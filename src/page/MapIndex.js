@@ -1,4 +1,3 @@
-/*global kakao */
 import axios from "axios";
 import React, { useState, useEffect, useRef } from "react";
 import {
@@ -6,18 +5,25 @@ import {
 	MapMarker,
 	MarkerClusterer,
 	ZoomControl,
-	EventMarkerContainer
 } from "react-kakao-maps-sdk";
 
 const MapIndex = () => {
 	const [level, setLevel] = useState();
 	const [centerElem, setCenterElem] = useState();
 	const [positions, setPositions] = useState([]);
-  const [selectedMarker, setSeleteMarker] = useState()
+	const [sitters, setSitters] = useState([]);
 	const mapRef = useRef();
 	const getData = async () => {
-		const res = await axios.get("http://localhost:5001/positions");
-		setPositions(res.data);
+		const res = await axios.get("http://localhost:5001/sitters");
+		console.log(res,res.data)
+		setSitters(res.data)
+		setPositions(()=>{
+			const positions = [];
+			res.data.map((v,i)=>{
+				positions.push(v.location.coordinates);
+			})
+			return positions;
+		});
 	};
 
 	const onClusterclick = (_target, cluster) => {
@@ -32,12 +38,11 @@ const MapIndex = () => {
 	const markerClickEvent = (idx) => {
 		const map = mapRef.current;
 		map.setPosition({
-			lat: positions[idx].lat,
-			lng: positions[idx].lng,
+			lat: sitters[idx][1],
+			lng: sitters[idx][0],
 		})
 		console.log(idx)
   }
-
 
 
 	useEffect(() => {
@@ -50,36 +55,41 @@ const MapIndex = () => {
 		}
 	}, [positions]);
 
+	console.log(sitters)
+
 	if (!centerElem) return <p>로딩중입니다</p>;
 	else
 		return (
 			<>
 				<Map
 					ref={mapRef}
-					center={{ lat: centerElem?.lat, lng: centerElem?.lng }}
+					center={{ lat: centerElem[1], lng: centerElem[0] }}
 					style={{ width: "100%", height: "360px" }}
 					onZoomChanged={(map) => setLevel(map.getLevel())}
 				>
-					{centerElem?.lat}
 					<ZoomControl />
 					<MarkerClusterer
 						averageCenter={false} // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
-						minLevel={10} // 클러스터 할 최소 지도 레벨
-						level={6}
+						minLevel={6} // 클러스터 할 최소 지도 레벨
+						level={3}
 						disableClickZoom={true}
 						onClusterclick={onClusterclick}
 					>
 						{positions.map((pos,idx) => (
 							<MapMarker
-								key={`${pos.lat}-${pos.lng}`}
+								key={`pos_${idx}`}
 								position={{
-									lat: pos.lat,
-									lng: pos.lng,
+									lat: pos[1],
+									lng: pos[0],
 								}}
 								clickable={true} // 마커를 클릭했을 때 지도의 클릭 이벤트가 발생하지 않도록 설정합니다
 								onClick={()=>markerClickEvent(idx)}
 							>
-								marker {idx}</MapMarker>
+								<div>
+									<p style={{display:'inline-block', margin: 0}}>{sitters[idx].userName}</p><span>{sitters[idx].star}</span>
+									{/* <span>{Array.from({length: sitters[idx].star}, () => '*')}</span> */}
+								</div>
+								</MapMarker>
 						))}
 					</MarkerClusterer>
 				</Map>
