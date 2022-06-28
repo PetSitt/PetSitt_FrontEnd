@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import {apis} from '../../store/api'
+import {apis} from '../store/api'
 
 function Home() {
   const {isLoading, data} = useQuery('queryKey', apis.get);
