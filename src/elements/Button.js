@@ -13,8 +13,7 @@ Button.defaultProps = {
 	_height: "33px",
 	_color : "#fff",
 	_bgColor : "#000",
-	_borderRadius: "0.4rem",
-	
+	_borderRadius: "0.4rem"
 }
 
 const BtnBx = styled.button`
