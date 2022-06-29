@@ -8,8 +8,8 @@ function Home() {
 
   return (
     <div className="home">
-      <Input _placeholder={"아이디(이메일)"} _required={"required"} />
-      <Button _color={"#fff"}>버튼</Button>
+      <Input _width={"100%"} _placeholder={"아이디(이메일)"} _required={"required"} />
+      <Button _color={"#fff"}>버튼2</Button>
     </div>
   );
 }
