@@ -4,7 +4,7 @@ const Button = ({_width, _height, _color, _bgColor, _borderRadius, _fontSize, _l
 	const styles = {_width, _height, _color, _bgColor, _borderRadius, _fontSize, _lineHeight, _padding, children};
 
 	return (
-		<BtnBx {...styles}></BtnBx>
+		<BtnBx {...styles}>{children}</BtnBx>
 	);
 }
 
