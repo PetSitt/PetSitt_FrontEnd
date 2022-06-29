@@ -20,9 +20,9 @@ function Home() {
 
   return (
     <div className="home">
-      <Checkbox _id={"id"} _text={"개인정보 수집 및 이용 동의(필수)"} _required={"required"} onChange={changeHandler}
+      <Checkbox _id={"id"} _text={"개인정보 수집 및 이용 동의(필수)"} _size={"1.2rem"} _bgColor={"#1184ff"} _required={"required"} onChange={changeHandler}
         checked={checkedInputs}/>
-      <Checkbox _id={"id2"} _text={"개인정보 수집 및 이용 동의(필수)2"} _required={"required"} onChange={changeHandler}
+      <Checkbox _id={"id2"} _text={"개인정보 수집 및 이용 동의(필수)2"} _size={"1.2rem"} _required={"required"} onChange={changeHandler}
         checked={checkedInputs}/>
       <Input _width={"100%"} _placeholder={"아이디(이메일)"} _required={"required"} />
       <Button _color={"#fff"}>버튼2</Button>
