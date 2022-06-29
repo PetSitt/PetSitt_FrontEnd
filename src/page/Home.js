@@ -8,6 +8,7 @@ import { useState } from "react";
 function Home() {
   // const {isLoading, data} = useQuery('queryKey', apis.get);
   const [checkedInputs, setCheckedInputs] = useState([]);
+  const [isChecked, setIsChecked] = useState(false);
 
   const changeHandler = (checked, id) => {
     if (checked) {
@@ -18,12 +19,24 @@ function Home() {
     }
   };
 
+  const checkedHandler = (isChecked) => {
+    if(isChecked){
+      setIsChecked(true);
+    } else {
+      setIsChecked(false);
+    }
+  }
+
   return (
     <div className="home">
-      <Checkbox _id={"id"} _text={"개인정보 수집 및 이용 동의(필수)"} _size={"1.2rem"} _bgColor={"#1184ff"} _required={"required"} onChange={changeHandler}
-        checked={checkedInputs}/>
-      <Checkbox _id={"id2"} _text={"개인정보 수집 및 이용 동의(필수)2"} _size={"1.2rem"} _required={"required"} onChange={changeHandler}
-        checked={checkedInputs}/>
+      {console.log(isChecked)}
+      {console.log(checkedInputs)}
+      <Checkbox _id={"소형견"} _text={"소형견"} _size={"1.2rem"} onChange={changeHandler} checked={checkedInputs} />
+      <Checkbox _id={"중형견"} _text={"중형견"} _size={"1.2rem"} onChange={changeHandler} checked={checkedInputs} />
+      <Checkbox _id={"대형견"} _text={"대형견"} _size={"1.2rem"} onChange={changeHandler} checked={checkedInputs} />
+      
+      <Checkbox _text={"산책"} _size={"1.2rem"} onChange={checkedHandler} checked={isChecked}/>
+
       <Input _width={"100%"} _placeholder={"아이디(이메일)"} _required={"required"} />
       <Button _color={"#fff"}>버튼2</Button>
     </div>

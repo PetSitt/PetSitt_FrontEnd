@@ -1,11 +1,19 @@
 import Router from './Router';
+import styled from "styled-components";
 
 function App() {
   return (
-    <div className="App">
+    <AppWrapper className="App">
       <Router />
-    </div>
+    </AppWrapper>
   );
 }
+
+const AppWrapper = styled.div`
+  max-width: 768px;
+  margin: 0 auto;
+  padding: 0 20px;
+  box-sizing: border-box;
+`
 
 export default App;

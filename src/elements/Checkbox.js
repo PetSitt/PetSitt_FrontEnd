@@ -1,13 +1,17 @@
 import styled, {css} from "styled-components";
 
+/* 
+*	Props로 _id값을 받으면 값을 array형태로 추가 가능.
+* Props로 _id값을 받지 않으면 Boolean형으로 구현.
+*/
 const Checkbox = ({_id, _text, _required, _size, _border, _bgColor ,checked, onChange}) => {
 	const styles = {_size, _border, _bgColor}
 
 	return (
 		<StLabel htmlFor={_id}>
 			<StInput {...styles} type="checkbox" id={_id} name={_text} required={_required} onChange={(e) => {
-				onChange(e.currentTarget.checked, _id)
-			}} checked={checked.includes(_id) ? true : false}></StInput>
+				_id ? onChange(e.currentTarget.checked, _id) : onChange(e.currentTarget.checked)
+			}} checked={ _id ? checked.includes(_id) ? true : false : null}></StInput>
 			<StP>{_text}</StP>
 		</StLabel>
 	);
