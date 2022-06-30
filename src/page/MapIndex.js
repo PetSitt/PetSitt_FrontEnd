@@ -16,17 +16,37 @@ const MapIndex = () => {
 	const [address, setAddress] = useState();
 
 	const mapRef = useRef();
-	const getData = async () => {
-		const res = await axios.get("http://localhost:5001/sitters");
-		console.log(res,res.data)
-		setSitters(res.data)
-		setPositions(()=>{
-			const positions = [];
-			res.data.map((v,i)=>{
-				positions.push(v.location.coordinates);
-			})
-			return positions;
-		});
+	const getData = () => {
+		setSitters([{
+			"objectIdsitterId" : "s2dadwd2s111",
+			"userName": "김철수",
+			"address": "서울 서초구 서초1동",
+			"sitterTitle": "정성을 다해 사랑으로 돌봐드려요",
+			"star" : 5.0,
+			"location": { 
+					"coordinates": [127.01763998406159, 37.27943075229118]
+			}
+		},
+		{
+			"objectIdsitterId" : "s2dadwd2s222",
+			"userName": "김유저",
+			"address": "서울 서초구 서초2동 222-22",
+			"sitterTitle": "정성을 다해 사랑으로 돌봐드려요~~ 저도 댕댕이가 있습니다",
+			"star" : 4.0,
+			"location": { 
+					"coordinates": [129.07944301057026, 35.20618517638034]
+			}
+		},
+		{
+			"objectIdsitterId" : "s2dadwd2s333",
+			"userName": "세번째",
+			"address": "서울 서초구 서초3동 333길 33",
+			"sitterTitle": "세번째 돌보미 소개 타이틀 세번째 돌보미 소개 타이틀 세번째 돌보미 소개 타이틀",
+			"star" : 4.0,
+			"location": { 
+					"coordinates": [127.02079678472444, 37.490413948014606]
+			}
+		}])
 	};
 
 
@@ -54,15 +74,27 @@ const MapIndex = () => {
 		getData();
 	}, []);
 
+	useEffect(()=>{
+
+		setPositions(()=>{
+			const positions = [];
+			sitters.map((v,i)=>{
+				console.log(v,i)
+				positions.push(v.location.coordinates);
+			})
+			return positions;
+		});
+	},[sitters])
+
 	useEffect(() => {
 		if (positions.length > 0) {
 			setCenterElem(positions[0]);
 		}
 	}, [positions]);
 
-	console.log(sitters)
+	console.log(sitters, positions,positions.length <= 0)
 
-	if (!centerElem) return <p>로딩중입니다</p>;
+	if (!centerElem || positions.length <= 0) return <p>로딩중입니다</p>;
 	else
 		return (
 			<>
@@ -81,7 +113,7 @@ const MapIndex = () => {
 						disableClickZoom={true}
 						onClusterclick={onClusterclick}
 					>
-						{positions.map((pos,idx) => (
+						{positions?.map((pos,idx) => (
 							<MapMarker
 								key={`pos_${idx}`}
 								position={{

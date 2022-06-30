@@ -4,7 +4,7 @@ import {apis} from '../store/api'
 import Input from '../elements/Input';
 import Button from "../elements/Button";
 import Checkbox from "../elements/Checkbox";
-import {getLocation} from './GetLocation';
+import { useEffect, useState } from "react";
 
 const INITIAL_VALUES = {
 	"소형견": false,
@@ -46,6 +46,7 @@ function Home() {
   return (
     <div className="home">
       {console.log(checkedInputs)}
+      바꿨는데???
       <Checkbox _id={"소형견"} _text={"소형견"} _size={"1.2rem"} onChange={changeHandler} checked={checkedInputs} />
       <Checkbox _id={"중형견"} _text={"중형견"} _size={"1.2rem"} onChange={changeHandler} checked={checkedInputs} />
       <Checkbox _id={"대형견"} _text={"대형견"} _size={"1.2rem"} onChange={changeHandler} checked={checkedInputs} />
