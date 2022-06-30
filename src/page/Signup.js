@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import styled from "styled-components";
-import { useQuery, useMutation, useQueryClient } from "react-query";
+import { useMutation } from "react-query";
 import Input from '../elements/Input';
 import Button from '../elements/Button';
 import { apis } from '../store/api';
@@ -92,7 +92,7 @@ const Signup = () => {
 	function phoneRegexr(e) {
 		handleInputChange(e)
 		const phoneVal = e.target.value;
-		setPhoneCurrent(phoneVal.replace(/[^a-zA-Z0-9]/gi,''));
+		setPhoneCurrent(phoneVal.replace(/[^0-9]/gi,''));
 		const phoneReg = /^\d{3}\d{3,4}\d{4}$/gim;
 		if (!phoneReg.test(phoneVal)) {
 				setPhoneMessage('정상적인 번호가 아닙니다.')
