@@ -4,7 +4,6 @@ import Input from '../elements/Input';
 import Button from "../elements/Button";
 import Checkbox from "../elements/Checkbox";
 import { useEffect, useState } from "react";
-import {getLocation} from './GetLocation';
 
 function Home() {
   useEffect(()=>{
@@ -14,14 +13,6 @@ function Home() {
         var longitude = pos.coords.longitude;
         alert("현재 위치는 : " + latitude + ", "+ longitude);
     });
-    setTimeout(()=>{
-      navigator.geolocation.getCurrentPosition(function(pos) {
-        console.log(pos);
-        var latitude = pos.coords.latitude;
-        var longitude = pos.coords.longitude;
-        alert("현재 위치는 : " + latitude + ", "+ longitude);
-    });
-    }, 1000)
   },[])
   
   // const {isLoading, data} = useQuery('queryKey', apis.get);
