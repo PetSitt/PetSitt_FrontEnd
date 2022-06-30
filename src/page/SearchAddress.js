@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import DaumPostcodeEmbed from "react-daum-postcode";
+import axios from 'axios';
 
 const SearchAddress = ({ setAddress }) => {
   const geocoder = new kakao.maps.services.Geocoder();
@@ -22,7 +23,7 @@ const SearchAddress = ({ setAddress }) => {
 		}
 		setAddress(fullAddress);
 
-    // 주소로 좌표를 검색합니다
+    // 주소로 좌표 검색
     geocoder.addressSearch(data.address, function(result, status) {
       console.log(result);
     });
@@ -32,6 +33,19 @@ const SearchAddress = ({ setAddress }) => {
   const handleSearch = (data) => {
     console.log(data, data.q, 'data???????')
     setTimeout(()=>{console.log(document.getElementById('__daum__layer_1'))}, 3000)
+
+    const searchTxt = data.q;
+    var config = { headers: {Authorization : 'KakaoAK b80edb4c633e56678385535a84dd1d63'}}; //인증키 정보
+    var url = 'https://dapi.kakao.com/v2/local/search/address.json?query='+searchTxt; // url 및 키워드 담아 보냄
+    axios.get(url, config).then(function(result) { // API호출
+      let searchResult = [];
+      if(result.data != undefined || result.data != null){
+        searchResult.push(result.data.documents); //결과를 목록에 담음
+        console.log(result.data.documents)
+      }
+    })
+
+
   }
 
   

@@ -29,7 +29,6 @@ const MapIndex = () => {
 		});
 	};
 
-	
 
 
 	const onClusterclick = (_target, cluster) => {
