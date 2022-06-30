@@ -7,6 +7,7 @@ import MapIndex from './page/MapIndex';
 import MapIndex2 from './page/MapIndex2';
 import Login from './page/Login';
 import SearchAddress from './page/SearchAddress';
+import PwFind from "./page/PwFind";
 
 const Router = () => {
 	return (
@@ -15,6 +16,7 @@ const Router = () => {
 				<Route path="/" component={Home} exact />
 				<Route path="/map" component={MapIndex} />
 				<Route path='/signup' component={Signup} />
+				<Route path='/pwfind' component={PwFind} />
 				<Route path="/map2" component={MapIndex2} />{/*이 route는 테스트 끝나면 지울게요!*/}
 				<Route path="/login" component={Login}></Route>
 				<Route path="/search" component={SearchAddress}></Route>

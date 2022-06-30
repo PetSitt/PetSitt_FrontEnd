@@ -1,9 +1,16 @@
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import {apis} from '../store/api'
 import Input from '../elements/Input';
 import Button from "../elements/Button";
 import Checkbox from "../elements/Checkbox";
 import { useEffect, useState } from "react";
+
+const INITIAL_VALUES = {
+	"소형견": false,
+	"중형견": false,
+	"대형견": false
+};
 
 function Home() {
   useEffect(()=>{
@@ -38,7 +45,6 @@ function Home() {
 
   return (
     <div className="home">
-      {console.log(isChecked)}
       {console.log(checkedInputs)}
       바꿨는데???
       <Checkbox _id={"소형견"} _text={"소형견"} _size={"1.2rem"} onChange={changeHandler} checked={checkedInputs} />
