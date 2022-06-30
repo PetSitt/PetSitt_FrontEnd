@@ -5,7 +5,6 @@ import Home from './page/Home';
 import Signup from './page/Signup';
 import MapIndex from './page/MapIndex';
 import MapIndex2 from './page/MapIndex2';
-import MapIndex from './page/MapIndex';
 import Login from './page/Login';
 import SearchAddress from './page/SearchAddress';
 
