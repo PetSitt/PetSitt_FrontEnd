@@ -4,7 +4,6 @@ import {apis} from '../store/api'
 import Input from '../elements/Input';
 import Button from "../elements/Button";
 import Checkbox from "../elements/Checkbox";
-import { useEffect, useState } from "react";
 
 const INITIAL_VALUES = {
 	"소형견": false,
