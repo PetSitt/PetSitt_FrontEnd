@@ -21,6 +21,7 @@ const SearchAddress = ({ setAddress }) => {
 			}
 			fullAddress += extraAddress !== "" ? ` (${extraAddress})` : "";
 		}
+		console.log(fullAddress)
 		setAddress(fullAddress);
 
     // 주소로 좌표 검색
