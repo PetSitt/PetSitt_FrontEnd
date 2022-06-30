@@ -6,12 +6,15 @@ import {
 	MarkerClusterer,
 	ZoomControl,
 } from "react-kakao-maps-sdk";
+import SearchAddress from './SearchAddress';
 
 const MapIndex = () => {
 	const [level, setLevel] = useState();
 	const [centerElem, setCenterElem] = useState();
 	const [positions, setPositions] = useState([]);
 	const [sitters, setSitters] = useState([]);
+	const [address, setAddress] = useState();
+
 	const mapRef = useRef();
 	const getData = async () => {
 		const res = await axios.get("http://localhost:5001/sitters");
@@ -25,6 +28,8 @@ const MapIndex = () => {
 			return positions;
 		});
 	};
+
+
 
 	const onClusterclick = (_target, cluster) => {
 		console.log("cluster clicked", _target, cluster);
@@ -61,6 +66,7 @@ const MapIndex = () => {
 	else
 		return (
 			<>
+				<SearchAddress setAddress={setAddress}/>
 				<Map
 					ref={mapRef}
 					center={{ lat: centerElem[1], lng: centerElem[0] }}

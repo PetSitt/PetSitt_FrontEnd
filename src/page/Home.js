@@ -3,9 +3,19 @@ import {apis} from '../store/api'
 import Input from '../elements/Input';
 import Button from "../elements/Button";
 import Checkbox from "../elements/Checkbox";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import {getLocation} from './GetLocation';
 
 function Home() {
+  useEffect(()=>{
+    navigator.geolocation.getCurrentPosition(function(pos) {
+        console.log(pos);
+        var latitude = pos.coords.latitude;
+        var longitude = pos.coords.longitude;
+        alert("현재 위치는 : " + latitude + ", "+ longitude);
+    });
+  },[])
+  
   // const {isLoading, data} = useQuery('queryKey', apis.get);
   const [checkedInputs, setCheckedInputs] = useState([]);
   const [isChecked, setIsChecked] = useState(false);
