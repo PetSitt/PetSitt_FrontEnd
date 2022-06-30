@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { useMutation } from "react-query";
 import styled from "styled-components";
+import Button from "../elements/Button";
 import Input from "../elements/Input";
+import { apis } from "../store/api";
 
 const INITIAL_VALUES = {
 	userEmail: '',
@@ -41,17 +44,62 @@ const PwFind = () => {
 		}
 	}
 
+	// useMutation 세팅 함수
+	const {mutate} = useMutation(apis.passwordFind, {
+    onSuccess: (data) => {
+			console.log(data)
+    },
+		onError: (data) => {
+			console.log(data)
+		}
+  });
+
+	// 등록하는 함수
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		console.log(values)
+		mutate(values)
+  };
+
 	return (
-		<div>
-			<h1>Sign Up</h1>
+		<Form onSubmit={handleSubmit}>
+			<h1>비밀번호 찾기</h1>
 			<label className="inner required">
 				<p className="tit">아이디(이메일)</p>
 				<Input _width="100%" _height="44px" _placeholder="test@gmail.com" _type="email" _name={"userEmail"} onChange={idCheck} required />
 				{ values.userEmail && <Message className={`${isId ? "success" : "error"}`}>{idMessage}</Message>}
 			</label>
-		</div>
+			<Button>전송</Button>
+		</Form>
 	);
 }
+
+const Form = styled.form`
+	h1 {
+		font-size: 34px;
+		font-weight: 600;
+	}
+	.inner {
+		&.required {
+			.tit {
+				font-size: 22px;
+				display: inline-block;
+				position: relative;
+				::after {
+					content: '';
+					display: inline-block;
+					width: 6px;
+					height: 6px;
+					border-radius: 50%;
+					background-color: rgb(255, 107, 107);
+					position: absolute;
+					top: 0px;
+					right: -12px;
+				}
+			}
+		}
+	}
+`
 
 const Message = styled.p`
   font-size: 13px;
