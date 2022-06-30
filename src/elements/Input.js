@@ -1,24 +1,24 @@
 import styled, { css } from "styled-components";
 
-const Input = ({_width, _height, _color, _fontSize, _lineHeight, _padding, _border, _borderRadius ,_placeholder, _required, children}) => {
+
+const Input = ({_width, _height, _color, _fontSize, _lineHeight, _padding, _border, _borderRadius, _name ,_placeholder, _required, _type, _defaultValue, onChange}) => {
 	const styles = { _width, _height, _color, _fontSize, _lineHeight, _padding, _border, _borderRadius };
 
 	return (
-		<InputBx {...styles}>
-			<label htmlFor="name">{children}</label>
-			<input type="text" id="name" name="name" placeholder={_placeholder} required={_required} />
+		<InputBx {...styles} className="inputBx">
+			<input type={_type} name={_name} placeholder={_placeholder} required={_required} defaultValue={_defaultValue} onChange={onChange}/>
 		</InputBx>
 	);
 };
 
 Input.defaultProps = {
 	_width: "100%",
-  _height: "56px",
+  _height: "44px",
 	_fontSize: "1.2rem",
   _padding: "0 20px",
   _color: "#b1b1b3",
   _border: "2px solid #8f8f9c",
-	_borderRadius: "14px"
+	_borderRadius: "8px"
 }
 
 const InputBx = styled.div`
@@ -28,6 +28,7 @@ const InputBx = styled.div`
 			width: ${props => props._width};
 			height: ${props => props._height};
 			line-height: ${props => props._height};
+			position: relative;
 			input {
 				width: 100%;
 				height: 100%;
