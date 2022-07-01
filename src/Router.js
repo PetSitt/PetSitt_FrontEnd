@@ -19,7 +19,7 @@ const Router = () => {
 				<Route path="/map" component={MapIndex} />
 				<Route path='/signup' component={Signup} />
 				<Route path='/pwfind' component={PwFind} />
-				<Route path='/mypage/myprofile' component={Mypage} exact />
+				<Route path='/mypage' component={Mypage} exact />
 				<Route path='/mypage/myprofile/:id' component={Myprofile}/>
 				<Route path="/map2" component={MapIndex2} />{/*이 route는 테스트 끝나면 지울게요!*/}
 				<Route path="/login" component={Login}></Route>
