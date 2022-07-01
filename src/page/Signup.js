@@ -21,8 +21,6 @@ const Signup = () => {
 	const [phoneMessage, setPhoneMessage] = useState("")
 
 	// 중복 체크
-	const [idCurrent, setIdCurrent] = useState("");
-	const [pwCurrent, setPwCurrent] = useState("");
 	const [phoneCurrent, setPhoneCurrent] = useState("");
 
 	// 유효성 검사
@@ -50,7 +48,6 @@ const Signup = () => {
 		handleInputChange(e)
 		const regId = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
 		const idCurrent = e.target.value;
-		setIdCurrent(idCurrent);
 
 		if (!regId.test(idCurrent)) {
 				setIdMessage("이메일 형식에 맞게 입력해주세요")
@@ -66,7 +63,6 @@ const Signup = () => {
 		handleInputChange(e)
 		const regPw = /^.{6,20}$/
 		const pwCurrent = e.target.value;
-		setPwCurrent(pwCurrent)
 
 		if (!regPw.test(pwCurrent)) {
 				setPwMessage("6~20자로 입력해주세요")
@@ -102,22 +98,21 @@ const Signup = () => {
 				setIsPhone(true)
 		}
 	};
-
+	
 	// useMutation 세팅 함수
-	const {mutate} = useMutation(apis.signup, {
-    onSuccess: (data) => {
-			console.log(data)
-    },
-		onError: (data) => {
-			console.log(data)
-		}
-  });
+	const {mutate, error, isSuccess} = useMutation(apis.signupAdd, {
+		onSuccess: ({data}) => {
+			alert(data.message)
+			window.location.href = '/login'
+    }
+	});
 
 	// 등록하는 함수
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		console.log(values)
-		mutate(values)
+		if(isId && isPw && isPhone){
+			mutate(values)
+		}
   };
 	
 	return (

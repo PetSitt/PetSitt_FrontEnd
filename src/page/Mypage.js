@@ -1,13 +1,20 @@
-import React, {useState, useEffect} from 'react';
-import AddressInfo from '../components/AddressInfo';
+import React from 'react';
+import { useParams, Link } from "react-router-dom";
 
 const Mypage = () => {
+	const id = useParams().id;
 	return (
 		<div>
-				<div className="inner">
-					<p className="tit">주소</p>
-					{/* <AddressInfo _address={values.address} _zonecode={values.zonecode} _name={"detailAddress"} onChange={handleInputChange} /> */}
-				</div>
+			<h1>마이페이지</h1>
+			<Link to={{pathname:`/mypage/myprofile/${id}`}}>
+				<div className="btnItem">내 프로필</div>
+			</Link>
+			<Link to={{pathname:`/mypage/petprofile/${id}`}}>
+				<div className="btnItem">반려동물 프로필</div>
+			</Link>
+			<Link to={{pathname:`/mypage/sitterprofile/${id}`}}>
+				<div className="btnItem">돌보미 프로필</div>
+			</Link>
 		</div>
 	);
 }
