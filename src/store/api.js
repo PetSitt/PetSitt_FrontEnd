@@ -11,7 +11,7 @@ const localhostApi = axios.create({
 });
 
 const api = axios.create({
-	baseURL: "http://3.35.135.160",
+	baseURL: "http://15.165.160.107",
 	headers: {
 		'Content-type': 'application/json; charset=UTF-8',
 		accept: 'application/json,',

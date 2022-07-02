@@ -1,9 +1,12 @@
-import React, {useRef} from "react";
+import React, {useRef, useEffect} from "react";
 import styled from "styled-components";
+import { useQuery } from "react-query";
 import Button from '../elements/Button';
 import Input from '../elements/Input';
+import { apis } from "../store/api";
 
 const Myprofile = () => {
+	const {isLoading, data} = useQuery("user", apis.myprofile)
 	const inputEl1 = useRef(null);
 	const inputEl2 = useRef(null);
 	const inputEl3 = useRef(null);
@@ -13,6 +16,11 @@ const Myprofile = () => {
 		inputEl2.current.disabled = false
 		inputEl3.current.disabled = false
 	}
+
+	console.log(isLoading, data)
+	useEffect(() => {
+		apis.myprofile();
+	},[])
 
 	return (
 		<MyprofileInner>
