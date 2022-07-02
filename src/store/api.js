@@ -23,4 +23,6 @@ export const apis = {
 		postCode_back
 	}),
 	passwordFind: (userEmail) => api.post('/user/password_check', {userEmail}),
+	addSitter: (data) => api.post('/sitters', data),
+
 }

@@ -42,10 +42,12 @@ function Home() {
     }
   }
 
+  const [size, setSize] = useState([false, false, false]);
+  console.log(size);
+
   return (
     <div className="home">
       {console.log(checkedInputs)}
-      바꿨는데???
       <Checkbox _id={"소형견"} _text={"소형견"} _size={"1.2rem"} onChange={changeHandler} checked={checkedInputs} />
       <Checkbox _id={"중형견"} _text={"중형견"} _size={"1.2rem"} onChange={changeHandler} checked={checkedInputs} />
       <Checkbox _id={"대형견"} _text={"대형견"} _size={"1.2rem"} onChange={changeHandler} checked={checkedInputs} />
@@ -54,6 +56,29 @@ function Home() {
 
       <Input _width={"100%"} _placeholder={"아이디(이메일)"} _required={"required"} />
       <Button _color={"#fff"}>버튼2</Button>
+
+      {/* true, false 배열에 담는거 테스트 */}
+      <input type="checkbox" onChange={(e)=>{
+        setSize((prev)=>{
+          const newData = [...prev];
+          newData[0] = e.target.checked;
+          return newData;
+        })
+      }}/>
+      <input type="checkbox" onChange={(e)=>{
+        setSize((prev)=>{
+          const newData = [...prev];
+          newData[1] = e.target.checked;
+          return newData;
+        })
+      }}/>
+      <input type="checkbox" onChange={(e)=>{
+        setSize((prev)=>{
+          const newData = [...prev];
+          newData[2] = e.target.checked;
+          return newData;
+        })
+      }}/>
     </div>
   );
 }
