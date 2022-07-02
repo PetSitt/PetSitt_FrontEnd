@@ -8,9 +8,9 @@ const Checkbox = ({_id, _text, _required, _size, _border, _bgColor ,checked, onC
 	const styles = {_size, _border, _bgColor}
 
 	return (
-		<StLabel htmlFor={_id}>
+		<StLabel htmlFor={_id} className="radio">
 			<StInput {...styles} type="checkbox" id={_id} name={_text} required={_required} onChange={(e) => {
-				_id ? onChange(e.currentTarget.checked, _id) : onChange(e.currentTarget.checked)
+				_id ? onChange(e.currentTarget.checked, _id) : onChange(e)
 			}} checked={ _id ? checked.includes(_id) ? true : false : null}></StInput>
 			<StP>{_text}</StP>
 		</StLabel>

@@ -1,12 +1,12 @@
 import styled, { css } from "styled-components";
 
 
-const Input = ({_width, _height, _color, _fontSize, _lineHeight, _padding, _border, _borderRadius, _name, _placeholder, _type, _value, _defaultValue, required, disabled, onChange}) => {
+const Input = ({_width, _height, _color, _fontSize, _lineHeight, _padding, _border, _borderRadius, _name, _placeholder, _type, _value, _defaultValue, _ref, required, disabled, onChange}) => {
 	const styles = { _width, _height, _color, _fontSize, _lineHeight, _padding, _border, _borderRadius };
 
 	return (
 		<InputBx {...styles} className="inputBx">
-			<input type={_type} name={_name} placeholder={_placeholder} value={_value} defaultValue={_defaultValue} required={required} disabled={disabled} onChange={onChange} />
+			<input type={_type} name={_name} placeholder={_placeholder} value={_value} defaultValue={_defaultValue} ref={_ref} required={required} disabled={disabled} onChange={onChange} />
 		</InputBx>
 	);
 };
