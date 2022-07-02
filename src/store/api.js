@@ -1,5 +1,7 @@
 import axios from "axios";
+import { Cookies } from "react-cookie";
 
+const cookies = new Cookies();
 const localhostApi = axios.create({
 	baseURL: "http://localhost:5001",
 	headers: {
@@ -17,7 +19,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config)=> {
-	config.headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`
+	config.headers['Authorization'] = `Bearer ${cookies.get('accessToken')}`
 	return config;
 }, (err) => {
 	return Promise.reject(err);
