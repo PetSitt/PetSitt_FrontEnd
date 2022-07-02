@@ -1,10 +1,10 @@
 import styled, {css} from "styled-components";
 
-const Button = ({_width, _height, _color, _bgColor, _borderRadius, _fontSize, _lineHeight, _padding, children}) => {
+const Button = ({_width, _height, _color, _bgColor, _borderRadius, _fontSize, _lineHeight, _padding, children, onClick}) => {
 	const styles = {_width, _height, _color, _bgColor, _borderRadius, _fontSize, _lineHeight, _padding, children};
 
 	return (
-		<BtnBx {...styles} className="btnBx">{children}</BtnBx>
+		<BtnBx {...styles} className="btnBx" onClick={onClick}>{children}</BtnBx>
 	);
 }
 
