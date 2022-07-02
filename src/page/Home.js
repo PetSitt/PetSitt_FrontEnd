@@ -12,7 +12,6 @@ function Home() {
   },[])
   return (
     <div className="home">
-      바꿨는데???
     </div>
   );
 }

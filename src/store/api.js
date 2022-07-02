@@ -27,6 +27,7 @@ export const apis = {
 	// user
 	signupAdd: (data) => api.post('/api/signup', data),
 	passwordFind: (userEmail) => api.post('/user/password_check', {userEmail}),
+
 	// mypage
 	myprofile: () => api.get('/mypage/myprofile'),
 	petprofile: () => api.get('/mypage/petprofile'),
