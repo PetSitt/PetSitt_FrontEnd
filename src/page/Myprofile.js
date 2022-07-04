@@ -17,7 +17,10 @@ const Myprofile = () => {
 
 	const {mutate} = useMutation(apis.myprofilePatch, {
 		onSuccess: ({data}) => {
-			console.log(data)
+			if(data.myprofile.acknowledged){
+				alert("프로필 정보를 수정했습니다.")
+				window.location.reload();
+			}
 		},
 		onError: (data) => {
 			console.log(data);
