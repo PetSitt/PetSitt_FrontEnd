@@ -11,7 +11,7 @@ const localhostApi = axios.create({
 });
 
 const api = axios.create({
-	baseURL: "http://15.165.160.107",
+	baseURL: "http://3.35.220.155",
 	headers: {
 		'Content-type': 'application/json; charset=UTF-8',
 		accept: 'application/json,',
@@ -32,6 +32,7 @@ export const apis = {
 	login: (data) => api.post('/api/login', data),
 
 	// mypage
-	myprofile: () => api.get('/mypage/myprofile'),
-	petprofile: () => api.get('/mypage/petprofile'),
+	myprofileGet: () => api.get('/mypage/myprofile'),
+	myprofilePatch: (data) => api.patch('/mypage/myprofile', data),
+	petprofileGet: () => api.get('/mypage/petprofile'),
 }

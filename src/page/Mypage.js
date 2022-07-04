@@ -6,16 +6,16 @@ const Mypage = () => {
 	return (
 		<div>
 			<h1>마이페이지</h1>
-			<Link to={{pathname:`/mypage/myprofile/${id}`}}>
+			<Link to={{pathname:`/mypage/myprofile`}}>
 				<div className="item">내 프로필</div>
 			</Link>
-			<Link to={{pathname:`/mypage/petprofile/${id}`}}>
+			<Link to={{pathname:`/mypage/petprofile`}}>
 				<div className="item">반려동물 프로필</div>
 			</Link>
-			<Link to={{pathname:`/mypage/sitterprofile/${id}`}}>
+			<Link to={{pathname:`/mypage/sitterprofile`}}>
 				<div className="item">돌보미 프로필</div>
 			</Link>
-			<Link to={{pathname:`/pwchange/${id}`}}>
+			<Link to={{pathname:`/pwchange`}}>
 				<div className="item">비밀번호 변경</div>
 			</Link>
 		</div>
