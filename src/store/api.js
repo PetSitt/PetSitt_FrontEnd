@@ -2,39 +2,21 @@ import axios from "axios";
 import { Cookies } from "react-cookie";
 
 const cookies = new Cookies();
-const localhostApi = axios.create({
-	baseURL: "http://localhost:5001",
-	headers: {
-		'Content-type': 'application/json; charset=UTF-8',
-		accept: 'application/json,',
-	}
-});
 
 const api = axios.create({
-	baseURL: "http://3.35.220.155",
-	headers: {
-		'Content-type': 'application/json; charset=UTF-8',
-		accept: 'application/json,',
-	} 
+	baseURL: `${process.env.REACT_APP_SERVER}`
 });
 
 const pwfindApi = axios.create({
-	baseURL: "http://3.35.135.160",
-	headers: {
-		'Content-type': 'application/json; charset=UTF-8',
-		accept: 'application/json,',
-	} 
+	baseURL: `${process.env.REACT_APP_PWFINDAPI}`
 });
 
 const mainApi = axios.create({
-	baseURL: "http://3.35.19.186:3000",
-	headers: {
-		'Content-type': 'application/json; charset=UTF-8',
-		accept: 'application/json,',
-	}
+	baseURL: `${process.env.REACT_APP_mainApi}`
 })
 
 api.interceptors.request.use((config)=> {
+	config.headers['Content-type']['Accept'] = 'application/json; charset=UTF-8';
 	config.headers['Authorization'] = `Bearer ${cookies.get('accessToken')}`
 	return config;
 }, (err) => {
