@@ -6,28 +6,16 @@ import {
 	MarkerClusterer,
 	ZoomControl,
 } from "react-kakao-maps-sdk";
-import SearchAddress from './SearchAddress';
 
 const MapIndex = () => {
 	const [level, setLevel] = useState();
 	const [centerElem, setCenterElem] = useState();
 	const [positions, setPositions] = useState([]);
 	const [sitters, setSitters] = useState([]);
-	const [address, setAddress] = useState();
 
 	const mapRef = useRef();
-	const getData = async () => {
-		const res = await axios.get("http://localhost:5001/sitters");
-		console.log(res,res.data)
-		setSitters(res.data)
-		setPositions(()=>{
-			const positions = [];
-			res.data.map((v,i)=>{
-				positions.push(v.location.coordinates);
-			})
-			return positions;
-		});
-	};
+
+	
 
 
 
@@ -51,7 +39,7 @@ const MapIndex = () => {
 
 
 	useEffect(() => {
-		getData();
+
 	}, []);
 
 	useEffect(() => {
@@ -60,13 +48,10 @@ const MapIndex = () => {
 		}
 	}, [positions]);
 
-	console.log(sitters)
-
 	if (!centerElem) return <p>로딩중입니다</p>;
 	else
 		return (
 			<>
-				<SearchAddress setAddress={setAddress}/>
 				<Map
 					ref={mapRef}
 					center={{ lat: centerElem[1], lng: centerElem[0] }}
