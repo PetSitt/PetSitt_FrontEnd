@@ -15,7 +15,7 @@ const api = axios.create({
 	headers: {
 		'Content-type': 'application/json; charset=UTF-8',
 		accept: 'application/json,',
-	}
+	} 
 });
 
 api.interceptors.request.use((config)=> {
