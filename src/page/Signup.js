@@ -142,7 +142,6 @@ const Signup = () => {
 					<p className="tit">닉네임</p>
 					<Input _width="100%" _height="44px" _type="text" id="pw2" _name={"userName"} onChange={handleInputChange} required />
 				</label>
-			
 				<Button>전송</Button>
 			</Form>
 	);
