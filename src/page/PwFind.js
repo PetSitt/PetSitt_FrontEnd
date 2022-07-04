@@ -47,7 +47,10 @@ const PwFind = () => {
 	// useMutation 세팅 함수
 	const {mutate} = useMutation(apis.passwordFind, {
     onSuccess: (data) => {
-			console.log(data)
+			if(data.data.result){
+				alert("임시 비번을 해당 이메일로 보냈습니다.")
+				window.location.replace('/');
+			}
     },
 		onError: (data) => {
 			console.log(data)

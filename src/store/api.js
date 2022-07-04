@@ -18,6 +18,14 @@ const api = axios.create({
 	} 
 });
 
+const pwfindApi = axios.create({
+	baseURL: "http://3.35.135.160",
+	headers: {
+		'Content-type': 'application/json; charset=UTF-8',
+		accept: 'application/json,',
+	} 
+});
+
 const mainApi = axios.create({
 	baseURL: "http://3.35.19.186:3000",
 	headers: {
@@ -36,7 +44,7 @@ api.interceptors.request.use((config)=> {
 export const apis = {
 	// user
 	signupAdd: (data) => api.post('/api/signup', data),
-	passwordFind: (userEmail) => api.post('/user/password_check', {userEmail}),
+	passwordFind: (data) => pwfindApi.post('/api/password_check', data),
 	login: (data) => api.post('/api/login', data),
 
 	// mypage
