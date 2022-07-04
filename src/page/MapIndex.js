@@ -48,8 +48,6 @@ const MapIndex = () => {
 		}
 	}, [positions]);
 
-	console.log(sitters)
-
 	if (!centerElem) return <p>로딩중입니다</p>;
 	else
 		return (
