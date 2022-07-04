@@ -5,7 +5,13 @@ import { ThemeProvider } from "styled-components";
 import App from './App';
 import GlobalStyles from "./styles/GlobalStyle";
 import theme from "./styles/theme";
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      suspense: true
+    }
+  }
+});
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
