@@ -87,6 +87,7 @@ function Home() {
 	}, []);
 
 	if (sitters_query.isLoading) return null;
+	if (sitters_query.isFetched) return <p>fetched</p>
 	return (
 		<div className="home">
 			<DatePicker
@@ -137,19 +138,6 @@ function Home() {
       </ul> */}
 		</div>
 	);
-  
-  useEffect(()=>{
-    navigator.geolocation.getCurrentPosition(function(pos) {
-        console.log(pos);
-        var latitude = pos.coords.latitude;
-        var longitude = pos.coords.longitude;
-    });
-  },[])
-  return (
-    <div className="home">
-      home
-    </div>
-  );
 }
 
 export default Home;
