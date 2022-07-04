@@ -22,18 +22,19 @@ function Home() {
 		{ dayCare: "데이 케어" },
 		{ boarding: "1박 케어" },
 	];
-  const [dateAndAddress, setDateAndAddress] = useState({searchDate: '', data: ''});
+  const [queriesData, setQueriesData] = useState({});
 	const [category, setCategory] = useState([]);
-  const [data, setData] = useState();
+	const [searched, setSearched] = useState(false);
 
-  
-
-	const getSittersList = (date, region, category) => {
-		return apis.getSittersList(date, region, category);
+ 
+	const getSittersList = (queriesData, category) => {
+		console.log(queriesData, category)
+		// return apis.getSittersList([date, region, category], data);
 	};
 	const sitters_query = useQuery(
 		"sitter_list",
-		() => getSittersList("2022/07/11", "마포구", "데이 케어"),
+		() => getSittersList(queriesData, category),
+		// () => getSittersList("2022/07/11", "마포구", "데이 케어"),
 		{
 			onSuccess: (data) => {
 				console.log(data);
@@ -41,42 +42,29 @@ function Home() {
 			onError: (data) => {
 				console.error(data);
 			},
-		}
+			enabled: searched,
+		},
 	);
 	useEffect(() => {
 		if (date.length) {
 			const getDates = date.map((v) => {
-				return `${v.year}/${v.month.number < 10 ? '0' + v.month.number : v.month.number}/${v.day}`;
+				return `${v.year}/${v.month.number < 10 ? '0' + v.month.number : v.month.number}/${v.day < 10 ? '0' + v.day : v.day}`;
 			});
 			setDates(getDates);
 		}
 	}, [date]);
 
 	useEffect(()=>{
-		if(addressInfo){
-			setAddress(
-				{
-					address: addressInfo.address_name,
-					region_1depth_name: addressInfo.region_1depth_name,
-					region_2depth_name: addressInfo.region_2depth_name,
-					region_3depth_name: addressInfo.region_3depth_name,
-					coordinates: [addressInfo.x, addressInfo.y]
-				}
-			)
+		if(dates?.length && addressInfo){
+			console.log(dates)
+			let datesArr = [];
+			for(let i=0; i<dates.length; i++){
+				datesArr.push({searchDate: dates[i]});
+			}
+			setQueriesData({...datesArr, region_2depth_name: addressInfo.region_2depth_name, x: addressInfo.x, y: addressInfo.y})
 		}
-	},[addressInfo])
+	}, [dates, addressInfo])
 
-	useEffect(()=>{
-		if(dates?.length && address?.address){
-			setDateAndAddress({data: address, searchDate: dates})
-		}
-	}, [dates, address])
-
-	useEffect(()=>{
-		if(dateAndAddress.data.address && dateAndAddress.searchDate.length ){
-			console.log(dateAndAddress)
-		}
-	},[dateAndAddress])
 
 	useEffect(() => {
 		// navigator.geolocation.getCurrentPosition(function(pos) {
@@ -87,7 +75,6 @@ function Home() {
 	}, []);
 
 	if (sitters_query.isLoading) return null;
-	if (sitters_query.isFetched) return <p>fetched</p>
 	return (
 		<div className="home">
 			<DatePicker
@@ -99,6 +86,13 @@ function Home() {
 				maxDate={new Date(today.year + 1, today.month.number, today.day)}
 			/>
 			<SearchAddress setAddressInfo={setAddressInfo} />
+			<button type="button" style={{border: '1px solid #333', fontSize: '16px', height: '40px', lineHeight: '42px', padding: '0 20px'}} onClick={()=>{
+				if(addressInfo &&  dates?.length > 0){
+					setSearched(true);
+				}else{
+					window.alert('날짜와 장소를 선택해주세요.')
+				}
+			}}>검색하기</button>
 			<ul>
 				{categories.map((v, i) => {
 					return (
@@ -125,17 +119,6 @@ function Home() {
 				})}
 			</ul>
 			<MapIndex />
-			{/* <ul>
-        {
-          sitters_query.data.data.sitters.map((v,i)=>{
-            return (
-              <li key={i}>
-                {v.address}
-              </li>
-            )
-          })
-        }
-      </ul> */}
 		</div>
 	);
 }

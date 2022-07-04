@@ -47,6 +47,6 @@ export const apis = {
 	petprofileGet: () => api.get('/mypage/petprofile'),
   
 	// main
-	getSittersList: (date, region, category) => mainApi.get('/mains/search', {params: {searchDate: date, region_2depth_name: region, dayCare: category}})
+	getSittersList: ([date, region, category], data) => mainApi.get('/mains/search', {params: {searchDate: date, region_2depth_name: region}}, data)
   
 }
