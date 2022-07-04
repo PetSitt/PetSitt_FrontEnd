@@ -18,6 +18,14 @@ const api = axios.create({
 	}
 });
 
+const mainApi = axios.create({
+	baseURL: "http://3.35.19.186:3000",
+	headers: {
+		'Content-type': 'application/json; charset=UTF-8',
+		accept: 'application/json,',
+	}
+})
+
 api.interceptors.request.use((config)=> {
 	config.headers['Authorization'] = `Bearer ${cookies.get('accessToken')}`
 	return config;
@@ -34,4 +42,8 @@ export const apis = {
 	// mypage
 	myprofile: () => api.get('/mypage/myprofile'),
 	petprofile: () => api.get('/mypage/petprofile'),
+
+	// main
+	getSittersList: (date, region, category) => mainApi.get('/mains/search', {params: {searchDate: date, region_2depth_name: region, dayCare: category}})
+
 }
