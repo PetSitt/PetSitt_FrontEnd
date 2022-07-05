@@ -12,7 +12,7 @@ const pwfindApi = axios.create({
 });
 
 const mainApi = axios.create({
-	baseURL: `${process.env.REACT_APP_mainApi}`
+	baseURL: `${process.env.REACT_APP_MAINAPI}`
 })
 
 api.interceptors.request.use((config)=> {
