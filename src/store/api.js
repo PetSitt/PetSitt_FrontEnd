@@ -15,6 +15,23 @@ const mainApi = axios.create({
 	baseURL: `${process.env.REACT_APP_MAINAPI}`
 })
 
+const detailApi = axios.create({
+	baseURL: 'http://15.165.160.107/',
+	headers: {
+		'Content-type': 'application/json; charset=UTF-8',
+		accept: 'application/json,',
+	}
+})
+
+mainApi.defaults.paramsSerializer = function(paramObj) {
+	const params = new URLSearchParams()
+	for (const key in paramObj) {
+			params.append(key, paramObj[key])
+	}
+
+	return params.toString()
+}
+
 api.interceptors.request.use((config)=> {
 	config.headers['Content-type']['Accept'] = 'application/json; charset=UTF-8';
 	config.headers['Authorization'] = `Bearer ${cookies.get('accessToken')}`
@@ -37,6 +54,8 @@ export const apis = {
 	petprofileGet: () => api.get('/mypage/petprofile'),
   
 	// main
-	getSittersList: ([date, region, category], data) => mainApi.get('/mains/search', {params: {searchDate: date, region_2depth_name: region}}, data)
+	getSittersList: (queriesData, data) => mainApi.get('/mains/search', queriesData),
   
+	// detail
+	getUserDetail: (sitterId) => detailApi.get(`/details/${sitterId}`),
 }

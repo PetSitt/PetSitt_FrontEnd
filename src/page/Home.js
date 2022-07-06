@@ -29,7 +29,7 @@ function Home() {
  
 	const getSittersList = (queriesData, category) => {
 		console.log(queriesData, category)
-		// return apis.getSittersList([date, region, category], data);
+		return apis.getSittersList(queriesData, category);
 	};
 	const sitters_query = useQuery(
 		"sitter_list",
@@ -43,6 +43,7 @@ function Home() {
 				console.error(data);
 			},
 			enabled: searched,
+			staleTime: 10000,
 		},
 	);
 	useEffect(() => {
@@ -56,12 +57,7 @@ function Home() {
 
 	useEffect(()=>{
 		if(dates?.length && addressInfo){
-			console.log(dates)
-			let datesArr = [];
-			for(let i=0; i<dates.length; i++){
-				datesArr.push({searchDate: dates[i]});
-			}
-			setQueriesData({...datesArr, region_2depth_name: addressInfo.region_2depth_name, x: addressInfo.x, y: addressInfo.y})
+			setQueriesData({searchDate: dates, region_2depth_name: addressInfo.region_2depth_name, coordinates: [addressInfo.x, addressInfo.y]})
 		}
 	}, [dates, addressInfo])
 
