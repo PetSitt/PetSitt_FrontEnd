@@ -3,7 +3,11 @@ import { Cookies } from "react-cookie";
 
 const cookies = new Cookies();
 
-const api = axios.create({
+const jsonApi = axios.create({
+	baseURL: `${process.env.REACT_APP_SERVER}`
+});
+
+const formDataApi = axios.create({
 	baseURL: `${process.env.REACT_APP_SERVER}`
 });
 
@@ -13,23 +17,19 @@ const pwfindApi = axios.create({
 
 const mainApi = axios.create({
 	baseURL: `${process.env.REACT_APP_MAINAPI}`
-})
+});
 
-const detailApi = axios.create({
-	baseURL: `${process.env.REACT_APP_DETAILAPI}`
-})
+jsonApi.interceptors.request.use((config)=> {
+	config.headers['Content-type'] = 'application/json; charset=UTF-8';
+	config.headers['Accept'] = 'application/json;';
+	config.headers['Authorization'] = `Bearer ${cookies.get('accessToken')}`
+	return config;
+}, (err) => {
+	return Promise.reject(err);
+});
 
-mainApi.defaults.paramsSerializer = function(paramObj) {
-	const params = new URLSearchParams()
-	for (const key in paramObj) {
-			params.append(key, paramObj[key])
-	}
-
-	return params.toString()
-}
-
-api.interceptors.request.use((config)=> {
-	config.headers['Content-type']['Accept'] = 'application/json; charset=UTF-8';
+formDataApi.interceptors.request.use((config) => {
+	config.headers['Content-type'] = 'multipart/form-data';
 	config.headers['Authorization'] = `Bearer ${cookies.get('accessToken')}`
 	return config;
 }, (err) => {
@@ -39,17 +39,18 @@ api.interceptors.request.use((config)=> {
 
 export const apis = {
 	// user
-	signupAdd: (data) => api.post('/api/signup', data),
+	signupAdd: (data) => jsonApi.post('/api/signup', data),
 	passwordFind: (data) => pwfindApi.post('/api/password_check', data),
-	login: (data) => api.post('/api/login', data),
+	login: (data) => jsonApi.post('/api/login', data),
 
 	// mypage
-	myprofile: () => api.get('/mypage/myprofile'),
-	petprofile: () => api.get('/mypage/petprofile'),
-	myprofileGet: () => api.get('/mypage/myprofile'),
-	myprofilePatch: (data) => api.patch('/mypage/myprofile', data),
-	petprofileGet: () => api.get('/mypage/petprofile'),
-  
+	myprofile: () => jsonApi.get('/mypage/myprofile'),
+	myprofileGet: () => jsonApi.get('/mypage/myprofile'),
+	myprofilePatch: (data) => jsonApi.patch('/mypage/myprofile', data),
+	petprofileGet: () => jsonApi.get('/mypage/petprofile'),
+	petprofilePost: (data) => formDataApi.post('/mypage/petprofile', data),
+	petprofilePatch: ({id, data}) => formDataApi.patch(`/mypage/petprofile/${id}`, data),
+  petprofileDelete: (id) => jsonApi.delete(`/mypage/petprofile/${id}`),
 	// main
 	getSittersList: (queriesData, data) => mainApi.get('/mains/search', queriesData),
   

@@ -104,7 +104,10 @@ const Signup = () => {
 		onSuccess: ({data}) => {
 			alert(data.message)
 			window.location.href = '/login'
-    }
+    },
+		onError: (data) => {
+			console.log(data)
+		}
 	});
 
 	// 등록하는 함수
