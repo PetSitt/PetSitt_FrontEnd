@@ -13,11 +13,23 @@ const Detail = () => {
   const today = new DateObject();
   const [date, setDate] = useState(new Date());
   const [dates, setDates] = useState(new Date());
+  const [reviews, setReviews] = useState(
+    [{
+      userName : "김대한",
+      reviewStar: 4.0,
+      reviewDate: "2022/06/29",
+      reviewInfo: "1000글자 제한 리뷰",
+    }, {
+      userName : "김민국",
+      reviewStar: 5.0,
+      reviewDate: "2022/06/28",
+      reviewInfo: "1000글자 제한 리뷰적어요!",
+    }]
+  )
 
   const {isLoading: detailIsLoading, isSuccess, data: detailData} = useQuery('detail_data', () => apis.getUserDetail(sitterId), {
     onSuccess: (data) =>{
       console.log(data.data,'data');
-      
     },
     onError: (data) => {
       console.error(data);
@@ -27,6 +39,17 @@ const Detail = () => {
   useEffect(()=>{
     setDetail(detailData.data);
   },[isSuccess])
+
+  // const {data: reviewsData} = useQuery('reviews_data', () => apis.getReviews(sitterId, {reviewId: 0}), {
+  //   onSuccess: (data) => {
+  //     console.log(data);
+  //   },
+  //   onError: (data) => {
+  //     console.error(data);
+  //   },
+  //   staleTime: Infinity,
+  // })
+
   useEffect(() => {
 		if (date.length >= 0) {
       console.log(date, date.length)
@@ -140,16 +163,18 @@ const Detail = () => {
         </ul>
       </section>
       <section className="pets_info_section">
-        <h3>{detail.user.userName}님과 함께사는 반려견</h3>
+        <h3>{detail.user.userName}님에 대한 후기</h3>
         <ul>
           {
-            detail.pets.map((v,i)=>{
+            reviews.map((v,i)=>{
               return(
-                <li key={`pet_${i}`}>
-                  <span className="pet_image" style={{backgroundImage: `url(${v.petImage})`}}></span>
-                  <p>{v.petName}</p>
-                  <p>{v.petType}</p>
-                  <p>{v.petAge}</p>
+                <li key={`review_${i}`}>
+                  <div>
+                    <span>{v.userName}</span>
+                    <span>{v.reviewStar}</span>
+                    <span>{v.reviewDate}</span>
+                  </div>
+                  <p>{v.reviewInfo}</p>
                 </li>
               )
             })
