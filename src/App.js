@@ -1,3 +1,4 @@
+import React, {Suspense} from 'react'
 import Router from './Router';
 import styled from "styled-components";
 
@@ -5,7 +6,9 @@ function App() {
   return (
     <AppWrapper className="App">
       <div className='AppInner'>
-        <Router />
+        <Suspense fallback={<div>로딩중!!</div>}>
+          <Router />
+        </Suspense>
       </div>
     </AppWrapper>
   );

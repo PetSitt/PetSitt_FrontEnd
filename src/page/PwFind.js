@@ -47,7 +47,10 @@ const PwFind = () => {
 	// useMutation 세팅 함수
 	const {mutate} = useMutation(apis.passwordFind, {
     onSuccess: (data) => {
-			console.log(data)
+			if(data.data.result){
+				alert('임시 비번을 이메일로 보냈습니다.')
+				window.location.replace('/home')
+			}
     },
 		onError: (data) => {
 			console.log(data)
@@ -62,19 +65,19 @@ const PwFind = () => {
   };
 
 	return (
-		<Form onSubmit={handleSubmit}>
+		<DivBox>
 			<h1>비밀번호 찾기</h1>
 			<label className="inner required">
 				<p className="tit">아이디(이메일)</p>
 				<Input _width="100%" _height="44px" _placeholder="test@gmail.com" _type="email" _name={"userEmail"} onChange={idCheck} required />
 				{ values.userEmail && <Message className={`${isId ? "success" : "error"}`}>{idMessage}</Message>}
 			</label>
-			<Button>전송</Button>
-		</Form>
+			<Button onClick={handleSubmit}>전송</Button>
+		</DivBox>
 	);
 }
 
-const Form = styled.form`
+const DivBox = styled.div`
 	h1 {
 		font-size: 34px;
 		font-weight: 600;
