@@ -25,16 +25,14 @@ function Home() {
   const [queriesData, setQueriesData] = useState({});
 	const [category, setCategory] = useState([]);
 	const [searched, setSearched] = useState(false);
-
- 
-	const getSittersList = (queriesData, category) => {
+	console.log(queriesData)
+	const getSittersList = () => {
 		console.log(queriesData, category)
 		return apis.getSittersList(queriesData, category);
 	};
 	const sitters_query = useQuery(
-		"sitter_list",
+		["sitter_list", queriesData, category],
 		() => getSittersList(queriesData, category),
-		// () => getSittersList("2022/07/11", "마포구", "데이 케어"),
 		{
 			onSuccess: (data) => {
 				console.log(data);
@@ -49,7 +47,7 @@ function Home() {
 	useEffect(() => {
 		if (date.length) {
 			const getDates = date.map((v) => {
-				return `${v.year}/${v.month.number < 10 ? '0' + v.month.number : v.month.number}/${v.day < 10 ? '0' + v.day : v.day}`;
+				return v.format(v._format);
 			});
 			setDates(getDates);
 		}
