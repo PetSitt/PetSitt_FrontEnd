@@ -19,6 +19,7 @@ const Router = () => {
 		<BrowserRouter>
 			<Routes>
 				<Route path="/" element={<Home />} exact />
+				<Route path="/detail/:id" element={<Detail />} exact />
 				<Route path="/map" element={<MapIndex/>} />
 				<Route path='/signup' element={<Signup/>} />
 				<Route path='/pwfind' element={<PwFind/>} />

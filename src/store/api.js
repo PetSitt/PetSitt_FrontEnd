@@ -19,6 +19,10 @@ const mainApi = axios.create({
 	baseURL: `${process.env.REACT_APP_MAINAPI}`
 });
 
+const detailApi = axios.create({
+	baseURL: `${process.env.REACT_APP_DETAILAPI}`
+})
+
 jsonApi.interceptors.request.use((config)=> {
 	config.headers['Content-type'] = 'application/json; charset=UTF-8';
 	config.headers['Accept'] = 'application/json;';
@@ -56,4 +60,5 @@ export const apis = {
   
 	// detail
 	getUserDetail: (sitterId) => detailApi.get(`/details/${sitterId}`),
+	getReviews: (sitterId, reviewId) => detailApi.get(`/details/reviews/${sitterId}`, reviewId),
 }
