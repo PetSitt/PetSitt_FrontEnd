@@ -16,11 +16,7 @@ const mainApi = axios.create({
 })
 
 const detailApi = axios.create({
-	baseURL: 'http://15.165.160.107/',
-	headers: {
-		'Content-type': 'application/json; charset=UTF-8',
-		accept: 'application/json,',
-	}
+	baseURL: `${process.env.REACT_APP_DETAILAPI}`
 })
 
 mainApi.defaults.paramsSerializer = function(paramObj) {
@@ -39,6 +35,7 @@ api.interceptors.request.use((config)=> {
 }, (err) => {
 	return Promise.reject(err);
 });
+
 
 export const apis = {
 	// user
