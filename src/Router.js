@@ -4,7 +4,6 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Home from './page/Home';
 import Detail from './page/Detail';
 import Signup from './page/Signup';
-import MapIndex from './page/MapIndex';
 import Login from './page/Login';
 import SearchAddress from './page/SearchAddress';
 import PwFind from "./page/PwFind";
@@ -21,7 +20,6 @@ const Router = () => {
 			<Routes>
 				<Route path="/" element={<Home />} exact />
 				<Route path="/detail/:id" element={<Detail />} exact />
-				<Route path="/map" element={<MapIndex/>} />
 				<Route path='/signup' element={<Signup/>} />
 				<Route path='/pwfind' element={<PwFind/>} />
 				<Route path='/idfind' element={<IdFind/>} />

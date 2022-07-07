@@ -1,18 +1,22 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import {useParams} from 'react-router-dom';
 import {useQuery} from 'react-query';
 import styled from 'styled-components';
 import DatePicker, { DateObject, Calendar } from "react-multi-date-picker";
+import MapContainer from './MapContainer';
 
 import {apis} from '../store/api';
 
 const Detail = () => {
+  // 62c63d6f25208ae3d3cda472
   const param = useParams();
   const sitterId = param.id;
   const [detail, setDetail] = useState();
   const today = new DateObject();
   const [date, setDate] = useState(new Date());
   const [dates, setDates] = useState(new Date());
+  const selectedServicesRef = useRef();
+  const selectedDatesRef = useRef();
   const [reviews, setReviews] = useState(
     [{
       userName : "김대한",
@@ -181,10 +185,35 @@ const Detail = () => {
           }
         </ul>
       </section>
+      <section>
+        <MapContainer centerElement={[detail.sitter.x, detail.sitter.y]} showOnly={true}/>
+        <p>{detail.sitter.address}</p>
+      </section>
+      <BottomButtons>
+        <ul>
+        <li>
+            <p>서비스 선택하기</p>
+            <p ref={selectedServicesRef}></p>
+          </li>
+          <li>
+            <p>날짜 선택하기</p>
+            <p ref={selectedDatesRef}></p>
+          </li>
+        </ul>
+        <div>
+        <button type="button">문의하기</button>
+        <button type="button">예약하기</button>
+        </div>
+      </BottomButtons>
     </SitterDetailPage>
   )
 }
 
+const BottomButtons = styled.div`
+  li p{
+    font-size: 16px;
+  }
+`
 const SitterDetailPage = styled.div`
   line-height: 1.4;
   section{
