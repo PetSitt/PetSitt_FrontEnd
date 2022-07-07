@@ -45,6 +45,7 @@ export const apis = {
 	// user
 	signupAdd: (data) => jsonApi.post('/api/signup', data),
 	passwordFind: (data) => pwfindApi.post('/api/password_check', data),
+	idFind: (data) => pwfindApi.post('/api/id_check', data),
 	login: (data) => jsonApi.post('/api/login', data),
 
 	// mypage
