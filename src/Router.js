@@ -13,6 +13,7 @@ import Myprofile from "./page/Myprofile";
 import Petprofile from "./page/Petprofile";
 import PetprofileForm from "./page/PetprofileForm";
 import PwChange from "./page/PwChange";
+import Reservation from "./page/Reservation";
 
 const Router = () => {
 	return (
@@ -31,6 +32,7 @@ const Router = () => {
 				<Route path='/pwchange/:id' element={<PwChange/>} />
 				<Route path="/login" element={<Login/>}></Route>
 				<Route path="/search" element={<SearchAddress/>}></Route>
+				<Route path="/reservation" element={<Reservation/>}></Route>
 				<Route path="*" element={<Home replace to="/"/>} />
 			</Routes>
 		</BrowserRouter>
