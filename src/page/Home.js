@@ -25,14 +25,13 @@ function Home() {
   const [queriesData, setQueriesData] = useState({});
 	const [category, setCategory] = useState([]);
 	const [searched, setSearched] = useState(false);
-	console.log(queriesData)
 	const getSittersList = () => {
-		console.log(queriesData, category)
-		return apis.getSittersList(queriesData, category);
+		console.log(queriesData)
+		return apis.getSittersList(queriesData);
 	};
 	const sitters_query = useQuery(
-		["sitter_list", queriesData, category],
-		() => getSittersList(queriesData, category),
+		["sitter_list", queriesData],
+		() => getSittersList(queriesData),
 		{
 			onSuccess: (data) => {
 				console.log(data);
@@ -41,7 +40,7 @@ function Home() {
 				console.error(data);
 			},
 			enabled: searched,
-			staleTime: 10000,
+			staleTime: Infinity,
 		},
 	);
 	useEffect(() => {
@@ -55,7 +54,7 @@ function Home() {
 
 	useEffect(()=>{
 		if(dates?.length && addressInfo){
-			setQueriesData({searchDate: dates, region_2depth_name: addressInfo.region_2depth_name, coordinates: [addressInfo.x, addressInfo.y]})
+			setQueriesData({searchDate: dates, region_2depth_name: addressInfo.region_2depth_name, x: addressInfo.x, y: addressInfo.y, walk: "산책"})
 		}
 	}, [dates, addressInfo])
 
