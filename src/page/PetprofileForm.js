@@ -52,7 +52,7 @@ const PetprofileForm = () => {
 		onSuccess: () => {
 			//무효화 시킴
 			queryClient.invalidateQueries('petprofile');
-			navigate("/mypage/petprofile")
+			navigate("/mypage/petprofile");
 		},
 		onError: (data) => {
 			console.log(data)
