@@ -79,6 +79,9 @@ const Login = () => {
 				<li>
 					<button type="button" onClick={()=>navigate('/pwfind')}>비밀번호 찾기</button>
 				</li>
+				<li>
+					<button type="button" onClick={()=>navigate('/signup')}>회원가입</button>
+				</li>
 			</ul>
 		</>
 	);
