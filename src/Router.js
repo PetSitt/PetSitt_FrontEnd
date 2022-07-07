@@ -8,6 +8,7 @@ import MapIndex from './page/MapIndex';
 import Login from './page/Login';
 import SearchAddress from './page/SearchAddress';
 import PwFind from "./page/PwFind";
+import IdFind from "./page/IdFind";
 import Mypage from "./page/Mypage";
 import Myprofile from "./page/Myprofile";
 import Petprofile from "./page/Petprofile";
@@ -23,6 +24,7 @@ const Router = () => {
 				<Route path="/map" element={<MapIndex/>} />
 				<Route path='/signup' element={<Signup/>} />
 				<Route path='/pwfind' element={<PwFind/>} />
+				<Route path='/idfind' element={<IdFind/>} />
 				<Route path='/mypage' element={<Mypage/>}  />
 				<Route path='/mypage/myprofile' element={<Myprofile/>} />
 				<Route path='/mypage/petprofile' element={<Petprofile/>} />
