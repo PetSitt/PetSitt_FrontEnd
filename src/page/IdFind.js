@@ -1,23 +1,22 @@
 import { useState, useRef, useEffect } from "react";
 import { useMutation, useQuery } from "react-query";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Button from "../elements/Button";
 import Input from "../elements/Input";
+import Modal from "../elements/Modal";
 import { apis } from "../store/api";
 
 
 const IdFind = () => {
   const mobileRef = useRef();
+	const navigate = useNavigate();
   const [findId, setFindId] = useState(false);
   const [numberState, setNumberState] = useState();
   const [foundId, setFoundId] = useState();
-  
-  const checkId = (data) => {
-    console.log(data)
-    return apis.idFind(data);
-  }
+	const [showModal, setShowModal] = useState(false);
 
-  const {data: find_id_query, isLoading:findIdLoading,  isSuccess: idFound} = useQuery(["find_id", numberState], () => checkId({phoneNumber: numberState}), {
+  const {data: find_id_query, isLoading:findIdLoading,  isSuccess: idFoundSucceess} = useQuery(["find_id", numberState], () => apis.idFind({phoneNumber: numberState}), {
     onSuccess: (data) => {
       console.log('success', data)
     },
@@ -29,15 +28,19 @@ const IdFind = () => {
     staleTime: Infinity,
   })
   useEffect(()=>{
-    setFoundId(find_id_query?.data.user.userEmail)
-  },[idFound])
+    if(!foundId && idFoundSucceess){
+			setFoundId(find_id_query?.data.user.userEmail)
+			setShowModal(true);
+		}
+  },[idFoundSucceess])
   
   if(findIdLoading) return null;
   
 
   return (
-		<DivBox>
-			<h1>아이디 찾기</h1>
+		<>
+			<DivBox>
+			<h1>아이디(이메일) 찾기</h1>
 			<label className="inner required">
 				<p className="tit">핸드폰번호</p>
 				<Input _width="100%" _height="44px" _placeholder="'-'없이 입력해주세요" _type="text" _name={"mobileNumber"} _ref={mobileRef} onChange={(e)=>setNumberState(e.target.value)} required />
@@ -45,6 +48,11 @@ const IdFind = () => {
 			</label>
 			<Button type="button" _width="130px" onClick={()=>setFindId(true)}>아이디(이메일) 찾기</Button>
 		</DivBox>
+		<Modal _display={showModal} _title="등록된 이메일" _text={foundId} _confirm="로그인 하러가기" _alert={true} _comfirm="로그인하기" confirmOnClick={ async()=>{
+			await sessionStorage.setItem('foundId', foundId);
+			navigate('/login');
+		}}/>
+		</>
 	);
 }
 
