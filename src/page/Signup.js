@@ -4,6 +4,7 @@ import { useMutation } from "react-query";
 import Input from '../elements/Input';
 import Button from '../elements/Button';
 import { apis } from '../store/api';
+import { useNavigate } from 'react-router-dom';
 
 const INITIAL_VALUES = {
 	userEmail: '',
@@ -28,6 +29,7 @@ const Signup = () => {
 	const [isPw, setIsPw] = useState(false)
 	const [isPw2, setIsPw2] = useState(false)
 	const [isPhone, setIsPhone] = useState(false)
+	const navigate = useNavigate();
 
 	const handleChange = (name, value) => {
     setValues(function(prevValues){
@@ -103,7 +105,7 @@ const Signup = () => {
 	const {mutate, error, isSuccess} = useMutation(apis.signupAdd, {
 		onSuccess: ({data}) => {
 			alert(data.message)
-			window.location.href = '/login'
+			navigate('/login')
     },
 		onError: (data) => {
 			console.log(data)

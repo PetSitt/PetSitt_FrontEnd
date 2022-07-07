@@ -3,7 +3,7 @@ import { useQuery } from "react-query";
 import DatePicker, { DateObject } from "react-multi-date-picker";
 import { apis } from "../store/api";
 
-import MapIndex from "./MapIndex";
+import MapContainer from "./MapContainer";
 import SearchAddress from "./SearchAddress";
 
 const INITIAL_VALUES = [false, false, false];
@@ -112,7 +112,7 @@ function Home() {
 					);
 				})}
 			</ul>
-			<MapIndex />
+			<MapContainer />
 		</div>
 	);
 }

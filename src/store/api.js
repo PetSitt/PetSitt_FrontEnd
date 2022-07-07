@@ -23,6 +23,10 @@ const detailApi = axios.create({
 	baseURL: `${process.env.REACT_APP_DETAILAPI}`
 })
 
+const authApi = axios.create({
+	baseURL: `${process.env.REACT_APP_PWFINDAPI}`
+})
+
 jsonApi.interceptors.request.use((config)=> {
 	config.headers['Content-type'] = 'application/json; charset=UTF-8';
 	config.headers['Accept'] = 'application/json;';
@@ -40,12 +44,22 @@ formDataApi.interceptors.request.use((config) => {
 	return Promise.reject(err);
 });
 
+authApi.interceptors.request.use((config)=> {
+	config.headers['Content-type'] = 'application/json; charset=UTF-8';
+	config.headers['Accept'] = 'application/json;';
+	config.headers['Authorization'] = `Bearer ${cookies.get('accessToken')}`
+	return config;
+}, (err) => {
+	return Promise.reject(err);
+});
 
 export const apis = {
 	// user
 	signupAdd: (data) => jsonApi.post('/api/signup', data),
 	passwordFind: (data) => pwfindApi.post('/api/password_check', data),
-	login: (data) => jsonApi.post('/api/login', data),
+	idFind: (data) => pwfindApi.post('/api/id_check', data),
+	login: (data) => pwfindApi.post('/api/login', data),
+	checkUser: () => authApi.get('/api/auth'),
 
 	// mypage
 	myprofile: () => jsonApi.get('/mypage/myprofile'),
