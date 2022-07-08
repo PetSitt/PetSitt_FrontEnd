@@ -4,6 +4,8 @@ import { apis } from '../store/api';
 import { useMutation } from 'react-query';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import InputBox from '../elements/InputBox';
+import StyledButton from '../elements/StyledButton';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -67,26 +69,30 @@ const Login = () => {
           <div />
         </NavBox>
         <InputWrap>
-          <InputBox>
-            <label>아이디(이메일)</label>
-            <input type="email" ref={email_ref} placeholder="example@petsitt.com" />
-          </InputBox>
-          <InputBox>
-            <label>비밀번호</label>
-            <input type="password" ref={pw_ref} placeholder="1234" />
-          </InputBox>
-          <button
-            type="button"
-            onClick={() => {
+          <InputBox
+            _label={'아이디(이메일)'}
+            _type={'email'}
+            _ref={email_ref}
+            _placeholder={'example@petsitt.com'}
+            _alert={'이메일 주소를 확인해 주세요'}
+          />
+          <InputBox
+            _label={'비밀번호'}
+            _type={'password'}
+            _ref={pw_ref}
+            _placeholder={'1234'}
+            _alert={'비밀번호를 확인해 주세요'}
+          />
+          <StyledButton
+            _onClick={() => {
               const data = {
                 userEmail: email_ref.current.value,
                 password: pw_ref.current.value,
               };
               loginQuery(data);
             }}
-          >
-            로그인
-          </button>
+            _title={'로그인'}
+          />
         </InputWrap>
         <FindBox>
           <ul>
@@ -104,12 +110,20 @@ const Login = () => {
         </FindBox>
         <DevideBar>또는</DevideBar>
         <RegisterBox>
-          <button type="button" onClick={() => navigate('/signup')}>
-            이메일로 시작하기
-          </button>
-          <button type="button" onClick={() => navigate('/signup')}>
-            카카오로 시작하기
-          </button>
+          <StyledButton
+            _onClick={() => navigate('/signup')}
+            _border={'1px solid #fc9215'}
+            _bgColor={'#ffffff'}
+            color={'#fc9215'}
+            _margin={'0 0 10px 0'}
+            _title={'이메일로 시작하기'}
+          />
+          <StyledButton
+            _onClick={() => navigate('/signup')}
+            color={'#381E1F'}
+            _bgColor={'#fde40b'}
+            _title={'카카오로 시작하기'}
+          />
         </RegisterBox>
       </LoginContainer>
     </>
@@ -138,44 +152,11 @@ const NavBox = styled.div`
 const InputWrap = styled.div`
   display: flex;
   flex-direction: column;
-  & button {
-    padding: 14px 0px;
-    background: #fc9215;
-    border-radius: 6px;
-    font-weight: 700;
-    font-size: 16px;
-    line-height: 19px;
-    color: #ffffff;
-    margin: 16px 0px;
-  }
-`;
-
-const InputBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin-top: 24px;
-  & label {
-    font-size: 16px;
-    line-height: 19px;
-    padding-bottom: 7px;
-  }
-  & input {
-    border-bottom: 1px solid rgba(120, 120, 120, 0.2);
-    padding: 9px 0px;
-    ::placeholder {
-      color: rgba(120, 120, 120, 0.6);
-      font-size: 16px;
-      line-height: 19px;
-      font-weight: 400;
-    }
-    :focus::placeholder {
-      color: transparent;
-    }
-  }
 `;
 
 const FindBox = styled.div`
-  margin: 40px auto;
+  margin: 0px auto 16px auto;
+
   & ul li {
     float: left;
     :first-child::after {
@@ -203,6 +184,7 @@ const DevideBar = styled.div`
   line-height: 17px;
   color: #787878;
   text-align: center;
+  margin: 48px 0px;
   ::before {
     content: '';
     flex-grow: 1;
@@ -223,6 +205,9 @@ const DevideBar = styled.div`
   }
 `;
 
-const RegisterBox = styled.div``;
+const RegisterBox = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
 export default Login;
