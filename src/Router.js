@@ -13,6 +13,9 @@ import Myprofile from "./page/Myprofile";
 import Petprofile from "./page/Petprofile";
 import PetprofileForm from "./page/PetprofileForm";
 import PwChange from "./page/PwChange";
+import SitterProfile from "./page/SitterProfile";
+import SitterProfileForm1 from "./page/SitterProfileForm1";
+import SitterProfileForm2 from "./page/SitterProfileForm2";
 
 const Router = () => {
 	return (
@@ -28,6 +31,9 @@ const Router = () => {
 				<Route path='/mypage/petprofile' element={<Petprofile/>} />
 				<Route path='/mypage/petprofileform' element={<PetprofileForm/>} />
 				<Route path='/mypage/:petId/petprofileform' element={<PetprofileForm/>}/>
+				<Route path='/mypage/sitterprofile' element={<SitterProfile/>}/>
+				<Route path='/mypage/SitterProfileForm1' element={<SitterProfileForm1/>}/>
+				<Route path='/mypage/SitterProfileForm2' element={<SitterProfileForm2/>}/>
 				<Route path='/pwchange/:id' element={<PwChange/>} />
 				<Route path="/login" element={<Login/>}></Route>
 				<Route path="/search" element={<SearchAddress/>}></Route>
