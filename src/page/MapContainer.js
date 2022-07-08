@@ -48,6 +48,7 @@ const MapContainer = ({centerElement, showOnly}) => {
 					center={{ lat: centerElem[1], lng: centerElem[0] }}
 					style={{ width: "100%", height: "360px" }}
 					onZoomChanged={(map) => setLevel(map.getLevel())}
+					draggable={showOnly ? false : true}
 				>
 					{
 						showOnly ? (
