@@ -30,7 +30,7 @@ const authApi = axios.create({
 jsonApi.interceptors.request.use((config)=> {
 	config.headers['Content-type'] = 'application/json; charset=UTF-8';
 	config.headers['Accept'] = 'application/json;';
-	config.headers['Authorization'] = `Bearer ${cookies.get('accessToken')}`
+	config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
 	return config;
 }, (err) => {
 	return Promise.reject(err);
@@ -38,7 +38,7 @@ jsonApi.interceptors.request.use((config)=> {
 
 formDataApi.interceptors.request.use((config) => {
 	config.headers['Content-type'] = 'multipart/form-data';
-	config.headers['Authorization'] = `Bearer ${cookies.get('accessToken')}`
+	config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
 	return config;
 }, (err) => {
 	return Promise.reject(err);
@@ -47,10 +47,35 @@ formDataApi.interceptors.request.use((config) => {
 authApi.interceptors.request.use((config)=> {
 	config.headers['Content-type'] = 'application/json; charset=UTF-8';
 	config.headers['Accept'] = 'application/json;';
-	config.headers['Authorization'] = `Bearer ${cookies.get('accessToken')}`
+	config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
 	return config;
 }, (err) => {
 	return Promise.reject(err);
+});
+authApi.interceptors.response.use((response) => {
+  return response
+}, async function (error) {
+  const originalRequest = error.config;
+	console.log(error.response.status)
+  if (error.response.status === 401 && !originalRequest._retry) {
+    originalRequest._retry = true;
+		const refreshToken = await cookies.get('refreshToken');
+    const newRequestResult = await axios.post('http://3.35.135.160/api/refresh', {refreshToken}, {headers: {
+			"Authorization" : `Bearer ${localStorage.getItem('accessToken')}`		
+		}}).then(
+			res => {
+				console.log('refresh api response',res);
+			}
+		).catch(
+			err => {
+				console.log('refresh api error', err, err.response.status, 'error message: ',err.response.data.message);
+			}
+		);       
+		// console.log(newRequestResult)     
+    // axios.defaults.headers.common['Authorization'] = 'Bearer ' + access_token;
+    // return axiosApiInstance(originalRequest);
+  }
+  return Promise.reject(error);
 });
 
 export const apis = {
@@ -69,24 +94,9 @@ export const apis = {
 	petprofilePost: (data) => formDataApi.post('/mypage/petprofile', data),
 	petprofilePatch: ({id, data}) => formDataApi.patch(`/mypage/petprofile/${id}`, data),
   petprofileDelete: (id) => jsonApi.delete(`/mypage/petprofile/${id}`),
+	
 	// main
-	getSittersList: (queriesData) => mainApi.post('/mains/search', queriesData).then(res=>console.log(res).catch((err) => {
-		if (err.response) {
-			// 요청이 전송되었고, 서버는 2xx 외의 상태 코드로 응답했습니다.
-			console.log(err.response.data);
-			console.log(err.response.status);
-			console.log(err.response.headers);
-		} else if (err.request) {
-			// 요청이 전송되었지만, 응답이 수신되지 않았습니다.
-			// 'error.request'는 브라우저에서 XMLHtpRequest 인스턴스이고,
-			// node.js에서는 http.ClientRequest 인스턴스입니다.
-			console.log(err.request);
-		} else {
-			// 오류가 발생한 요청을 설정하는 동안 문제가 발생했습니다.
-			console.log("Error", err.message);
-		}
-		console.log(err, err.config);
-	})),
+	getSittersList: (queriesData) => mainApi.post('/mains/search', queriesData),
   
 	// detail
 	getUserDetail: (sitterId) => detailApi.get(`/details/${sitterId}`),

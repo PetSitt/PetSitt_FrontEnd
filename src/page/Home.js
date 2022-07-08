@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
-import { useQuery } from "react-query";
+import { Cookies } from "react-cookie";
+import { useQuery, useMutation } from "react-query";
 import DatePicker, { DateObject } from "react-multi-date-picker";
 import { apis } from "../store/api";
 
@@ -11,6 +12,7 @@ const INITIAL_VALUES = [false, false, false];
 function Home() {
 	const datepickerRef = useRef();
 	const today = new DateObject();
+	const cookies = new Cookies();
 	const [date, setDate] = useState(new Date());
 	const [dates, setDates] = useState(new Date());
 	const [addressInfo, setAddressInfo] = useState();
@@ -58,13 +60,21 @@ function Home() {
 		}
 	}, [dates, addressInfo])
 
+	// 로그인 여부 확인하는 api
+	const { mutate: checkUser } = useMutation(()=>apis.checkUser(), { 
+		onSuccess: (data) => {
+
+			console.log(data);
+		},
+		onError: (data) => {
+			console.log(data)
+		},
+		staleTime: Infinity,
+	});
+	
 
 	useEffect(() => {
-		// navigator.geolocation.getCurrentPosition(function(pos) {
-		//     console.log(pos);
-		//     var latitude = pos.coords.latitude;
-		//     var longitude = pos.coords.longitude;
-		// });
+		checkUser()
 	}, []);
 
 	if (sitters_query.isLoading) return null;
