@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from "react-query";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { apis } from "../store/api";
+import { handleChange } from "../shared/common";
 
 const INITIAL_VALUES = {
   petName: "",
@@ -21,29 +22,20 @@ const PetprofileForm = () => {
   const [txt, setTxt] = useState(data ? data.data : false);
   const navigate = useNavigate();
 
-  const handleChange = (name, value) => {
-    setValues(function (prevValues) {
-      return {
-        ...prevValues,
-        [name]: value,
-      };
-    });
-  };
-
   const handleClickRadioButton = (e) => {
     const { name } = e.target;
     setTxt(Boolean(Number(e.target.value)));
-    handleChange(name, Boolean(Number(e.target.id)));
+    handleChange(name, Boolean(Number(e.target.id)), setValues);
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    handleChange(name, value);
+    handleChange(name, value, setValues);
   };
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
-    handleChange(name, files[0]);
+    handleChange(name, files[0], setValues);
   };
   const queryClient = useQueryClient();
 
