@@ -8,7 +8,7 @@ import Input from '../elements/Input';
 import { apis } from "../store/api";
 
 const Myprofile = () => {
-	const {isLoading, data} = useQuery("user", apis.myprofileGet)
+	const {isLoading, data} = useQuery("user", apis.myprofileGet);
 	const inputEl1 = useRef(null);
 	const inputEl2 = useRef(null);
 	const inputEl3 = useRef(null);
@@ -45,6 +45,10 @@ const Myprofile = () => {
 		setText('저장');
 	}
 
+	useEffect(() => {
+
+	},[])
+
 	return (
 		<MyprofileInner>
 			<div className='myprofileInner'>
@@ -56,15 +60,15 @@ const Myprofile = () => {
 				<>
 					<label className="inner required">
 						<p className="tit">이름</p>
-						<Input _width="100%" _height="44px" _type="text" _ref={inputEl1} _defaultValue={data.data.myprofile.userName} disabled/>
+						<Input _width="100%" _height="44px" _type="text" _ref={inputEl1} defaultValue={data.data.myprofile.userName} disabled/>
 					</label>
 					<label className="inner required">
 						<p className="tit">전화번호</p>
-						<Input _width="100%" _height="44px" _type="text" _ref={inputEl2} _defaultValue={data.data.myprofile.phoneNumber} disabled/>
+						<Input _width="100%" _height="44px" _type="text" _ref={inputEl2} defaultValue={data.data.myprofile.phoneNumber} disabled/>
 					</label>
 					<label className="inner required">
 						<p className="tit">이메일</p>
-						<Input _width="100%" _height="44px" _type="text" _ref={inputEl3} _defaultValue={data.data.myprofile.userEmail} disabled/>
+						<Input _width="100%" _height="44px" _type="text" _ref={inputEl3} defaultValue={data.data.myprofile.userEmail} disabled/>
 					</label>
 				</>
 				) : (

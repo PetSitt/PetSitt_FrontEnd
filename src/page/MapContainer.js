@@ -1,59 +1,105 @@
-import React, { useEffect } from 'react'
+import axios from "axios";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Map,
+  MapMarker,
+  MarkerClusterer,
+  ZoomControl,
+  Circle,
+} from "react-kakao-maps-sdk";
 
-const { kakao } = window
+const MapContainer = ({ centerElement, showOnly }) => {
+  const [level, setLevel] = useState();
+  const [centerElem, setCenterElem] = useState(centerElement && centerElement);
+  const [positions, setPositions] = useState([]);
+  const [sitters, setSitters] = useState([]);
+  const mapRef = useRef();
 
-const MapContainer = ({ searchPlace }) => {
-  console.log(searchPlace)
+  const onClusterclick = (_target, cluster) => {
+    console.log("cluster clicked", _target, cluster);
+    const map = mapRef.current;
+    // 현재 지도 레벨에서 1레벨 확대한 레벨
+    const level = map.getLevel() - 1;
+    // 지도를 클릭된 클러스터의 마커의 위치를 기준으로 확대합니다
+    map.setLevel(level, { anchor: cluster.getCenter() });
+  };
+
+  const markerClickEvent = (idx) => {
+    const map = mapRef.current;
+    map.setPosition({
+      lat: sitters[idx][1],
+      lng: sitters[idx][0],
+    });
+    console.log(idx);
+  };
+
   useEffect(() => {
-    var infowindow = new kakao.maps.InfoWindow({ zIndex: 1 })
-    const container = document.getElementById('myMap')
-    const options = {
-      center: new kakao.maps.LatLng(33.450701, 126.570667),
-      level: 3,
+    if (positions.length > 0) {
+      setCenterElem(positions[0]);
     }
-    const map = new kakao.maps.Map(container, options)
+  }, [positions]);
 
-    const ps = new kakao.maps.services.Places()
+  if (!centerElem) return <p>로딩중입니다</p>;
+  else
+    return (
+      <>
+        <Map
+          ref={mapRef}
+          center={{ lat: centerElem[1], lng: centerElem[0] }}
+          style={{ width: "100%", height: "360px" }}
+          onZoomChanged={(map) => setLevel(map.getLevel())}
+          draggable={showOnly ? false : true}
+        >
+          {showOnly ? (
+            <Circle
+              center={{
+                lat: centerElem[1],
+                lng: centerElem[0],
+              }}
+              radius={50}
+              strokeWeight={2} // 선의 두께
+              strokeColor={"#75B8FA"} // 선의 색
+              strokeOpacity={1} // 선의 불투명도, 1에서 0 사이의 값
+              strokeStyle={"normal"} // 선의 스타일
+              fillColor={"#CFE7FF"} // 채우기 색
+              fillOpacity={0.7} // 채우기 불투명도
+            />
+          ) : (
+            <>
+              <ZoomControl />
+              <MarkerClusterer
+                averageCenter={false} // 클러스터에 포함된 마커들의 평균 위치를 클러스터 마커 위치로 설정
+                minLevel={6} // 클러스터 할 최소 지도 레벨
+                level={3}
+                disableClickZoom={true}
+                onClusterclick={onClusterclick}
+              >
+                {positions.map((pos, idx) => (
+                  <MapMarker
+                    key={`pos_${idx}`}
+                    position={{
+                      lat: pos[1],
+                      lng: pos[0],
+                    }}
+                    clickable={true} // 마커를 클릭했을 때 지도의 클릭 이벤트가 발생하지 않도록 설정합니다
+                    onClick={() => markerClickEvent(idx)}
+                  >
+                    <div>
+                      <p style={{ display: "inline-block", margin: 0 }}>
+                        {sitters[idx].userName}
+                      </p>
+                      <span>{sitters[idx].star}</span>
+                      {/* <span>{Array.from({length: sitters[idx].star}, () => '*')}</span> */}
+                    </div>
+                  </MapMarker>
+                ))}
+              </MarkerClusterer>
+            </>
+          )}
+        </Map>
+        {level && <p>{"현재 지도 레벨은 " + level + " 입니다"}</p>}
+      </>
+    );
+};
 
-    ps.keywordSearch(searchPlace, placesSearchCB)
-
-    function placesSearchCB(data, status, pagination) {
-      if (status === kakao.maps.services.Status.OK) {
-        let bounds = new kakao.maps.LatLngBounds()
-
-        for (let i = 0; i < data.length; i++) {
-          displayMarker(data[i])
-          bounds.extend(new kakao.maps.LatLng(data[i].y, data[i].x))
-        }
-
-        map.setBounds(bounds)
-      }
-    }
-
-    function displayMarker(place) {
-      let marker = new kakao.maps.Marker({
-        map: map,
-        position: new kakao.maps.LatLng(place.y, place.x),
-      })
-
-      // 마커에 클릭이벤트를 등록합니다
-      kakao.maps.event.addListener(marker, 'click', function () {
-        // 마커를 클릭하면 장소명이 인포윈도우에 표출됩니다
-        infowindow.setContent('<div style="padding:5px;font-size:12px;">' + place.place_name + '</div>')
-        infowindow.open(map, marker)
-      })
-    }
-  }, [searchPlace])
-
-  return (
-     <div
-        id="myMap"
-        style={{
-          width: '500px',
-          height: '500px',
-        }}>
-     </div>
-  )
-}
-
-export default MapContainer
+export default MapContainer;
