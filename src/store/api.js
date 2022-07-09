@@ -4,27 +4,27 @@ import { Cookies } from "react-cookie";
 const cookies = new Cookies();
 
 const jsonApi = axios.create({
-	baseURL: `${process.env.REACT_APP_SERVER}`
+	baseURL: process.env.REACT_APP_SERVER
 });
 
 const formDataApi = axios.create({
-	baseURL: `${process.env.REACT_APP_SERVER}`
+	baseURL: process.env.REACT_APP_SERVER
 });
 
 const pwfindApi = axios.create({
-	baseURL: `${process.env.REACT_APP_PWFINDAPI}`
+	baseURL: process.env.REACT_APP_PWFINDAPI
 });
 
 const mainApi = axios.create({
-	baseURL: `${process.env.REACT_APP_MAINAPI}`
+	baseURL: process.env.REACT_APP_MAINAPI
 });
 
 const detailApi = axios.create({
-	baseURL: `${process.env.REACT_APP_DETAILAPI}`
+	baseURL: process.env.REACT_APP_DETAILAPI
 })
 
 const authApi = axios.create({
-	baseURL: `${process.env.REACT_APP_PWFINDAPI}`
+	baseURL: process.env.REACT_APP_PWFINDAPI
 })
 
 jsonApi.interceptors.request.use((config)=> {

@@ -1,5 +1,5 @@
 # 📌 프로젝트 기간 및 팀원 소개
-기간 : 2022년 6월 24일 ~ 2021년 7월 31일
+기간 : 2022년 6월 24일 ~ 2022년 7월 31일
 
 👨‍👧‍👧팀원\
 ReactJS : 소윤호, 김하연, 이정민\
@@ -14,4 +14,3 @@ UI/UX : 고가은
 ![](https://img.shields.io/badge/AXIOS-671ddf?style=for-the-badge&logo=AXIOS&logoColor=black)
 ![](https://img.shields.io/badge/reactquery-ff4154?style=for-the-badge&logo=reactquery&logoColor=black)
 ![](https://img.shields.io/badge/Socket.io-000000?style=for-the-badge&logo=Socket.io&logoColor=white)
-
