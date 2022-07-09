@@ -16,7 +16,7 @@ const Login = () => {
 	};
 	const { mutate: loginQuery } = useMutation(login, {
 		onSuccess: async (data) => {
-			console.log('login success');
+			console.log('login success', data);
 			await cookies.set("refreshToken", data.data.refreshToken);
 			await localStorage.setItem("accessToken", data.data.accessToken);
 			await sessionStorage.removeItem('foundId');
@@ -24,7 +24,7 @@ const Login = () => {
 			// navigate('/')
 		},
 		onError: (data) => {
-			console.error('login failed');
+			console.error('login failed', data);
 			alert(data.response.data.errorMessage);
 		},
 	});

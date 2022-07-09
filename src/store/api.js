@@ -56,19 +56,34 @@ authApi.interceptors.response.use((response) => {
   return response
 }, async function (error) {
   const originalRequest = error.config;
-	console.log(error.response.status)
-  if (error.response.status === 401 && !originalRequest._retry) {
-    originalRequest._retry = true;
+	console.log(error.response.status, error.response.status === 401)
+  if (error.response.status === 401) {
+
 		const refreshToken = await cookies.get('refreshToken');
-    const newRequestResult = await axios.post('http://3.35.135.160/api/refresh', {refreshToken}, {headers: {
-			"Authorization" : `Bearer ${localStorage.getItem('accessToken')}`		
-		}}).then(
+		// const newRequestResult = await axios.post('http://3.35.135.160/api/refresh', {refreshToken}, {headers: {
+		console.log(refreshToken, typeof refreshToken)
+		await axios.post('http://3.35.135.160/api/refresh', {refreshToken}).then(
 			res => {
 				console.log('refresh api response',res);
 			}
 		).catch(
 			err => {
-				console.log('refresh api error', err, err.response.status, 'error message: ',err.response.data.message);
+				console.log('refresh api error', err);
+				if (err.response) {
+					// 요청이 전송되었고, 서버는 2xx 외의 상태 코드로 응답했습니다.
+					console.log(err.response.data);
+					console.log(err.response.status);
+					console.log(err.response.headers);
+				} else if (err.request) {
+					// 요청이 전송되었지만, 응답이 수신되지 않았습니다.
+					// 'error.request'는 브라우저에서 XMLHtpRequest 인스턴스이고,
+					// node.js에서는 http.ClientRequest 인스턴스입니다.
+					console.log(err.request);
+				} else {
+					// 오류가 발생한 요청을 설정하는 동안 문제가 발생했습니다.
+					console.log("Error", err.message);
+				}
+				console.log(err, err.config);
 			}
 		);       
 		// console.log(newRequestResult)     
@@ -97,7 +112,8 @@ export const apis = {
 	
 	// main
 	getSittersList: (queriesData) => mainApi.post('/mains/search', queriesData),
-  
+  getSittersDefault: (data) => mainApi.post('/mains', data),
+
 	// detail
 	getUserDetail: (sitterId) => detailApi.get(`/details/${sitterId}`),
 	getReviews: (sitterId, reviewId) => detailApi.get(`/details/reviews/${sitterId}`, reviewId),

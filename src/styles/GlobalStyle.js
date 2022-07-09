@@ -2,15 +2,16 @@ import { createGlobalStyle } from "styled-components";
 import { reset } from "styled-reset";
 
 const GlobalStyles = createGlobalStyle`
+  @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.4/dist/web/static/pretendard.css");
   ${reset};
   * {
     box-sizing: border-box;
-    font-family: 'SUIT', sans-serif;
+    font-family: 'Pretendard', sans-serif;
   }
   body {
     color: ${({ theme }) => theme.colors.black};
     background-color: ${({ theme }) => theme.colors.white};
-    font-family: 'SUIT', sans-serif;
+    font-family: 'Pretendard', sans-serif;
     
   }
   a {
