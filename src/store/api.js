@@ -30,7 +30,7 @@ const authApi = axios.create({
 jsonApi.interceptors.request.use((config)=> {
 	config.headers['Content-type'] = 'application/json; charset=UTF-8';
 	config.headers['Accept'] = 'application/json;';
-	config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
+	config.headers['Authorization'] = `Bearer ${cookies.get('accessToken')}`
 	return config;
 }, (err) => {
 	return Promise.reject(err);
@@ -38,7 +38,7 @@ jsonApi.interceptors.request.use((config)=> {
 
 formDataApi.interceptors.request.use((config) => {
 	config.headers['Content-type'] = 'multipart/form-data';
-	config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
+	config.headers['Authorization'] = `Bearer ${cookies.get('accessToken')}`
 	return config;
 }, (err) => {
 	return Promise.reject(err);
@@ -47,7 +47,7 @@ formDataApi.interceptors.request.use((config) => {
 authApi.interceptors.request.use((config)=> {
 	config.headers['Content-type'] = 'application/json; charset=UTF-8';
 	config.headers['Accept'] = 'application/json;';
-	config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
+	config.headers['Authorization'] = `Bearer ${cookies.get('accessToken')}`
 	return config;
 }, (err) => {
 	return Promise.reject(err);
@@ -56,12 +56,11 @@ authApi.interceptors.response.use((response) => {
   return response
 }, async function (error) {
   const originalRequest = error.config;
-	console.log(error.response.status)
   if (error.response.status === 401 && !originalRequest._retry) {
     originalRequest._retry = true;
 		const refreshToken = await cookies.get('refreshToken');
     const newRequestResult = await axios.post('http://3.35.135.160/api/refresh', {refreshToken}, {headers: {
-			"Authorization" : `Bearer ${localStorage.getItem('accessToken')}`		
+			"Authorization" : `Bearer ${cookies.get('accessToken')}`		
 		}}).then(
 			res => {
 				console.log('refresh api response',res);
