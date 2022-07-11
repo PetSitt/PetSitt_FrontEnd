@@ -47,11 +47,11 @@ const Login = () => {
     }
     if (!localStorage.getItem('accessToken')) {
       // accessToken 없으면 refreshToken도 삭제
-      cookies.removeItem('refreshToken');
+      cookies.remove('refreshToken');
     } else {
       // 로그인된 상태에서 로그인 페이지 접근했을 경우 로그아웃처리
       localStorage.removeItem('accessToken');
-      cookies.removeItem('refreshToken');
+      cookies.remove('refreshToken');
       sessionStorage.removeItem('foundId');
     }
   }, []);
