@@ -142,6 +142,7 @@ function Home() {
 
 	console.log(defaultSearch, 'defaultSearch')
 	useEffect(()=>{
+		console.log('github action test')
 		queryClient.invalidateQueries('sitter_default');
 		if(listIsFetched){
 			console.log('? 1111')
