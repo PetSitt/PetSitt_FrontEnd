@@ -27,9 +27,9 @@ jobs:
             ${{ runner.OS }}-build-
             ${{ runner.OS }}-
       - name: Install Dependencies   
-        run: npm install
+        run: npm install --legacy-peer-deps --save radium
 
-      - name: Build                   
+      - name: Build
         run: npm run build
         env:
           CI: ""
