@@ -18,8 +18,8 @@ const Login = () => {
   const { mutate: loginQuery } = useMutation(login, {
     onSuccess: async (data) => {
       console.log(data);
-      await cookies.set('accessToken', data.data.accessToken);
-      await localStorage.setItem('refreshToken', data.data.refreshToken);
+      await localStorage.set('localStorage', data.data.accessToken);
+      await cookies.setItem('cookies', data.data.refreshToken);
       await sessionStorage.removeItem('foundId');
       navigate('/');
     },
@@ -45,13 +45,13 @@ const Login = () => {
     if (foundId) {
       email_ref.current.value = foundId;
     }
-    if (!cookies.get('accessToken')) {
+    if (!localStorage.get('accessToken')) {
       // accessToken 없으면 refreshToken도 삭제
-      localStorage.removeItem('refreshToken');
+      cookies.removeItem('refreshToken');
     } else {
       // 로그인된 상태에서 로그인 페이지 접근했을 경우 로그아웃처리
-      cookies.remove('accessToken');
-      localStorage.removeItem('refreshToken');
+      localStorage.remove('accessToken');
+      cookies.removeItem('refreshToken');
       sessionStorage.removeItem('foundId');
     }
   }, []);
