@@ -1,4 +1,3 @@
-import "../styles/datepicker.css";
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "react-query";
@@ -59,7 +58,6 @@ const Detail = () => {
 			setSelectBoxToggle({ type: "", status: false });
 		}
 	};
-
   const requestReservation = () => {
     let trueLength = 0;
     for (let i = 0; i < services.length; i++) {
@@ -118,7 +116,6 @@ const Detail = () => {
       setDates(getDates);
     }
   }, [date]);
-
   if (detailIsLoading || !detail) return <p>로딩중입니다</p>;
 	return (
 		<SitterDetailPage>

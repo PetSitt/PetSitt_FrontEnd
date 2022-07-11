@@ -4,33 +4,33 @@ import { Cookies } from "react-cookie";
 const cookies = new Cookies();
 
 const jsonApi = axios.create({
-	baseURL: `${process.env.REACT_APP_SERVER}`
+	baseURL: process.env.REACT_APP_SERVER
 });
 
 const formDataApi = axios.create({
-	baseURL: `${process.env.REACT_APP_SERVER}`
+	baseURL: process.env.REACT_APP_SERVER
 });
 
 const pwfindApi = axios.create({
-	baseURL: `${process.env.REACT_APP_PWFINDAPI}`
+	baseURL: process.env.REACT_APP_PWFINDAPI
 });
 
 const mainApi = axios.create({
-	baseURL: `${process.env.REACT_APP_MAINAPI}`
+	baseURL: process.env.REACT_APP_MAINAPI
 });
 
 const detailApi = axios.create({
-	baseURL: `${process.env.REACT_APP_DETAILAPI}`
+	baseURL: process.env.REACT_APP_DETAILAPI
 })
 
 const authApi = axios.create({
-	baseURL: `${process.env.REACT_APP_PWFINDAPI}`
+	baseURL: process.env.REACT_APP_PWFINDAPI
 })
 
 jsonApi.interceptors.request.use((config)=> {
 	config.headers['Content-type'] = 'application/json; charset=UTF-8';
 	config.headers['Accept'] = 'application/json;';
-	config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
+	config.headers['Authorization'] = `Bearer ${cookies.get('accessToken')}`
 	return config;
 }, (err) => {
 	return Promise.reject(err);
@@ -38,7 +38,7 @@ jsonApi.interceptors.request.use((config)=> {
 
 formDataApi.interceptors.request.use((config) => {
 	config.headers['Content-type'] = 'multipart/form-data';
-	config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
+	config.headers['Authorization'] = `Bearer ${cookies.get('accessToken')}`
 	return config;
 }, (err) => {
 	return Promise.reject(err);
@@ -47,7 +47,7 @@ formDataApi.interceptors.request.use((config) => {
 authApi.interceptors.request.use((config)=> {
 	config.headers['Content-type'] = 'application/json; charset=UTF-8';
 	config.headers['Accept'] = 'application/json;';
-	config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
+	config.headers['Authorization'] = `Bearer ${cookies.get('accessToken')}`
 	return config;
 }, (err) => {
 	return Promise.reject(err);

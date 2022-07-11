@@ -1,5 +1,5 @@
 import React, {useRef, useEffect, useState} from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Cookies } from "react-cookie";
 import styled from "styled-components";
 import { useQuery, useMutation, useQueryClient } from "react-query";
@@ -8,12 +8,13 @@ import Input from '../elements/Input';
 import { apis } from "../store/api";
 
 const Myprofile = () => {
-	const {isLoading, data} = useQuery("user", apis.myprofileGet)
+	const {isLoading, data: userData} = useQuery("user", apis.myprofileGet);
 	const inputEl1 = useRef(null);
 	const inputEl2 = useRef(null);
 	const inputEl3 = useRef(null);
 	const [text, setText] = useState('수정')
 	const cookies = new Cookies();
+	const navigate = useNavigate();
 
 	const {mutate} = useMutation(apis.myprofilePatch, {
 		onSuccess: ({data}) => {
@@ -23,7 +24,9 @@ const Myprofile = () => {
 			}
 		},
 		onError: (data) => {
-			console.log(data);
+			console.log(data)
+			alert(data.response.data.errorMessage)
+			navigate("/login");
 		}
 	})
 
@@ -45,6 +48,10 @@ const Myprofile = () => {
 		setText('저장');
 	}
 
+	useEffect(() => {
+		console.log(userData)
+	},[])
+
 	return (
 		<MyprofileInner>
 			<div className='myprofileInner'>
@@ -52,19 +59,19 @@ const Myprofile = () => {
 				{isLogin && <Button onClick={handleUpdate}>{text}</Button>}
 			</div>
 			{ 
-			data ? (
+			userData ? (
 				<>
 					<label className="inner required">
 						<p className="tit">이름</p>
-						<Input _width="100%" _height="44px" _type="text" _ref={inputEl1} _defaultValue={data.data.myprofile.userName} disabled/>
+						<Input _width="100%" _height="44px" _type="text" _ref={inputEl1} defaultValue={userData.data.myprofile.userName} disabled/>
 					</label>
 					<label className="inner required">
 						<p className="tit">전화번호</p>
-						<Input _width="100%" _height="44px" _type="text" _ref={inputEl2} _defaultValue={data.data.myprofile.phoneNumber} disabled/>
+						<Input _width="100%" _height="44px" _type="text" _ref={inputEl2} defaultValue={userData.data.myprofile.phoneNumber} disabled/>
 					</label>
 					<label className="inner required">
 						<p className="tit">이메일</p>
-						<Input _width="100%" _height="44px" _type="text" _ref={inputEl3} _defaultValue={data.data.myprofile.userEmail} disabled/>
+						<Input _width="100%" _height="44px" _type="text" _ref={inputEl3} defaultValue={userData.data.myprofile.userEmail} disabled/>
 					</label>
 				</>
 				) : (

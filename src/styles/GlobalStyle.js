@@ -1,18 +1,19 @@
-import { createGlobalStyle } from "styled-components";
-import { reset } from "styled-reset";
+import { createGlobalStyle } from 'styled-components';
+import { reset } from 'styled-reset';
 
 const GlobalStyles = createGlobalStyle`
-  @import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.4/dist/web/static/pretendard.css");
   ${reset};
+
+  @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
   * {
     box-sizing: border-box;
-    font-family: 'Pretendard', sans-serif;
+    font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
   }
   body {
     color: ${({ theme }) => theme.colors.black};
     background-color: ${({ theme }) => theme.colors.white};
-    font-family: 'Pretendard', sans-serif;
-    
+    font-family: Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
   }
   a {
     color: ${({ theme }) => theme.colors.black};
