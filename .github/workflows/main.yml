@@ -15,18 +15,18 @@ jobs:
   build:
     runs-on: ubuntu-18.04
     steps:
-      - name: Checkout source code.
-      uses: actions/checkout@master
+      - name: Checkout source code.  
+        uses: actions/checkout@master
 
       # 실행 속도를 빠르게 하기 위해 설치된 Node 모듈을 캐시하도록 설정합니다.
-      - name: Cache node modules
-        uses: actions/cache@v2
+      - name: Cache node modules      
+        uses: actions/cache@v1
         with:
-            path: ~/.npm
-            key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-            restore-keys: |
-                ${{ runner.os }}-node-
-
+          path: node_modules
+          key: ${{ runner.OS }}-build-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-build-
+            ${{ runner.OS }}-
       - name: Install Dependencies   
         run: yarn
 
