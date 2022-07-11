@@ -73,22 +73,20 @@ const Detail = () => {
       setErrorMessage("날짜를 선택해주세요.");
       return;
     }
-  };
-  useEffect(() => {
-    setDetail(detailData.data);
-    setServices(
-      Array.from(
-        { length: detailData.data.sitter.category.length },
-        () => false
-      )
-    );
-  }, [isSuccess]);
-  useEffect(() => {
-    window.addEventListener("click", checkSelectArea);
-  }, []);
-  useEffect(() => {
-    if (services?.length > 0) {
-      setServicesText(() => {
+  }
+	useEffect(() => {
+		setDetail(detailData.data);
+    setServices(Array.from({length: detailData.data.sitter.category.length}, () => false))
+	}, [detailData.data]);
+	useEffect(() => {
+		window.addEventListener("click", checkSelectArea);
+		return()=>{
+			setDetail('');
+		}
+	}, []);
+  useEffect(()=>{
+    if(services?.length > 0){
+      setServicesText(()=>{
         const new_data = [];
         for (let i = 0; i < services.length; i++) {
           if (services[i]) {
@@ -119,73 +117,69 @@ const Detail = () => {
     }
   }, [date]);
   if (detailIsLoading || !detail) return <p>로딩중입니다</p>;
-  return (
-    <SitterDetailPage>
-      <section>
-        <img src={detail.sitter.mainImageUrl} style={{ maxWidth: "100%" }} />
-        <SitterProfile>
-          <li className="profile">
-            <span
-              style={{ backgroundImage: `url(${detail.user.userImage})` }}
-            ></span>
-          </li>
-          <li className="userName">{detail.user.userName}</li>
-          <li className="score">평균 평점 {detail.sitter.averageStar}</li>
-          <li>
-            <strong>{detail.sitter.servicePrice}원</strong>
-            <span>/일</span>
-          </li>
-          <li>
-            재고용률: <strong>{detail.sitter.rehireRate}%</strong>
-          </li>
-          <li>{detail.sitter.introTitle}</li>
-          <li>{detail.sitter.myIntro}</li>
-        </SitterProfile>
-      </section>
-      <section>
-        <h3 style={{ display: "flex", justifyContent: "space-between" }}>
-          서비스 예약하기
-          <p style={{ fontSize: "16px" }}>
-            <strong>{detail.sitter.servicePrice}원</strong>/일
-          </p>
-        </h3>
-        <ul style={{ margin: "10px 0" }}>
-          {detail.sitter.category.map((v, i) => {
-            return (
-              <li key={`category_${i}`}>
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={services[i]}
-                    onChange={(e) => {
-                      setServices((prev) => {
-                        const new_data = [...prev];
-                        new_data[i] = e.target.checked;
-                        return new_data;
-                      });
-                    }}
-                  />
-                  {v}
-                </label>
-              </li>
-            );
-          })}
-        </ul>
-        <div>
-          <p>
-            {dates.length > 0 &&
-              dates?.map((v, i) => {
-                return (
-                  <>
-                    {i > 0 ? ", " : ""}
-                    <span key={`date_${v}`} style={{ display: "inline-block" }}>
-                      {v}
-                    </span>
-                  </>
-                );
-              })}
-          </p>
-          <Calendar
+	return (
+		<SitterDetailPage>
+			<section>
+				<img src={detail.sitter.mainImageUrl} style={{ maxWidth: "100%" }} />
+				<SitterProfile>
+					<li className="profile">
+						<span
+							style={{ backgroundImage: `url(${detail.sitter.imageUrl})` }}
+						></span>
+					</li>
+					<li className="userName">{detail.user.userName}</li>
+					<li className="score">평균 평점 {detail.sitter.averageStar}</li>
+					<li>
+						<strong>{detail.sitter.servicePrice}원</strong>
+						<span>/일</span>
+					</li>
+					<li>
+						재고용률: <strong>{detail.sitter.rehireRate}%</strong>
+					</li>
+					<li>{detail.sitter.introTitle}</li>
+					<li>{detail.sitter.myIntro}</li>
+				</SitterProfile>
+			</section>
+			<section>
+				<h3 style={{ display: "flex", justifyContent: "space-between" }}>
+					서비스 예약하기
+					<p style={{ fontSize: "16px" }}>
+						<strong>{detail.sitter.servicePrice}원</strong>/일
+					</p>
+				</h3>
+				<ul style={{ margin: "10px 0" }}>
+					{detail.sitter.category.map((v, i) => {
+						return (
+							<li key={`category_${i}`}>
+								<label>
+									<input type="checkbox" checked={services[i]} onChange={(e)=>{
+                    setServices((prev)=>{
+                      const new_data = [...prev];
+                      new_data[i] = e.target.checked;
+                      return new_data;
+                    })
+                  }}/>
+									{v}
+								</label>
+							</li>
+						);
+					})}
+				</ul>
+				<div>
+					<p>
+						{dates.length > 0 &&
+							dates?.map((v, i) => {
+								return (
+									<>
+										{i > 0 ? ", " : ""}
+										<span key={`date_${v}`} style={{ display: "inline-block" }}>
+											{v}
+										</span>
+									</>
+								);
+							})}
+					</p>
+					<Calendar
             value={date && date}
             onChange={setDate}
             multiple={true}

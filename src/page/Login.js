@@ -38,7 +38,7 @@ const Login = () => {
   // 		console.log(data);
   // 	},
   // });
-
+  
   useEffect(() => {
     const foundId = sessionStorage.getItem('foundId');
     // 아이디 찾기 페이지에서 접속했을 경우 input value에 찾은 id 입력
@@ -55,6 +55,7 @@ const Login = () => {
       sessionStorage.removeItem('foundId');
     }
   }, []);
+
 
   return (
     <>
