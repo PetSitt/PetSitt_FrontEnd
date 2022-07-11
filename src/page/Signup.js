@@ -5,6 +5,7 @@ import Input from "../elements/Input";
 import Button from "../elements/Button";
 import { apis } from "../store/api";
 import { useNavigate } from "react-router-dom";
+import { handleChange } from "../shared/common";
 
 const INITIAL_VALUES = {
   userEmail: "",
@@ -31,18 +32,9 @@ const Signup = () => {
   const [isPhone, setIsPhone] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = (name, value) => {
-    setValues(function (prevValues) {
-      return {
-        ...prevValues,
-        [name]: value,
-      };
-    });
-  };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    handleChange(name, value);
+    handleChange(name, value, setValues);
   };
 
   // 회원가입 유효성 검사
