@@ -38,27 +38,6 @@ const GlobalStyles = createGlobalStyle`
     padding: 0;
     cursor: pointer;
   }
-
-  /* Datepicker */
-  .rmdp-wrapper,
-  .rmdp-top-class,
-  .rmdp-calendar,
-  .rmdp-day-picker,
-  .rmdp-day-picker > div  {
-    width: 100%;
-  }
-  .rmdp-day, .rmdp-week-day{
-    display: flex;
-    width: 14.285714%;
-    height: 0;
-    padding-top: 7.142857%;
-    padding-bottom: 7.142857%;
-    align-items: center;
-    justify-content: center;
-  }
-  .rmdp-day span{
-    
-  }
   
   
 `;

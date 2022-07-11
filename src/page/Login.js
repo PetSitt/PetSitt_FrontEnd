@@ -12,14 +12,15 @@ const Login = () => {
   const cookies = new Cookies();
   const email_ref = useRef();
   const pw_ref = useRef();
+
   const login = (data) => {
     return apis.login(data);
   };
   const { mutate: loginQuery } = useMutation(login, {
     onSuccess: async (data) => {
       console.log(data);
-      await localStorage.set('localStorage', data.data.accessToken);
-      await cookies.setItem('cookies', data.data.refreshToken);
+      await cookies.set('accessToken', data.data.accessToken);
+      await localStorage.setItem('refreshToken', data.data.refreshToken);
       await sessionStorage.removeItem('foundId');
       navigate('/');
     },
@@ -32,30 +33,30 @@ const Login = () => {
   // const { mutate: checkUser } = useMutation(()=>apis.checkUser(), {
   // 	onSuccess: (data) => {
   // 		if(cookies.get('accessToken')){
+
   // 			cookies.remove('accessToken');
   // 			localStorage.removeItem('refreshToken');
   // 		}
   // 		console.log(data);
   // 	},
   // });
-  
+
   useEffect(() => {
     const foundId = sessionStorage.getItem('foundId');
     // 아이디 찾기 페이지에서 접속했을 경우 input value에 찾은 id 입력
     if (foundId) {
       email_ref.current.value = foundId;
     }
-    if (!localStorage.get('accessToken')) {
+    if (!cookies.get('accessToken')) {
       // accessToken 없으면 refreshToken도 삭제
-      cookies.removeItem('refreshToken');
+      localStorage.removeItem('refreshToken');
     } else {
       // 로그인된 상태에서 로그인 페이지 접근했을 경우 로그아웃처리
-      localStorage.remove('accessToken');
-      cookies.removeItem('refreshToken');
+      cookies.remove('accessToken');
+      localStorage.removeItem('refreshToken');
       sessionStorage.removeItem('foundId');
     }
   }, []);
-
 
   return (
     <>

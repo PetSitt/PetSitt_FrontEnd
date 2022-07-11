@@ -1,21 +1,20 @@
+import "../styles/datepicker.css";
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery } from "react-query";
 import styled from "styled-components";
 import DatePicker, { DateObject, Calendar } from "react-multi-date-picker";
 import MapContainer from "./MapContainer";
 import { apis } from "../store/api";
-import axios from 'axios';
 
 const Detail = () => {
-	// 62c63d6f25208ae3d3cda472
-	const queryClient = useQueryClient();
-	const param = useParams();
-	const sitterId = param.id;
-	const [detail, setDetail] = useState();
-	const today = new DateObject();
-	const [date, setDate] = useState();
-	const [dates, setDates] = useState(new Date());
+  // 62c63d6f25208ae3d3cda472
+  const param = useParams();
+  const sitterId = param.id;
+  const [detail, setDetail] = useState();
+  const today = new DateObject();
+  const [date, setDate] = useState();
+  const [dates, setDates] = useState(new Date());
   const [services, setServices] = useState();
   const [servicesText, setServicesText] = useState([]);
   const [selectBoxToggle, setSelectBoxToggle] = useState({
@@ -23,41 +22,41 @@ const Detail = () => {
     status: false,
   });
   const [errorMessage, setErrorMessage] = useState();
-	const [reviews, setReviews] = useState([
-		{
-			userName: "김대한",
-			reviewStar: 4.0,
-			reviewDate: "2022/06/29",
-			reviewInfo: "1000글자 제한 리뷰",
-		},
-		{
-			userName: "김민국",
-			reviewStar: 5.0,
-			reviewDate: "2022/06/28",
-			reviewInfo: "1000글자 제한 리뷰적어요!",
-		},
-	]);
-	const {
-		isLoading: detailIsLoading,
-		isSuccess,
-		isFetched,
-		data: detailData,
-	} = useQuery("detail_data", () => apis.getUserDetail(sitterId), {
-		onSuccess: (data) => {
-			console.log('success')
-			console.log(data.data, "data loaded");
-		},
-		onError: (data) => {
-			console.error(data);
-		},
-		staleTime: Infinity,
-		refetchOnMount: "always",
-	});
-	const checkSelectArea = (e) => {
-		if (!e.target.closest(".select_area") && !e.target.closest('.select_wrap')) {
-			setSelectBoxToggle({ type: "", status: false });
-		}
-	};
+  const [reviews, setReviews] = useState([
+    {
+      userName: "김대한",
+      reviewStar: 4.0,
+      reviewDate: "2022/06/29",
+      reviewInfo: "1000글자 제한 리뷰",
+    },
+    {
+      userName: "김민국",
+      reviewStar: 5.0,
+      reviewDate: "2022/06/28",
+      reviewInfo: "1000글자 제한 리뷰적어요!",
+    },
+  ]);
+  const {
+    isLoading: detailIsLoading,
+    isSuccess,
+    data: detailData,
+  } = useQuery("detail_data", () => apis.getUserDetail(sitterId), {
+    onSuccess: (data) => {
+      console.log(data.data, "data loaded");
+    },
+    onError: (data) => {
+      console.error(data);
+    },
+    staleTime: Infinity,
+  });
+  const checkSelectArea = (e) => {
+    if (
+      !e.target.closest(".select_area") &&
+      !e.target.closest(".select_wrap")
+    ) {
+      setSelectBoxToggle({ type: "", status: false });
+    }
+  };
   const requestReservation = () => {
     let trueLength = 0;
     for (let i = 0; i < services.length; i++) {
@@ -73,20 +72,22 @@ const Detail = () => {
       setErrorMessage("날짜를 선택해주세요.");
       return;
     }
-  }
-	useEffect(() => {
-		setDetail(detailData.data);
-    setServices(Array.from({length: detailData.data.sitter.category.length}, () => false))
-	}, [detailData.data]);
-	useEffect(() => {
-		window.addEventListener("click", checkSelectArea);
-		return()=>{
-			setDetail('');
-		}
-	}, []);
-  useEffect(()=>{
-    if(services?.length > 0){
-      setServicesText(()=>{
+  };
+  useEffect(() => {
+    setDetail(detailData.data);
+    setServices(
+      Array.from(
+        { length: detailData.data.sitter.category.length },
+        () => false
+      )
+    );
+  }, [isSuccess]);
+  useEffect(() => {
+    window.addEventListener("click", checkSelectArea);
+  }, []);
+  useEffect(() => {
+    if (services?.length > 0) {
+      setServicesText(() => {
         const new_data = [];
         for (let i = 0; i < services.length; i++) {
           if (services[i]) {
@@ -116,70 +117,75 @@ const Detail = () => {
       setDates(getDates);
     }
   }, [date]);
+
   if (detailIsLoading || !detail) return <p>로딩중입니다</p>;
-	return (
-		<SitterDetailPage>
-			<section>
-				<img src={detail.sitter.mainImageUrl} style={{ maxWidth: "100%" }} />
-				<SitterProfile>
-					<li className="profile">
-						<span
-							style={{ backgroundImage: `url(${detail.sitter.imageUrl})` }}
-						></span>
-					</li>
-					<li className="userName">{detail.user.userName}</li>
-					<li className="score">평균 평점 {detail.sitter.averageStar}</li>
-					<li>
-						<strong>{detail.sitter.servicePrice}원</strong>
-						<span>/일</span>
-					</li>
-					<li>
-						재고용률: <strong>{detail.sitter.rehireRate}%</strong>
-					</li>
-					<li>{detail.sitter.introTitle}</li>
-					<li>{detail.sitter.myIntro}</li>
-				</SitterProfile>
-			</section>
-			<section>
-				<h3 style={{ display: "flex", justifyContent: "space-between" }}>
-					서비스 예약하기
-					<p style={{ fontSize: "16px" }}>
-						<strong>{detail.sitter.servicePrice}원</strong>/일
-					</p>
-				</h3>
-				<ul style={{ margin: "10px 0" }}>
-					{detail.sitter.category.map((v, i) => {
-						return (
-							<li key={`category_${i}`}>
-								<label>
-									<input type="checkbox" checked={services[i]} onChange={(e)=>{
-                    setServices((prev)=>{
-                      const new_data = [...prev];
-                      new_data[i] = e.target.checked;
-                      return new_data;
-                    })
-                  }}/>
-									{v}
-								</label>
-							</li>
-						);
-					})}
-				</ul>
-				<div>
-					<p>
-						{dates.length > 0 &&
-							dates?.map((v, i) => {
-								return (
-									<>
-										{i > 0 ? ", " : ""}
-										<span key={`date_${v}`} style={{ display: "inline-block" }}>
-											{v}
-										</span>
-									</>
-								);
-							})}
-					</p>
-					<Calendar
+  return (
+    <SitterDetailPage>
+      <section>
+        <img src={detail.sitter.mainImageUrl} style={{ maxWidth: "100%" }} />
+        <SitterProfile>
+          <li className="profile">
+            <span
+              style={{ backgroundImage: `url(${detail.user.userImage})` }}
+            ></span>
+          </li>
+          <li className="userName">{detail.user.userName}</li>
+          <li className="score">평균 평점 {detail.sitter.averageStar}</li>
+          <li>
+            <strong>{detail.sitter.servicePrice}원</strong>
+            <span>/일</span>
+          </li>
+          <li>
+            재고용률: <strong>{detail.sitter.rehireRate}%</strong>
+          </li>
+          <li>{detail.sitter.introTitle}</li>
+          <li>{detail.sitter.myIntro}</li>
+        </SitterProfile>
+      </section>
+      <section>
+        <h3 style={{ display: "flex", justifyContent: "space-between" }}>
+          서비스 예약하기
+          <p style={{ fontSize: "16px" }}>
+            <strong>{detail.sitter.servicePrice}원</strong>/일
+          </p>
+        </h3>
+        <ul style={{ margin: "10px 0" }}>
+          {detail.sitter.category.map((v, i) => {
+            return (
+              <li key={`category_${i}`}>
+                <label>
+                  <input
+                    type="checkbox"
+                    checked={services[i]}
+                    onChange={(e) => {
+                      setServices((prev) => {
+                        const new_data = [...prev];
+                        new_data[i] = e.target.checked;
+                        return new_data;
+                      });
+                    }}
+                  />
+                  {v}
+                </label>
+              </li>
+            );
+          })}
+        </ul>
+        <div>
+          <p>
+            {dates.length > 0 &&
+              dates?.map((v, i) => {
+                return (
+                  <>
+                    {i > 0 ? ", " : ""}
+                    <span key={`date_${v}`} style={{ display: "inline-block" }}>
+                      {v}
+                    </span>
+                  </>
+                );
+              })}
+          </p>
+          <Calendar
             value={date && date}
             onChange={setDate}
             multiple={true}

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
@@ -10,7 +10,7 @@ const INITIAL_VALUES = {
   petAge: "",
   petWeight: "",
   petType: "",
-  petSpay: false,
+  petSpay: true,
   petIntro: "",
   petImage: {},
 };
@@ -125,7 +125,7 @@ const PetprofileForm = () => {
               type="radio"
               value={1}
               name="petSpay"
-              defaultChecked={data ? values.petSpay : values.petSpay && true}
+              defaultChecked={data ? values.petSpay : txt === true && true}
               onChange={handleClickRadioButton}
             />
             <label htmlFor="1">했어요</label>
@@ -135,7 +135,7 @@ const PetprofileForm = () => {
               type="radio"
               value={0}
               name="petSpay"
-              defaultChecked={data ? !values.petSpay : !values.petSpay && true}
+              defaultChecked={data ? !values.petSpay : txt === false && false}
               onChange={handleClickRadioButton}
             />
             <label htmlFor="0">안했어요</label>
