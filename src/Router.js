@@ -17,6 +17,7 @@ import Reservation from "./page/Reservation";
 import SitterProfile from "./page/SitterProfile";
 import SitterProfileForm1 from "./page/SitterProfileForm1";
 import SitterProfileForm2 from "./page/SitterProfileForm2";
+import SitterProfileForm3 from "./page/SitterProfileForm3";
 
 const Router = () => {
   return (
@@ -43,6 +44,10 @@ const Router = () => {
         <Route
           path="/mypage/SitterProfileForm2"
           element={<SitterProfileForm2 />}
+        />
+        <Route
+          path="/mypage/SitterProfileForm3"
+          element={<SitterProfileForm3 />}
         />
         <Route path="/pwchange/:id" element={<PwChange />} />
         <Route path="/login" element={<Login />}></Route>

@@ -11,8 +11,7 @@ const KakaoMapContainer = ({ address, onChange }) => {
 
     new kakao.maps.Map(container, options);
     //위도, 경도로 변환 및 마커표시
-    var geocoder = new kakao.maps.services.Geocoder();
-
+    const geocoder = new kakao.maps.services.Geocoder();
     geocoder.addressSearch(address, function (result, status) {
       if (status === kakao.maps.services.Status.OK) {
         onChange("x", result[0].x);

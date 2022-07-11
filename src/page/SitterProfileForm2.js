@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { handleChange } from "../shared/common";
 import ImageRegist from "../components/ImageRegist"
@@ -20,10 +20,6 @@ const SitterProfileForm2 = () => {
     handleChange(name, value, setValues);
   };
 
-  const onSubmitTest = () => {
-    console.log(values);
-  };
-
   return (
     <SitterProfileFormInner>
       <h1>
@@ -37,11 +33,18 @@ const SitterProfileForm2 = () => {
         <p className="tit">대표 이미지 (최대 1장)</p>
         <ImageRegist name={"mainImageUrl"} value={values.mainImageUrl} onChange={handleInputChange}/>
       </div>
+      <div>
+        <p className="tit">소개 타이틀 (30자 제한)</p>
+        <input type="text" name="introTitle" onChange={handleInputChange} />
+      </div>
+      <div>
+        <p className="tit">자기 소개글 (1000자 제한)</p>
+        <textarea type="text" name="myIntro" onChange={handleInputChange}></textarea>
+      </div>
 
-      <button onClick={onSubmitTest}>다음</button>
-      {/* <Link to={`/mypage/SitterProfileForm3`} state={{ data: values }}>
-        <button onClick={onSubmitTest}>다음</button>
-      </Link> */}
+      <Link to={`/mypage/SitterProfileForm3`} state={{ data: values }}>
+        <button>다음</button>
+      </Link>
     </SitterProfileFormInner>
   );
 };
