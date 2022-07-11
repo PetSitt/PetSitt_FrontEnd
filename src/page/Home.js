@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
+import { Link } from 'react-router-dom';
 import { Cookies } from "react-cookie";
-import { useQuery, useMutation } from "react-query";
+import { useQuery, useMutation, useQueryClient } from "react-query";
 import DatePicker, { DateObject } from "react-multi-date-picker";
 import styled from 'styled-components';
 import axios from "axios";
@@ -15,13 +16,14 @@ function Home() {
 	const datepickerRef = useRef();
 	const today = new DateObject();
 	const cookies = new Cookies();
+	const queryClient = useQueryClient();
 	const [date, setDate] = useState(new Date());
 	const [dates, setDates] = useState(new Date());
 	const [addressInfo, setAddressInfo] = useState();
 	const [address, setAddress] = useState();
 	const categories = [
 		{ walk: "산책" },
-		{ wash: "목욕, 모발관리" },
+		{ wash: "목욕, 모발 관리" },
 		{ prac: "훈련" },
 		{ dayCare: "데이 케어" },
 		{ boarding: "1박 케어" },
@@ -41,10 +43,10 @@ function Home() {
 			}
 		}
 		console.log(queriesData)
-		return axios.post('http://13.209.49.214:3000/mains/search', queriesData)
-		// return apis.getSittersList(queriesData);
+		// return axios.post('http://13.209.49.214:3000/mains/search', queriesData)
+		return apis.getSittersList(queriesData);
 	};
-	const {data: sitters_query, isLoading: sitterListIsLoading, isSuccess: sitterListSuccess} = useQuery(
+	const {data: sitters_query, isLoading: sitterListIsLoading, isFetched: listIsFetched, isSuccess: sitterListSuccess} = useQuery(
 		["sitter_list", queriesData, category],
 		() => getSittersList(queriesData, category),
 		{
@@ -83,38 +85,85 @@ function Home() {
 		},
 		staleTime: Infinity,
 	});
-	const {data: sitters_default_query, isLoading: sitterDefaultIsLoading, isSuccess: sitterDefaultSuccess} = useQuery(
-		["sitter_default", currentPosition],
-		() => axios.post('http://13.209.49.214:3000/mains', currentPosition),
+	const getListApi = (currentPosition, category) =>{
+		const categoryData = {}
+		if(category.length > 0 && category.length < 5){
+			for(let i=0; i<category.length; i++){
+				const cate_key = Object.keys(category[i])[0];
+				const cate_value = Object.values(category[i])[0];
+				categoryData[cate_key] = cate_value;
+			}
+		}
+		return apis.getSittersDefault({...currentPosition, ...categoryData});
+	}
+	const {data: sitters_default_query, isFetched: defaultIsFetched, isLoading: sitterDefaultIsLoading, isSuccess: sitterDefaultSuccess, refetch: refetchList} = useQuery(
+		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
 		{
 			onSuccess: (data) => {
 				console.log(data);
+				setDefaultSearch(false);
 			},
 			onError: (data) => {
 				console.error(data);
+				setDefaultSearch(false);
 			},
 			enabled: !!defaultSearch,
 			staleTime: Infinity,
 		},
 	);
+	const getLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+					const latitude = pos.coords.latitude;
+					const longitude = pos.coords.longitude;
+					setCurrentPosition({x: longitude, y: latitude});
+					setDefaultSearch(true);
+        },
+        (error) => {
+          console.error(error);
+        },
+        {
+          enableHighAccuracy: false,
+          maximumAge: 0,
+          timeout: Infinity,
+        }
+      );
+    } else {
+      alert('GPS를 허용해주세요');
+    }
+  };
 	useEffect(()=>{
-		navigator.geolocation.getCurrentPosition(async (pos) => {
-			const latitude = await pos.coords.latitude;
-			const longitude = await pos.coords.longitude;
-			setCurrentPosition({x: longitude, y: latitude});
-			setDefaultSearch(true);
-		});
+		getLocation();
 	},[])
+
+	console.log(defaultSearch, 'defaultSearch')
 	useEffect(()=>{
-		if(sitterListSuccess){
-			console.log('? 1111')
-			setSitters(sitters_query.data.sitter2);
-		}
+		// if(sitterListSuccess){
+		// 	console.log('? 1111')
+		// 	setSitters(sitters_query.data.sitter2);
+		// }
+		// console.log()
+		console.log(listIsFetched, defaultIsFetched, sitterListSuccess, sitterDefaultSuccess)
 		if(sitterDefaultSuccess){
 			console.log('? 222')
-			setSitters(sitters_default_query.data.sitter2);
+			setSitters(sitters_default_query.data.sitters);
 		}
-	}, [sitterListSuccess, sitterDefaultSuccess])
+		if(defaultIsFetched){
+			queryClient.invalidateQueries('sitter_default');
+			setSitters(sitters_default_query.data.sitters);
+		}
+	}, [sitterListSuccess, sitterDefaultSuccess, listIsFetched, defaultIsFetched])
+	useEffect(()=>{
+		if(sitters?.length > 0){
+			if(addressInfo &&  dates?.length > 0){
+				console.log('검색 후 categorizing')
+			}else{
+				console.log(category, 'changed')
+				refetchList(category);			
+			}
+		}
+	},[category])
 
 
 
@@ -183,15 +232,15 @@ function Home() {
 						sitters?.map((v,i)=>{
 							return (
 								<li key={`sitter_${i}`}>
+									<Link to={`/detail/${v.sitterId}`}>
 									<div className="image_area" style={{backgroundImage: `url(${v.mainImageUrl})`}}>
 										<span className="sitter_image" style={{backgroundImage: `url(${v.imageUrl})`}}></span>
 									</div>
 									<div className="info_area">
 										<p className="sitter">
 											<em>{`돌보미`}</em>
-											<span>재고용률 {v.rehaireRate}%</span>
+											<span>재고용률 {v.rehireRate}%</span>
 										</p>
-										<p className="address">{v.address}</p>
 										<div className="bottom_info">
 											<div className="star">
 												<img src={icon_star} alt="star"/>
@@ -201,6 +250,7 @@ function Home() {
 											<p className="price"><strong>{v.servicePrice}</strong><span>원~</span></p>
 										</div>
 									</div>
+									</Link>
 								</li>
 							)
 						})

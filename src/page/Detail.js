@@ -1,13 +1,16 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import styled from "styled-components";
 import DatePicker, { DateObject, Calendar } from "react-multi-date-picker";
 import MapContainer from "./MapContainer";
 import { apis } from "../store/api";
+import axios from 'axios';
 
 const Detail = () => {
+
 	// 62c63d6f25208ae3d3cda472
+	const queryClient = useQueryClient();
 	const param = useParams();
 	const sitterId = param.id;
 	const [detail, setDetail] = useState();
@@ -38,15 +41,18 @@ const Detail = () => {
 	const {
 		isLoading: detailIsLoading,
 		isSuccess,
+		isFetched,
 		data: detailData,
 	} = useQuery("detail_data", () => apis.getUserDetail(sitterId), {
 		onSuccess: (data) => {
+			console.log('success')
 			console.log(data.data, "data loaded");
 		},
 		onError: (data) => {
 			console.error(data);
 		},
 		staleTime: Infinity,
+		refetchOnMount: "always",
 	});
 	const checkSelectArea = (e) => {
 		if (!e.target.closest(".select_area") && !e.target.closest('.select_wrap')) {
@@ -74,9 +80,12 @@ const Detail = () => {
 	useEffect(() => {
 		setDetail(detailData.data);
     setServices(Array.from({length: detailData.data.sitter.category.length}, () => false))
-	}, [isSuccess]);
+	}, [detailData.data]);
 	useEffect(() => {
 		window.addEventListener("click", checkSelectArea);
+		return()=>{
+			setDetail('');
+		}
 	}, []);
   useEffect(()=>{
     if(services?.length > 0){
@@ -120,7 +129,7 @@ const Detail = () => {
 				<SitterProfile>
 					<li className="profile">
 						<span
-							style={{ backgroundImage: `url(${detail.user.userImage})` }}
+							style={{ backgroundImage: `url(${detail.sitter.imageUrl})` }}
 						></span>
 					</li>
 					<li className="userName">{detail.user.userName}</li>
