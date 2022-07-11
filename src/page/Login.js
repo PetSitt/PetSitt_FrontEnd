@@ -18,8 +18,8 @@ const Login = () => {
   const { mutate: loginQuery } = useMutation(login, {
     onSuccess: async (data) => {
       console.log(data);
-      await localStorage.set('localStorage', data.data.accessToken);
-      await cookies.setItem('cookies', data.data.refreshToken);
+      await localStorage.setItem('localStorage', data.data.accessToken);
+      await cookies.set('cookies', data.data.refreshToken);
       await sessionStorage.removeItem('foundId');
       navigate('/');
     },
