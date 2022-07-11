@@ -42,4 +42,4 @@ jobs:
           aws s3 cp \
             —recursive \
             —region ap-northeast-2 \
-            build s3://bubbled.at
+            build s3://petsitt.link
