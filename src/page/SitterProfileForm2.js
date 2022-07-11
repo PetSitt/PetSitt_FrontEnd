@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import React, { useState } from "react";
+import { useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { handleChange } from "../shared/common";
+import ImageRegist from "../components/ImageRegist"
 
 const INITIAL_VALUES = {
   imageUrl: "",
@@ -29,9 +30,14 @@ const SitterProfileForm2 = () => {
         돌보미 등록<span>2/4</span>
       </h1>
       <div>
-        <p className="tit">이름</p>
-        <input type="text" name="myIntro" onChange={handleInputChange} />
+        <p className="tit">돌보미 프로필 사진</p>
+        <ImageRegist name={"imageUrl"} value={values.imageUrl} onChange={handleInputChange}/>
       </div>
+      <div>
+        <p className="tit">대표 이미지 (최대 1장)</p>
+        <ImageRegist name={"mainImageUrl"} value={values.mainImageUrl} onChange={handleInputChange}/>
+      </div>
+
       <button onClick={onSubmitTest}>다음</button>
       {/* <Link to={`/mypage/SitterProfileForm3`} state={{ data: values }}>
         <button onClick={onSubmitTest}>다음</button>
