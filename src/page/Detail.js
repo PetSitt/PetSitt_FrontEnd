@@ -1,20 +1,21 @@
-import "../styles/datepicker.css";
 import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
-import { useQuery } from "react-query";
+import { useQuery, useQueryClient } from "react-query";
 import styled from "styled-components";
 import DatePicker, { DateObject, Calendar } from "react-multi-date-picker";
 import MapContainer from "./MapContainer";
 import { apis } from "../store/api";
+import axios from 'axios';
 
 const Detail = () => {
-  // 62c63d6f25208ae3d3cda472
-  const param = useParams();
-  const sitterId = param.id;
-  const [detail, setDetail] = useState();
-  const today = new DateObject();
-  const [date, setDate] = useState();
-  const [dates, setDates] = useState(new Date());
+	// 62c63d6f25208ae3d3cda472
+	const queryClient = useQueryClient();
+	const param = useParams();
+	const sitterId = param.id;
+	const [detail, setDetail] = useState();
+	const today = new DateObject();
+	const [date, setDate] = useState();
+	const [dates, setDates] = useState(new Date());
   const [services, setServices] = useState();
   const [servicesText, setServicesText] = useState([]);
   const [selectBoxToggle, setSelectBoxToggle] = useState({
@@ -22,41 +23,41 @@ const Detail = () => {
     status: false,
   });
   const [errorMessage, setErrorMessage] = useState();
-  const [reviews, setReviews] = useState([
-    {
-      userName: "김대한",
-      reviewStar: 4.0,
-      reviewDate: "2022/06/29",
-      reviewInfo: "1000글자 제한 리뷰",
-    },
-    {
-      userName: "김민국",
-      reviewStar: 5.0,
-      reviewDate: "2022/06/28",
-      reviewInfo: "1000글자 제한 리뷰적어요!",
-    },
-  ]);
-  const {
-    isLoading: detailIsLoading,
-    isSuccess,
-    data: detailData,
-  } = useQuery("detail_data", () => apis.getUserDetail(sitterId), {
-    onSuccess: (data) => {
-      console.log(data.data, "data loaded");
-    },
-    onError: (data) => {
-      console.error(data);
-    },
-    staleTime: Infinity,
-  });
-  const checkSelectArea = (e) => {
-    if (
-      !e.target.closest(".select_area") &&
-      !e.target.closest(".select_wrap")
-    ) {
-      setSelectBoxToggle({ type: "", status: false });
-    }
-  };
+	const [reviews, setReviews] = useState([
+		{
+			userName: "김대한",
+			reviewStar: 4.0,
+			reviewDate: "2022/06/29",
+			reviewInfo: "1000글자 제한 리뷰",
+		},
+		{
+			userName: "김민국",
+			reviewStar: 5.0,
+			reviewDate: "2022/06/28",
+			reviewInfo: "1000글자 제한 리뷰적어요!",
+		},
+	]);
+	const {
+		isLoading: detailIsLoading,
+		isSuccess,
+		isFetched,
+		data: detailData,
+	} = useQuery("detail_data", () => apis.getUserDetail(sitterId), {
+		onSuccess: (data) => {
+			console.log('success')
+			console.log(data.data, "data loaded");
+		},
+		onError: (data) => {
+			console.error(data);
+		},
+		staleTime: Infinity,
+		refetchOnMount: "always",
+	});
+	const checkSelectArea = (e) => {
+		if (!e.target.closest(".select_area") && !e.target.closest('.select_wrap')) {
+			setSelectBoxToggle({ type: "", status: false });
+		}
+	};
   const requestReservation = () => {
     let trueLength = 0;
     for (let i = 0; i < services.length; i++) {
@@ -117,7 +118,6 @@ const Detail = () => {
       setDates(getDates);
     }
   }, [date]);
-
   if (detailIsLoading || !detail) return <p>로딩중입니다</p>;
   return (
     <SitterDetailPage>
