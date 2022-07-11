@@ -12,7 +12,6 @@ const Login = () => {
   const cookies = new Cookies();
   const email_ref = useRef();
   const pw_ref = useRef();
-
   const login = (data) => {
     return apis.login(data);
   };
@@ -33,7 +32,6 @@ const Login = () => {
   // const { mutate: checkUser } = useMutation(()=>apis.checkUser(), {
   // 	onSuccess: (data) => {
   // 		if(cookies.get('accessToken')){
-
   // 			cookies.remove('accessToken');
   // 			localStorage.removeItem('refreshToken');
   // 		}

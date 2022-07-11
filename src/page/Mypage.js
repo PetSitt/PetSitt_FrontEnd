@@ -5,7 +5,7 @@ import Button from "../elements/Button";
 
 const Mypage = () => {
   const cookies = new Cookies();
-  const isLogin = cookies.get("refreshToken");
+  const isLogin = cookies.get("accessToken");
   return (
     <div>
       <h1>마이페이지</h1>
