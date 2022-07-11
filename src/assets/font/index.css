@@ -25,13 +25,26 @@ i {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.ic-home:before {
+.ic-map:before {
   content: "\e900";
+  color: #fc9215;
+}
+.ic-location:before {
+  content: "\e901";
   color: #676767;
 }
+.ic-arw-right:before {
+  content: "\e902";
+}
+.ic-arw-left:before {
+  content: "\e903";
+}
+.ic-home:before {
+  content: "\e904";
+}
 .ic-plus:before {
-  content: "\e901";
+  content: "\e905";
 }
 .ic-close:before {
-  content: "\e903";
+  content: "\e906";
 }
