@@ -7,6 +7,8 @@ import MapContainer from "./MapContainer";
 import { apis } from "../store/api";
 import axios from 'axios';
 
+import icon_star from '../assets/img/icon_star.png';
+
 const Detail = () => {
 	// 62c63d6f25208ae3d3cda472
 	const queryClient = useQueryClient();
@@ -120,19 +122,18 @@ const Detail = () => {
 	return (
 		<SitterDetailPage>
 			<section>
-				<img src={detail.sitter.mainImageUrl} style={{ maxWidth: "100%" }} />
+        <TopImage style={{backgroundImage: `url(${detail.sitter.mainImageUrl})`, margin: '0 -20px'}}></TopImage>
 				<SitterProfile>
 					<li className="profile">
 						<span
 							style={{ backgroundImage: `url(${detail.sitter.imageUrl})` }}
 						></span>
 					</li>
-					<li className="userName">{detail.user.userName}</li>
-					<li className="score">평균 평점 {detail.sitter.averageStar}</li>
-					<li>
-						<strong>{detail.sitter.servicePrice}원</strong>
-						<span>/일</span>
-					</li>
+					<li className="user">
+            <p className="userName">{detail.user.userName}</p>
+            <p className="score"><i style={{backgroundImage: `url(${icon_star})`}}></i><strong>{detail.sitter.averageStar}</strong>{`(54)`}</p>
+          </li>
+          <li className="address"><i className="ic-location"></i>{detail.sitter.address}</li>
 					<li>
 						재고용률: <strong>{detail.sitter.rehireRate}%</strong>
 					</li>
@@ -455,23 +456,56 @@ const SitterDetailPage = styled.div`
     }
   }
 `;
+const TopImage = styled.div`
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 0;
+  padding-bottom: 50.4%;
+`
 const SitterProfile = styled.ul`
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  margin-top: -25px;
+  margin-top: -40px;
   li {
     &.profile span {
       display: inline-block;
-      width: 50px;
-      height: 50px;
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
       background-size: cover;
       background-position: center;
       background-repeat: no-repeat;
-      border: 1px solid #ddd;
+      border: 3px solid #fff;
       box-sizing: border-box;
+    }
+    &.user{
+      display: flex;
+      align-items: center;
+      .userName{
+        font-size: 21px;
+        font-weight: 500;
+      }
+      .score{
+        font-size: 14px;
+        strong{
+          font-weight: 500;
+        }
+        i{
+          display: inline-block;
+          width: 16px;
+          height: 16px;
+          background-size: contain;
+          background-repeat: no-repeat;
+          background-position: center;
+          vertical-align: middle;
+          margin: -2px 3px 0 8px;
+        }
+      }
+    }
+    &.address{
+      color: #676767;
     }
   }
 `;
