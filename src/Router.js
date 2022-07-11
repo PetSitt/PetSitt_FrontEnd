@@ -18,6 +18,7 @@ import SitterProfile from "./page/SitterProfile";
 import SitterProfileForm1 from "./page/SitterProfileForm1";
 import SitterProfileForm2 from "./page/SitterProfileForm2";
 import SitterProfileForm3 from "./page/SitterProfileForm3";
+import SitterProfileForm4 from "./page/SitterProfileForm4";
 
 const Router = () => {
   return (
@@ -48,6 +49,10 @@ const Router = () => {
         <Route
           path="/mypage/SitterProfileForm3"
           element={<SitterProfileForm3 />}
+        />
+        <Route
+          path="/mypage/SitterProfileForm4"
+          element={<SitterProfileForm4 />}
         />
         <Route path="/pwchange/:id" element={<PwChange />} />
         <Route path="/login" element={<Login />}></Route>

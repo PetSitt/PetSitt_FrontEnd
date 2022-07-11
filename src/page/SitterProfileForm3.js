@@ -2,7 +2,7 @@ import { useState } from "react";
 import Button from "../elements/Button";
 import Checkbox from "../elements/Checkbox";
 import styled from "styled-components";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { handleChange } from "../shared/common";
 
 const INITIAL_VALUES = {
@@ -12,7 +12,7 @@ const INITIAL_VALUES = {
   servicePrice: 0
 };
 
-function SitterProfileForm1() {
+function SitterProfileForm3() {
   const { data } = useLocation().state;
 
   const [available, setAvailable] = useState([]);
@@ -58,10 +58,6 @@ function SitterProfileForm1() {
   const handleInput = (e) => {
     const { name, value } = e.target;
     handleChange(name, value, setValues);
-  };
-
-  const onSubmitTest = () => {
-    console.log(values);
   };
 
   return (
@@ -125,7 +121,9 @@ function SitterProfileForm1() {
         </div>
       </div>
 
-      <Button _color={"#fff"} onClick={onSubmitTest}>다음</Button>
+      <Link to={`/mypage/SitterProfileForm4`} state={{ data: values }}>
+        <button>다음</button>
+      </Link>
     </SitterProfileFormInner>
   );
 }
@@ -137,4 +135,4 @@ const SitterProfileFormInner = styled.div`
   }
 `;
 
-export default SitterProfileForm1;
+export default SitterProfileForm3;
