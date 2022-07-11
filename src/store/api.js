@@ -30,7 +30,7 @@ const authApi = axios.create({
 jsonApi.interceptors.request.use((config)=> {
 	config.headers['Content-type'] = 'application/json; charset=UTF-8';
 	config.headers['Accept'] = 'application/json;';
-	config.headers['Authorization'] = `Bearer ${localStorage.get('accessToken')}`
+	config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
 	return config;
 }, (err) => {
 	return Promise.reject(err);
@@ -38,7 +38,7 @@ jsonApi.interceptors.request.use((config)=> {
 
 formDataApi.interceptors.request.use((config) => {
 	config.headers['Content-type'] = 'multipart/form-data';
-	config.headers['Authorization'] = `Bearer ${localStorage.get('accessToken')}`
+	config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
 	return config;
 }, (err) => {
 	return Promise.reject(err);
@@ -47,7 +47,7 @@ formDataApi.interceptors.request.use((config) => {
 authApi.interceptors.request.use((config)=> {
 	config.headers['Content-type'] = 'application/json; charset=UTF-8';
 	config.headers['Accept'] = 'application/json;';
-	config.headers['Authorization'] = `Bearer ${localStorage.get('accessToken')}`
+	config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
 	return config;
 }, (err) => {
 	return Promise.reject(err);
