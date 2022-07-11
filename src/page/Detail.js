@@ -247,7 +247,7 @@ const Detail = () => {
       </section>
       <section>
         <MapContainer
-          centerElement={[detail.sitter.x, detail.sitter.y]}
+          centerElement={{x: detail.sitter.x, y: detail.sitter.y, userName: detail.user.userName, reviewStar: detail.sitter.averageStar}}
           showOnly={true}
         />
         <p>{detail.sitter.address}</p>
