@@ -56,9 +56,7 @@ const GlobalStyles = createGlobalStyle`
     align-items: center;
     justify-content: center;
   }
-  .rmdp-day span{
-    
-  }
+  
   
   
 `;
