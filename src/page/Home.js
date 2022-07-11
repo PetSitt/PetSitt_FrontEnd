@@ -35,7 +35,7 @@ function Home() {
 	const [currentPosition, setCurrentPosition] = useState();
 	const [defaultSearch, setDefaultSearch] = useState(false);
 	const getSittersList = (queriesData, category) => {
-		if(category.length > 0){
+		if(category.length > 0 && category.length < 5){
 			for(let i=0; i<category.length; i++){
 				const cate_key = Object.keys(category[i])[0];
 				const cate_value = Object.values(category[i])[0];
@@ -52,9 +52,11 @@ function Home() {
 		{
 			onSuccess: (data) => {
 				console.log(data);
+				setSearched(false);
 			},
 			onError: (data) => {
 				console.error(data);
+				setSearched(false);
 			},
 			enabled: !!searched,
 			staleTime: Infinity,
@@ -94,6 +96,7 @@ function Home() {
 				categoryData[cate_key] = cate_value;
 			}
 		}
+		console.log(currentPosition,categoryData)
 		return apis.getSittersDefault({...currentPosition, ...categoryData});
 	}
 	const {data: sitters_default_query, isFetched: defaultIsFetched, isLoading: sitterDefaultIsLoading, isSuccess: sitterDefaultSuccess, refetch: refetchList} = useQuery(
@@ -139,19 +142,17 @@ function Home() {
 
 	console.log(defaultSearch, 'defaultSearch')
 	useEffect(()=>{
-		// if(sitterListSuccess){
-		// 	console.log('? 1111')
-		// 	setSitters(sitters_query.data.sitter2);
-		// }
-		// console.log()
+		queryClient.invalidateQueries('sitter_default');
+		if(listIsFetched){
+			console.log('? 1111')
+			setSitters(sitters_query.data.sitter2 ? sitters_query.data.sitter2 : sitters_query.data.sitters);
+			return;
+		}
 		console.log(listIsFetched, defaultIsFetched, sitterListSuccess, sitterDefaultSuccess)
-		if(sitterDefaultSuccess){
+		if(defaultIsFetched){
 			console.log('? 222')
 			setSitters(sitters_default_query.data.sitters);
-		}
-		if(defaultIsFetched){
-			queryClient.invalidateQueries('sitter_default');
-			setSitters(sitters_default_query.data.sitters);
+			return;
 		}
 	}, [sitterListSuccess, sitterDefaultSuccess, listIsFetched, defaultIsFetched])
 	useEffect(()=>{
@@ -241,6 +242,7 @@ function Home() {
 											<em>{`돌보미`}</em>
 											<span>재고용률 {v.rehireRate}%</span>
 										</p>
+										<p className="address">{v.address}</p>
 										<div className="bottom_info">
 											<div className="star">
 												<img src={icon_star} alt="star"/>
