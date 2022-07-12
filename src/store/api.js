@@ -117,7 +117,7 @@ export const apis = {
 
 	// detail
 	getUserDetail: (sitterId) => detailApi.get(`/details/${sitterId}`),
-	getReviews: (sitterId, reviewId) => detailApi.get(`/details/reviews/${sitterId}`, reviewId),
+	getReviews: (sitterId, reviewId) => detailApi.post(`/details/reviews/${sitterId}`, reviewId),
 
 	// reservation
 	makeReservation: (data, sitterId) => jsonApi.post(`/reservations/regist/${sitterId}`, data),
