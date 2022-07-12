@@ -27,7 +27,6 @@ const MapContainer = ({ centerElement, showOnly, items, _height }) => {
     // 지도를 클릭된 클러스터의 마커의 위치를 기준으로 확대합니다
     map.setLevel(level, { anchor: cluster.getCenter() });
   };
-  console.log(items)
 
   const markerClickEvent = (idx) => {
     const map = mapRef.current;
@@ -45,9 +44,6 @@ const MapContainer = ({ centerElement, showOnly, items, _height }) => {
       setCenterElem(positions[0]);
     }
   }, [positions]);
-
-  console.log(items, positions, 'map items')
-
 
   if (!centerElem) return <p>로딩중입니다</p>;
   else

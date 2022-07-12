@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "react-query";
 import styled from "styled-components";
 import DatePicker, { DateObject, Calendar } from "react-multi-date-picker";
@@ -12,6 +12,7 @@ const Detail = () => {
 	// 62c63d6f25208ae3d3cda472
 	const queryClient = useQueryClient();
 	const param = useParams();
+  const navigate = useNavigate();
 	const sitterId = param.id;
 	const [detail, setDetail] = useState();
 	const today = new DateObject();
@@ -61,7 +62,7 @@ const Detail = () => {
 			setSelectBoxToggle({ type: "", status: false });
 		}
 	};
-  const requestReservation = () => {
+  const requestReservation = async () => {
     let trueLength = 0;
     for (let i = 0; i < services.length; i++) {
       if (services[i]) {
@@ -76,6 +77,15 @@ const Detail = () => {
       setErrorMessage("날짜를 선택해주세요.");
       return;
     }
+    const reservationInfo = {
+      date: dates,
+      service: servicesText,
+      userName: detail.user.userName,
+      price: detail.sitter.servicePrice,
+      sitterId: detail.sitter.sitterId,
+    }
+    await localStorage.setItem('reservationInfo', JSON.stringify(reservationInfo));
+    navigate('/reservation');
   }
 	useEffect(() => {
 		setDetail(detailData.data);
@@ -122,7 +132,7 @@ const Detail = () => {
   if (detailIsLoading || !detail) return <p>로딩중입니다</p>;
 	return (
 		<SitterDetailPage>
-			<section className="top_section">
+			<section className="page_top">
         <section>
           <TopImage style={{backgroundImage: `url(${detail.sitter.mainImageUrl})`, margin: '0 -20px'}}></TopImage>
           <SitterProfile>
@@ -151,7 +161,7 @@ const Detail = () => {
           </SitterProfile>
         </section>
 			</section>
-      <section className="body_section">
+      <section className="page_body">
         <section>
           <h3 style={{ display: "flex", justifyContent: "space-between" }}>
             서비스 예약하기
@@ -373,14 +383,10 @@ const Detail = () => {
             _margin="0"
           />
           <StyledButton
-            _onClick={() => console.log('')}
+            _onClick={requestReservation}
             _title="예약하기"
             _margin="0"
           />
-          {/* <button type="button">문의하기</button>
-          <button type="button" onClick={requestReservation}>
-            예약하기
-          </button> */}
         </div>
       </ReservationFunctions>
     </SitterDetailPage>
@@ -453,7 +459,7 @@ const SitterDetailPage = styled.div`
   position: relative;
   line-height: 1.4;
   & > section {
-    &.top_section{
+    &.page_top{
       section{
         padding-bottom: 48px;
       }
@@ -465,7 +471,7 @@ const SitterDetailPage = styled.div`
         margin: 0 -20px;
       }
     }
-    &.body_section{
+    &.page_body{
       padding: 70px 0;
       .rmdp-border{
         margin-top: 46px;
