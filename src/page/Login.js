@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef } from 'react';
 import { Cookies } from 'react-cookie';
 import { apis } from '../store/api';
@@ -6,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import InputBox from '../elements/InputBox';
 import StyledButton from '../elements/StyledButton';
+import NavBox from '../elements/NavBox';
+import StyledContainer from '../elements/StyledContainer';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -56,18 +59,11 @@ const Login = () => {
       localStorage.removeItem('refreshToken');
       sessionStorage.removeItem('foundId');
     }
-  }, []);
+  }, [cookies]);
 
   return (
-    <>
-      <LoginContainer>
-        <NavBox>
-          <button>
-            <img src="/images/left_arrow.svg" alt="left_arrow" />
-          </button>
-          <h1>로그인</h1>
-          <div />
-        </NavBox>
+      <StyledContainer>
+        <NavBox _title={'로그인'} />
         <InputWrap>
           <InputBox
             _label={'아이디(이메일)'}
@@ -80,7 +76,7 @@ const Login = () => {
             _label={'비밀번호'}
             _type={'password'}
             _ref={pw_ref}
-            _placeholder={'1234'}
+            _placeholder={'4~10자리(특수문자, 숫자, 영어 포함)'}
             _alert={'비밀번호를 확인해 주세요'}
           />
           <StyledButton
@@ -125,29 +121,9 @@ const Login = () => {
             _title={'카카오로 시작하기'}
           />
         </RegisterBox>
-      </LoginContainer>
-    </>
+      </StyledContainer>
   );
 };
-
-const LoginContainer = styled.section`
-  display: flex;
-  flex-direction: column;
-  padding: 65px 16px;
-`;
-
-const NavBox = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 40px;
-  & h1 {
-    font-weight: 500;
-    font-size: 21px;
-    line-height: 25px;
-  }
-`;
 
 const InputWrap = styled.div`
   display: flex;
