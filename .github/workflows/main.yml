@@ -42,4 +42,4 @@ jobs:
           aws s3 cp \
             --recursive \
             --region ap-northeast-2 \
-            dist s3://petsitt.link
+            build s3://petsitt.link
