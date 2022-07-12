@@ -1,37 +1,44 @@
 import Button from "../elements/Button";
 import styled from "styled-components";
 import { Calendar, DateObject } from "react-multi-date-picker"
+import { Link, useLocation } from "react-router-dom";
 import { useState } from "react";
 
+
 const format = "YYYY/MM/DD/";
+const INITIAL_VALUES = {
+  noDate: []
+};
 
 function SitterProfileForm4() {
-  const [value, setValue] = useState([
-    new DateObject().set({ day: 4, format }),
-    new DateObject().set({ day: 25, format }),
-    new DateObject().set({ day: 20, format })
-  ]);
+  const { data } = useLocation().state;
+  const [values, setValues] = useState({...data, ...INITIAL_VALUES});
+  const [dates, setDates] = useState([]);
 
-  const onSubmitTest = () => {
-    console.log(value)
-  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const noDate = dates.map((el) => el.format());
+    setValues((prevValues) => {
+      return {...prevValues, noDate}
+    })
+  }
 
   return (
-    <SitterProfileFormInner>
+    <Form onSubmit={handleSubmit}>
       <h1>돌보미 등록<span>4/4</span></h1>
-      <Calendar value={value} onChange={setValue}></Calendar>
+      <Calendar multiple sort format={format} value={dates} onChange={setDates}></Calendar>
       <ul>
-        {value.map((date, index) => (
-          <li key={index}>{date.format()}</li>
+        {values.noDate.map((date, index) => (
+          <li key={index}>{date}</li>
         ))}
       </ul>
       
-      <Button _color={"#fff"} onClick={onSubmitTest}>등록하기</Button>
-    </SitterProfileFormInner>
+      <Button _color={"#fff"}>등록하기</Button>
+    </Form>
   );
 }
 
-const SitterProfileFormInner = styled.div`
+const Form = styled.form`
   input,
   textarea {
     border: 1px solid #000;
