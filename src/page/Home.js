@@ -184,9 +184,11 @@ function Home() {
 				let index = 0;
 				let priceArray = [];
 				priceArray = sitters[i].servicePrice.toString().split('');
-				for(let j=1; j<commaLength; j++){
-					priceArray.splice(-(3 * j + index), 0, ',');
-					index++;					
+				if(priceArray[-4] !== ','){
+					for(let j=1; j<commaLength; j++){
+						priceArray.splice(-(3 * j + index), 0, ',');
+						index++;				
+					}
 				}
 				sitters[i].servicePrice = priceArray.join('');
 			}
@@ -266,7 +268,7 @@ function Home() {
 					{
 						(viewType === 'list')
 						? (
-						<ul>
+						<ul style={{minHeight: mapHeight}}>
 							{
 								sitters?.map((v,i)=>{
 									return (
@@ -335,13 +337,14 @@ const Buttons = styled.div`
 		transform: translateX(-50%);
 		pointer-events: all;
 		display: inline-block;
-		line-height: 40px;
+		line-height: 38px;
 		height: 40px;
 		padding: 0 16px;
 		font-size: 16px;
-		color: #FC9215;
+		color: #1A1A1A;
 		background: #FFFFFF;
-		box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
+		border: 1px solid rgba(120, 120, 120, 0.2);
+		box-shadow: 0px 2px 3px rgba(0, 0, 0, 0.1);
 		border-radius: 20px;
 		i{
 			display: inline-block;
@@ -351,7 +354,7 @@ const Buttons = styled.div`
 			background-position: center;
 			background-repeat: no-repeat;
 			vertical-align: middle;
-			margin: -2px 5px 0 0;
+			margin: -3px 5px 0 0;
 		}
 }
 `
