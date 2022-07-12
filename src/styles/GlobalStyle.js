@@ -129,6 +129,9 @@ const GlobalStyles = createGlobalStyle`
     color: #676767;
     font-weight: normal;
   }
+  .rmdp-disabled{
+    pointer-events: none;
+  }
  
   
   

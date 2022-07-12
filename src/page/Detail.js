@@ -2,9 +2,10 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "react-query";
 import styled from "styled-components";
-import DatePicker, { DateObject, Calendar } from "react-multi-date-picker";
+import { DateObject, Calendar } from "react-multi-date-picker";
 import MapContainer from "./MapContainer";
 import { apis } from "../store/api";
+import Settings from "react-multi-date-picker/plugins/settings"
 
 import StyledButton from '../elements/StyledButton';
 
@@ -18,15 +19,27 @@ const Detail = () => {
 	const today = new DateObject();
 	const [date, setDate] = useState();
 	const [dates, setDates] = useState(new Date());
+  const [month, setMonth] = useState(new Date().getMonth()+1);
   const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
   const months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
+  const [unavailable, setUnavailable] = useState([]);
   const [services, setServices] = useState();
   const [servicesText, setServicesText] = useState([]);
   const [selectBoxToggle, setSelectBoxToggle] = useState({
     type: "",
     status: false,
   });
+  const [calendar, setCalendar] = useState('body');
   const [errorMessage, setErrorMessage] = useState();
+  const disableDate = () => {
+    const datesArray = [];
+    detail?.sitter.noDate.map(v=>{
+      if (new Date(v).getMonth()+1 === month){
+        datesArray.push(new Date(v).getDate())
+      }
+    })
+    setUnavailable(datesArray);
+  }
 	const [reviews, setReviews] = useState([
 		{
 			userName: "김대한",
@@ -48,7 +61,6 @@ const Detail = () => {
 		data: detailData,
 	} = useQuery("detail_data", () => apis.getUserDetail(sitterId), {
 		onSuccess: (data) => {
-			console.log('success')
 			console.log(data.data, "data loaded");
 		},
 		onError: (data) => {
@@ -87,10 +99,33 @@ const Detail = () => {
     await localStorage.setItem('reservationInfo', JSON.stringify(reservationInfo));
     navigate('/reservation');
   }
+  useEffect(()=>{
+    let elements = null; 
+    if(selectBoxToggle.status && selectBoxToggle.type === 'date'){
+      elements = document.querySelectorAll('.calendar_onModal .rmdp-day .sd');
+    }else{
+      elements = document.querySelectorAll('.calendar_onBody .rmdp-day .sd');
+    }
+    
+    for(let i=0; i<elements.length; i++){
+      for(let j=0; j<unavailable.length; j++){
+        if(elements[i].innerText/1 === unavailable[j]){
+          elements[i].parentNode.classList.add('rmdp-disabled');
+        }
+      }
+    }
+  },[unavailable])
+  console.log(unavailable, detail?.sitter.noDate)
 	useEffect(() => {
 		setDetail(detailData.data);
-    setServices(Array.from({length: detailData.data.sitter.category.length}, () => false))
+    setServices(Array.from({length: detailData.data.sitter.category.length}, () => false));
+    console.log(detailData.data.sitter.noDate)
 	}, [detailData.data]);
+  useEffect(()=>{
+    if(detail){
+      disableDate();
+    }
+  },[detail, month, selectBoxToggle]);
 	useEffect(() => {
 		window.addEventListener("click", checkSelectArea);
 		return()=>{
@@ -121,6 +156,7 @@ const Detail = () => {
   //   staleTime: Infinity,
   // })
 
+
   useEffect(() => {
     if (date?.length >= 0) {
       const getDates = date.map((v) => {
@@ -129,6 +165,8 @@ const Detail = () => {
       setDates(getDates);
     }
   }, [date]);
+
+
   if (detailIsLoading || !detail) return <p>로딩중입니다</p>;
 	return (
 		<SitterDetailPage>
@@ -194,6 +232,7 @@ const Detail = () => {
           </ServiceList>
           <div>
             <Calendar
+              className="calendar_onBody"
               value={date && date}
               onChange={setDate}
               multiple={true}
@@ -203,6 +242,7 @@ const Detail = () => {
               shadow={false}
               weekDays={weekDays}
               months={months}
+              onMonthChange={(date) => setMonth(new Date(date).getMonth()+1)}
             />
           </div>
         </section>
@@ -328,15 +368,17 @@ const Detail = () => {
                     })}
                 </p>
                 <Calendar
+                  className="calendar_onModal"
                   value={date && date}
                   onChange={setDate}
                   multiple={true}
                   format="YYYY/MM/DD"
                   minDate={new Date()}
-                  maxDate={
-                    new Date(today.year + 1, today.month.number, today.day)
-                  }
+                  maxDate={new Date(today.year + 1, today.month.number, today.day)}
                   shadow={false}
+                  weekDays={weekDays}
+                  months={months}
+                  onMonthChange={(date) => setMonth(new Date(date).getMonth()+1)}
                 />
               </div>
             </div>
@@ -357,6 +399,7 @@ const Detail = () => {
           </li>
           <li
             onClick={() => {
+              setMonth(new Date().getMonth()+1);
               setSelectBoxToggle({ type: "date", status: true });
             }}
           >
