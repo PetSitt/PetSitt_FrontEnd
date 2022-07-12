@@ -19,7 +19,7 @@ const Login = () => {
     onSuccess: async (data) => {
       console.log(data);
       await localStorage.setItem('accessToken', data.data.accessToken);
-      await cookies.set('cookies', data.data.refreshToken);
+      await cookies.set('refreshToken', data.data.refreshToken);
       await sessionStorage.removeItem('foundId');
       navigate('/');
     },
