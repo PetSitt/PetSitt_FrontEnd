@@ -33,6 +33,8 @@ jobs:
         run: yarn build
         env:
           CI: ""
+          REACT_APP_SERVER: ${{ secrets.REACT_APP_SERVER }}
+          REACT_APP_KAKAOMAPAPI: ${{ secrets.REACT_APP_KAKAOMAPAPI }}
 
       - name: Deploy                  
         env:
