@@ -14,9 +14,12 @@ import Petprofile from "./page/Petprofile";
 import PetprofileForm from "./page/PetprofileForm";
 import PwChange from "./page/PwChange";
 import Reservation from "./page/Reservation";
+import ReservationList from "./page/ReservationList";
 import SitterProfile from "./page/SitterProfile";
 import SitterProfileForm1 from "./page/SitterProfileForm1";
 import SitterProfileForm2 from "./page/SitterProfileForm2";
+import SitterProfileForm3 from "./page/SitterProfileForm3";
+import SitterProfileForm4 from "./page/SitterProfileForm4";
 
 const Router = () => {
   return (
@@ -44,10 +47,19 @@ const Router = () => {
           path="/mypage/SitterProfileForm2"
           element={<SitterProfileForm2 />}
         />
+        <Route
+          path="/mypage/SitterProfileForm3"
+          element={<SitterProfileForm3 />}
+        />
+        <Route
+          path="/mypage/SitterProfileForm4"
+          element={<SitterProfileForm4 />}
+        />
         <Route path="/pwchange/:id" element={<PwChange />} />
         <Route path="/login" element={<Login />}></Route>
         <Route path="/search" element={<SearchAddress />}></Route>
         <Route path="/reservation" element={<Reservation />}></Route>
+        <Route path="/reservation/list" element={<ReservationList />}></Route>
         <Route path="*" element={<Home replace to="/" />} />
       </Routes>
     </BrowserRouter>

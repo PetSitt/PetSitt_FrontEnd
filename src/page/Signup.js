@@ -7,6 +7,7 @@ import StyledContainer from "../elements/StyledContainer";
 import NavBox from "../elements/NavBox";
 import InputBox from "../elements/InputBox";
 import StyledButton from "../elements/StyledButton";
+import { handleChange } from "../shared/common";
 
 const INITIAL_VALUES = {
   userEmail: "",
@@ -33,18 +34,9 @@ const Signup = () => {
   const [isPhone, setIsPhone] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = (name, value) => {
-    setValues(function (prevValues) {
-      return {
-        ...prevValues,
-        [name]: value,
-      };
-    });
-  };
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    handleChange(name, value);
+    handleChange(name, value, setValues);
   };
 
   // 회원가입 유효성 검사

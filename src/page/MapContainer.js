@@ -3,12 +3,16 @@ import React, { useState, useEffect, useRef } from "react";
 import {
   Map,
   MapMarker,
+  CustomOverlayMap,
   MarkerClusterer,
   ZoomControl,
   Circle,
 } from "react-kakao-maps-sdk";
 
-const MapContainer = ({ centerElement, showOnly }) => {
+import marker from '../assets/img/marker.png';
+import star from '../assets/img/icon_star.png';
+
+const MapContainer = ({ centerElement, showOnly, items, _height }) => {
   const [level, setLevel] = useState();
   const [centerElem, setCenterElem] = useState(centerElement && centerElement);
   const [positions, setPositions] = useState([]);
@@ -27,12 +31,14 @@ const MapContainer = ({ centerElement, showOnly }) => {
   const markerClickEvent = (idx) => {
     const map = mapRef.current;
     map.setPosition({
-      lat: sitters[idx][1],
-      lng: sitters[idx][0],
+      lat: positions[idx].x,
+      lng: positions[idx].y,
     });
-    console.log(idx);
   };
 
+  useEffect(()=>{
+    items && setPositions(items);
+  },[])
   useEffect(() => {
     if (positions.length > 0) {
       setCenterElem(positions[0]);
@@ -45,24 +51,24 @@ const MapContainer = ({ centerElement, showOnly }) => {
       <>
         <Map
           ref={mapRef}
-          center={{ lat: centerElem[1], lng: centerElem[0] }}
-          style={{ width: "100%", height: "360px" }}
+          center={{ lat: centerElem.y, lng: centerElem.x }}
+          style={{ width: "100%", height: _height ? _height :  "360px" }}
           onZoomChanged={(map) => setLevel(map.getLevel())}
           draggable={showOnly ? false : true}
         >
           {showOnly ? (
             <Circle
               center={{
-                lat: centerElem[1],
-                lng: centerElem[0],
+                lat: centerElem.y,
+                lng: centerElem.x,
               }}
               radius={50}
               strokeWeight={2} // 선의 두께
-              strokeColor={"#75B8FA"} // 선의 색
+              strokeColor={"#FC9215"} // 선의 색
               strokeOpacity={1} // 선의 불투명도, 1에서 0 사이의 값
               strokeStyle={"normal"} // 선의 스타일
-              fillColor={"#CFE7FF"} // 채우기 색
-              fillOpacity={0.7} // 채우기 불투명도
+              fillColor={"#FC9215"} // 채우기 색
+              fillOpacity={0.4} // 채우기 불투명도
             />
           ) : (
             <>
@@ -75,29 +81,43 @@ const MapContainer = ({ centerElement, showOnly }) => {
                 onClusterclick={onClusterclick}
               >
                 {positions.map((pos, idx) => (
-                  <MapMarker
+                  <CustomOverlayMap
                     key={`pos_${idx}`}
                     position={{
-                      lat: pos[1],
-                      lng: pos[0],
+                      lat: pos.y,
+                      lng: pos.x,
                     }}
                     clickable={true} // 마커를 클릭했을 때 지도의 클릭 이벤트가 발생하지 않도록 설정합니다
                     onClick={() => markerClickEvent(idx)}
+                    image={{
+                      src: marker,
+                      size: {
+                        width: 40,
+                        height: 47,
+                      }, // 마커이미지의 크기입니다
+                      options: {
+                        offset: {
+                          x: 20,
+                          y: -47,
+                        }, // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+                      },
+                      style: {textAlign: 'center', display: 'flex', justifyContent: 'center'}
+                    }}
                   >
-                    <div>
-                      <p style={{ display: "inline-block", margin: 0 }}>
-                        {sitters[idx].userName}
-                      </p>
-                      <span>{sitters[idx].star}</span>
-                      {/* <span>{Array.from({length: sitters[idx].star}, () => '*')}</span> */}
+                    <div style={{textAlign: 'center', transform: 'translate(0, -47px)'}}>
+                      <div style={{display: 'flex', alignItems: 'center', height: '40px', padding: '0 15px', background: '#fff', borderRadius: '20px', border: '1px solid #FC9215', boxSizing: 'border-box'}}>
+                        <strong style={{fontWeight: 700}}>{pos.userName}</strong>
+                        <span style={{fontSize: '14px'}}><img src={star} alt="star" style={{display: 'inline-block', width: '13px', height: '13px', verticalAlign: 'middle', margin: '-3px 1px 0 5px'}}/>{pos.averageStar}</span>
+                      </div>
+                      <img src={marker} alt="star" style={{width: '40px', height: '47px', margin: '2px 0 0'}}/>
+
                     </div>
-                  </MapMarker>
+                  </CustomOverlayMap>
                 ))}
               </MarkerClusterer>
             </>
           )}
         </Map>
-        {level && <p>{"현재 지도 레벨은 " + level + " 입니다"}</p>}
       </>
     );
 };

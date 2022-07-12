@@ -1,6 +1,7 @@
 import React, {Suspense} from 'react'
 import Router from './Router';
 import styled from "styled-components";
+import "./assets/font/index.css"
 
 function App() {
   return (
@@ -17,7 +18,7 @@ function App() {
 const AppWrapper = styled.div`
   height: 100vh;
   background: rgb(217, 227, 238);
-
+  overflow: hidden;
   .AppInner{
     width: 100%;
     height: 100%;
@@ -25,6 +26,8 @@ const AppWrapper = styled.div`
     padding: 0 20px;
     box-sizing: border-box;
     background-color: #fff;
+    overflow: hidden;
+    overflow-y: auto;
 
     @media (min-width:768px) {
       max-width: 412px;
