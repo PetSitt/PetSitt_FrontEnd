@@ -1,21 +1,38 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
-const InputBox = ({ _label, _type, _ref, _placeholder, _alert }) => {
+const InputBox = ({
+  _label,
+  _type,
+  _ref,
+  _placeholder,
+  _name,
+  _onChange,
+  _value,
+}) => {
   return (
     <InputWrap>
       <label>{_label}</label>
-      <input type={_type} ref={_ref} placeholder={_placeholder} />
-      <span>{_alert}</span>
+      <input
+        type={_type}
+        {... _ref ? `ref=${_ref}` : null}
+        {... _name ? `name=${_name}` : null}
+        placeholder={_placeholder}
+        onChange={_onChange}
+        value={_value}
+      />
     </InputWrap>
   );
 };
 
 InputBox.defaultProps = {
-  _label: '',
-  _type: 'text',
-  _ref: '',
-  _placeholder: '미리보기 내용',
-  _alert: '알림 내용',
+  _label: "라벨",
+  _type: "text",
+  _ref: "ref",
+  _placeholder: "미리보기 내용",
+  _alert: "알림 내용",
+  _name: "이름",
+  _onChange: () => {},
+  _value: "",
 };
 
 const InputWrap = styled.div`
