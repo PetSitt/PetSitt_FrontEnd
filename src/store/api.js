@@ -109,7 +109,8 @@ export const apis = {
 	petprofilePost: (data) => formDataApi.post('/mypage/petprofile', data),
 	petprofilePatch: ({id, data}) => formDataApi.patch(`/mypage/petprofile/${id}`, data),
   petprofileDelete: (id) => jsonApi.delete(`/mypage/petprofile/${id}`),
-	
+	reservation: () => jsonApi.get('/reservations'),
+
 	// main
 	getSittersList: (queriesData) => mainApi.post('/mains/search', queriesData),
   getSittersDefault: (data) => mainApi.post('/mains', data),
@@ -117,4 +118,7 @@ export const apis = {
 	// detail
 	getUserDetail: (sitterId) => detailApi.get(`/details/${sitterId}`),
 	getReviews: (sitterId, reviewId) => detailApi.get(`/details/reviews/${sitterId}`, reviewId),
+
+	// reservation
+	makeReservation: (data, sitterId) => jsonApi.post(`/reservations/regist/${sitterId}`, data),
 }
