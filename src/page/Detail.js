@@ -5,9 +5,8 @@ import styled from "styled-components";
 import DatePicker, { DateObject, Calendar } from "react-multi-date-picker";
 import MapContainer from "./MapContainer";
 import { apis } from "../store/api";
-import axios from 'axios';
 
-import icon_star from '../assets/img/icon_star.png';
+import StyledButton from '../elements/StyledButton';
 
 const Detail = () => {
 	// 62c63d6f25208ae3d3cda472
@@ -228,8 +227,7 @@ const Detail = () => {
                     style={{ backgroundImage: `url(${v.petImage})` }}
                   ></span>
                   <p className="pet_name">{v.petName}</p>
-                  <p className="pet_type">{v.petType}</p>
-                  <p>{v.petAge}</p>
+                  <p className="pet_type">{v.petAge}살 {v.petType}</p>
                 </li>
               );
             })}
@@ -253,6 +251,7 @@ const Detail = () => {
           </ul>
         </section>
         <section>
+          <h3>{detail.user.userName}님의 위치</h3>
           <MapWrapper>
             <MapContainer
               centerElement={{x: detail.sitter.x, y: detail.sitter.y, userName: detail.user.userName, reviewStar: detail.sitter.averageStar}}
@@ -360,12 +359,28 @@ const Detail = () => {
                 : "날짜를 선택해주세요."}
             </strong>
           </li>
+          <li className="price">
+            <span>결제예정금액</span>
+            <strong><em>{detail.sitter.servicePrice}</em>원/일</strong>
+          </li>
         </ul>
         <div className="buttons">
-          <button type="button">문의하기</button>
+          <StyledButton
+            _onClick={() => console.log('')}
+            _bgColor={'rgba(252, 146, 21, 0.1)'}
+            color={'#fc9215'}
+            _title="문의하기"
+            _margin="0"
+          />
+          <StyledButton
+            _onClick={() => console.log('')}
+            _title="예약하기"
+            _margin="0"
+          />
+          {/* <button type="button">문의하기</button>
           <button type="button" onClick={requestReservation}>
             예약하기
-          </button>
+          </button> */}
         </div>
       </ReservationFunctions>
     </SitterDetailPage>
@@ -379,8 +394,7 @@ const ReservationFunctions = styled.div`
   bottom: 0;
   z-index: 5;
   background-color: #fff;
-  border-top: 1px solid #ddd;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  border-top: 1px solid #C9C9C9;
   margin: 0 -20px;
   .select_wrap {
     h3 {
@@ -396,34 +410,42 @@ const ReservationFunctions = styled.div`
   li {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     font-size: 16px;
-    line-height: 40px;
-    height: 36px;
+    height: 40px;
     padding: 0 20px;
     cursor: pointer;
-    & + li {
-      border-top: 1px solid #ddd;
-    }
+    border-bottom: 1px solid #C9C9C9;
     label {
       display: block;
       width: 100%;
     }
     span {
-      font-weight: 700;
+      color: #676767;
     }
     strong {
       font-size: 14px;
+      font-weight: 500;
+    }
+    &.price{
+      cursor: default;
+      strong{
+        font-weight: normal;
+        color: #1A1A1A;
+        em{
+          color: #FC9215;
+          font-weight: 500;
+        }
+      }
     }
   }
   .buttons {
     display: flex;
     align-items: center;
-    background: #ddd;
+    gap: 10px;
+    padding: 10px 20px 30px;
     button {
       flex-basis: 50%;
-      height: 40px;
-      line-height: 40px;
-      font-size: 18px;
     }
   }
 `;
@@ -491,6 +513,7 @@ const SitterDetailPage = styled.div`
             .pet_name{
               line-height: 1;
               margin: 10px 0 5px;
+              font-weight: 500;
             }
             .pet_type{
               color: #676767;
