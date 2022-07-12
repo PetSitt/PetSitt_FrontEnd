@@ -18,6 +18,8 @@ const Detail = () => {
 	const today = new DateObject();
 	const [date, setDate] = useState();
 	const [dates, setDates] = useState(new Date());
+  const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
+  const months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
   const [services, setServices] = useState();
   const [servicesText, setServicesText] = useState([]);
   const [selectBoxToggle, setSelectBoxToggle] = useState({
@@ -121,137 +123,145 @@ const Detail = () => {
   if (detailIsLoading || !detail) return <p>로딩중입니다</p>;
 	return (
 		<SitterDetailPage>
-			<section>
-        <TopImage style={{backgroundImage: `url(${detail.sitter.mainImageUrl})`, margin: '0 -20px'}}></TopImage>
-				<SitterProfile>
-					<li className="profile">
-						<span
-							style={{ backgroundImage: `url(${detail.sitter.imageUrl})` }}
-						></span>
-					</li>
-					<li className="user">
-            <p className="userName">{detail.user.userName}</p>
-            <p className="score"><i style={{backgroundImage: `url(${icon_star})`}}></i><strong>{detail.sitter.averageStar}</strong>{`(54)`}</p>
-          </li>
-          <li className="address"><i className="ic-location"></i>{detail.sitter.address}</li>
-					<li>
-						재고용률: <strong>{detail.sitter.rehireRate}%</strong>
-					</li>
-					<li>{detail.sitter.introTitle}</li>
-					<li>{detail.sitter.myIntro}</li>
-				</SitterProfile>
+			<section className="top_section">
+        <section>
+          <TopImage style={{backgroundImage: `url(${detail.sitter.mainImageUrl})`, margin: '0 -20px'}}></TopImage>
+          <SitterProfile>
+            <li className="profile">
+              <span
+                style={{ backgroundImage: `url(${detail.sitter.imageUrl})` }}
+              ></span>
+            </li>
+            <li className="user">
+              <p className="userName">{detail.user.userName}</p>
+              <p className="score">
+                <i className="ic-star"></i>
+                <strong>{detail.sitter.averageStar}</strong>{`(54)`}
+              </p>
+            </li>
+            <li className="address"><i className="ic-location"></i>{detail.sitter.address}</li>
+            <li>
+              <p className="rehire">재고용률 <strong>{detail.sitter.rehireRate}%</strong></p>	
+            </li>
+            <li className="introduce">
+              <dl>
+                <dt>{detail.sitter.introTitle}</dt>
+                <dd>{detail.sitter.myIntro}</dd>
+              </dl>
+            </li>
+          </SitterProfile>
+        </section>
 			</section>
-			<section>
-				<h3 style={{ display: "flex", justifyContent: "space-between" }}>
-					서비스 예약하기
-					<p style={{ fontSize: "16px" }}>
-						<strong>{detail.sitter.servicePrice}원</strong>/일
-					</p>
-				</h3>
-				<ul style={{ margin: "10px 0" }}>
-					{detail.sitter.category.map((v, i) => {
-						return (
-							<li key={`category_${i}`}>
-								<label>
-									<input type="checkbox" checked={services[i]} onChange={(e)=>{
-                    setServices((prev)=>{
-                      const new_data = [...prev];
-                      new_data[i] = e.target.checked;
-                      return new_data;
-                    })
-                  }}/>
-									{v}
-								</label>
-							</li>
-						);
-					})}
-				</ul>
-				<div>
-					<p>
-						{dates.length > 0 &&
-							dates?.map((v, i) => {
-								return (
-									<>
-										{i > 0 ? ", " : ""}
-										<span key={`date_${v}`} style={{ display: "inline-block" }}>
-											{v}
-										</span>
-									</>
-								);
-							})}
-					</p>
-					<Calendar
-            value={date && date}
-            onChange={setDate}
-            multiple={true}
-            format="YYYY/MM/DD"
-            minDate={new Date()}
-            maxDate={new Date(today.year + 1, today.month.number, today.day)}
-            shadow={false}
-          />
-        </div>
-      </section>
-      <section>
-        <h3>서비스 가능한 반려견 사이즈</h3>
-        <ul>
-          {detail.sitter.careSize.map((v, i) => {
-            return (
-              <li key={`careSize_${i}`}>
-                {v && (i === 0 ? "소" : i === 1 ? "중" : "대")}
-              </li>
-            );
-          })}
-        </ul>
-      </section>
-      <section>
-        <h3>추가 제공 가능한 서비스</h3>
-        <ul>
-          {detail.sitter.plusService.map((v, i) => {
-            return <li key={`plusService_${i}`}>{v}</li>;
-          })}
-        </ul>
-      </section>
-      <section className="pets_info_section">
-        <h3>{detail.user.userName}님과 함께사는 반려견</h3>
-        <ul>
-          {detail.pets.map((v, i) => {
-            return (
-              <li key={`pet_${i}`}>
-                <span
-                  className="pet_image"
-                  style={{ backgroundImage: `url(${v.petImage})` }}
-                ></span>
-                <p>{v.petName}</p>
-                <p>{v.petType}</p>
-                <p>{v.petAge}</p>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
-      <section className="pets_info_section">
-        <h3>{detail.user.userName}님에 대한 후기</h3>
-        <ul>
-          {reviews.map((v, i) => {
-            return (
-              <li key={`review_${i}`}>
-                <div>
-                  <span>{v.userName}</span>
-                  <span>{v.reviewStar}</span>
-                  <span>{v.reviewDate}</span>
-                </div>
-                <p>{v.reviewInfo}</p>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
-      <section>
-        <MapContainer
-          centerElement={{x: detail.sitter.x, y: detail.sitter.y, userName: detail.user.userName, reviewStar: detail.sitter.averageStar}}
-          showOnly={true}
-        />
-        <p>{detail.sitter.address}</p>
+      <section className="body_section">
+        <section>
+          <h3 style={{ display: "flex", justifyContent: "space-between" }}>
+            서비스 예약하기
+            <p>
+              <strong>{detail.sitter.servicePrice}원</strong>/일
+            </p>
+          </h3>
+          <ServiceList>
+            {detail.sitter.category.map((v, i) => {
+              return (
+                <li key={`category_${i}`}>
+                  <div>
+                    <label>
+                      <input type="checkbox" checked={services[i]} onChange={(e)=>{
+                        setServices((prev)=>{
+                          const new_data = [...prev];
+                          new_data[i] = e.target.checked;
+                          return new_data;
+                        })
+                      }}/>
+                      <span>
+                        <i></i>
+                        {v}
+                      </span>
+                    </label>
+                  </div>
+                </li>
+              );
+            })}
+          </ServiceList>
+          <div>
+            <Calendar
+              value={date && date}
+              onChange={setDate}
+              multiple={true}
+              format="YYYY/MM/DD"
+              minDate={new Date()}
+              maxDate={new Date(today.year + 1, today.month.number, today.day)}
+              shadow={false}
+              weekDays={weekDays}
+              months={months}
+            />
+          </div>
+        </section>
+        <section>
+          <h3>서비스 가능한 반려견 사이즈</h3>
+          <ul>
+            {detail.sitter.careSize.map((v, i) => {
+              return (
+                <li key={`careSize_${i}`}>
+                  {v && (i === 0 ? "소" : i === 1 ? "중" : "대")}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+        <section>
+          <h3>추가 제공 가능한 서비스</h3>
+          <ul>
+            {detail.sitter.plusService.map((v, i) => {
+              return <li key={`plusService_${i}`}>{v}</li>;
+            })}
+          </ul>
+        </section>
+        <section className="pets_info_section">
+          <h3>{detail.user.userName}님과 함께사는 반려견</h3>
+          <ul>
+            {detail.pets.map((v, i) => {
+              return (
+                <li key={`pet_${i}`}>
+                  <span
+                    className="pet_image"
+                    style={{ backgroundImage: `url(${v.petImage})` }}
+                  ></span>
+                  <p className="pet_name">{v.petName}</p>
+                  <p className="pet_type">{v.petType}</p>
+                  <p>{v.petAge}</p>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+        <section className="pets_info_section">
+          <h3>{detail.user.userName}님에 대한 후기</h3>
+          <ul>
+            {reviews.map((v, i) => {
+              return (
+                <li key={`review_${i}`}>
+                  <div>
+                    <span>{v.userName}</span>
+                    <span>{v.reviewStar}</span>
+                    <span>{v.reviewDate}</span>
+                  </div>
+                  <p>{v.reviewInfo}</p>
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+        <section>
+          <MapWrapper>
+            <MapContainer
+              centerElement={{x: detail.sitter.x, y: detail.sitter.y, userName: detail.user.userName, reviewStar: detail.sitter.averageStar}}
+              showOnly={true}
+              _height="100%"
+            />
+          </MapWrapper>
+          <p>{detail.sitter.address}</p>
+        </section>
       </section>
       <ReservationFunctions>
         {selectBoxToggle.status &&
@@ -420,36 +430,72 @@ const ReservationFunctions = styled.div`
 const SitterDetailPage = styled.div`
   position: relative;
   line-height: 1.4;
-  section {
-    h3 {
-      font-size: 20px;
-      padding-bottom: 6px;
-      border-bottom: 1px solid #333;
-      margin-bottom: 15px;
+  & > section {
+    &.top_section{
+      section{
+        padding-bottom: 48px;
+      }
+      &:after{
+        content: '';
+        display: block;
+        height: 8px;
+        background-color: rgba(245, 245, 245, 1);
+        margin: 0 -20px;
+      }
     }
-    & + section {
-      padding: 30px 0 0;
-      margin: 30px 0 0;
+    &.body_section{
+      padding: 70px 0;
+      .rmdp-border{
+        margin-top: 46px;
+      }
     }
-    &:last-of-type {
-      padding-bottom: 30px;
-    }
-    &.pets_info_section {
-      ul {
-        li {
-          display: flex;
-          align-items: center;
-          gap: 20px;
-          .pet_image {
-            display: block;
-            width: 50px;
-            height: 50px;
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
+    & > section{
+      h3 {
+        font-size: 18px;
+        font-weight: 700;
+        margin-bottom: 22px;
+        line-height: 1.2;
+        p{
+          font-size: 14px;
+          font-weight: normal;
+          letter-spacing: .03em;
+          strong{
+            font-size: 18px;
+            letter-spacing: normal;
           }
-          & + li {
-            margin-top: 20px;
+        }
+      }
+      & + section {
+        padding: 70px 0 0;
+      }
+      &.pets_info_section {
+        ul {
+          display: flex;
+          flex-direction: row;
+          gap: 16px;
+          li {
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+            align-items: center;
+            justify-items: center;
+            .pet_image {
+              display: block;
+              width: 60px;
+              height: 60px;
+              border-radius: 50%;
+              background-size: cover;
+              background-position: center;
+              background-repeat: no-repeat;
+            }
+            .pet_name{
+              line-height: 1;
+              margin: 10px 0 5px;
+            }
+            .pet_type{
+              color: #676767;
+              line-height: 1;
+            }
           }
         }
       }
@@ -494,20 +540,98 @@ const SitterProfile = styled.ul`
         }
         i{
           display: inline-block;
-          width: 16px;
-          height: 16px;
+          width: 18px;
+          height: 18px;
           background-size: contain;
           background-repeat: no-repeat;
           background-position: center;
           vertical-align: middle;
-          margin: -2px 3px 0 8px;
+          margin: -4px 1px 0 8px;
         }
       }
     }
     &.address{
       color: #676767;
+      margin: 10px 0;
+      line-height: 1;
+      i{
+        display: inline-block;
+        font-size: 20px;
+        vertical-align: middle;
+        margin-top: -3px;
+        margin-right: 4px;
+      }
+    }
+    .rehire{
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 500;
+      background: rgba(252, 146, 21, 0.1);
+      border-radius: 3px;
+      color: #FC9215;
+      padding: 0 6px;
+      line-height: 20px;
+    }
+    &.introduce{
+      margin-top: 36px;
+      dt{
+        line-height: 1.2;
+      }
+      dd{
+        color: #676767;
+        line-height: 1.4;
+        margin-top: 8px;
+      }
     }
   }
 `;
+const ServiceList = styled.ul`
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 0 -5px;
+  li{
+    flex-basis: 50%;
+    box-sizing: border-box;
+    padding: 0 5px;
+    label{
+      position: relative;
+      input{
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 0;
+        height: 0;
+        &:checked + span{
+          border-color: #FC9215;
+          color: #FC9215;
+        }
+      }
+      span{
+        display: block;
+        border: 2px solid rgba(120,120,120,.2);
+        border-radius: 6px;
+        padding: 20px 0;
+        text-align: center;
+        color: rgba(120,120,120,.7);
+      }
+    }
+    &:nth-of-type(n+3){
+      margin-top: 16px;
+    }
+  }
+`
+const MapWrapper = styled.div`
+  width: 100%;
+  height: 12vw;
+  border-radius: 10px;
+  overflow: hidden;
+  & + p{
+    font-size: 14px;
+    line-height: 1.2;
+    margin-top: 8px;
+  }
+`
 
 export default Detail;

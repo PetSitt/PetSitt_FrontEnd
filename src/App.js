@@ -26,6 +26,8 @@ const AppWrapper = styled.div`
     padding: 0 20px;
     box-sizing: border-box;
     background-color: #fff;
+    overflow: hidden;
+    overflow-y: auto;
 
     @media (min-width:768px) {
       max-width: 412px;

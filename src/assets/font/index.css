@@ -27,11 +27,9 @@ i {
 
 .ic-map:before {
   content: "\e900";
-  color: #fc9215;
 }
 .ic-location:before {
   content: "\e901";
-  color: #676767;
 }
 .ic-arw-right:before {
   content: "\e902";
@@ -47,4 +45,8 @@ i {
 }
 .ic-close:before {
   content: "\e906";
+}
+.ic-star:before {
+  content: "\e907";
+  color: #FFC700;
 }
