@@ -150,7 +150,6 @@ function Home() {
 	},[])
 
 	useEffect(()=>{
-		console.log('github action test')
 		queryClient.invalidateQueries('sitter_default');
 		if(sittersFilteredIsFetched){
 			const sittersData = sittersFilteredSearch.data.sitter2 ? sittersFilteredSearch.data.sitter2 : sittersFilteredSearch.data.sitters;
@@ -201,6 +200,7 @@ function Home() {
 				return positionItems;
 			})
 		}
+		console.log('action test11')
 	},[sitters])
 	
 
