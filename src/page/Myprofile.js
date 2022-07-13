@@ -1,17 +1,17 @@
-import React, {useRef, useEffect, useState} from "react";
+import React, {useRef, useState} from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Cookies } from "react-cookie";
 import styled from "styled-components";
-import { useQuery, useMutation, useQueryClient } from "react-query";
+import { useQuery, useMutation } from "react-query";
 import Button from '../elements/Button';
 import Input from '../elements/Input';
 import { apis } from "../store/api";
 
 const Myprofile = () => {
 	const {isLoading, data: userData} = useQuery("user", apis.myprofileGet);
-	const inputEl1 = useRef(null);
-	const inputEl2 = useRef(null);
-	const inputEl3 = useRef(null);
+	const inputEl1 = useRef();
+	const inputEl2 = useRef();
+	const inputEl3 = useRef();
 	const [text, setText] = useState('수정')
 	const cookies = new Cookies();
 	const navigate = useNavigate();
@@ -28,10 +28,11 @@ const Myprofile = () => {
 			alert(data.response.data.errorMessage)
 			navigate("/login");
 		}
-	})
+	});
 
-	const isLogin = cookies.get('accessToken');
+	const isLogin = cookies.get('refreshToken');
 	const handleUpdate = (e) => {
+		console.log(inputEl1)
 		inputEl1.current.disabled = false
 		inputEl2.current.disabled = false
 		inputEl3.current.disabled = false
@@ -47,10 +48,6 @@ const Myprofile = () => {
 		}
 		setText('저장');
 	}
-
-	useEffect(() => {
-		console.log(userData)
-	},[])
 
 	return (
 		<MyprofileInner>

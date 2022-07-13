@@ -1,9 +1,8 @@
 import { useState } from "react";
-import Button from "../elements/Button";
-import Checkbox from "../elements/Checkbox";
 import styled from "styled-components";
 import { Link, useLocation } from "react-router-dom";
-import { handleChange } from "../shared/common";
+import Checkbox from "../elements/Checkbox";
+import { handleChange, comma, uncomma } from "../shared/common";
 
 const INITIAL_VALUES = {
   careSize: [false, false, false],
@@ -16,6 +15,7 @@ function SitterProfileForm3() {
   const { data } = useLocation().state;
   const [available, setAvailable] = useState([]);
   const [addService, setAddService] = useState([]);
+  const [num, setNum] = useState(0);
   const [values, setValues] = useState({ ...data, ...INITIAL_VALUES });
 
   const availableHandler = (checked, id) => {
@@ -56,7 +56,8 @@ function SitterProfileForm3() {
 
   const handleInput = (e) => {
     const { name, value } = e.target;
-    handleChange(name, value, setValues);
+    handleChange(name, comma(uncomma(value)), setValues);
+    return setNum(comma(uncomma(value)))
   };
 
   return (
@@ -205,7 +206,7 @@ function SitterProfileForm3() {
         <p className="tit">금연*</p>
         <p className="txt">일당 서비스 금액을 입력해주세요.</p>
         <div>
-          <input type="text" name="servicePrice" onChange={handleInput} />
+          <input type="text" name="servicePrice" value={num} onChange={handleInput} />
         </div>
       </div>
 

@@ -40,15 +40,11 @@ const PetprofileForm = () => {
   const queryClient = useQueryClient();
 
   // useMutation 생성하는 세팅 함수
-  const {
-    mutate: create,
-    error,
-    isSuccess,
-  } = useMutation(apis.petprofilePost, {
+  const {mutate: create, error, isSuccess,} = useMutation(apis.petprofilePost, {
     onSuccess: () => {
       //무효화 시킴
       queryClient.invalidateQueries("petprofile");
-      navigate("/mypage/petprofile");
+      // navigate("/mypage/petprofile");
     },
     onError: (data) => {
       console.log(data);
@@ -78,6 +74,7 @@ const PetprofileForm = () => {
     formData.append("petSpay", values.petSpay);
     formData.append("petIntro", values.petIntro);
     formData.append("petImage", values.petImage);
+    
     const fields = {
       id: values.petId,
       data: formData,
