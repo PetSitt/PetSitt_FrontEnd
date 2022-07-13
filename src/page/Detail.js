@@ -8,6 +8,7 @@ import { apis } from "../store/api";
 import Settings from "react-multi-date-picker/plugins/settings"
 
 import StyledButton from '../elements/StyledButton';
+import Reviews from './Reviews';
 
 const Detail = () => {
 	// 62c63d6f25208ae3d3cda472
@@ -31,10 +32,6 @@ const Detail = () => {
   });
   const [calendar, setCalendar] = useState('body');
   const [errorMessage, setErrorMessage] = useState();
-  const [requestReviews, setRequestReviews] = useState(false);
-  const [reviewIdValue, setReviewIdValue] = useState(0);
-  const [reviews, setReviews] = useState();
-  const lastReviewRef = useRef();
   const disableDate = () => {
     const datesArray = [];
     detail?.sitter.noDate.map(v=>{
@@ -98,7 +95,6 @@ const Detail = () => {
     }else{
       elements = document.querySelectorAll('.calendar_onBody .rmdp-day .sd');
     }
-    
     for(let i=0; i<elements.length; i++){
       for(let j=0; j<unavailable.length; j++){
         if(elements[i].innerText/1 === unavailable[j]){
@@ -111,7 +107,6 @@ const Detail = () => {
   useEffect(() => {
 		setDetail(detailData.data);
     setServices(Array.from({length: detailData.data.sitter.category.length}, () => false));
-    setRequestReviews(true);
 	}, [detailData.data]);
   useEffect(()=>{
     if(detail){
@@ -138,17 +133,7 @@ const Detail = () => {
     }
   }, [services]);
 
-  const {data: reviewsData} = useQuery(['reviewsData', detail?.sitter.sitterId, reviewIdValue], () => apis.getReviews(sitterId, {reviewId: reviewIdValue}), {
-    onSuccess: (data) => {
-      
-    },
-    onError: (data) => {
-      //console.error(data);
-    },
-    enabled: !!requestReviews,
-    staleTime: Infinity,
-    refetchOnMount: 'always',
-  })
+  
 
   useEffect(() => {
     if (date?.length >= 0) {
@@ -159,39 +144,11 @@ const Detail = () => {
     }
   }, [date]);
 
-  useEffect(()=>{
-    if(reviewsData?.data.reviews.length > 0){
-      setReviews((prev)=>{
-        const _new_added = reviewsData.data.reviews.map(v=>{
-          const _date = new Date(v.reviewDate)
-          .toISOString().split("T")[0]
-          .split('-').join('/');
-          const _time = new Date(v.reviewDate)
-          .toISOString().split("T")[1].split('.')[0];
-          return {...v, date: _date, time: _time};
-        })
-        if(prev?.length > 0){
-          const _new = [...prev];
-          return [..._new, ..._new_added];
-        }else{
-          return [..._new_added]
-        }
-      });
-    }
-  },[reviewsData])
+  
 
-  useEffect(()=>{
-    if(lastReviewRef.current){
-      console.log(lastReviewRef?.current.offsetTop)
-      document.querySelector(".AppInner").scrollTo(0,lastReviewRef?.current.offsetTop)
-      // setTimeout(()=>{
-      //   window.scrollTo(0, lastReviewRef?.current.offsetTop)
-      // }, 100)
-    }
-    
-  },[reviews])
+  console.log('????')
 
-  if (detailIsLoading || !detail || !reviews) return <p>로딩중입니다</p>;
+  if (detailIsLoading || !detail ) return <p>로딩중입니다</p>;
 	return (
 		<SitterDetailPage>
 			<section className="page_top">
@@ -314,28 +271,7 @@ const Detail = () => {
             <strong style={{fontSize: '32px', fontWeight: '500'}}>{detail?.sitter.averageStar}</strong>
             <span>{detail?.sitter.reviewCount}개의 후기</span>
           </div>
-          <ul>
-            {reviews.map((v, i) => {
-              return (
-                <li key={`review_${i}`} ref={(i === reviews.length-4) ? lastReviewRef : null}>
-                  <div>
-                    <span className="name">{v.userName}</span>
-                    <span><i className="ic-star" style={{fontSize: '14px'}}></i><em style={{margin: '0 10px 0 3px'}}>{v.reviewStar}</em></span>
-                    <span style={{color: '#676767'}}>{v.date}</span>
-                    <span style={{color: '#676767', marginLeft: '6px'}}>{v.time}</span>
-                  </div>
-                  <p>{v.reviewInfo}</p>
-                </li>
-              );
-            })}
-          </ul>
-          {
-            (reviews.length < detail.sitter.reviewCount) && (
-              <div style={{textAlign: 'center', paddingTop: '40px'}}>
-                <button type="button" className="more_review" onClick={()=>setReviewIdValue(reviews[reviews.length-1].id)}>리뷰 더보기</button>
-              </div>
-            )
-          }
+          <Reviews reviewCount={detail.sitter.reviewCount} sitterId={detail?.sitter.sitterId}/>
         </section>
         <section>
           <h3>{detail.user.userName}님의 위치</h3>
@@ -786,10 +722,18 @@ const ServiceList = styled.ul`
   }
 `
 const MapWrapper = styled.div`
+  position: relative;
   width: 100%;
-  height: 12vw;
+  height: 0;
+  padding-bottom: 32.7272%;
   border-radius: 10px;
   overflow: hidden;
+  & > div{
+    position: absolute!important;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
   & + p{
     font-size: 14px;
     line-height: 1.2;
