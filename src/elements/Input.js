@@ -11,6 +11,7 @@ const Input = ({
   _borderRadius,
   _name,
   _placeholder,
+  _ref,
   _type,
   _value,
   defaultValue,
@@ -36,6 +37,7 @@ const Input = ({
         name={_name}
         placeholder={_placeholder}
         values={_value}
+        ref={_ref}
         defaultValue={defaultValue}
         required={required}
         disabled={disabled}

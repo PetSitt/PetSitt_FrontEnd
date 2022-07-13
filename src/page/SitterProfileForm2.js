@@ -15,6 +15,11 @@ const SitterProfileForm2 = () => {
   const { data } = useLocation().state;
   const [values, setValues] = useState({ ...data, ...INITIAL_VALUES });
 
+  const handleFileChange = (e) => {
+    const { name, files } = e.target;
+    handleChange(name, files[0], setValues);
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     handleChange(name, value, setValues);
@@ -27,11 +32,11 @@ const SitterProfileForm2 = () => {
       </h1>
       <div>
         <p className="tit">돌보미 프로필 사진</p>
-        <ImageRegist name={"imageUrl"} value={values.imageUrl} onChange={handleInputChange}/>
+        <ImageRegist name={"imageUrl"} value={values.imageUrl} onChange={handleFileChange}/>
       </div>
       <div>
         <p className="tit">대표 이미지 (최대 1장)</p>
-        <ImageRegist name={"mainImageUrl"} value={values.mainImageUrl} onChange={handleInputChange}/>
+        <ImageRegist name={"mainImageUrl"} value={values.mainImageUrl} onChange={handleFileChange}/>
       </div>
       <div>
         <p className="tit">소개 타이틀 (30자 제한)</p>
