@@ -14,6 +14,7 @@ import Petprofile from "./page/Petprofile";
 import PetprofileForm from "./page/PetprofileForm";
 import PwChange from "./page/PwChange";
 import Reservation from "./page/Reservation";
+import ReservationList from "./page/ReservationList";
 import SitterProfile from "./page/SitterProfile";
 import SitterProfileForm1 from "./page/SitterProfileForm1";
 import SitterProfileForm2 from "./page/SitterProfileForm2";
@@ -58,6 +59,7 @@ const Router = () => {
         <Route path="/login" element={<Login />}></Route>
         <Route path="/search" element={<SearchAddress />}></Route>
         <Route path="/reservation" element={<Reservation />}></Route>
+        <Route path="/reservation/list" element={<ReservationList />}></Route>
         <Route path="*" element={<Home replace to="/" />} />
       </Routes>
     </BrowserRouter>

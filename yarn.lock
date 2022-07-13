@@ -7936,6 +7936,11 @@ react-kakao-maps-sdk@^1.1.1:
   dependencies:
     kakao.maps.d.ts "^0.1.32"
 
+react-moment@^1.1.2:
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/react-moment/-/react-moment-1.1.2.tgz#a9b157c58ddd226a2f746e5ca43415b24a17b6af"
+  integrity sha512-lfb+shYXI2tXlQrNUpNr05/1D/kzFj8Isbfp89DQrpZk0fs2JIAnLHWETR0hQS9zvtzwLWlVv0wKLffbue5HoA==
+
 react-multi-date-picker@^3.3.0:
   version "3.3.0"
   resolved "https://registry.yarnpkg.com/react-multi-date-picker/-/react-multi-date-picker-3.3.0.tgz#89036a1bf013fc65bc12dda640d5a979a640b453"

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef } from 'react';
 import { Cookies } from 'react-cookie';
 import { apis } from '../store/api';
@@ -6,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import InputBox from '../elements/InputBox';
 import StyledButton from '../elements/StyledButton';
+import NavBox from '../elements/NavBox';
+import StyledContainer from '../elements/StyledContainer';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -54,99 +57,88 @@ const Login = () => {
       cookies.remove('refreshToken');
       sessionStorage.removeItem('foundId');
     }
-  }, []);
+  }, [cookies]);
 
 
   return (
-    <>
-      <LoginContainer>
-        <NavBox>
-          <button>
-            <img src="/images/left_arrow.svg" alt="left_arrow" />
-          </button>
-          <h1>로그인</h1>
-          <div />
-        </NavBox>
-        <InputWrap>
-          <InputBox
-            _label={'아이디(이메일)'}
-            _type={'email'}
-            _ref={email_ref}
-            _placeholder={'example@petsitt.com'}
-            _alert={'이메일 주소를 확인해 주세요'}
+    <StyledContainer>
+      <NavBox _title={'로그인'} />
+      <InputWrap>
+        <InputBox>
+          <label className='inner required'>아이디(이메일)</label>
+          <input
+            type="email"
+            name="userEmail"
+            ref={email_ref}
+            placeholder="example@petsitt.com"
+            required
           />
-          <InputBox
-            _label={'비밀번호'}
-            _type={'password'}
-            _ref={pw_ref}
-            _placeholder={'1234'}
-            _alert={'비밀번호를 확인해 주세요'}
+          {/* {values.userEmail && (
+            <Message className={`${isId ? "success" : "error"}`}>
+              {idMessage}
+            </Message>
+          )} */}
+        </InputBox>
+        <InputBox>
+          <label className='inner required'>비밀번호</label>
+          <input
+            type="password"
+            name="userPwd"
+            ref={pw_ref}
+            placeholder="4~10자리(특수문자, 숫자, 영어 포함)"
+            required
           />
-          <StyledButton
-            _onClick={() => {
-              const data = {
-                userEmail: email_ref.current.value,
-                password: pw_ref.current.value,
-              };
-              loginQuery(data);
-            }}
-            _title={'로그인'}
-          />
-        </InputWrap>
-        <FindBox>
-          <ul>
-            <li>
-              <button type="button" onClick={() => navigate('/idfind')}>
-                아이디 찾기
-              </button>
-            </li>
-            <li>
-              <button type="button" onClick={() => navigate('/pwfind')}>
-                비밀번호 찾기
-              </button>
-            </li>
-          </ul>
-        </FindBox>
-        <DevideBar>또는</DevideBar>
-        <RegisterBox>
-          <StyledButton
-            _onClick={() => navigate('/signup')}
-            _border={'1px solid #fc9215'}
-            _bgColor={'#ffffff'}
-            color={'#fc9215'}
-            _margin={'0 0 10px 0'}
-            _title={'이메일로 시작하기'}
-          />
-          <StyledButton
-            _onClick={() => navigate('/signup')}
-            color={'#381E1F'}
-            _bgColor={'#fde40b'}
-            _title={'카카오로 시작하기'}
-          />
-        </RegisterBox>
-      </LoginContainer>
-    </>
+          {/* {values.password && (
+            <Message className={`${isId ? "success" : "error"}`}>
+              {idMessage}
+            </Message>
+          )} */}
+        </InputBox>
+        <StyledButton
+          _onClick={() => {
+            const data = {
+              userEmail: email_ref.current.value,
+              password: pw_ref.current.value,
+            };
+            loginQuery(data);
+          }}
+          _title={'로그인'}
+        />
+      </InputWrap>
+      <FindBox>
+        <ul>
+          <li>
+            <button type="button" onClick={() => navigate('/idfind')}>
+              아이디 찾기
+            </button>
+          </li>
+          <li>
+            <button type="button" onClick={() => navigate('/pwfind')}>
+              비밀번호 찾기
+            </button>
+          </li>
+        </ul>
+      </FindBox>
+      <DevideBar>또는</DevideBar>
+      <RegisterBox>
+        <StyledButton
+          _onClick={() => navigate('/signup')}
+          _border={'1px solid #fc9215'}
+          _bgColor={'#ffffff'}
+          color={'#fc9215'}
+          _margin={'0 0 10px 0'}
+          _title={'이메일로 시작하기'}
+        />
+        <StyledButton
+          _onClick={() => navigate('/signup')}
+          color={'#381E1F'}
+          _bgColor={'#fde40b'}
+          _title={'카카오로 시작하기'}
+        />
+      </RegisterBox>
+    </StyledContainer>
   );
 };
-
-const LoginContainer = styled.section`
-  display: flex;
-  flex-direction: column;
-  padding: 65px 16px;
-`;
-
-const NavBox = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 40px;
-  & h1 {
-    font-weight: 500;
-    font-size: 21px;
-    line-height: 25px;
-  }
-`;
 
 const InputWrap = styled.div`
   display: flex;

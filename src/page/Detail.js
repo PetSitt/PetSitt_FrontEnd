@@ -1,10 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "react-query";
 import styled from "styled-components";
-import DatePicker, { DateObject, Calendar } from "react-multi-date-picker";
+import { DateObject, Calendar } from "react-multi-date-picker";
 import MapContainer from "./MapContainer";
 import { apis } from "../store/api";
+import Settings from "react-multi-date-picker/plugins/settings"
 
 import StyledButton from '../elements/StyledButton';
 
@@ -12,34 +13,37 @@ const Detail = () => {
 	// 62c63d6f25208ae3d3cda472
 	const queryClient = useQueryClient();
 	const param = useParams();
+  const navigate = useNavigate();
 	const sitterId = param.id;
 	const [detail, setDetail] = useState();
 	const today = new DateObject();
 	const [date, setDate] = useState();
 	const [dates, setDates] = useState(new Date());
+  const [month, setMonth] = useState(new Date().getMonth()+1);
   const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
   const months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
+  const [unavailable, setUnavailable] = useState([]);
   const [services, setServices] = useState();
   const [servicesText, setServicesText] = useState([]);
   const [selectBoxToggle, setSelectBoxToggle] = useState({
     type: "",
     status: false,
   });
+  const [calendar, setCalendar] = useState('body');
   const [errorMessage, setErrorMessage] = useState();
-	const [reviews, setReviews] = useState([
-		{
-			userName: "김대한",
-			reviewStar: 4.0,
-			reviewDate: "2022/06/29",
-			reviewInfo: "1000글자 제한 리뷰",
-		},
-		{
-			userName: "김민국",
-			reviewStar: 5.0,
-			reviewDate: "2022/06/28",
-			reviewInfo: "1000글자 제한 리뷰적어요!",
-		},
-	]);
+  const [requestReviews, setRequestReviews] = useState(false);
+  const [reviewIdValue, setReviewIdValue] = useState(0);
+  const [reviews, setReviews] = useState();
+  const lastReviewRef = useRef();
+  const disableDate = () => {
+    const datesArray = [];
+    detail?.sitter.noDate.map(v=>{
+      if (new Date(v).getMonth()+1 === month){
+        datesArray.push(new Date(v).getDate())
+      }
+    })
+    setUnavailable(datesArray);
+  }
 	const {
 		isLoading: detailIsLoading,
 		isSuccess,
@@ -47,7 +51,6 @@ const Detail = () => {
 		data: detailData,
 	} = useQuery("detail_data", () => apis.getUserDetail(sitterId), {
 		onSuccess: (data) => {
-			console.log('success')
 			console.log(data.data, "data loaded");
 		},
 		onError: (data) => {
@@ -61,7 +64,7 @@ const Detail = () => {
 			setSelectBoxToggle({ type: "", status: false });
 		}
 	};
-  const requestReservation = () => {
+  const requestReservation = async () => {
     let trueLength = 0;
     for (let i = 0; i < services.length; i++) {
       if (services[i]) {
@@ -70,17 +73,51 @@ const Detail = () => {
     }
     if (trueLength === 0) {
       setErrorMessage("서비스를 선택해주세요.");
+      alert("서비스를 선택해주세요.");
       return;
     }
     if (dates.length === 0) {
       setErrorMessage("날짜를 선택해주세요.");
+      alert("날짜를 선택해주세요.");
       return;
     }
+    const reservationInfo = {
+      date: dates,
+      service: servicesText,
+      userName: detail.user.userName,
+      price: detail.sitter.servicePrice,
+      sitterId: detail.sitter.sitterId,
+    }
+    await localStorage.setItem('reservationInfo', JSON.stringify(reservationInfo));
+    navigate('/reservation');
   }
-	useEffect(() => {
+  useEffect(()=>{
+    let elements = null; 
+    if(selectBoxToggle.status && selectBoxToggle.type === 'date'){
+      elements = document.querySelectorAll('.calendar_onModal .rmdp-day .sd');
+    }else{
+      elements = document.querySelectorAll('.calendar_onBody .rmdp-day .sd');
+    }
+    
+    for(let i=0; i<elements.length; i++){
+      for(let j=0; j<unavailable.length; j++){
+        if(elements[i].innerText/1 === unavailable[j]){
+          elements[i].parentNode.classList.add('rmdp-disabled');
+        }
+      }
+    }
+  },[unavailable])
+
+  useEffect(() => {
 		setDetail(detailData.data);
-    setServices(Array.from({length: detailData.data.sitter.category.length}, () => false))
+    setServices(Array.from({length: detailData.data.sitter.category.length}, () => false));
+    setRequestReviews(true);
 	}, [detailData.data]);
+  useEffect(()=>{
+    if(detail){
+      disableDate();
+    }
+  },[detail, month, selectBoxToggle]);
 	useEffect(() => {
 		window.addEventListener("click", checkSelectArea);
 		return()=>{
@@ -101,15 +138,17 @@ const Detail = () => {
     }
   }, [services]);
 
-  // const {data: reviewsData} = useQuery('reviews_data', () => apis.getReviews(sitterId, {reviewId: 0}), {
-  //   onSuccess: (data) => {
-  //     console.log(data);
-  //   },
-  //   onError: (data) => {
-  //     console.error(data);
-  //   },
-  //   staleTime: Infinity,
-  // })
+  const {data: reviewsData} = useQuery(['reviewsData', detail?.sitter.sitterId, reviewIdValue], () => apis.getReviews(sitterId, {reviewId: reviewIdValue}), {
+    onSuccess: (data) => {
+      
+    },
+    onError: (data) => {
+      //console.error(data);
+    },
+    enabled: !!requestReviews,
+    staleTime: Infinity,
+    refetchOnMount: 'always',
+  })
 
   useEffect(() => {
     if (date?.length >= 0) {
@@ -119,10 +158,43 @@ const Detail = () => {
       setDates(getDates);
     }
   }, [date]);
-  if (detailIsLoading || !detail) return <p>로딩중입니다</p>;
+
+  useEffect(()=>{
+    if(reviewsData?.data.reviews.length > 0){
+      setReviews((prev)=>{
+        const _new_added = reviewsData.data.reviews.map(v=>{
+          const _date = new Date(v.reviewDate)
+          .toISOString().split("T")[0]
+          .split('-').join('/');
+          const _time = new Date(v.reviewDate)
+          .toISOString().split("T")[1].split('.')[0];
+          return {...v, date: _date, time: _time};
+        })
+        if(prev?.length > 0){
+          const _new = [...prev];
+          return [..._new, ..._new_added];
+        }else{
+          return [..._new_added]
+        }
+      });
+    }
+  },[reviewsData])
+
+  useEffect(()=>{
+    if(lastReviewRef.current){
+      console.log(lastReviewRef?.current.offsetTop)
+      document.querySelector(".AppInner").scrollTo(0,lastReviewRef?.current.offsetTop)
+      // setTimeout(()=>{
+      //   window.scrollTo(0, lastReviewRef?.current.offsetTop)
+      // }, 100)
+    }
+    
+  },[reviews])
+
+  if (detailIsLoading || !detail || !reviews) return <p>로딩중입니다</p>;
 	return (
 		<SitterDetailPage>
-			<section className="top_section">
+			<section className="page_top">
         <section>
           <TopImage style={{backgroundImage: `url(${detail.sitter.mainImageUrl})`, margin: '0 -20px'}}></TopImage>
           <SitterProfile>
@@ -135,7 +207,7 @@ const Detail = () => {
               <p className="userName">{detail.user.userName}</p>
               <p className="score">
                 <i className="ic-star"></i>
-                <strong>{detail.sitter.averageStar}</strong>{`(54)`}
+                <strong>{detail.sitter.averageStar}</strong>({detail.sitter.reviewCount})
               </p>
             </li>
             <li className="address"><i className="ic-location"></i>{detail.sitter.address}</li>
@@ -151,7 +223,7 @@ const Detail = () => {
           </SitterProfile>
         </section>
 			</section>
-      <section className="body_section">
+      <section className="page_body">
         <section>
           <h3 style={{ display: "flex", justifyContent: "space-between" }}>
             서비스 예약하기
@@ -184,6 +256,7 @@ const Detail = () => {
           </ServiceList>
           <div>
             <Calendar
+              className="calendar_onBody"
               value={date && date}
               onChange={setDate}
               multiple={true}
@@ -193,6 +266,7 @@ const Detail = () => {
               shadow={false}
               weekDays={weekDays}
               months={months}
+              onMonthChange={(date) => setMonth(new Date(date).getMonth()+1)}
             />
           </div>
         </section>
@@ -233,22 +307,35 @@ const Detail = () => {
             })}
           </ul>
         </section>
-        <section className="pets_info_section">
+        <section className="review_section">
           <h3>{detail.user.userName}님에 대한 후기</h3>
+          <div className="summary">
+            <i className="ic-star" style={{fontSize: '24px'}}></i>
+            <strong style={{fontSize: '32px', fontWeight: '500'}}>{detail?.sitter.averageStar}</strong>
+            <span>{detail?.sitter.reviewCount}개의 후기</span>
+          </div>
           <ul>
             {reviews.map((v, i) => {
               return (
-                <li key={`review_${i}`}>
+                <li key={`review_${i}`} ref={(i === reviews.length-4) ? lastReviewRef : null}>
                   <div>
-                    <span>{v.userName}</span>
-                    <span>{v.reviewStar}</span>
-                    <span>{v.reviewDate}</span>
+                    <span className="name">{v.userName}</span>
+                    <span><i className="ic-star" style={{fontSize: '14px'}}></i><em style={{margin: '0 10px 0 3px'}}>{v.reviewStar}</em></span>
+                    <span style={{color: '#676767'}}>{v.date}</span>
+                    <span style={{color: '#676767', marginLeft: '6px'}}>{v.time}</span>
                   </div>
                   <p>{v.reviewInfo}</p>
                 </li>
               );
             })}
           </ul>
+          {
+            (reviews.length < detail.sitter.reviewCount) && (
+              <div style={{textAlign: 'center', paddingTop: '40px'}}>
+                <button type="button" className="more_review" onClick={()=>setReviewIdValue(reviews[reviews.length-1].id)}>리뷰 더보기</button>
+              </div>
+            )
+          }
         </section>
         <section>
           <h3>{detail.user.userName}님의 위치</h3>
@@ -318,15 +405,17 @@ const Detail = () => {
                     })}
                 </p>
                 <Calendar
+                  className="calendar_onModal"
                   value={date && date}
                   onChange={setDate}
                   multiple={true}
                   format="YYYY/MM/DD"
                   minDate={new Date()}
-                  maxDate={
-                    new Date(today.year + 1, today.month.number, today.day)
-                  }
+                  maxDate={new Date(today.year + 1, today.month.number, today.day)}
                   shadow={false}
+                  weekDays={weekDays}
+                  months={months}
+                  onMonthChange={(date) => setMonth(new Date(date).getMonth()+1)}
                 />
               </div>
             </div>
@@ -335,7 +424,13 @@ const Detail = () => {
         <ul className="select_area">
           <li
             onClick={() => {
-              setSelectBoxToggle({ type: "service", status: true });
+              setSelectBoxToggle(()=>{
+                if(selectBoxToggle.type === 'date'){
+                  return { type: "service", status: true }
+                }else{
+                  return { type: "service", status: !selectBoxToggle.status }
+                }
+              });
             }}
           >
             <span>서비스</span>
@@ -347,7 +442,14 @@ const Detail = () => {
           </li>
           <li
             onClick={() => {
-              setSelectBoxToggle({ type: "date", status: true });
+              setMonth(new Date().getMonth()+1);
+              setSelectBoxToggle(()=>{
+                if(selectBoxToggle.type === 'service'){
+                  return { type: "date", status: true }
+                }else{
+                  return { type: "date", status: !selectBoxToggle.status }
+                }
+              });
             }}
           >
             <span>날짜</span>
@@ -373,14 +475,10 @@ const Detail = () => {
             _margin="0"
           />
           <StyledButton
-            _onClick={() => console.log('')}
+            _onClick={requestReservation}
             _title="예약하기"
             _margin="0"
           />
-          {/* <button type="button">문의하기</button>
-          <button type="button" onClick={requestReservation}>
-            예약하기
-          </button> */}
         </div>
       </ReservationFunctions>
     </SitterDetailPage>
@@ -453,7 +551,7 @@ const SitterDetailPage = styled.div`
   position: relative;
   line-height: 1.4;
   & > section {
-    &.top_section{
+    &.page_top{
       section{
         padding-bottom: 48px;
       }
@@ -465,7 +563,7 @@ const SitterDetailPage = styled.div`
         margin: 0 -20px;
       }
     }
-    &.body_section{
+    &.page_body{
       padding: 70px 0;
       .rmdp-border{
         margin-top: 46px;
@@ -520,6 +618,48 @@ const SitterDetailPage = styled.div`
               line-height: 1;
             }
           }
+        }
+      }
+      &.review_section{
+        line-height: 1;
+        .summary{
+          display: flex;
+          gap: 12px;
+          align-items: center;
+          padding-bottom: 16px;
+          border-bottom: 1px solid rgba(120, 120, 120, 0.2);
+          i{
+            margin-top: -4px;
+          }
+        }
+        ul{
+          li{
+            padding: 24px 0;
+            border-bottom: 1px solid rgba(120, 120, 120, 0.2);
+            div{
+              font-size: 14px;
+              .name{
+                display: block;
+                font-weight: 500;
+                font-size: 16px;
+                margin-bottom: 10px;
+              }
+            }
+            p{
+              line-height: 1.6;
+              color: #676767;
+              margin-top: 15px;
+            }
+          }
+        }
+        .more_review{
+          display: inline-block;
+          color: #676767;
+          height: 34px;
+          line-height: 32px;
+          padding: 0 12px;
+          border: 1px solid rgba(120, 120, 120, 0.2);
+          border-radius: 17px;
         }
       }
     }
