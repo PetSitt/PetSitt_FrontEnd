@@ -88,7 +88,7 @@ const [userEmail, setUserEmail] = useState("example@petsitt.com")
           navigate("/login");
         }}
       >
-		<div className="text_area">
+		    <div className="text_area">
           <h3>귀하의 아이디는 <br /><span>{userEmail}</span> 입니다</h3>
         </div>
 	  </Modal>
