@@ -56,7 +56,7 @@ function Home() {
 		() => getSittersList(queriesData, category),
 		{
 			onSuccess: (data) => {
-				console.log(data);
+				// console.log(data);
 				setSearched(false);
 			},
 			onError: (data) => {
@@ -88,10 +88,11 @@ function Home() {
 			console.log(data);
 		},
 		onError: (data) => {
-			console.log(data)
+			console.log(data);
 		},
 		staleTime: Infinity,
 	});
+	
 	const getListApi = (currentPosition, category) =>{
 		const categoryData = {}
 		if(category.length > 0 && category.length < 5){
@@ -200,13 +201,16 @@ function Home() {
 				return positionItems;
 			})
 		}
-		console.log('action test11')
 	},[sitters])
 	
 
-	// useEffect(() => {
-	// 	checkUser()
-	// }, []);
+	useEffect(() => {
+		if(localStorage.getItem('accessToken')){
+			checkUser();
+		}else{
+			console.log('액세스 토큰 없음')
+		}
+	}, []);
 	
 
 	if (sittersFilteredIsLoading) return null;
