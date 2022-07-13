@@ -261,4 +261,6 @@ export const apis = {
 	reservation: () => jsonApi.get('/reservations'),
 	makeReservation: (data, sitterId) => jsonApi.post(`/reservations/regist/${sitterId}`, data),
 	reservationList: (type) => jsonApi.get(`/reservations/lists?searchCase=${type}`),
+	reservationDetail: (reservationId, type) => jsonApi.get(`/reservations/details/${reservationId}?searchCase=${type}`),
+	cancelReservation: (reservationId) => jsonApi.put(`/reservations/cancel/${reservationId}`),
 }

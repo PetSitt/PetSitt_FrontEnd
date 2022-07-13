@@ -25,6 +25,7 @@ const ReservationList = () => {
     refetchOnMount: 'always',
     staleTime: Infinity,
   })
+
   useEffect(()=>{
     refetch();
     queryClient.invalidateQueries('reservationQuery');
@@ -44,13 +45,13 @@ const ReservationList = () => {
             ) : (
               <>
               <section>
-                <h3>진행중인 예약</h3>
+                <h3>진행중인 예약 {proceedings?.length > 0 && `(${proceedings?.length})`}</h3>
                 <ul>
                   {
                     proceedings?.length > 0 ? (
                       proceedings.map((v,i)=>{
                         return(
-                          <ReservationItem key={`reservation_${i}`} className="proceeding_reservations">
+                          <ReservationItem key={`reservation_${i}`} className="proceeding_reservations" onClick={()=>navigate(`/reservation/detail/${selectedTab}/${v.reservationId}`)}>
                             <p className="reservationInfo">
                               <strong>{v.category.map((category,index)=>(<span key={`category_${index}`}>{category}</span>))}</strong><br/>
                               <strong>{v.reservationDate.map((date,index)=>(<span key={`date_${index}`}>{index > 0 ? ', ' + date : date}</span>))}</strong>
@@ -81,7 +82,7 @@ const ReservationList = () => {
                 </ul>
               </section>
               <section>
-                <h3>지난 예약</h3>
+                <h3>지난 예약 {pastReservation?.length > 0 && `(${ pastReservation?.length})`}</h3>
                 <ul>
                   {
                     pastReservation?.length > 0 ? (
