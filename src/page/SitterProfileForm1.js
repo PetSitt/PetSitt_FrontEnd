@@ -7,7 +7,7 @@ import KakaoMapContainer from "../components/KakaoMapContainer";
 import { handleChange } from "../shared/common";
 
 const INITIAL_VALUES = {
-  userName: "",
+  sitterName: "",
   address: "",
   detailAddress: "",
   region_1depth_name: "",
@@ -76,7 +76,7 @@ const SitterProfileForm1 = () => {
       </h1>
       <div>
         <p className="tit">이름</p>
-        <input type="text" name="userName" onChange={handleInputChange} defaultValue={values.userName} />
+        <input type="text" name="sitterName" onChange={handleInputChange} defaultValue={values.sitterName} />
       </div>
       <AddressInfo
         _address={values.address}

@@ -12,7 +12,7 @@ const INITIAL_VALUES = {
 };
 
 function SitterProfileForm4() {
-  const today = new DateObject()
+  const today = new DateObject();
   const {data, update} = useLocation().state;
   const [values, setValues] = useState(update ? data : { ...data, ...INITIAL_VALUES });
   const [dates, setDates] = useState([]);
@@ -44,18 +44,26 @@ function SitterProfileForm4() {
   });
 
   useEffect(() => {
-    if(!update){
-      const noDate = dates.map((el) => el.format()); //켈린더의 날짜 데이터를 배열에 문자열로 추출
+    if(update){
+      const noNewDate = dates.map((el) => typeof el === 'object' && el.format()); //켈린더의 날짜 데이터가 object type일때 배열에 문자열로 추출
       setValues((prevValues) => {
+        const noDates = [...prevValues.noDate, ...noNewDate]; //기존 배열에 noDate있던 데이터랑 새로운 noDate있던랑 병합
+        const noDate = noDates.filter((v, i) => noDates.indexOf(v) === i); //중복된 데이터 제거
         return {...prevValues, noDate}
-      })
+      });
     }
-  },[dates])
+  },[dates, update])
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setDates(values.noDate);
+    // const test = typeof values.imageUrl === 'object';
+    // console.log(test ? typeof values.imageUrl : null)
+    console.log(dates)
+    console.log(values.noDate)
+
     const formData = new FormData();
-    formData.append("userName", values.userName);
+    formData.append("sitterName", values.sitterName);
     formData.append("gender", values.gender);
     formData.append("address", values.address);
     formData.append("detailAddress", values.detailAddress);
@@ -74,13 +82,11 @@ function SitterProfileForm4() {
     formData.append("plusService", JSON.stringify(values.plusService));
     formData.append("noDate", JSON.stringify(values.noDate));
     formData.append("servicePrice", values.servicePrice);
-  
     update ? sitterUpdate(formData) : create(formData)
   }
 
   return (
     <Form onSubmit={handleSubmit}>
-      {console.log(values.noDate)}
       <h1>돌보미 등록<span>4/4</span></h1>
       <Calendar required multiple sort format={format} value={values.noDate} minDate={new Date()} maxDate={new Date(today.year + 1, today.month.number, today.day)} onChange={setDates}></Calendar>
       
