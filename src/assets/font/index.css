@@ -1,10 +1,10 @@
 @font-face {
   font-family: 'iconFont';
-  src:  url('./iconFont.eot?sdo0cc');
-  src:  url('./iconFont.eot?sdo0cc#iefix') format('embedded-opentype'),
-    url('./iconFont.ttf?sdo0cc') format('truetype'),
-    url('./iconFont.woff?sdo0cc') format('woff'),
-    url('./iconFont.svg?sdo0cc#iconFont') format('svg');
+  src:  url('./iconFont.eot?iivj37');
+  src:  url('./iconFont.eot?iivj37#iefix') format('embedded-opentype'),
+    url('./iconFont.ttf?iivj37') format('truetype'),
+    url('./iconFont.woff?iivj37') format('woff'),
+    url('./iconFont.svg?iivj37#iconFont') format('svg');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -25,28 +25,39 @@ i {
   -moz-osx-font-smoothing: grayscale;
 }
 
-.ic-map:before {
+.ic-book:before {
   content: "\e900";
+  color: #787878;
 }
-.ic-location:before {
+.ic-contact:before {
   content: "\e901";
+  color: #787878;
 }
-.ic-arw-right:before {
+.ic-user:before {
   content: "\e902";
+  color: #787878;
 }
-.ic-arw-left:before {
+.ic-map:before {
   content: "\e903";
 }
-.ic-home:before {
+.ic-location:before {
   content: "\e904";
 }
-.ic-plus:before {
+.ic-arw-right:before {
   content: "\e905";
 }
-.ic-close:before {
+.ic-arw-left:before {
   content: "\e906";
 }
-.ic-star:before {
+.ic-home:before {
   content: "\e907";
-  color: #FFC700;
+}
+.ic-plus:before {
+  content: "\e908";
+}
+.ic-close:before {
+  content: "\e909";
+}
+.ic-star:before {
+  content: "\e90a";
 }

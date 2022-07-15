@@ -2,6 +2,7 @@ import React, {Suspense} from 'react'
 import Router from './Router';
 import styled from "styled-components";
 import "./assets/font/index.css"
+import Menu from './components/Menu';
 
 function App() {
   return (
@@ -10,6 +11,7 @@ function App() {
         <Suspense fallback={<div>로딩중!!</div>}>
           <Router />
         </Suspense>
+        <Menu />
       </div>
     </AppWrapper>
   );
@@ -22,7 +24,6 @@ const AppWrapper = styled.div`
   .AppInner{
     width: 100%;
     height: 100%;
-    margin: 0 auto;
     padding: 0 20px;
     box-sizing: border-box;
     background-color: #fff;
@@ -31,8 +32,8 @@ const AppWrapper = styled.div`
 
     @media (min-width:768px) {
       max-width: 412px;
-      position: relative;
-      left: 27%;
+      position: absolute;
+      right: 10%;
       top: 0%;
       overflow: auto;
     }
