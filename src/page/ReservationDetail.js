@@ -50,9 +50,9 @@ const ReservationDetail = () => {
 				<section className="page_body">
 					<section>
 						<span style={{ backgroundImage: `url()` }}></span>
-						<h4>{`{sitterName}`} 돌보미가 방문합니다.</h4>
+						<h4>{data.sitterName} 돌보미가 방문합니다.</h4>
 						<Link to={`/detail/${data.sitterId}`}>
-							{`{sitterName}`} 돌보미 상세 프로필 상세보기
+							{data.sitterName} 돌보미 상세 프로필 상세보기
 						</Link>
 					</section>
 					<section>
@@ -75,14 +75,14 @@ const ReservationDetail = () => {
 								</dd>
 							</div>
 							<div>
-								<dt>{`{sitterNAme}`} 돌보미 연락처</dt>
+								<dt>{data.sitterName}님의 연락처</dt>
 								<dd>{data.phoneNumber}</dd>
 							</div>
 						</dl>
 					</section>
 					<section>
 						<p>
-							{`{userName}`} 님이 제공하는 서비스의 일당 금액은
+							{data.sitterName}님이 제공하는 서비스의 일당 금액은
 							{data.servicePrice}원 입니다.
 						</p>
 						<ul>
@@ -197,7 +197,7 @@ const ReservationDetail = () => {
           </section>
 					<section>
 						<p>
-							{`{sitterName}`} 님이 제공하는 서비스의 일당 금액은
+							{data.detailData.sitterName}님이 제공하는 서비스의 일당 금액은
 							{data.detailData.servicePrice}원 입니다.
 						</p>
 						<ul>
