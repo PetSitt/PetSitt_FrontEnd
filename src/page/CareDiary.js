@@ -22,8 +22,20 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus}) => {
     setDiaryData(datas);
   },[datas]); // state 하나 바뀔때마다 refresh 되니까 비효율적인 것 같은데...
 
+  // useEffect(()=>{
+  //   if(mode === 'view' && diaryData){
+  //     setCheckList(diaryData.checkList);
+  //     setInputValues(diaryData.inputValues);
+  //     setChecked(diaryData.checked);
+  //     setImages(diaryData.images);
+  //     setImageUrls(diaryData.imageUrls);
+  //     setFiles(diaryData.files);
+  //     setText(diaryData.text);
+  //   }
+  // },[mode])
+  console.log(mode, diaryData)
+
   useEffect(()=>{
-    // if(diaryStatus === 'save') setDiaryData(datas);
     if(diaryStatus === 'get') {
       setCheckList(diaryData.checkList);
       setInputValues(diaryData.inputValues);
