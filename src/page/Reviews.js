@@ -9,7 +9,7 @@ const Reviews = ({reviewCount, sitterId}) => {
   const [reviewIdValue, setReviewIdValue] = useState(0);
   const {data: reviewsData} = useQuery(['reviewsData', sitterId, reviewIdValue], () => apis.getReviews(sitterId, {reviewId: reviewIdValue}), {
     onSuccess: (data) => {
-      
+      console.log('review loading success')
     },
     onError: (data) => {
       //console.error(data);
@@ -53,7 +53,13 @@ const Reviews = ({reviewCount, sitterId}) => {
   },[reviews])
 
   useEffect(()=>{
+    setReviews(null);
+    setReviewIdValue(0);
     setRequestReviews(true);
+    return () => {
+      setReviews(null);
+      setReviewIdValue(0);
+    }
   },[])
 
 
