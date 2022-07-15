@@ -389,6 +389,7 @@ const ReservationList = () => {
 												key={`reservation_${i}`}
 												className="past_reservations"
 											>
+                        <Link to={`/reservation/detail/${selectedTab}/${v.reservationId}`} style={{position: 'absolute', left: 0, top: 0, right: 0, bottom: 0}}></Link>
 												<p className="reservationInfo">
 													<strong>
 														{v.category.map((category, index) => (
@@ -431,7 +432,7 @@ const ReservationList = () => {
 												)}
                         {
                           v.reservationState !== '취소완료' && (
-                            <div className="buttons">
+                            <div className="buttons" style={{position: 'relative', zIndex: 2}}>
                             <StyledButton _margin="0" _title="리뷰 보기" color={'#fc9215'} _bgColor={'#fff'} _border={'1px solid #fc9215'} _onClick={()=>{idForReview.current = v.reservationId; loadReview()}}/>
                             <StyledButton _margin="0" _title="돌봄일지 보기" color={'#fc9215'} _bgColor={'#fff'} _border={'1px solid #fc9215'} />
                             </div>
