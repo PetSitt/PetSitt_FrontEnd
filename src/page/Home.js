@@ -6,6 +6,7 @@ import DatePicker, { DateObject } from "react-multi-date-picker";
 import styled from 'styled-components';
 import axios from "axios";
 import { apis } from "../store/api";
+import useCurrentLocation from '../shared/useCurrentLocation';
 
 import MapContainer from "./MapContainer";
 import SearchAddress from "./SearchAddress";
@@ -145,6 +146,7 @@ function Home() {
   };
 
 	useEffect(()=>{
+		
 		// getLocation();
 		setCurrentPosition({x: "126.891779471155", y: "37.4768763179226"});
 		setDefaultSearch(true);
@@ -208,6 +210,8 @@ function Home() {
 			})
 		}
 	},[sitters])
+
+	
 	
 
 	// useEffect(() => {
@@ -217,7 +221,9 @@ function Home() {
 	// 		console.log('액세스 토큰 없음')
 	// 	}
 	// }, []);
-	
+
+
+
 	
 
 	if (sittersFilteredIsLoading) return null;

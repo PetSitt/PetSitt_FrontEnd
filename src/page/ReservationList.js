@@ -27,11 +27,12 @@ const ReservationList = () => {
   const [errorMessage, setErrorMessage] = useState(null);
   const [buttonHide, setButtonHide] = useState(false);
   const [reviewPageMode, setReviewPageMode] = useState('write');
-  const [diaryPageMode, setdiaryPageMode] = useState('write');
+  const [diaryPageMode, setDiaryPageMode] = useState('write');
   const idForReview = useRef();
   const [diaryData, setDiaryData] = useState(null);
   const [diaryStatus, setDiaryStatus] = useState(null);
   const reservationIdForDiary = useRef();
+  const [diaryDataExist, setDiaryDataExist] = useState();
   const dataToSend = useRef({
     reservationId: null,
     data: {
@@ -126,12 +127,17 @@ const ReservationList = () => {
     const formData = new FormData();
     formData.append('checkList', JSON.stringify(diaryData.inputValues));
     formData.append('checkState', JSON.stringify(diaryData.checked));
-    formData.append('diaryImage', JSON.stringify(diaryData.files));
     formData.append('diaryInfo', diaryData.text ? diaryData.text : null);
-    
-    // console.log(formData.get('checkList'), formData.get('checkState'), formData.get('diaryImage')[0], formData.get('diaryInfo'))
-    // console.log(reservationIdForDiary.current)
-    return apis.registerDiary(reservationIdForDiary.current, formData);
+    formData.append('diaryImage', JSON.stringify(diaryData.files));
+    for(let i=0; diaryData.files.length > i; i++){
+      formData.append('diaryImage', diaryData.files[i]);
+    };
+    const config = {
+			headers: {
+				"Content-Type": "multipart/form-data",
+			},
+		};
+    return apis.registerDiary(reservationIdForDiary.current, formData, config);
   }
   const saveDiary = useQuery(['saveDiaryQuery', diaryData], ()=>registerDiaryApi(diaryData), {
     onSuccess: (data) => {
@@ -148,6 +154,29 @@ const ReservationList = () => {
       console.log(data, 'diary saving failed');
     },
     enabled: !!diarySave,
+  });
+  const {mutate: loadDiaryData} = useMutation(()=>apis.loadDiaryData(reservationIdForDiary.current), {
+    onSuccess: (data) => {
+      console.log(data.data, 'diary data loaded');
+      const _data = {
+        checkList: data.data.checkList.length,
+        inputValues: data.data.checkList,
+        checked: data.data.checkState,
+        images: data.data.diaryImage.length,
+        imageUrls: data.data.diaryImage,
+        files: [],
+        text: data.data.diaryInfo,
+      }
+      console.log(_data)
+      setDiaryData(_data);
+      setDiaryStatus('get');
+      setDiaryPageMode('view');
+      setModalType(modalContent.diary);
+      setModalDisplay(true);
+    },
+    onError: (data) => {
+      console.log(data, 'diary loading failed');
+    }
   })
   const confirmWritingReview = () => {
     if(starRef.current > 0 && reviewTextRef.current?.value.length > 0){
@@ -174,13 +203,23 @@ const ReservationList = () => {
     setDiaryStatus('save');
     setDiarySave(true);
   }
+  const closeDiaryPage = () => {
+    setModalDisplay(false);
+    setModalType(null);
+    reservationIdForDiary.current = null;
+    if(diaryPageMode === 'write') {
+      setDiaryStatus('clear'); console.log('write close');
+    }else{
+      setDiaryStatus(null); console.log('view close');
+    }
+  }
   // console.log(diaryStatus, diaryData)
   const modalContent = {
     review: {type: 'review', _alert: false, _confirm: '리뷰 등록', _cancel: '등록 취소', confirmFn: confirmWritingReview, cancelFn: ()=>{setReviewText(reviewTextRef.current?.value); setModalType(modalContent.reviewCancel)}},
     reviewView: {type: 'review', _alert: true, confirmFn: ()=>{setModalDisplay(false); setModalType(null)}},
     reviewCancel: {type: 'reviewCancel', _alert: false, _confirm: '리뷰 작성 취소', _cancel: '리뷰 작성', confirmFn: ()=>{setModalDisplay(false); setModalType(null); setReviewText(null); starRef.current = null; dataToSend.current.data.sitterId = null; dataToSend.current.reservationId = null; setErrorMessage(null)}, cancelFn: ()=>{setModalType(modalContent.review)}},
     diary: {type: 'diary', _alert: false, _confirm: '일지 등록', _cancel: '등록 취소', confirmFn: confirmWritingDiary, cancelFn: cancelWritingDiary},
-    diaryCancel: {type: 'diaryCancel', _alert: false, _confirm: '일지 작성 취소', _cancel: '일지 작성', confirmFn: ()=>{setModalDisplay(false); setModalType(null); setDiaryStatus('clear'); reservationIdForDiary.current = null}, cancelFn: ()=>{setDiaryStatus('get'); setModalType(modalContent.diary)}},
+    diaryCancel: {type: 'diaryCancel', _alert: false, _confirm: '일지 작성 취소', _cancel: '일지 작성', confirmFn: closeDiaryPage, cancelFn: ()=>{setDiaryStatus('get'); setModalType(modalContent.diary)}},
   };
 	useEffect(() => {
 		refetch();
@@ -317,7 +356,7 @@ const ReservationList = () => {
                                 <StyledButton
                                   _margin="0"
                                   _title="일지 작성하기"
-                                  _onClick={()=>{setModalType(modalContent.diary); setModalDisplay(true); reservationIdForDiary.current = v.reservationId;}}
+                                  _onClick={()=>{reservationIdForDiary.current = v.reservationId; loadDiaryData()}}
                                 />
                               )}
                             </div>
