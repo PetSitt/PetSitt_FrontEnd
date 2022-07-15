@@ -264,12 +264,20 @@ const Detail = () => {
         </section>
         <section className="review_section">
           <h3>{detail.sitter?.sitterName}님에 대한 후기</h3>
-          <div className="summary">
+          {
+            detail?.sitter.reviewCount <= 0 ? (
+              <p>{detail.sitter?.sitterName}님에 대한 후기가 없습니다.</p>
+            ) : (
+              <>
+                <div className="summary">
             <i className="ic-star" style={{fontSize: '24px'}}></i>
             <strong style={{fontSize: '32px', fontWeight: '500'}}>{detail?.sitter.averageStar}</strong>
             <span>{detail?.sitter.reviewCount}개의 후기</span>
           </div>
           <Reviews reviewCount={detail.sitter?.reviewCount} sitterId={detail?.sitter.sitterId}/>
+              </>
+            )
+          }
         </section>
         <section>
           <h3>{detail.sitter?.sitterName}님의 위치</h3>
