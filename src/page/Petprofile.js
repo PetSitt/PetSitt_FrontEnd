@@ -6,18 +6,10 @@ import { apis } from "../store/api";
 
 const Petprofile = () => {
   const queryClient = useQueryClient();
-  const {
-    isLoading,
-    data: petprofileData,
-    isSuccess: petSuccessGet,
-  } = useQuery("petprofile", apis.petprofileGet);
+  const {isLoading, data: petprofileData, isSuccess: petSuccessGet} = useQuery("petprofile", apis.petprofileGet);
   const [values, setValues] = useState(petprofileData.data.petprofile);
 
-  const {
-    mutate: delect,
-    error,
-    isSuccess: petSuccessDelete,
-  } = useMutation(apis.petprofileDelete, {
+  const { mutate: delect, error, isSuccess: petSuccessDelete,} = useMutation(apis.petprofileDelete, {
     onSuccess: (data) => {
       queryClient.invalidateQueries("petprofile");
     },

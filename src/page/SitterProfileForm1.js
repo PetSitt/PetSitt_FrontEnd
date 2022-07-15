@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDaumPostcodePopup } from "react-daum-postcode";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import AddressInfo from "../components/AddressInfo";
 import KakaoMapContainer from "../components/KakaoMapContainer";
@@ -8,7 +8,6 @@ import { handleChange } from "../shared/common";
 
 const INITIAL_VALUES = {
   userName: "",
-  gender: "Man",
   address: "",
   detailAddress: "",
   region_1depth_name: "",
@@ -20,11 +19,12 @@ const INITIAL_VALUES = {
 };
 
 const SitterProfileForm1 = () => {
-  const [values, setValues] = useState(INITIAL_VALUES);
-  const [gender, setGender] = useState(false);
+  const location = useLocation();
+  const data = location.state;
+  const [values, setValues] = useState(data ? data.data : INITIAL_VALUES);
   const open = useDaumPostcodePopup(
     "https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"
-  );
+    );
 
   //주소 입력 우편번호 함수
   const handlePostcode = (data) => {
@@ -52,12 +52,6 @@ const SitterProfileForm1 = () => {
     open({ onComplete: handlePostcode });
   };
 
-  const handleClickRadioButton = (e) => {
-    const { name, value, id } = e.target;
-    setGender(Boolean(Number(value)));
-    handleChange(name, id, setValues);
-  };
-
   const handleGeolocation = (name, value) => {
     handleChange(name, value, setValues);
   };
@@ -66,6 +60,10 @@ const SitterProfileForm1 = () => {
     const { name, value } = e.target;
     handleChange(name, value, setValues);
   };
+  
+  useEffect(() => {
+    console.log(values)
+  },[])
 
   return (
     <SitterProfileFormInner>
@@ -78,29 +76,7 @@ const SitterProfileForm1 = () => {
       </h1>
       <div>
         <p className="tit">이름</p>
-        <input type="text" name="userName" onChange={handleInputChange} />
-      </div>
-      <div>
-        <p className="tit">성별</p>
-        <input
-          id="Man"
-          value={1}
-          type="radio"
-          name="gender"
-          defaultChecked={values.gender === "Man" && true}
-          onChange={handleClickRadioButton}
-        />
-        <label htmlFor="Man">남</label>
-
-        <input
-          id="WoMan"
-          value={0}
-          type="radio"
-          name="gender"
-          defaultChecked={values.gender === "WoMan" && true}
-          onChange={handleClickRadioButton}
-        />
-        <label htmlFor="WoMan">여</label>
+        <input type="text" name="userName" onChange={handleInputChange} defaultValue={values.userName} />
       </div>
       <AddressInfo
         _address={values.address}
@@ -109,9 +85,20 @@ const SitterProfileForm1 = () => {
         onChange={handleInputChange}
         handlePost={handlePost}
       />
-      <Link to={`/mypage/SitterProfileForm2`} state={{ data: values }}>
-        <button>다음</button>
-      </Link>
+
+      {
+        data ? (
+          <Link to={`/mypage/SitterProfileForm2`} state={{ data: values, update: true }}>
+            <button>다음 true</button>
+          </Link>
+        ) : (
+          <Link to={`/mypage/SitterProfileForm2`} state={{ data: values, update: false }}>
+            <button>다음 false</button>
+          </Link>
+        )
+      }
+      
+
     </SitterProfileFormInner>
   );
 };

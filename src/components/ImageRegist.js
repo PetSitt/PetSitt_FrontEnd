@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { handleChange } from "../shared/common";
 
 const ImageRegist = ({name, value, onChange}) => {
-	const [showImages, setShowImages] = useState(value ? value : []);
+	const [showImages, setShowImages] = useState(value ? [value] : []);
 	const [num, setNum] = useState(0);
 
 	// 이미지 추가
