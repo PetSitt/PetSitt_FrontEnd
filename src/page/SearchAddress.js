@@ -3,7 +3,7 @@ import React from "react";
 import DaumPostcodeEmbed from "react-daum-postcode";
 import axios from 'axios';
 
-const SearchAddress = ({ setAddressInfo }) => {
+const SearchAddress = ({ setAddressInfo, iframeDisplay, setIframeDisplay }) => {
   const handleSearch = (data) => {
     const searchTxt = data.q;
     var config = { headers: {Authorization : 'KakaoAK b80edb4c633e56678385535a84dd1d63'}}; //인증키 정보
@@ -11,8 +11,9 @@ const SearchAddress = ({ setAddressInfo }) => {
     axios.get(url, config).then(function(result) { // API호출
       if(result.data != undefined || result.data != null){
 				console.log(result.data)
-				if(result.data.documents[0].address) setAddressInfo(result.data.documents[0].address)
-				else {
+				if(result.data.documents[0].address) {
+					setAddressInfo(result.data.documents[0].address); setIframeDisplay(false);
+				} else {
 					const x = result.data.documents[0].x;
 					const y = result.data.documents[0].y;
 					const url_2nd ='https://dapi.kakao.com/v2/local/geo/coord2address.json?x='+x+'&y='+y;
@@ -23,6 +24,7 @@ const SearchAddress = ({ setAddressInfo }) => {
 							axios.get(url_3rd, config).then(function(result3) { // API호출
 								if(result3.data != undefined || result3.data != null){
 									setAddressInfo(result3.data.documents[0].address);
+									setIframeDisplay(false);
 								}
 							})
 							
@@ -34,25 +36,13 @@ const SearchAddress = ({ setAddressInfo }) => {
   }
 
 	return (
-		<div>
-			<p
-				style={{
-					textAlign: "center",
-					fontWeight: "700",
-					lineHeight: "32px",
-					fontSize: "15px",
-				}}
-			>
-				장소 선택
-			</p>
-			<DaumPostcodeEmbed
-				// onComplete={handleComplete}
-        onSearch={handleSearch}
-				style={{ width: "100%", height: "100vh" }}
-				useBannerLink={false}
-        submitMode={false}
-			/>
-		</div>
+		<DaumPostcodeEmbed
+			// onComplete={handleComplete}
+			onSearch={handleSearch}
+			style={{ width: "100%"}}
+			useBannerLink={false}
+			submitMode={false}
+		/>
 	);
 };
 

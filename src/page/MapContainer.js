@@ -106,7 +106,7 @@ const MapContainer = ({ centerElement, showOnly, items, _height }) => {
                   >
                     <div style={{textAlign: 'center', transform: 'translate(0, -47px)'}}>
                       <div style={{display: 'flex', alignItems: 'center', height: '40px', padding: '0 15px', background: '#fff', borderRadius: '20px', border: '1px solid #FC9215', boxSizing: 'border-box'}}>
-                        <strong style={{fontWeight: 700}}>{pos.userName}</strong>
+                        <strong style={{fontWeight: 700}}>{pos.sitterName}</strong>
                         <span style={{fontSize: '14px'}}><img src={star} alt="star" style={{display: 'inline-block', width: '13px', height: '13px', verticalAlign: 'middle', margin: '-3px 1px 0 5px'}}/>{pos.averageStar}</span>
                       </div>
                       <img src={marker} alt="star" style={{width: '40px', height: '47px', margin: '2px 0 0'}}/>

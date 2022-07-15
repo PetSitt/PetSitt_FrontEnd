@@ -20,26 +20,14 @@ const Login = () => {
   };
   const { mutate: loginQuery } = useMutation(login, {
     onSuccess: async (data) => {
-      console.log(data);
+      // console.log(data);
       await localStorage.setItem('accessToken', data.data.accessToken);
       await cookies.set('refreshToken', data.data.refreshToken);
       await sessionStorage.removeItem('foundId');
-      console.log(data, localStorage.getItem('accessToken'));
-      // setTimeout(()=>{
-      //   apis.checkUser().then(
-      //     res=>{
-      //       console.log(res)
-      //     }
-      //   ).catch(
-      //     err=>{
-      //       console.log(err)
-      //     }
-      //   );
-      // },1000)
-      // navigate('/');
+      navigate('/')
     },
     onError: (data) => {
-      console.error(data);
+      // console.error(data);
       alert(data.response.data.errorMessage);
     },
   });
