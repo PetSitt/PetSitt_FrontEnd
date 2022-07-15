@@ -23,6 +23,7 @@ function Home() {
 	const [dates, setDates] = useState(new Date());
 	const [addressInfo, setAddressInfo] = useState();
 	const [address, setAddress] = useState();
+	const [iframeDisplay, setIframeDisplay] = useState(false);
 	const categories = [
 		{ walk: "산책" },
 		{ wash: "목욕, 모발 관리" },
@@ -47,8 +48,6 @@ function Home() {
 				queriesData[cate_key] = cate_value;
 			}
 		}
-		console.log(queriesData)
-		// return axios.post('http://13.209.49.214:3000/mains/search', queriesData)
 		return apis.getSittersList(queriesData);
 	};
 	const {data: sittersFilteredSearch, isLoading: sittersFilteredIsLoading, isFetched: sittersFilteredIsFetched, isRefetching: sittersAfterIsRefetching} = useQuery(
@@ -92,6 +91,8 @@ function Home() {
 		},
 		staleTime: Infinity,
 	});
+
+	console.log(address, addressInfo)
 	
 	const getListApi = (currentPosition, category) =>{
 		const categoryData = {}
@@ -195,7 +196,7 @@ function Home() {
 			setLocationItems(()=>{
 				const positionItems = [];
 				sitters.map(v=>{
-					const obj = {x: v.location.coordinates[0], y: v.location.coordinates[1], userName: v.userName ? v.userName : '돌보미', averageStar: v.averageStar};
+					const obj = {x: v.location.coordinates[0], y: v.location.coordinates[1], sitterName: v.sitterName ? v.sitterName : '돌보미', averageStar: v.averageStar};
 					positionItems.push(obj);
 				})
 				return positionItems;
@@ -204,13 +205,14 @@ function Home() {
 	},[sitters])
 	
 
-	useEffect(() => {
-		if(localStorage.getItem('accessToken')){
-			checkUser();
-		}else{
-			console.log('액세스 토큰 없음')
-		}
-	}, []);
+	// useEffect(() => {
+	// 	if(localStorage.getItem('accessToken')){
+	// 		checkUser();
+	// 	}else{
+	// 		console.log('액세스 토큰 없음')
+	// 	}
+	// }, []);
+	
 	
 
 	if (sittersFilteredIsLoading) return null;
@@ -226,9 +228,16 @@ function Home() {
 						minDate={date}
 						maxDate={new Date(today.year + 1, today.month.number, today.day)}
 					/>
-					<AddressWrap>
-						<SearchAddress setAddressInfo={setAddressInfo} />
-					</AddressWrap>
+					<div style={{position: 'relative'}}>
+					<input type="text" value={addressInfo?.address_name && addressInfo?.address_name} onClick={()=>setIframeDisplay(true)} style={{display: 'block', width: '100%', height: '46px', lineHeight: '46px', border: '1px solid #999', margin: '10px 0 0'}}/>
+					{
+						iframeDisplay && (
+							<AddressWrap>
+								<SearchAddress setAddressInfo={setAddressInfo} iframeDisplay={iframeDisplay} setIframeDisplay={setIframeDisplay}/>
+							</AddressWrap>
+						)
+					}
+					</div>
 					<button type="button" style={{border: '1px solid #333', fontSize: '16px', height: '40px', lineHeight: '42px', padding: '0 20px'}} onClick={()=>{
 						if(addressInfo &&  dates?.length > 0){
 							setSearched(true);
@@ -281,7 +290,7 @@ function Home() {
 											</div>
 											<div className="info_area">
 												<p className="sitter">
-													<em>{`돌보미`}</em>
+													<em>{v.sitterName}</em>
 													<span>재고용률 {v.rehireRate}%</span>
 												</p>
 												<p className="address">{v.address}</p>
@@ -321,6 +330,22 @@ function Home() {
 }
 
 const IndexPage = styled.div`
+.rmdp-container{
+	max-width: 100%;
+	width: 100%;
+	.rmdp-input{
+		display: block;
+		width: 100%;
+		height: 46px;
+		line-height: 46px;
+		border-radius: 0;
+		border: 1px solid #999;
+		&:focus{
+			box-shadow: none;
+		}
+	}
+}
+	
 
 `
 const Buttons = styled.div`
@@ -502,12 +527,16 @@ const SittersListArea = styled.div`
 	}
 `
 const AddressWrap = styled.div`
-	height: 45px;
-	overflow: hidden;
-	border: 1px solid #333;
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	border: 1px solid #999;
 	margin-bottom: 10px;
+	z-index: 100;
 	& > div{
-		margin-top: -32px;
+		/* margin-top: -32px; */
 	}
+	
 `
 export default Home;
