@@ -175,11 +175,15 @@ const Reservation = () => {
           </section>
         </section>
       </ReservationPage>
-      <Modal _alert={modalType?.alert} _display={modalDisplay} confirmOnClick={modalType?.confirmFn} cancelOnclick={modalType?.cancelFn}>
-        <div className="text_area">
-          <h3>{modalType?.text}</h3>
-        </div>
-      </Modal>
+      {
+        modalType && (
+          <Modal _alert={modalType?.alert} _display={modalDisplay} confirmOnClick={modalType?.confirmFn} cancelOnclick={modalType?.cancelFn}>
+            <div className="text_area">
+              <h3>{modalType?.text}</h3>
+            </div>
+          </Modal>
+        )
+      }
     </>
   )
 }
