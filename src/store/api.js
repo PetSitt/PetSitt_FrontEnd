@@ -267,4 +267,8 @@ export const apis = {
 	reservationList: (type) => jsonApi.get(`/reservations/lists?searchCase=${type}`),
 	reservationDetail: (reservationId, type) => jsonApi.get(`/reservations/details/${reservationId}?searchCase=${type}`),
 	cancelReservation: (reservationId) => jsonApi.put(`/reservations/cancel/${reservationId}`),
+	registerReview: (reservationId, data) => jsonApi.post(`/reviews/${reservationId}`, data),
+	loadMorePastReservation: (reservationId, type) => jsonApi.get(`/reservations/lists/${reservationId}?searchCase=${type}`),
+	loadReview: (reservationId) => jsonApi.get(`reviews/${reservationId}`),
+	registerDiary: (reservationId, formdata) => jsonApi.post(`/diarys/${reservationId}`, formdata),
 }

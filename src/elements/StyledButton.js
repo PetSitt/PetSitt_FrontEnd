@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
-const StyledButton = ({ _margin, _border, color, _bgColor, _onClick, _title }) => {
-  const style = { _margin, _border, color, _bgColor };
+const StyledButton = ({ _margin, _border, color, _bgColor, _onClick, _title, _width }) => {
+  const style = { _margin, _border, color, _bgColor, _width};
   return (
     <MainButton {...style} type="button" onClick={_onClick}>
       {_title}
@@ -19,7 +19,7 @@ StyledButton.defaultProps = {
 };
 
 const MainButton = styled.button`
-  width: 100%;
+  width: ${(props) => props._width ? props._width : '100%'};
   font-size: 16px;
   font-weight: 700;
   padding: 14px 0px;

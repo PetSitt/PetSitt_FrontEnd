@@ -81,7 +81,7 @@ const Detail = () => {
     const reservationInfo = {
       date: dates,
       service: servicesText,
-      userName: detail.user.userName,
+      sitterName: detail.sitter.sitterName,
       price: detail.sitter.servicePrice,
       sitterId: detail.sitter.sitterId,
     }
@@ -144,9 +144,6 @@ const Detail = () => {
     }
   }, [date]);
 
-  
-
-  console.log('????')
 
   if (detailIsLoading || !detail ) return <p>로딩중입니다</p>;
 	return (
@@ -161,7 +158,7 @@ const Detail = () => {
               ></span>
             </li>
             <li className="user">
-              <p className="userName">{detail.user.userName}</p>
+              <p className="userName">{detail.sitter.sitterName}</p>
               <p className="score">
                 <i className="ic-star"></i>
                 <strong>{detail.sitter.averageStar}</strong>({detail.sitter.reviewCount})
@@ -248,7 +245,7 @@ const Detail = () => {
           </ul>
         </section>
         <section className="pets_info_section">
-          <h3>{detail.user.userName}님과 함께사는 반려견</h3>
+          <h3>{detail.sitter.sitterName}님과 함께사는 반려견</h3>
           <ul>
             {detail.pets.map((v, i) => {
               return (
@@ -265,7 +262,7 @@ const Detail = () => {
           </ul>
         </section>
         <section className="review_section">
-          <h3>{detail.user.userName}님에 대한 후기</h3>
+          <h3>{detail.sitter.sitterName}님에 대한 후기</h3>
           <div className="summary">
             <i className="ic-star" style={{fontSize: '24px'}}></i>
             <strong style={{fontSize: '32px', fontWeight: '500'}}>{detail?.sitter.averageStar}</strong>
@@ -274,10 +271,10 @@ const Detail = () => {
           <Reviews reviewCount={detail.sitter.reviewCount} sitterId={detail?.sitter.sitterId}/>
         </section>
         <section>
-          <h3>{detail.user.userName}님의 위치</h3>
+          <h3>{detail.sitter.sitterName}님의 위치</h3>
           <MapWrapper>
             <MapContainer
-              centerElement={{x: detail.sitter.x, y: detail.sitter.y, userName: detail.user.userName, reviewStar: detail.sitter.averageStar}}
+              centerElement={{x: detail.sitter.x, y: detail.sitter.y, sitterName: detail.sitter.sitterName, reviewStar: detail.sitter.averageStar}}
               showOnly={true}
               _height="100%"
             />

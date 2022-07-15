@@ -11,8 +11,6 @@ const Modal = ({
   confirmOnClick,
   cancelOnclick,
 }) => {
-  console.log(_display)
-  // console.log(confirmOnClick(), cancelOnclick())
   const [display, setDisplay] = useState(false);
   useEffect(() => {
     setDisplay(_display);
@@ -28,13 +26,13 @@ const Modal = ({
               color={'#fc9215'}
               _title={_cancel ? _cancel : "취소"}
               _margin="0"
-              _onClick={cancelOnclick ? cancelOnclick : ()=>setDisplay(false)}
+              _onClick={cancelOnclick ? cancelOnclick : setDisplay(false)}
             />
           )}
           <StyledButton
             _title={_confirm ? _confirm : "확인"}
             _margin="0"
-            _onClick={confirmOnClick ? confirmOnClick : ()=>setDisplay(false)}
+            _onClick={confirmOnClick ? confirmOnClick : setDisplay(false)}
           />
         </div>
       </div>
