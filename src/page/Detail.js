@@ -82,9 +82,9 @@ const Detail = () => {
     const reservationInfo = {
       date: dates,
       service: servicesText,
-      sitterName: detail.sitter.sitterName,
-      price: detail.sitter.servicePrice,
-      sitterId: detail.sitter.sitterId,
+      sitterName: detail.sitter?.sitterName,
+      price: detail.sitter?.servicePrice,
+      sitterId: detail.sitter?.sitterId,
     }
     await localStorage.setItem('reservationInfo', JSON.stringify(reservationInfo));
     navigate('/reservation');
@@ -162,17 +162,17 @@ const Detail = () => {
               <p className="userName">{detail.sitter?.sitterName}</p>
               <p className="score">
                 <i className="ic-star"></i>
-                <strong>{detail.sitter.averageStar}</strong>({detail.sitter.reviewCount})
+                <strong>{detail.sitter?.averageStar}</strong>({detail.sitter?.reviewCount})
               </p>
             </li>
-            <li className="address"><i className="ic-location"></i>{detail.sitter.address}</li>
+            <li className="address"><i className="ic-location"></i>{detail.sitter?.address}</li>
             <li>
-              <p className="rehire">재고용률 <strong>{detail.sitter.rehireRate}%</strong></p>	
+              <p className="rehire">재고용률 <strong>{detail.sitter?.rehireRate}%</strong></p>	
             </li>
             <li className="introduce">
               <dl>
-                <dt>{detail.sitter.introTitle}</dt>
-                <dd>{detail.sitter.myIntro}</dd>
+                <dt>{detail.sitter?.introTitle}</dt>
+                <dd>{detail.sitter?.myIntro}</dd>
               </dl>
             </li>
           </SitterProfile>
@@ -183,7 +183,7 @@ const Detail = () => {
           <h3 style={{ display: "flex", justifyContent: "space-between" }}>
             서비스 예약하기
             <p>
-              <strong>{detail.sitter.servicePrice}원</strong>/일
+              <strong>{detail.sitter?.servicePrice}원</strong>/일
             </p>
           </h3>
           <ServiceList>
@@ -228,7 +228,7 @@ const Detail = () => {
         <section>
           <h3>서비스 가능한 반려견 사이즈</h3>
           <ul>
-            {detail.sitter.careSize.map((v, i) => {
+            {detail.sitter?.careSize.map((v, i) => {
               return (
                 <li key={`careSize_${i}`}>
                   {v && (i === 0 ? "소" : i === 1 ? "중" : "대")}
@@ -240,13 +240,13 @@ const Detail = () => {
         <section>
           <h3>추가 제공 가능한 서비스</h3>
           <ul>
-            {detail.sitter.plusService.map((v, i) => {
+            {detail.sitter?.plusService.map((v, i) => {
               return <li key={`plusService_${i}`}>{v}</li>;
             })}
           </ul>
         </section>
         <section className="pets_info_section">
-          <h3>{detail.sitter.sitterName}님과 함께사는 반려견</h3>
+          <h3>{detail.sitter?.sitterName}님과 함께사는 반려견</h3>
           <ul>
             {detail.pets.map((v, i) => {
               return (
@@ -263,24 +263,24 @@ const Detail = () => {
           </ul>
         </section>
         <section className="review_section">
-          <h3>{detail.sitter.sitterName}님에 대한 후기</h3>
+          <h3>{detail.sitter?.sitterName}님에 대한 후기</h3>
           <div className="summary">
             <i className="ic-star" style={{fontSize: '24px'}}></i>
             <strong style={{fontSize: '32px', fontWeight: '500'}}>{detail?.sitter.averageStar}</strong>
             <span>{detail?.sitter.reviewCount}개의 후기</span>
           </div>
-          <Reviews reviewCount={detail.sitter.reviewCount} sitterId={detail?.sitter.sitterId}/>
+          <Reviews reviewCount={detail.sitter?.reviewCount} sitterId={detail?.sitter.sitterId}/>
         </section>
         <section>
-          <h3>{detail.sitter.sitterName}님의 위치</h3>
+          <h3>{detail.sitter?.sitterName}님의 위치</h3>
           <MapWrapper>
             <MapContainer
-              centerElement={{x: detail.sitter.x, y: detail.sitter.y, sitterName: detail.sitter.sitterName, reviewStar: detail.sitter.averageStar}}
+              centerElement={{x: detail.sitter?.x, y: detail.sitter?.y, sitterName: detail.sitter?.sitterName, reviewStar: detail.sitter?.averageStar}}
               showOnly={true}
               _height="100%"
             />
           </MapWrapper>
-          <p>{detail.sitter.address}</p>
+          <p>{detail.sitter?.address}</p>
         </section>
       </section>
       <ReservationFunctions>
@@ -290,7 +290,7 @@ const Detail = () => {
               <h3 style={{ display: "flex", justifyContent: "space-between" }}>
                 서비스 선택하기
                 <p style={{ fontSize: "16px" }}>
-                  <strong>{detail.sitter.servicePrice}원</strong>/일
+                  <strong>{detail.sitter?.servicePrice}원</strong>/일
                 </p>
               </h3>
               <div>
@@ -397,7 +397,7 @@ const Detail = () => {
           </li>
           <li className="price">
             <span>결제예정금액</span>
-            <strong><em>{detail.sitter.servicePrice}</em>원/일</strong>
+            <strong><em>{detail.sitter?.servicePrice}</em>원/일</strong>
           </li>
         </ul>
         <div className="buttons">
