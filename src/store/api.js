@@ -254,8 +254,8 @@ export const apis = {
 	sitterprofileDelete: () => jsonApi.delete('/mypage/sitterprofile'),
 
 	// main
-	getSittersList: (queriesData) => mainApi.post('/mains/search', queriesData),
-  getSittersDefault: (data) => mainApi.post('/mains', data),
+	getSittersList: (queriesData) => jsonApi.post('/mains/search', queriesData),
+  getSittersDefault: (data) => jsonApi.post('/mains', data),
 
 	// detail
 	getUserDetail: (sitterId) => detailApi.get(`/details/${sitterId}`),
