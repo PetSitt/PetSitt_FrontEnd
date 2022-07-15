@@ -111,7 +111,7 @@ const ReservationList = () => {
   const {mutate: loadReview, data: reviewData} = useMutation(()=>apis.loadReview(idForReview.current), {
     onSuccess: (data) => {
       console.log(data, 'review loaded');
-      setModalType(modalContent.review);
+      setModalType(modalContent.reviewView);
       setReviewPageMode('view');
       setModalDisplay(true);
     },
@@ -176,10 +176,11 @@ const ReservationList = () => {
   }
   // console.log(diaryStatus, diaryData)
   const modalContent = {
-    review: {type: 'review', _confirm: '리뷰 등록', _cancel: '등록 취소', confirmFn: confirmWritingReview, cancelFn: ()=>{setReviewText(reviewTextRef.current?.value); setModalType(modalContent.reviewCancel)}},
-    reviewCancel: {type: 'reviewCancel', _confirm: '리뷰 작성 취소', _cancel: '리뷰 작성', confirmFn: ()=>{setModalDisplay(false); setModalType(null); setReviewText(null); starRef.current = null; dataToSend.current.data.sitterId = null; dataToSend.current.reservationId = null; setErrorMessage(null)}, cancelFn: ()=>{setModalType(modalContent.review)}},
-    diary: {type: 'diary', _confirm: '일지 등록', _cancel: '등록 취소', confirmFn: confirmWritingDiary, cancelFn: cancelWritingDiary},
-    diaryCancel: {type: 'diaryCancel', _confirm: '일지 작성 취소', _cancel: '일지 작성', confirmFn: ()=>{setModalDisplay(false); setModalType(null); setDiaryStatus('clear'); reservationIdForDiary.current = null}, cancelFn: ()=>{setDiaryStatus('get'); setModalType(modalContent.diary)}},
+    review: {type: 'review', _alert: false, _confirm: '리뷰 등록', _cancel: '등록 취소', confirmFn: confirmWritingReview, cancelFn: ()=>{setReviewText(reviewTextRef.current?.value); setModalType(modalContent.reviewCancel)}},
+    reviewView: {type: 'review', _alert: true, confirmFn: ()=>{setModalDisplay(false); setModalType(null)}},
+    reviewCancel: {type: 'reviewCancel', _alert: false, _confirm: '리뷰 작성 취소', _cancel: '리뷰 작성', confirmFn: ()=>{setModalDisplay(false); setModalType(null); setReviewText(null); starRef.current = null; dataToSend.current.data.sitterId = null; dataToSend.current.reservationId = null; setErrorMessage(null)}, cancelFn: ()=>{setModalType(modalContent.review)}},
+    diary: {type: 'diary', _alert: false, _confirm: '일지 등록', _cancel: '등록 취소', confirmFn: confirmWritingDiary, cancelFn: cancelWritingDiary},
+    diaryCancel: {type: 'diaryCancel', _alert: false, _confirm: '일지 작성 취소', _cancel: '일지 작성', confirmFn: ()=>{setModalDisplay(false); setModalType(null); setDiaryStatus('clear'); reservationIdForDiary.current = null}, cancelFn: ()=>{setDiaryStatus('get'); setModalType(modalContent.diary)}},
   };
 	useEffect(() => {
 		refetch();
@@ -202,7 +203,7 @@ const ReservationList = () => {
 
 	return (
     <>
-		<ReservationListPage>
+		<ReservationListPage style={{paddingBottom: '100px'}}>
 			<section className="page_top">
 				<h2>예약내역</h2>
 				<Tabs
@@ -414,10 +415,12 @@ const ReservationList = () => {
 		</ReservationListPage>
     {
       modalType && (
-        <Modal _display={modalDisplay} _confirm={modalType._confirm} _cancel={modalType._cancel} cancelOnclick={modalType.cancelFn} confirmOnClick={modalType.confirmFn}>
+        <Modal _display={modalDisplay} _alert={modalType._alert} _confirm={modalType._confirm} _cancel={modalType._cancel} cancelOnclick={modalType.cancelFn} confirmOnClick={modalType.confirmFn}>
           {modalType.type === 'review' ? (
             <Review mode={reviewPageMode} reviewTextRef={reviewTextRef} reviewText={reviewText} starRef={starRef} errorMessage={errorMessage} reviewData={reviewData}/>
-          ): modalType.type === 'diary' ? (
+          ): modalType.type === 'reviewView' ? (
+            <Review mode={reviewPageMode} reviewTextRef={reviewTextRef} reviewText={reviewText} starRef={starRef} errorMessage={errorMessage} reviewData={reviewData}/>
+          ) : modalType.type === 'diary' ? (
             <CareDiary mode={diaryPageMode} setDiaryData={setDiaryData} diaryData={diaryData} diaryStatus={diaryStatus}/>
           ) : modalType.type === 'reviewCancel' ? (
             <div className="text_area">
