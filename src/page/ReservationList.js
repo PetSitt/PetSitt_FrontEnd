@@ -176,6 +176,10 @@ const ReservationList = () => {
     },
     onError: (data) => {
       console.log(data, 'diary loading failed');
+      setDiaryStatus('clear');
+      setDiaryPageMode('write');
+      setModalType(modalContent.diary);
+      setModalDisplay(true);
     }
   })
   const confirmWritingReview = () => {
