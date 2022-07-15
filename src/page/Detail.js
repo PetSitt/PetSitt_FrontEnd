@@ -41,6 +41,7 @@ const Detail = () => {
     })
     setUnavailable(datesArray);
   }
+  console.log(detail)
 	const {
 		isLoading: detailIsLoading,
 		isSuccess,
@@ -106,7 +107,7 @@ const Detail = () => {
 
   useEffect(() => {
 		setDetail(detailData.data);
-    setServices(Array.from({length: detailData.data.sitter?.category.length}, () => false));
+    setServices(Array.from({length: detailData?.data?.sitter?.category.length}, () => false));
 	}, [detailData.data]);
   useEffect(()=>{
     if(detail){
@@ -150,15 +151,15 @@ const Detail = () => {
 		<SitterDetailPage>
 			<section className="page_top">
         <section>
-          <TopImage style={{backgroundImage: `url(${detail.sitter.mainImageUrl})`, margin: '0 -20px'}}></TopImage>
+          <TopImage style={{backgroundImage: `url(${detail.sitter?.mainImageUrl})`, margin: '0 -20px'}}></TopImage>
           <SitterProfile>
             <li className="profile">
               <span
-                style={{ backgroundImage: `url(${detail.sitter.imageUrl})` }}
+                style={{ backgroundImage: `url(${detail.sitter?.imageUrl})` }}
               ></span>
             </li>
             <li className="user">
-              <p className="userName">{detail.sitter.sitterName}</p>
+              <p className="userName">{detail.sitter?.sitterName}</p>
               <p className="score">
                 <i className="ic-star"></i>
                 <strong>{detail.sitter.averageStar}</strong>({detail.sitter.reviewCount})
