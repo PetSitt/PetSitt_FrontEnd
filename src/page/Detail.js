@@ -34,7 +34,7 @@ const Detail = () => {
   const [errorMessage, setErrorMessage] = useState();
   const disableDate = () => {
     const datesArray = [];
-    detail?.sitter.noDate.map(v=>{
+    detail.sitter.noDate.map(v=>{
       if (new Date(v).getMonth()+1 === month){
         datesArray.push(new Date(v).getDate())
       }
@@ -82,9 +82,9 @@ const Detail = () => {
     const reservationInfo = {
       date: dates,
       service: servicesText,
-      sitterName: detail.sitter?.sitterName,
-      price: detail.sitter?.servicePrice,
-      sitterId: detail.sitter?.sitterId,
+      sitterName: detail.sitter.sitterName,
+      price: detail.sitter.servicePrice,
+      sitterId: detail.sitter.sitterId,
     }
     await localStorage.setItem('reservationInfo', JSON.stringify(reservationInfo));
     navigate('/reservation');
@@ -126,7 +126,7 @@ const Detail = () => {
         const new_data = [];
         for (let i = 0; i < services.length; i++) {
           if (services[i]) {
-            new_data.push(detail.sitter?.category[i]);
+            new_data.push(detail.sitter.category[i]);
           }
         }
         return new_data;
@@ -151,28 +151,28 @@ const Detail = () => {
 		<SitterDetailPage>
 			<section className="page_top">
         <section>
-          <TopImage style={{backgroundImage: `url(${detail.sitter?.mainImageUrl})`, margin: '0 -20px'}}></TopImage>
+          <TopImage style={{backgroundImage: `url(${detail.sitter.mainImageUrl})`, margin: '0 -20px'}}></TopImage>
           <SitterProfile>
             <li className="profile">
               <span
-                style={{ backgroundImage: `url(${detail.sitter?.imageUrl})` }}
+                style={{ backgroundImage: `url(${detail.sitter.imageUrl})` }}
               ></span>
             </li>
             <li className="user">
-              <p className="userName">{detail.sitter?.sitterName}</p>
+              <p className="userName">{detail.sitter.sitterName}</p>
               <p className="score">
                 <i className="ic-star"></i>
-                <strong>{detail.sitter?.averageStar}</strong>({detail.sitter?.reviewCount})
+                <strong>{detail.sitter.averageStar}</strong>({detail.sitter.reviewCount})
               </p>
             </li>
-            <li className="address"><i className="ic-location"></i>{detail.sitter?.address}</li>
+            <li className="address"><i className="ic-location"></i>{detail.sitter.address}</li>
             <li>
-              <p className="rehire">재고용률 <strong>{detail.sitter?.rehireRate}%</strong></p>	
+              <p className="rehire">재고용률 <strong>{detail.sitter.rehireRate}%</strong></p>	
             </li>
             <li className="introduce">
               <dl>
-                <dt>{detail.sitter?.introTitle}</dt>
-                <dd>{detail.sitter?.myIntro}</dd>
+                <dt>{detail.sitter.introTitle}</dt>
+                <dd>{detail.sitter.myIntro}</dd>
               </dl>
             </li>
           </SitterProfile>
@@ -183,11 +183,11 @@ const Detail = () => {
           <h3 style={{ display: "flex", justifyContent: "space-between" }}>
             서비스 예약하기
             <p>
-              <strong>{detail.sitter?.servicePrice}원</strong>/일
+              <strong>{detail.sitter.servicePrice}원</strong>/일
             </p>
           </h3>
           <ServiceList>
-            {detail.sitter?.category.map((v, i) => {
+            {detail.sitter.category.map((v, i) => {
               return (
                 <li key={`category_${i}`}>
                   <div>
@@ -225,70 +225,82 @@ const Detail = () => {
             />
           </div>
         </section>
-        <section>
-          <h3>서비스 가능한 반려견 사이즈</h3>
-          <ul>
-            {detail.sitter?.careSize.map((v, i) => {
-              return (
-                <li key={`careSize_${i}`}>
-                  {v && (i === 0 ? "소" : i === 1 ? "중" : "대")}
-                </li>
-              );
-            })}
-          </ul>
-        </section>
-        <section>
-          <h3>추가 제공 가능한 서비스</h3>
-          <ul>
-            {detail.sitter?.plusService.map((v, i) => {
-              return <li key={`plusService_${i}`}>{v}</li>;
-            })}
-          </ul>
-        </section>
-        <section className="pets_info_section">
-          <h3>{detail.sitter?.sitterName}님과 함께사는 반려견</h3>
-          <ul>
-            {detail.pets.map((v, i) => {
-              return (
-                <li key={`pet_${i}`}>
-                  <span
-                    className="pet_image"
-                    style={{ backgroundImage: `url(${v.petImage})` }}
-                  ></span>
-                  <p className="pet_name">{v.petName}</p>
-                  <p className="pet_type">{v.petAge}살 {v.petType}</p>
-                </li>
-              );
-            })}
-          </ul>
-        </section>
+        {
+          detail.sitter.careSize.length > 0 && (
+          <section>
+            <h3>서비스 가능한 반려견 사이즈</h3>
+            <ul>
+              {detail.sitter.careSize.map((v, i) => {
+                return (
+                  <li key={`careSize_${i}`}>
+                    {v && (i === 0 ? "소" : i === 1 ? "중" : "대")}
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+          )
+        }
+        {
+          detail.sitter.plusService.length > 0 && (
+            <section>
+              <h3>추가 제공 가능한 서비스</h3>
+              <ul>
+                {detail.sitter.plusService.map((v, i) => {
+                  return <li key={`plusService_${i}`}>{v}</li>;
+                })}
+              </ul>
+            </section>
+          )
+        }
+        {
+          detail.pets.length > 0 && (
+            <section className="pets_info_section">
+              <h3>{detail.sitter.sitterName}님과 함께사는 반려견</h3>
+              <ul>
+                {detail.pets.map((v, i) => {
+                  return (
+                    <li key={`pet_${i}`}>
+                      <span
+                        className="pet_image"
+                        style={{ backgroundImage: `url(${v.petImage})` }}
+                      ></span>
+                      <p className="pet_name">{v.petName}</p>
+                      <p className="pet_type">{v.petAge}살 {v.petType}</p>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          )
+        }
         <section className="review_section">
-          <h3>{detail.sitter?.sitterName}님에 대한 후기</h3>
+          <h3>{detail.sitter.sitterName}님에 대한 후기</h3>
           {
-            detail?.sitter.reviewCount <= 0 ? (
-              <p>{detail.sitter?.sitterName}님에 대한 후기가 없습니다.</p>
+            detail.sitter.reviewCount <= 0 ? (
+              <p>{detail.sitter.sitterName}님에 대한 후기가 없습니다.</p>
             ) : (
               <>
                 <div className="summary">
-            <i className="ic-star" style={{fontSize: '24px'}}></i>
-            <strong style={{fontSize: '32px', fontWeight: '500'}}>{detail?.sitter.averageStar}</strong>
-            <span>{detail?.sitter.reviewCount}개의 후기</span>
-          </div>
-          <Reviews reviewCount={detail.sitter?.reviewCount} sitterId={detail?.sitter.sitterId}/>
+                  <i className="ic-star" style={{fontSize: '24px'}}></i>
+                  <strong style={{fontSize: '32px', fontWeight: '500'}}>{detail.sitter.averageStar}</strong>
+                  <span>{detail.sitter.reviewCount}개의 후기</span>
+                </div>
+                <Reviews reviewCount={detail.sitter.reviewCount} sitterId={detail.sitter.sitterId}/>
               </>
             )
           }
         </section>
         <section>
-          <h3>{detail.sitter?.sitterName}님의 위치</h3>
+          <h3>{detail.sitter.sitterName}님의 위치</h3>
           <MapWrapper>
             <MapContainer
-              centerElement={{x: detail.sitter?.x, y: detail.sitter?.y, sitterName: detail.sitter?.sitterName, reviewStar: detail.sitter?.averageStar}}
+              centerElement={{x: detail.sitter.x, y: detail.sitter.y, sitterName: detail.sitter.sitterName, reviewStar: detail.sitter.averageStar}}
               showOnly={true}
               _height="100%"
             />
           </MapWrapper>
-          <p>{detail.sitter?.address}</p>
+          <p>{detail.sitter.address}</p>
         </section>
       </section>
       <ReservationFunctions>
@@ -298,54 +310,68 @@ const Detail = () => {
               <h3 style={{ display: "flex", justifyContent: "space-between" }}>
                 서비스 선택하기
                 <p style={{ fontSize: "16px" }}>
-                  <strong>{detail.sitter?.servicePrice}원</strong>/일
+                  <strong>{detail.sitter.servicePrice}원</strong>/일
                 </p>
               </h3>
               <div>
-                <ul style={{ margin: "10px 0" }}>
-                  {detail.sitter?.category.map((v, i) => {
+              {/* <ServiceList>
+            {detail.sitter.category.map((v, i) => {
+              return (
+                <li key={`category_${i}`}>
+                  <div>
+                    <label>
+                      <input type="checkbox" checked={services[i]} onChange={(e)=>{
+                        setServices((prev)=>{
+                          const new_data = [...prev];
+                          new_data[i] = e.target.checked;
+                          return new_data;
+                        })
+                      }}/>
+                      <span>
+                        <i></i>
+                        {v}
+                      </span>
+                    </label>
+                  </div>
+                </li>
+              );
+            })}
+          </ServiceList> */}
+
+
+                <ServiceList style={{ margin: "10px 0" }}>
+                  {detail.sitter.category.map((v, i) => {
                     return (
                       <li key={`category_${i}`}>
-                        <label>
-                          <input
-                            type="checkbox"
-                            checked={services[i]}
-                            onChange={(e) => {
-                              setServices((prev) => {
-                                const new_data = [...prev];
-                                new_data[i] = e.target.checked;
-                                return new_data;
-                              });
-                            }}
-                          />
-                          {v}
-                        </label>
+                        <div>
+                          <label>
+                            <input
+                              type="checkbox"
+                              checked={services[i]}
+                              onChange={(e) => {
+                                setServices((prev) => {
+                                  const new_data = [...prev];
+                                  new_data[i] = e.target.checked;
+                                  return new_data;
+                                });
+                              }}
+                            />
+                            <span>
+                              <i></i>
+                              {v}
+                            </span>
+                          </label>
+                        </div>
                       </li>
                     );
                   })}
-                </ul>
+                </ServiceList>
               </div>
             </div>
           ) : (
             <div className="select_wrap date">
               <h3>날짜 선택하기</h3>
               <div>
-                <p>
-                  {dates.length > 0 &&
-                    dates?.map((v, i) => {
-                      return (
-                        <>
-                          {i > 0 ? ", " : ""}
-                          <span
-                            key={`date_${v}`}
-                            style={{ display: "inline-block" }}
-                          >
-                            {v}
-                          </span>
-                        </>
-                      );
-                    })}
-                </p>
                 <Calendar
                   className="calendar_onModal"
                   value={date && date}
@@ -405,7 +431,7 @@ const Detail = () => {
           </li>
           <li className="price">
             <span>결제예정금액</span>
-            <strong><em>{detail.sitter?.servicePrice}</em>원/일</strong>
+            <strong><em>{detail.sitter.servicePrice}</em>원/일</strong>
           </li>
         </ul>
         <div className="buttons">
@@ -428,14 +454,18 @@ const Detail = () => {
 };
 
 const ReservationFunctions = styled.div`
-  position: sticky;
+  position: fixed;
   left: 0;
   right: 0;
   bottom: 0;
   z-index: 5;
   background-color: #fff;
   border-top: 1px solid #C9C9C9;
-  margin: 0 -20px;
+  @media (min-width: 768px){
+    left: auto;
+    right: 10%;
+    width: 412px;
+  }
   .select_wrap {
     h3 {
       font-size: 18px;
@@ -444,10 +474,10 @@ const ReservationFunctions = styled.div`
       border-bottom: 1px solid #ddd;
     }
     & > div {
-      padding: 0 20px;
+      padding: 20px;
     }
   }
-  li {
+  .select_area li {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -506,7 +536,7 @@ const SitterDetailPage = styled.div`
       }
     }
     &.page_body{
-      padding: 70px 0;
+      padding: 70px 0 200px;
       .rmdp-border{
         margin-top: 46px;
       }
