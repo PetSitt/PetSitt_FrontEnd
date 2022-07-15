@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 import { useMutation } from "react-query";
-import Input from "../elements/Input";
-import Button from "../elements/Button";
 import { apis } from "../store/api";
 import { useNavigate } from "react-router-dom";
+import StyledContainer from "../elements/StyledContainer";
+import NavBox from "../elements/NavBox";
+import InputBox from "../elements/InputBox";
+import StyledButton from "../elements/StyledButton";
 import { handleChange } from "../shared/common";
 
 const INITIAL_VALUES = {
@@ -40,8 +42,7 @@ const Signup = () => {
   // 회원가입 유효성 검사
   const idCheck = (e) => {
     handleInputChange(e);
-    const regId =
-      /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
+    const regId = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
     const idCurrent = e.target.value;
 
     if (!regId.test(idCurrent)) {
@@ -53,14 +54,14 @@ const Signup = () => {
     }
   };
 
-  // 영문 숫자 포함해서 6~20 이내로
+  // 영문 숫자 포함해서 4~10 이내로
   const pwCheck = (e) => {
     handleInputChange(e);
-    const regPw = /^.{6,20}$/;
+    const regPw = /^.*(?=.{4,10})(?=.*[a-zA-Z])(?=.*?[A-Z])(?=.*\d)(?=.+?[\W|_])[a-zA-Z0-9!@#$%^&*()-_+={}\|\\\/]+$/gim;
     const pwCurrent = e.target.value;
 
     if (!regPw.test(pwCurrent)) {
-      setPwMessage("6~20자로 입력해주세요");
+      setPwMessage("4~10자 이내 대/소문자,숫자,특수문자 조합으로 입력해주세요");
       setIsPw(false);
     } else {
       setPwMessage("올바른 비밀번호 입니다");
@@ -114,96 +115,100 @@ const Signup = () => {
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <h1>Sign Up</h1>
-      <label className="inner required">
-        <p className="tit">아이디(이메일)</p>
-        <Input
-          _width="100%"
-          _height="44px"
-          _placeholder="test@gmail.com"
-          _type="email"
-          _name={"userEmail"}
-          onChange={idCheck}
-          required
-        />
-        {values.userEmail && (
-          <Message className={`${isId ? "success" : "error"}`}>
-            {idMessage}
-          </Message>
-        )}
-      </label>
-      <label className="inner required">
-        <p className="tit">비밀번호</p>
-        <Input
-          _width="100%"
-          _height="44px"
-          _placeholder="4~10자리(특수문자, 숫자, 영어 포함)"
-          _type="password"
-          id="pw"
-          _name={"password"}
-          onChange={pwCheck}
-          required
-        />
-        {values.password && (
-          <Message className={`${isPw ? "success" : "error"}`}>
-            {pwMessage}
-          </Message>
-        )}
-      </label>
-      <label className="inner required">
-        <p className="tit">비밀번호 확인</p>
-        <Input
-          _width="100%"
-          _height="44px"
-          _placeholder="4~10자리(특수문자, 숫자, 영어 포함)"
-          _type="password"
-          id="pw2"
-          onChange={isSamePw}
-          required
-        />
-        {values.password && (
-          <Message className={`${isPw2 ? "success" : "error"}`}>
-            {pw2Message}
-          </Message>
-        )}
-      </label>
-      <label className="inner required">
-        <p className="tit">핸드폰번호</p>
-        <Input
-          _width="100%"
-          _height="44px"
-          _placeholder="'-' 없이 입력해주세요"
-          _type="text"
-          _value={phoneCurrent}
-          _name={"phoneNumber"}
-          onChange={phoneRegexr}
-          required
-        />
-        {values.phoneNumber && (
-          <Message className={`${isPhone ? "success" : "error"}`}>
-            {phoneMessage}
-          </Message>
-        )}
-      </label>
-      <label className="inner required">
-        <p className="tit">닉네임</p>
-        <Input
-          _width="100%"
-          _height="44px"
-          _type="text"
-          id="pw2"
+    <StyledContainer>
+      <NavBox _title={"회원가입"} />
+      <Form onSubmit={handleSubmit}>
+        <InputBox>
+          <label>아이디(이메일)</label>
+          <input
+            type="email"
+            name="userEmail"
+            placeholder="example@petsitt.com"
+            onChange={idCheck}
+            required
+          />
+          {values.userEmail && (
+            <Message className={`${isId ? "success" : "error"}`}>
+              {idMessage}
+            </Message>
+          )}
+        </InputBox>
+        <InputBox>
+          <label>비밀번호</label>
+          <input
+            id="pw"
+            type="password"
+            name="password"
+            placeholder="4~10자리(특수문자, 숫자, 영어 포함)"
+            onChange={pwCheck}
+            required
+          />
+          {values.password && (
+            <Message className={`${isPw ? "success" : "error"}`}>
+              {pwMessage}
+            </Message>
+          )}
+        </InputBox>
+        <InputBox>
+          <label className="inner required">비밀번호 확인</label>
+          <input
+            type="password"
+            name="passwordCheck"
+            placeholder="4~10자리(특수문자, 숫자, 영어 포함)"
+            onChange={isSamePw}
+            required
+          />
+          {values.password && (
+            <Message className={`${isPw2 ? "success" : "error"}`}>
+              {pw2Message}
+            </Message>
+          )}
+        </InputBox>
+        <InputBox>
+          <label>핸드폰번호</label>
+          <input
+            type="text"
+            name="phoneNumber"
+            value={phoneCurrent}
+            placeholder="'-' 없이 입력해주세요"
+            onChange={phoneRegexr}
+            required
+          />
+          {values.phoneNumber && (
+            <Message className={`${isPhone ? "success" : "error"}`}>
+              {phoneMessage}
+            </Message>
+          )}
+        </InputBox>
+        <InputBox
+          _label={"닉네임"}
+          _type={"text"}
+          _placeholder={"닉네임을 입력해주세요"}
           _name={"userName"}
-          onChange={handleInputChange}
+          _onChange={handleInputChange}
+          _value={phoneCurrent}
           required
-        />
-      </label>
-      <Button>전송</Button>
-    </Form>
+        >
+          <label>닉네임</label>
+          <input
+            type="text"
+            name="userName"
+            placeholder="닉네임을 입력해주세요"
+            onChange={handleInputChange}
+            required
+          />
+        </InputBox>
+        <ButtonBox>
+          <StyledButton _title={"회원가입"} />
+        </ButtonBox>
+      </Form>
+    </StyledContainer>
   );
 };
 
 const Form = styled.form`
+  position: relative;
+  height: 90vh;
   h1 {
     font-size: 34px;
     font-weight: 600;
@@ -237,6 +242,12 @@ const Message = styled.p`
   align-self: flex-start;
   padding: 5px 0;
   color: ${(props) => (props.className === "success" ? "green" : "red")};
+`;
+
+const ButtonBox = styled.div`
+  position: absolute;
+  width: 100%;
+  bottom: 0px;
 `;
 
 export default Signup;
