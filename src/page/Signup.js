@@ -42,8 +42,7 @@ const Signup = () => {
   // 회원가입 유효성 검사
   const idCheck = (e) => {
     handleInputChange(e);
-    const regId =
-      /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
+    const regId = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
     const idCurrent = e.target.value;
 
     if (!regId.test(idCurrent)) {
@@ -55,14 +54,14 @@ const Signup = () => {
     }
   };
 
-  // 영문 숫자 포함해서 6~20 이내로
+  // 영문 숫자 포함해서 4~10 이내로
   const pwCheck = (e) => {
     handleInputChange(e);
-    const regPw = /^.{6,20}$/;
+    const regPw = /^.*(?=.{4,10})(?=.*[a-zA-Z])(?=.*?[A-Z])(?=.*\d)(?=.+?[\W|_])[a-zA-Z0-9!@#$%^&*()-_+={}\|\\\/]+$/gim;
     const pwCurrent = e.target.value;
 
     if (!regPw.test(pwCurrent)) {
-      setPwMessage("6~20자로 입력해주세요");
+      setPwMessage("4~10자 이내 대/소문자,숫자,특수문자 조합으로 입력해주세요");
       setIsPw(false);
     } else {
       setPwMessage("올바른 비밀번호 입니다");

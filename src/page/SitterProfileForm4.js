@@ -1,11 +1,10 @@
 import Button from "../elements/Button";
 import styled from "styled-components";
-import { Calendar } from "react-multi-date-picker"
-import { Navigate, useLocation } from "react-router-dom";
+import { Calendar, DateObject } from "react-multi-date-picker";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { apis } from "../store/api";
-
 
 const format = "YYYY/MM/DD";
 const INITIAL_VALUES = {
@@ -13,28 +12,31 @@ const INITIAL_VALUES = {
 };
 
 function SitterProfileForm4() {
-  const { data } = useLocation().state;
-  const [values, setValues] = useState({...data, ...INITIAL_VALUES});
+  const today = new DateObject()
+  const {data, update} = useLocation().state;
+  const [values, setValues] = useState(update ? data : { ...data, ...INITIAL_VALUES });
   const [dates, setDates] = useState([]);
   const queryClient = useQueryClient();
-
+  const navigate = useNavigate();
 
   // useMutation 생성하는 세팅 함수
-  const { mutate: create } = useMutation(apis.sitterProfilePost, {
+  const { mutate: create } = useMutation(apis.sitterprofilePost, {
     onSuccess: () => {
-      Navigate("/mypage/sitterprofile");
+      //무효화 시킴
+      queryClient.invalidateQueries("sitterprofile");
+      navigate("/mypage/sitterprofile");
     },
     onError: (data) => {
       console.log(data);
     },
   });
 
-   // useMutation 수정하는 세팅 함수
-   const { mutate: update } = useMutation(apis.petprofilePatch, {
+  // useMutation 수정하는 세팅 함수
+  const { mutate: sitterUpdate } = useMutation(apis.sitterprofilePatch, {
     onSuccess: (data) => {
-      queryClient.setQueryData(["petprofile", values.petId], data);
-      queryClient.invalidateQueries("petprofile");
-      Navigate("/mypage/sitterprofile");
+      queryClient.setQueryData(["sitterprofile", values.petId], data);
+      queryClient.invalidateQueries("sitterprofile");
+      navigate("/mypage/sitterprofile");
     },
     onError: (data) => {
       console.log(data);
@@ -42,10 +44,12 @@ function SitterProfileForm4() {
   });
 
   useEffect(() => {
-    const noDate = dates.map((el) => el.format());
-    setValues((prevValues) => {
-      return {...prevValues, noDate}
-    });
+    if(!update){
+      const noDate = dates.map((el) => el.format()); //켈린더의 날짜 데이터를 배열에 문자열로 추출
+      setValues((prevValues) => {
+        return {...prevValues, noDate}
+      })
+    }
   },[dates])
 
   const handleSubmit = (e) => {
@@ -65,30 +69,22 @@ function SitterProfileForm4() {
     formData.append("mainImageUrl", values.mainImageUrl);
     formData.append("introTitle", values.introTitle);
     formData.append("myIntro", values.myIntro);
-    formData.append("careSize", values.careSize);
-    formData.append("category", values.category);
-    formData.append("plusService", values.plusService);
-    formData.append("noDate", values.noDate);
+    formData.append("careSize", JSON.stringify(values.careSize));
+    formData.append("category", JSON.stringify(values.category));
+    formData.append("plusService", JSON.stringify(values.plusService));
+    formData.append("noDate", JSON.stringify(values.noDate));
     formData.append("servicePrice", values.servicePrice);
-
-    const fields = {
-      data: formData
-    };
-
-    create(formData)
+  
+    update ? sitterUpdate(formData) : create(formData)
   }
 
   return (
     <Form onSubmit={handleSubmit}>
+      {console.log(values.noDate)}
       <h1>돌보미 등록<span>4/4</span></h1>
-      <Calendar multiple sort format={format} value={values.noDate} onChange={setDates}></Calendar>
-      <ul>
-        {values.noDate.map((date, index) => (
-          <li key={index}>{date}</li>
-        ))}
-      </ul>
+      <Calendar required multiple sort format={format} value={values.noDate} minDate={new Date()} maxDate={new Date(today.year + 1, today.month.number, today.day)} onChange={setDates}></Calendar>
       
-      <Button _color={"#fff"}>등록하기</Button>
+      <Button _color={"#fff"}>{ update ? "수정하기" : "등록하기"}</Button>
     </Form>
   );
 }

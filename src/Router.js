@@ -56,7 +56,7 @@ const Router = () => {
           path="/mypage/SitterProfileForm4"
           element={<SitterProfileForm4 />}
         />
-        <Route path="/pwchange/:id" element={<PwChange />} />
+        <Route path="/pwchange" element={<PwChange />} />
         <Route path="/login" element={<Login />}></Route>
         <Route path="/search" element={<SearchAddress />}></Route>
         <Route path="/reservation" element={<Reservation />}></Route>ReservationDetail

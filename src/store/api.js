@@ -247,8 +247,12 @@ export const apis = {
 	petprofilePost: (data) => formDataApi.post('/mypage/petprofile', data),
 	petprofilePatch: ({id, data}) => formDataApi.patch(`/mypage/petprofile/${id}`, data),
   petprofileDelete: (id) => jsonApi.delete(`/mypage/petprofile/${id}`),
-	sitterProfilePost: (data) => formDataApi.post('/mypage/sitterprofile', data),
-	
+	reservation: () => jsonApi.get('/reservations'),
+	sitterprofileGet: () => jsonApi.get('/mypage/sitterprofile'),
+	sitterprofilePost: (data) => formDataApi.post('/mypage/sitterprofile', data),
+	sitterprofilePatch: (data) => formDataApi.patch('/mypage/sitterprofile', data),
+	sitterprofileDelete: () => jsonApi.delete('/mypage/sitterprofile'),
+
 	// main
 	getSittersList: (queriesData) => mainApi.post('/mains/search', queriesData),
   getSittersDefault: (data) => mainApi.post('/mains', data),

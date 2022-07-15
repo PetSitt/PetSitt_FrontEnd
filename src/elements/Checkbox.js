@@ -4,20 +4,45 @@ import styled, {css} from "styled-components";
 *	Props로 _id값을 받으면 값을 array형태로 추가 가능.
 * Props로 _id값을 받지 않으면 Boolean형으로 구현.
 */
-const Checkbox = ({_id, _text, _required, _size, _border, _bgColor ,checked, onChange}) => {
-	const styles = {_size, _border, _bgColor}
+const CheckBox = ({_id, _key, _text, _name, _required, _size, _border, _bgColor, checked, onChange}) => {
+	const styles = {_size, _border, _bgColor};
+	let _checkBox = false;
+	switch(_text) {
+		case "소형견":
+			_checkBox = checked[0] === true ? true : false;
+			break;
+		case "중형견":
+			_checkBox = checked[1] === true ? true : false;
+			break;
+		case "대형견":
+			_checkBox = checked[2] === true ? true : false;
+			break;
+		default:
+			_checkBox = _text === _id ? true : false;
+			break;
+	}
 
+	if(_checkBox === true){
+		return (
+			<StLabel htmlFor={_id} className="radio">
+				<StInput {...styles} type="checkbox" id={_id} name={_name} required={_required} onChange={(e) => {
+					_id ? onChange(e.currentTarget.checked, _key, _id) : onChange(e)
+				}} defaultChecked={true}></StInput>
+				<StP>{_text}</StP>
+			</StLabel>
+		)
+	}
 	return (
 		<StLabel htmlFor={_id} className="radio">
-			<StInput {...styles} type="checkbox" id={_id} name={_text} required={_required} onChange={(e) => {
-				_id ? onChange(e.currentTarget.checked, _id) : onChange(e)
-			}} checked={ _id ? checked?.includes(_id) ? true : false : null}></StInput>
+			<StInput {...styles} type="checkbox" id={_id} name={_name} required={_required} onChange={(e) => {
+				_id ? onChange(e.currentTarget.checked, _key, _id) : onChange(e)
+			}} defaultChecked={ checked.includes(_id) ? true : false }></StInput>
 			<StP>{_text}</StP>
 		</StLabel>
 	);
 }
 
-Checkbox.defaultProps = {
+CheckBox.defaultProps = {
 	_size: "1.2rem",
 	_border: "1.2px solid gainsboro",
 	_bgColor: "#000"
@@ -70,4 +95,4 @@ const StP = styled.p`
 	position: relative;
 `;
 
-export default Checkbox;
+export default CheckBox;
