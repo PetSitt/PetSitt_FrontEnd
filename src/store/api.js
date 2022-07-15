@@ -254,8 +254,10 @@ export const apis = {
 	sitterprofileDelete: () => jsonApi.delete('/mypage/sitterprofile'),
 
 	// main
-	getSittersList: (queriesData) => jsonApi.post('/mains/search', queriesData),
-  getSittersDefault: (data) => jsonApi.post('/mains', data),
+	// getSittersList: (queriesData) => jsonApi.post('/mains/search', queriesData),
+  // getSittersDefault: (data) => jsonApi.post('/mains', data),
+	getSittersList: (queriesData) => jsonApi.post('https://kimguen.com/mains/search', queriesData),
+  getSittersDefault: (data) => jsonApi.post('https://kimguen.com/mains', data),
 
 	// detail
 	getUserDetail: (sitterId) => detailApi.get(`/details/${sitterId}`),
