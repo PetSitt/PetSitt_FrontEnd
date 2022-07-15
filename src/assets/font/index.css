@@ -60,4 +60,5 @@ i {
 }
 .ic-star:before {
   content: "\e90a";
+  color: #FFC700;
 }
