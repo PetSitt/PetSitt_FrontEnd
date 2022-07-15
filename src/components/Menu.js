@@ -25,6 +25,7 @@ const MenuInner = styled.div`
 	bottom: 0;
 	margin-top: 100px;
 	right: 10%;
+	background-color: #fff;
 	.item {
 		font-size: 22px;
 	}
