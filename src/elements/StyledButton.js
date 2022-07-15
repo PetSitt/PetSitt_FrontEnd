@@ -3,7 +3,7 @@ import styled from 'styled-components';
 const StyledButton = ({ _margin, _border, color, _bgColor, _onClick, _title, _width }) => {
   const style = { _margin, _border, color, _bgColor, _width};
   return (
-    <MainButton {...style} type="button" onClick={_onClick}>
+    <MainButton {...style} onClick={_onClick}>
       {_title}
     </MainButton>
   );

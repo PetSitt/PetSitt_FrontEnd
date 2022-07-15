@@ -201,6 +201,7 @@ const Signup = () => {
         <ButtonBox>
           <StyledButton _title={"회원가입"} />
         </ButtonBox>
+        <button>버튼</button>
       </Form>
     </StyledContainer>
   );
