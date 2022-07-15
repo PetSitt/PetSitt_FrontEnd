@@ -106,7 +106,7 @@ const Detail = () => {
 
   useEffect(() => {
 		setDetail(detailData.data);
-    setServices(Array.from({length: detailData.data.sitter.category.length}, () => false));
+    setServices(Array.from({length: detailData.data.sitter?.category.length}, () => false));
 	}, [detailData.data]);
   useEffect(()=>{
     if(detail){
@@ -125,7 +125,7 @@ const Detail = () => {
         const new_data = [];
         for (let i = 0; i < services.length; i++) {
           if (services[i]) {
-            new_data.push(detail.sitter.category[i]);
+            new_data.push(detail.sitter?.category[i]);
           }
         }
         return new_data;
@@ -186,7 +186,7 @@ const Detail = () => {
             </p>
           </h3>
           <ServiceList>
-            {detail.sitter.category.map((v, i) => {
+            {detail.sitter?.category.map((v, i) => {
               return (
                 <li key={`category_${i}`}>
                   <div>
@@ -294,7 +294,7 @@ const Detail = () => {
               </h3>
               <div>
                 <ul style={{ margin: "10px 0" }}>
-                  {detail.sitter.category.map((v, i) => {
+                  {detail.sitter?.category.map((v, i) => {
                     return (
                       <li key={`category_${i}`}>
                         <label>
