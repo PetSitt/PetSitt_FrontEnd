@@ -6,6 +6,7 @@ import styled, {css} from "styled-components";
 */
 const CheckBox = ({_id, _key, _text, _name, _required, _size, _border, _bgColor, checked, onChange}) => {
 	const styles = {_size, _border, _bgColor};
+	console.log(checked.includes(_text))
 	let _checkBox = false;
 	switch(_text) {
 		case "소형견":
@@ -18,7 +19,7 @@ const CheckBox = ({_id, _key, _text, _name, _required, _size, _border, _bgColor,
 			_checkBox = checked[2] === true ? true : false;
 			break;
 		default:
-			_checkBox = _text === _id ? true : false;
+			_checkBox = checked.includes(_text) ? true : false;
 			break;
 	}
 

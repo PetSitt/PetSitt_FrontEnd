@@ -15,10 +15,8 @@ const INITIAL_VALUES = {
 function SitterProfileForm3() {
   const {data, update} = useLocation().state;
   const [available, setAvailable] = useState([]);
-  const [addService, setAddService] = useState([]);
   const [num, setNum] = useState('');
   const [values, setValues] = useState(update ? data : { ...data, ...INITIAL_VALUES });
-
   /** 채크박스에 항목 id의 값을 배열로 만들어서 values에 저장 */
   const availableHandler = (checked, key, id) => {
     if (checked) {
@@ -97,11 +95,11 @@ function SitterProfileForm3() {
       <div>
         <p className="tit">제공 가능한 서비스*</p>
         <div>
-          <CheckBox _id={"산책"} _key={"category"} _text={"산책"} _size={"1.2rem"} onChange={availableHandler} checked={available}/>
-          <CheckBox _id={"목욕, 모발 관리"} _key={"category"} _text={"목욕, 모발 관리"} _size={"1.2rem"} onChange={availableHandler} checked={available}/>
-          <CheckBox _id={"훈련"} _key={"category"} _text={"훈련"} _size={"1.2rem"} onChange={availableHandler} checked={available}/>
-          <CheckBox _id={"데이 케어 - 시터 집"} _key={"category"} _text={"데이 케어 - 시터 집"} _size={"1.2rem"} onChange={availableHandler} checked={available}/>
-          <CheckBox _id={"1박 케어 - 시터 집"} _key={"category"} _text={"1박 케어 - 시터 집"} _size={"1.2rem"} onChange={availableHandler} checked={available}/>
+          <CheckBox _id={"산책"} _key={"category"} _text={"산책"} _size={"1.2rem"} onChange={availableHandler} checked={values.category}/>
+          <CheckBox _id={"목욕, 모발 관리"} _key={"category"} _text={"목욕, 모발 관리"} _size={"1.2rem"} onChange={availableHandler} checked={values.category}/>
+          <CheckBox _id={"훈련"} _key={"category"} _text={"훈련"} _size={"1.2rem"} onChange={availableHandler} checked={values.category}/>
+          <CheckBox _id={"데이 케어"} _key={"category"} _text={"데이 케어"} _size={"1.2rem"} onChange={availableHandler} checked={values.category}/>
+          <CheckBox _id={"1박 케어"} _key={"category"} _text={"1박 케어"} _size={"1.2rem"} onChange={availableHandler} checked={values.category}/>
         </div>
       </div>
 
@@ -114,7 +112,7 @@ function SitterProfileForm3() {
             _text={"(자동차 그림) 집앞 픽업 가능 - 비용은 펫시터와 협의"}
             _size={"1.2rem"}
             onChange={availableHandler}
-            checked={addService}
+            checked={values.plusService}
           />
           <CheckBox
             _id={"응급 처치"}
@@ -122,7 +120,7 @@ function SitterProfileForm3() {
             _text={"응급 처치"}
             _size={"1.2rem"}
             onChange={availableHandler}
-            checked={addService}
+            checked={values.plusService}
           />
           <CheckBox
             _id={"장기 예약 가능 - 14일 이상 돌봄가능"}
@@ -130,7 +128,7 @@ function SitterProfileForm3() {
             _text={"장기 예약 가능 - 14일 이상 돌봄가능"}
             _size={"1.2rem"}
             onChange={availableHandler}
-            checked={addService}
+            checked={values.plusService}
           />
           <CheckBox
             _id={"퍼피 케어(1살미만)"}
@@ -138,7 +136,7 @@ function SitterProfileForm3() {
             _text={"퍼피 케어(1살미만)"}
             _size={"1.2rem"}
             onChange={availableHandler}
-            checked={addService}
+            checked={values.plusService}
           />
           <CheckBox
             _id={"노견 케어(8살이상)"}
@@ -146,7 +144,7 @@ function SitterProfileForm3() {
             _text={"노견 케어(8살이상)"}
             _size={"1.2rem"}
             onChange={availableHandler}
-            checked={addService}
+            checked={values.plusService}
           />
           <CheckBox
             _id={"실내놀이"}
@@ -154,7 +152,7 @@ function SitterProfileForm3() {
             _text={"실내놀이"}
             _size={"1.2rem"}
             onChange={availableHandler}
-            checked={addService}
+            checked={values.plusService}
           />
           <CheckBox
             _id={"마당있음"}
@@ -162,7 +160,7 @@ function SitterProfileForm3() {
             _text={"마당있음"}
             _size={"1.2rem"}
             onChange={availableHandler}
-            checked={addService}
+            checked={values.plusService}
           />
         </div>
       </div>

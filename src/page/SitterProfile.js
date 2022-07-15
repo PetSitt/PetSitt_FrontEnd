@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { Calendar } from "react-multi-date-picker";
+import { Calendar, DateObject } from "react-multi-date-picker";
 import { Link } from "react-router-dom";
 import styled from "styled-components";
 import { apis } from "../store/api";
 import { comma } from "../shared/common";
 
 const SitterProfile = () => {
+  const today = new DateObject();
   const queryClient = useQueryClient();
   const [caresizeData, setCaresizeData] = useState(["소형견", "중형견", "대형견"])
   const {data: sitterData, isSuccess: sitterSuccessGet } = useQuery("sitterprofile", apis.sitterprofileGet);
@@ -66,7 +67,8 @@ const SitterProfile = () => {
             </div>
             <div className="inner">
               <h3 className="tit">서비스 가능한 날짜</h3>
-              <Calendar value={values.noDate} readOnly={true}></Calendar>
+              {console.log(values.noDate)}
+              <Calendar value={values.noDate} readOnly={true} minDate={new Date()} maxDate={new Date(today.year + 1, today.month.number, today.day)}></Calendar>
             </div>
           </div>
         ) : (
