@@ -17,7 +17,7 @@ const Reservation = () => {
   const [petsForService, setPetsForService] = useState([]);
   const [requestStatus, setRequestStatus] = useState(false);
   const [dataForRequest, setDataForRequest] = useState();
-  const [modalDisplay, setModalDisplay] = useState();
+  const [modalDisplay, setModalDisplay] = useState(false);
   const [modalType, setModalType] = useState();
   const [page, setPage] = useState('reservation');
   const {data: petsQuery, isLoading, isSuccess, isPreviousData} = useQuery('petsData', apis.reservation, {
@@ -63,10 +63,11 @@ const Reservation = () => {
     setRequestStatus(true);
   }
   const modalContent = {
-    notSelected: {alert: true, text: '반려견을 선택해주세요.', confirmFn: ()=>{setModalDisplay(false)}},
-    confirm: {alert: false, text: '예약을 확정하시겠습니까?', confirmFn: confirmReservation, cancelFn: ()=>{setModalDisplay(false)}}
+    notSelected: {alert: true, text: '반려견을 선택해주세요.', confirmFn: ()=>setModalDisplay(false)},
+    confirm: {alert: false, text: '예약을 확정하시겠습니까?', confirmFn: confirmReservation, cancelFn: ()=>setModalDisplay(false)}
   };
-  
+
+
   if(page !== 'reservation') return <Navigate to="/reservation/list"/>
   if(isLoading || !info || !petsData) return '예약페이지 로딩중';
   return (
@@ -174,7 +175,11 @@ const Reservation = () => {
           </section>
         </section>
       </ReservationPage>
-      <Modal _text={modalType?.text} _alert={modalType?.alert} _display={modalDisplay} confirmOnClick={modalType?.confirmFn} cancelOnclick={modalType?.cancelFn}/>
+      <Modal _alert={modalType?.alert} _display={modalDisplay} confirmOnClick={modalType?.confirmFn} cancelOnclick={modalType?.cancelFn}>
+        <div className="text_area">
+          <h3>{modalType?.text}</h3>
+        </div>
+      </Modal>
     </>
   )
 }

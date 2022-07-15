@@ -11,28 +11,30 @@ const Modal = ({
   confirmOnClick,
   cancelOnclick,
 }) => {
+  console.log(_display)
+  // console.log(confirmOnClick(), cancelOnclick())
   const [display, setDisplay] = useState(false);
   useEffect(() => {
     setDisplay(_display);
   }, [_display]);
   return (
-    <ModalContainer style={{ display: display ? "block" : "none" }}>
+    <ModalContainer style={{ display: display ? "flex" : "none" }}>
       <div className="modal">
         {children}
         <div className={`button_area ${!_alert && "button_x2"}`}>
           {!_alert && (
-            <button
-              type="button"
-              className="cancel"
-              onClick={cancelOnclick ? cancelOnclick : setDisplay(false)}
-            >
-              {_cancel ? _cancel : "취소"}
-            </button>
+            <StyledButton
+              _bgColor={'rgba(252, 146, 21, 0.1)'}
+              color={'#fc9215'}
+              _title={_cancel ? _cancel : "취소"}
+              _margin="0"
+              _onClick={cancelOnclick ? cancelOnclick : ()=>setDisplay(false)}
+            />
           )}
           <StyledButton
             _title={_confirm ? _confirm : "확인"}
-            _margin={"24px 0 0 0"}
-            _onClick={confirmOnClick ? confirmOnClick : setDisplay(false)}
+            _margin="0"
+            _onClick={confirmOnClick ? confirmOnClick : ()=>setDisplay(false)}
           />
         </div>
       </div>
@@ -67,6 +69,17 @@ const ModalContainer = styled.div`
       text-align: center;
       & span {
         color: #fc9215;
+      }
+    }
+    .button_area{
+      padding: 20px 0 0;
+    }
+    .button_x2{
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      button{
+        margin: 0;
       }
     }
   }
