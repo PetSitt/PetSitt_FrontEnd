@@ -6,7 +6,6 @@ import DatePicker, { DateObject } from "react-multi-date-picker";
 import styled from 'styled-components';
 import axios from "axios";
 import { apis } from "../store/api";
-import useCurrentLocation from '../shared/useCurrentLocation';
 
 import MapContainer from "./MapContainer";
 import SearchAddress from "./SearchAddress";
@@ -42,6 +41,7 @@ function Home() {
 	const [viewType, setViewType] = useState('list');
 	const [locationItems, setLocationItems] = useState();
 	const [mapHeight, setMapHeight] = useState();
+	const getLocationButtonRef = useRef();
 	const getSittersList = (queriesData, category) => {
 		if(category.length > 0 && category.length < 5){
 			for(let i=0; i<category.length; i++){
@@ -123,6 +123,7 @@ function Home() {
 		},
 	);
 	const getLocation = () => {
+		console.log('????!')
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -145,11 +146,12 @@ function Home() {
     }
   };
 
+	console.log(currentPosition)
 	useEffect(()=>{
 		
-		// getLocation();
-		setCurrentPosition({x: "126.891779471155", y: "37.4768763179226"});
-		setDefaultSearch(true);
+		// setCurrentPosition({x: "126.891779471155", y: "37.4768763179226"});
+		// setDefaultSearch(true);
+		getLocationButtonRef.current.click();
 
 		const fullHeight = window.innerHeight;
 		const filterHeight = filterAreaRef.current.clientHeight;
@@ -223,12 +225,10 @@ function Home() {
 	// }, []);
 
 
-
-	
-
 	if (sittersFilteredIsLoading) return null;
 	return (
 		<div className="home" style={{position: 'relative'}}>
+			<button type="button" onClick={getLocation} ref={getLocationButtonRef}></button>
 			<IndexPage>
 				<FilterArea ref={filterAreaRef}>
 					<DatePicker
