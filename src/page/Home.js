@@ -11,6 +11,7 @@ import MapContainer from "./MapContainer";
 import SearchAddress from "./SearchAddress";
 import icon_star from '../assets/img/icon_star.png';
 import icon_map from '../assets/img/icon_map.png';
+import StyledButton from "../elements/StyledButton";
 
 
 function Home() {
@@ -34,7 +35,7 @@ function Home() {
   const [queriesData, setQueriesData] = useState({});
 	const [category, setCategory] = useState(categories);
 	const [searched, setSearched] = useState(false);
-	const [sitters, setSitters] = useState();
+	const [sitters, setSitters] = useState(null);
 	const [currentPosition, setCurrentPosition] = useState();
 	const [defaultSearch, setDefaultSearch] = useState(false);
 	const [viewType, setViewType] = useState('list');
@@ -55,7 +56,7 @@ function Home() {
 		() => getSittersList(queriesData, category),
 		{
 			onSuccess: (data) => {
-				// console.log(data);
+				console.log(data);
 				setSearched(false);
 			},
 			onError: (data) => {
@@ -91,10 +92,9 @@ function Home() {
 		},
 		staleTime: Infinity,
 	});
-
-	console.log(address, addressInfo)
 	
 	const getListApi = (currentPosition, category) =>{
+		console.log(currentPosition)
 		const categoryData = {}
 		if(category.length > 0 && category.length < 5){
 			for(let i=0; i<category.length; i++){
@@ -103,6 +103,7 @@ function Home() {
 				categoryData[cate_key] = cate_value;
 			}
 		}
+		console.log(currentPosition, categoryData)
 		return apis.getSittersDefault({...currentPosition, ...categoryData});
 	}
 	const {data: sittersBeforeSearch, isFetched: sittersIsFetched, refetch: refetchSitters, isRefetching: sittersIsRefetching} = useQuery(
@@ -144,7 +145,10 @@ function Home() {
   };
 
 	useEffect(()=>{
-		getLocation();
+		// getLocation();
+		setCurrentPosition({x: "126.891779471155", y: "37.4768763179226"});
+		setDefaultSearch(true);
+
 		const fullHeight = window.innerHeight;
 		const filterHeight = filterAreaRef.current.clientHeight;
 		setMapHeight(fullHeight - filterHeight);
@@ -159,7 +163,7 @@ function Home() {
 			return;
 		}
 		if(sittersIsFetched){
-			setSitters(sittersBeforeSearch.data.sitters);
+			setSitters(sittersBeforeSearch?.data.sitters);
 			return;
 		}
 	}, [sittersFilteredIsFetched, sittersIsFetched])
@@ -169,6 +173,7 @@ function Home() {
 			if(addressInfo &&  dates?.length > 0){
 				// 검색 후 categorizing
 				console.log('검색 후 categorizing')
+				setSearched(true);
 			}else{
 				// 검색 전 categorizing
 				console.log('검색 전 categorizing')
@@ -225,8 +230,12 @@ function Home() {
 						onChange={setDate}
 						multiple={true}
 						format="YYYY/MM/DD"
-						minDate={date}
+						minDate={new Date()}
 						maxDate={new Date(today.year + 1, today.month.number, today.day)}
+						shadow={false}
+						style={{
+							borderRadius: 0,
+						}}
 					/>
 					<div style={{position: 'relative'}}>
 					<input type="text" value={addressInfo?.address_name && addressInfo?.address_name} onClick={()=>setIframeDisplay(true)} style={{display: 'block', width: '100%', height: '46px', lineHeight: '46px', border: '1px solid #999', margin: '10px 0 0'}}/>
@@ -238,13 +247,20 @@ function Home() {
 						)
 					}
 					</div>
-					<button type="button" style={{border: '1px solid #333', fontSize: '16px', height: '40px', lineHeight: '42px', padding: '0 20px'}} onClick={()=>{
+					<StyledButton _onClick={()=>{
 						if(addressInfo &&  dates?.length > 0){
 							setSearched(true);
 						}else{
 							window.alert('날짜와 장소를 선택해주세요.')
 						}
-					}}>검색하기</button>
+					}} _title="검색하기"/>
+					{/* <button type="button" style={{border: '1px solid #333', fontSize: '16px', height: '40px', lineHeight: '42px', padding: '0 20px'}} onClick={()=>{
+						if(addressInfo &&  dates?.length > 0){
+							setSearched(true);
+						}else{
+							window.alert('날짜와 장소를 선택해주세요.')
+						}
+					}}>검색하기</button> */}
 					<Categories>
 						<ul>
 						{categories.map((v, i) => {
@@ -252,7 +268,9 @@ function Home() {
 								<li key={i}>
 									<label>
 										<input type="checkbox" onChange={(e) => {
+											console.log('??')
 											if(e.target.checked){ 
+												console.log('??')
 												setCategory((prev)=>{
 													const new_category = [...prev];
 													return new_category.filter(item=>{
@@ -266,7 +284,7 @@ function Home() {
 													return new_category;
 												})
 											}
-										}} />
+										}}/>
 										<span>{Object.values(v)}</span>
 									</label>
 								</li>
@@ -277,50 +295,62 @@ function Home() {
 				</FilterArea>
 				<SittersListArea>
 					{
-						(viewType === 'list')
-						? (
-						<ul>
+						sitters?.length > 0 ? (
+							<>
 							{
-								sitters?.map((v,i)=>{
-									return (
-										<li key={`sitter_${i}`}>
-											<Link to={`/detail/${v.sitterId}`}>
-											<div className="image_area" style={{backgroundImage: `url(${v.mainImageUrl})`}}>
-												<span className="sitter_image" style={{backgroundImage: `url(${v.imageUrl})`}}></span>
-											</div>
-											<div className="info_area">
-												<p className="sitter">
-													<em>{v.sitterName}</em>
-													<span>재고용률 {v.rehireRate}%</span>
-												</p>
-												<p className="address">{v.address}</p>
-												<div className="bottom_info">
-													<div className="star">
-														<img src={icon_star} alt="star"/>
-														<span>{v.averageStar} </span>
-														<span>{`(54)`}</span>
+								(viewType === 'list')
+								? (
+								<ul>
+									{
+										sitters?.map((v,i)=>{
+											return (
+												<li key={`sitter_${i}`}>
+													<Link to={`/detail/${v.sitterId}`}>
+													<div className="image_area" style={{backgroundImage: `url(${v.mainImageUrl})`}}>
+														<span className="sitter_image" style={{backgroundImage: `url(${v.imageUrl})`}}></span>
 													</div>
-													<p className="price"><strong>{v.servicePrice}</strong><span>원~</span></p>
-												</div>
-											</div>
-											</Link>
-										</li>
-									)
-								})
+													<div className="info_area">
+														<p className="sitter">
+															<em>{v.sitterName}</em>
+															<span>재고용률 {v.rehireRate}%</span>
+														</p>
+														<p className="address">{v.address}</p>
+														<div className="bottom_info">
+															<div className="star">
+																<img src={icon_star} alt="star"/>
+																<span>{v.averageStar} </span>
+																<span>{`(54)`}</span>
+															</div>
+															<p className="price"><strong>{v.servicePrice}</strong><span>원~</span></p>
+														</div>
+													</div>
+													</Link>
+												</li>
+											)
+										})
+									}
+								</ul>
+								) : (
+									<MapContainer items={locationItems} _height={mapHeight}/>
+								)
 							}
-						</ul>
+							</>
 						) : (
-							<MapContainer items={locationItems} _height={mapHeight}/>
+							<>
+								검색된 돌보미가 없습니다.
+							</>
 						)
 					}
 					
 				</SittersListArea>
 				<Buttons>
 					{
-						viewType === 'list' ? (
-							<button type="button" className="showMapView" onClick={()=>setViewType('map')}><i style={{backgroundImage: `url(${icon_map})`}}></i>지도</button>
-						) : (
-							<button type="button" className="showListView" onClick={()=>setViewType('list')}><i style={{backgroundImage: `url(${icon_map})`}}></i>리스트</button>
+						sitters?.length > 0 && (
+							viewType === 'list' ? (
+								<button type="button" className="showMapView" onClick={()=>setViewType('map')}><i style={{backgroundImage: `url(${icon_map})`}}></i>지도</button>
+							) : (
+								<button type="button" className="showListView" onClick={()=>setViewType('list')}><i style={{backgroundImage: `url(${icon_map})`}}></i>리스트</button>
+							)
 						)
 					}
 				</Buttons>
@@ -385,6 +415,24 @@ const Buttons = styled.div`
 }
 `
 const FilterArea = styled.div`
+.rmdp-container {
+	position: relative;
+}
+ .rmdp-ep-arrow{
+	height: 0!important;
+	 & + div{
+		width: 100%;
+		top: 46px!important;
+		transform: translate(0,0)!important;
+		z-index: 100;
+	 }
+ }
+ .rmdp-ep-arrow[direction=top]:after{
+	display: none;
+ }
+ .rmdp-border{
+	border-radius: 0;
+ }
 
 `
 const Categories = styled.div`

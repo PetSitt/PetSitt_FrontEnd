@@ -254,12 +254,16 @@ export const apis = {
 	sitterprofileDelete: () => jsonApi.delete('/mypage/sitterprofile'),
 
 	// main
-	getSittersList: (queriesData) => mainApi.post('/mains/search', queriesData),
-  getSittersDefault: (data) => mainApi.post('/mains', data),
+	// getSittersList: (queriesData) => jsonApi.post('/mains/search', queriesData),
+  // getSittersDefault: (data) => jsonApi.post('/mains', data),
+	getSittersList: (queriesData) => axios.post('https://kimguen.com/mains/search', queriesData),
+  getSittersDefault: (data) => axios.post('https://kimguen.com/mains', data),
 
 	// detail
-	getUserDetail: (sitterId) => detailApi.get(`/details/${sitterId}`),
-	getReviews: (sitterId, reviewId) => detailApi.post(`/details/reviews/${sitterId}`, reviewId),
+	// getUserDetail: (sitterId) => detailApi.get(`/details/${sitterId}`),
+	// getReviews: (sitterId, reviewId) => detailApi.post(`/details/reviews/${sitterId}`, reviewId),
+	getUserDetail: (sitterId) => axios.get(`https://kimguen.com/details/${sitterId}`),
+	getReviews: (sitterId, reviewId) => axios.post(`https://kimguen.com/details/reviews/${sitterId}`, reviewId),
 
 	// reservation
 	reservation: () => jsonApi.get('/reservations'),
