@@ -115,7 +115,7 @@ function Home() {
 			}
 		}
 		console.log(currentPosition, categoryData)
-		return apis.getSittersDefault({...currentPosition, ...categoryData});
+		// return apis.getSittersDefault({...currentPosition, ...categoryData});
 	}
 	const {data: sittersBeforeSearch, isLoading: sittersIsLoading, isFetched: sittersIsFetched, refetch: refetchSitters, isRefetching: sittersIsRefetching} = useQuery(
 		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
