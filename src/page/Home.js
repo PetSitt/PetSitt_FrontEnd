@@ -2,9 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import { Link } from 'react-router-dom';
 import { Cookies } from "react-cookie";
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import DatePicker, { DateObject } from "react-multi-date-picker";
+import { DateObject,Calendar } from "react-multi-date-picker";
 import styled from 'styled-components';
-import axios from "axios";
 import { apis } from "../store/api";
 
 import MapContainer from "./MapContainer";
@@ -41,7 +40,10 @@ function Home() {
 	const [viewType, setViewType] = useState('list');
 	const [locationItems, setLocationItems] = useState();
 	const [mapHeight, setMapHeight] = useState();
+	const getLocationButtonRef = useRef();
+	const [datepickerDisplay, setDatepickerDisplay] = useState(false);
 	const getSittersList = (queriesData, category) => {
+		console.log(queriesData, category)
 		if(category.length > 0 && category.length < 5){
 			for(let i=0; i<category.length; i++){
 				const cate_key = Object.keys(category[i])[0];
@@ -67,18 +69,26 @@ function Home() {
 			staleTime: Infinity,
 		},
 	);
-	useEffect(() => {
+	// useEffect(() => {
+	// 	if (date.length) {
+	// 		const getDates = date.map((v) => {
+	// 			return v.format(v._format);
+	// 		});
+	// 		setDates(getDates);
+	// 	}
+	// }, [date]);
+	const setDatesFormat = () => {
 		if (date.length) {
 			const getDates = date.map((v) => {
 				return v.format(v._format);
 			});
 			setDates(getDates);
 		}
-	}, [date]);
+	}
 
 	useEffect(()=>{
 		if(dates?.length && addressInfo){
-			setQueriesData({searchDate: dates, region_2depth_name: addressInfo.region_2depth_name, x: addressInfo.x, y: addressInfo.y, walk: "산책"})
+			setQueriesData({searchDate: dates, region_2depth_name: addressInfo.region_2depth_name, x: addressInfo.x, y: addressInfo.y})
 		}
 	}, [dates, addressInfo])
 
@@ -106,7 +116,7 @@ function Home() {
 		console.log(currentPosition, categoryData)
 		return apis.getSittersDefault({...currentPosition, ...categoryData});
 	}
-	const {data: sittersBeforeSearch, isFetched: sittersIsFetched, refetch: refetchSitters, isRefetching: sittersIsRefetching} = useQuery(
+	const {data: sittersBeforeSearch, isLoading: sittersIsLoading, isFetched: sittersIsFetched, refetch: refetchSitters, isRefetching: sittersIsRefetching} = useQuery(
 		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
 		{
 			onSuccess: (data) => {
@@ -145,13 +155,10 @@ function Home() {
   };
 
 	useEffect(()=>{
-		// getLocation();
-		setCurrentPosition({x: "126.891779471155", y: "37.4768763179226"});
-		setDefaultSearch(true);
-
+		getLocationButtonRef.current.click();
 		const fullHeight = window.innerHeight;
 		const filterHeight = filterAreaRef.current.clientHeight;
-		setMapHeight(fullHeight - filterHeight);
+		setMapHeight(fullHeight - filterHeight - 74);
 		console.log(fullHeight, filterHeight, fullHeight - filterHeight)
 	},[])
 
@@ -186,16 +193,8 @@ function Home() {
 		if(sitters?.length > 0 && !sittersIsRefetching){
 			// 가격에 쉼표 추가
 			for(let i=0; i<sitters.length; i++){
-				const length = sitters[i].servicePrice.toString().length;
-				const commaLength = length/3;
-				let index = 0;
-				let priceArray = [];
-				priceArray = sitters[i].servicePrice.toString().split('');
-				for(let j=1; j<commaLength; j++){
-					priceArray.splice(-(3 * j + index), 0, ',');
-					index++;					
-				}
-				sitters[i].servicePrice = priceArray.join('');
+				const priceString = String(sitters[i].servicePrice);
+				sitters[i].servicePrice = priceString.replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
 			}
 			// 카카오맵에 전달할 위도,경도 정보 저장
 			setLocationItems(()=>{
@@ -208,7 +207,6 @@ function Home() {
 			})
 		}
 	},[sitters])
-	
 
 	// useEffect(() => {
 	// 	if(localStorage.getItem('accessToken')){
@@ -217,32 +215,38 @@ function Home() {
 	// 		console.log('액세스 토큰 없음')
 	// 	}
 	// }, []);
-	
-	
 
 	if (sittersFilteredIsLoading) return null;
 	return (
 		<div className="home" style={{position: 'relative'}}>
+			<button type="button" onClick={getLocation} ref={getLocationButtonRef} style={{position: 'absolute', left: 0, top: 0, width: 0, height: 0}}></button>
 			<IndexPage>
 				<FilterArea ref={filterAreaRef}>
-					<DatePicker
-						ref={datepickerRef}
-						onChange={setDate}
-						multiple={true}
-						format="YYYY/MM/DD"
-						minDate={new Date()}
-						maxDate={new Date(today.year + 1, today.month.number, today.day)}
-						shadow={false}
-						style={{
-							borderRadius: 0,
-						}}
-					/>
+					<div style={{position: 'relative', zIndex: 2}}>
+						<input type="text" placeholder="날짜를 검색해주세요." value={dates?.length > 0 ? dates : ''} onClick={()=>setDatepickerDisplay(true)} style={{display: 'block', width: '100%', height: '46px', lineHeight: '46px', border: '1px solid #999', margin: '10px 0 0', padding: '0 15px'}} readOnly/>
+						<DatepickerWrap style={{display: datepickerDisplay === true ? 'block' : 'none', position: 'absolute', left: '0', right: '0', top: '100%'}}>
+							<Calendar
+								ref={datepickerRef}
+								onChange={setDate}
+								multiple={true}
+								format="YYYY/MM/DD"
+								minDate={new Date()}
+								maxDate={new Date(today.year + 1, today.month.number, today.day)}
+								shadow={false}
+								style={{
+									borderRadius: 0,
+								}}
+							/>
+							<StyledButton _title="닫기" _margin="0" _onClick={()=>{setDatepickerDisplay(false); setDatesFormat()}}/>
+						</DatepickerWrap>
+					</div>
 					<div style={{position: 'relative'}}>
-					<input type="text" value={addressInfo?.address_name && addressInfo?.address_name} onClick={()=>setIframeDisplay(true)} style={{display: 'block', width: '100%', height: '46px', lineHeight: '46px', border: '1px solid #999', margin: '10px 0 0'}}/>
+					<input type="text" placeholder="지역를 검색해주세요." value={addressInfo?.address_name && addressInfo?.address_name} onClick={()=>setIframeDisplay(true)} style={{display: 'block', width: '100%', height: '46px', lineHeight: '46px', border: '1px solid #999', margin: '10px 0 0', padding: '0 15px'}} readOnly/>
 					{
 						iframeDisplay && (
 							<AddressWrap>
 								<SearchAddress setAddressInfo={setAddressInfo} iframeDisplay={iframeDisplay} setIframeDisplay={setIframeDisplay}/>
+								<StyledButton _title="닫기" _margin="0" _onClick={()=>setIframeDisplay(false)}/>
 							</AddressWrap>
 						)
 					}
@@ -319,7 +323,7 @@ function Home() {
 															<div className="star">
 																<img src={icon_star} alt="star"/>
 																<span>{v.averageStar} </span>
-																<span>{`(54)`}</span>
+																<span>{`(${v.reviewCount})`}</span>
 															</div>
 															<p className="price"><strong>{v.servicePrice}</strong><span>원~</span></p>
 														</div>
@@ -337,7 +341,9 @@ function Home() {
 							</>
 						) : (
 							<>
-								검색된 돌보미가 없습니다.
+								{
+									(!sittersIsFetched || !sittersFilteredIsFetched) ? <p>돌보미 리스트를 검색중입니다.</p> : <p>검색된 돌보미가 없습니다.</p>
+								}
 							</>
 						)
 					}
@@ -375,17 +381,23 @@ const IndexPage = styled.div`
 		}
 	}
 }
-	
-
+`
+const DatepickerWrap = styled.div`
 `
 const Buttons = styled.div`
-	position: sticky;
-	left: 0;
-	right: 0;
-	bottom: 0;
+	position: fixed;
+	width: 100%;
+	bottom: 44px;
 	text-align: center;
 	pointer-events: none;
+	left: 0;
+	right: 0;
 	z-index: 2;
+	@media (min-width: 768px){
+		max-width: 412px;
+		right: 10%;
+		left: auto;
+	}
 	button{
 		position: absolute;
 		bottom: 30px;
