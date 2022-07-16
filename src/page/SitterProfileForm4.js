@@ -2,20 +2,16 @@ import Button from "../elements/Button";
 import styled from "styled-components";
 import { Calendar, DateObject } from "react-multi-date-picker";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { apis } from "../store/api";
 
 const format = "YYYY/MM/DD";
-const INITIAL_VALUES = {
-  noDate: []
-};
 
 function SitterProfileForm4() {
   const today = new DateObject();
   const {data, update} = useLocation().state;
-  const [values, setValues] = useState(update ? data.noDate : { ...data, ...INITIAL_VALUES });
-  const [dates, setDates] = useState(update ?  data.noDate : (values.noDate));
+  const [dates, setDates] = useState(data.noDate);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -34,7 +30,7 @@ function SitterProfileForm4() {
   // useMutation 수정하는 세팅 함수
   const { mutate: sitterUpdate } = useMutation(apis.sitterprofilePatch, {
     onSuccess: (data) => {
-      queryClient.setQueryData(["sitterprofile", values.petId], data);
+      queryClient.setQueryData(["sitterprofile", data.petId], data);
       queryClient.invalidateQueries("sitterprofile");
       navigate("/mypage/sitterprofile");
     },
@@ -42,46 +38,29 @@ function SitterProfileForm4() {
       console.log(data);
     },
   });
-  
-  useEffect(() => {
-    const noDate = dates.map((el) => typeof el !== 'string' && el.format()); //켈린더의 날짜 데이터가 object type일때 배열에 문자열로 추출
-    if(!update){ //등록모드 일때 실행.
-      setDates(() => {
-        return {...dates, noDate}
-      });
-    } else { //수정모드 일때 실행.
-      setValues(() => {
-        console.log(values)
-        return [...values]
-      });
-    }
-  },[dates, update]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // const test = typeof values.imageUrl === 'object';
-    // console.log(test ? typeof values.imageUrl : null)
-
     const formData = new FormData();
-    formData.append("sitterName", values.sitterName);
-    formData.append("gender", values.gender);
-    formData.append("address", values.address);
-    formData.append("detailAddress", values.detailAddress);
-    formData.append("region_1depth_name", values.region_1depth_name);
-    formData.append("region_2depth_name", values.region_2depth_name);
-    formData.append("region_3depth_name", values.region_3depth_name);
-    formData.append("zoneCode", values.zoneCode);
-    formData.append("x", values.x);
-    formData.append("y", values.y);
-    formData.append("imageUrl", values.imageUrl);
-    formData.append("mainImageUrl", values.mainImageUrl);
-    formData.append("introTitle", values.introTitle);
-    formData.append("myIntro", values.myIntro);
-    formData.append("careSize", JSON.stringify(values.careSize));
-    formData.append("category", JSON.stringify(values.category));
-    formData.append("plusService", JSON.stringify(values.plusService));
-    formData.append("noDate", JSON.stringify(values.noDate));
-    formData.append("servicePrice", values.servicePrice);
+    formData.append("sitterName", data.sitterName);
+    formData.append("gender", data.gender);
+    formData.append("address", data.address);
+    formData.append("detailAddress", data.detailAddress);
+    formData.append("region_1depth_name", data.region_1depth_name);
+    formData.append("region_2depth_name", data.region_2depth_name);
+    formData.append("region_3depth_name", data.region_3depth_name);
+    formData.append("zoneCode", data.zoneCode);
+    formData.append("x", data.x);
+    formData.append("y", data.y);
+    formData.append("imageUrl", data.imageUrl);
+    formData.append("mainImageUrl", data.mainImageUrl);
+    formData.append("introTitle", data.introTitle);
+    formData.append("myIntro", data.myIntro);
+    formData.append("careSize", JSON.stringify(data.careSize));
+    formData.append("category", JSON.stringify(data.category));
+    formData.append("plusService", JSON.stringify(data.plusService));
+    formData.append("noDate", JSON.stringify(dates));
+    formData.append("servicePrice", data.servicePrice);
     
     update ? sitterUpdate(formData) : create(formData)
   }
@@ -90,7 +69,7 @@ function SitterProfileForm4() {
   return (
     <Form onSubmit={handleSubmit}>
       <h1>돌보미 등록<span>4/4</span></h1>
-      <Calendar required multiple sort format={format} value={ update ? values : dates } onChange={ update ? setValues : setDates } minDate={new Date()} maxDate={new Date(today.year + 1, today.month.number, today.day)}></Calendar>
+      <Calendar required multiple sort format={format} value={ dates } onChange={ setDates } minDate={new Date()} maxDate={new Date(today.year + 1, today.month.number, today.day)}></Calendar>
       
       <Button _color={"#fff"}>{ update ? "수정하기" : "등록하기"}</Button>
     </Form>
