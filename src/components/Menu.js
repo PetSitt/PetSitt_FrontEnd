@@ -14,18 +14,24 @@ const Menu = () => {
 };
 
 const MenuInner = styled.div`
-	width: 412px;
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	width: 100%;
 	height: 54px;
 	line-height: 54px;
 	display: flex;
 	align-items: center;
 	justify-content: space-around;
 	border-top: 1px solid rgba(120,120,120,0.2);
-	position: fixed;
-	bottom: 0;
 	margin-top: 100px;
-	right: 10%;
 	background-color: #fff;
+	@media (min-width: 768px){
+		max-width: 412px;
+		right: 10%;
+		left: auto;
+	}
 	.item {
 		font-size: 22px;
 	}
