@@ -14,8 +14,8 @@ const INITIAL_VALUES = {
 function SitterProfileForm4() {
   const today = new DateObject();
   const {data, update} = useLocation().state;
-  const [values, setValues] = useState(update ? data : { ...data, ...INITIAL_VALUES });
-  const [dates, setDates] = useState([]);
+  const [values, setValues] = useState(update ? data.noDate : { ...data, ...INITIAL_VALUES });
+  const [dates, setDates] = useState(update ?  data.noDate : (values.noDate));
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -42,25 +42,26 @@ function SitterProfileForm4() {
       console.log(data);
     },
   });
-
+  
   useEffect(() => {
-    if(update){
-      const noNewDate = dates.map((el) => typeof el === 'object' && el.format()); //켈린더의 날짜 데이터가 object type일때 배열에 문자열로 추출
-      setValues((prevValues) => {
-        const noDates = [...prevValues.noDate, ...noNewDate]; //기존 배열에 noDate있던 데이터랑 새로운 noDate있던랑 병합
-        const noDate = noDates.filter((v, i) => noDates.indexOf(v) === i); //중복된 데이터 제거
-        return {...prevValues, noDate}
+    if(!update){ //등록모드 일때 실행.
+      const noDate = dates.map((el) => typeof el !== 'string' && el.format()); //켈린더의 날짜 데이터가 object type일때 배열에 문자열로 추출
+      setValues(() => {
+        return {...values, noDate}
+      });
+    } else { //수정모드 일때 실행.
+      setValues(() => {
+        // console.log(dates)
+        // return [...values, ...dates]
       });
     }
-  },[dates, update])
+  },[dates])
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setDates(values.noDate);
+    console.log(dates)
     // const test = typeof values.imageUrl === 'object';
     // console.log(test ? typeof values.imageUrl : null)
-    console.log(dates)
-    console.log(values.noDate)
 
     const formData = new FormData();
     formData.append("sitterName", values.sitterName);
@@ -88,7 +89,7 @@ function SitterProfileForm4() {
   return (
     <Form onSubmit={handleSubmit}>
       <h1>돌보미 등록<span>4/4</span></h1>
-      <Calendar required multiple sort format={format} value={values.noDate} minDate={new Date()} maxDate={new Date(today.year + 1, today.month.number, today.day)} onChange={setDates}></Calendar>
+      <Calendar required multiple sort format={format} value={ update ? values : dates } onChange={setDates} minDate={new Date()} maxDate={new Date(today.year + 1, today.month.number, today.day)}></Calendar>
       
       <Button _color={"#fff"}>{ update ? "수정하기" : "등록하기"}</Button>
     </Form>
