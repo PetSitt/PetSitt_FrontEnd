@@ -50,8 +50,9 @@ function SitterProfileForm4() {
         return {...values, noDate}
       });
     } else { //수정모드 일때 실행.
-      setValues((preve) => {
-        return [...preve, ...values]
+      setValues(() => {
+        // console.log(dates)
+        // return [...values, ...dates]
       });
     }
   },[dates])
