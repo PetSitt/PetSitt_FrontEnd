@@ -44,22 +44,21 @@ function SitterProfileForm4() {
   });
   
   useEffect(() => {
+    const noDate = dates.map((el) => typeof el !== 'string' && el.format()); //켈린더의 날짜 데이터가 object type일때 배열에 문자열로 추출
     if(!update){ //등록모드 일때 실행.
-      const noDate = dates.map((el) => typeof el !== 'string' && el.format()); //켈린더의 날짜 데이터가 object type일때 배열에 문자열로 추출
-      setValues(() => {
-        return {...values, noDate}
+      setDates(() => {
+        return {...dates, noDate}
       });
     } else { //수정모드 일때 실행.
       setValues(() => {
-        // console.log(dates)
-        // return [...values, ...dates]
+        console.log(values)
+        return [...values]
       });
     }
-  },[dates])
+  },[dates, update]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(dates)
     // const test = typeof values.imageUrl === 'object';
     // console.log(test ? typeof values.imageUrl : null)
 
@@ -83,13 +82,15 @@ function SitterProfileForm4() {
     formData.append("plusService", JSON.stringify(values.plusService));
     formData.append("noDate", JSON.stringify(values.noDate));
     formData.append("servicePrice", values.servicePrice);
+    
     update ? sitterUpdate(formData) : create(formData)
   }
+
 
   return (
     <Form onSubmit={handleSubmit}>
       <h1>돌보미 등록<span>4/4</span></h1>
-      <Calendar required multiple sort format={format} value={ update ? values : dates } onChange={setDates} minDate={new Date()} maxDate={new Date(today.year + 1, today.month.number, today.day)}></Calendar>
+      <Calendar required multiple sort format={format} value={ update ? values : dates } onChange={ update ? setValues : setDates } minDate={new Date()} maxDate={new Date(today.year + 1, today.month.number, today.day)}></Calendar>
       
       <Button _color={"#fff"}>{ update ? "수정하기" : "등록하기"}</Button>
     </Form>
