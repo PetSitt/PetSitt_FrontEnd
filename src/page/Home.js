@@ -2,9 +2,8 @@ import { useEffect, useState, useRef } from "react";
 import { Link } from 'react-router-dom';
 import { Cookies } from "react-cookie";
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import DatePicker, { DateObject,Calendar } from "react-multi-date-picker";
+import { DateObject,Calendar } from "react-multi-date-picker";
 import styled from 'styled-components';
-import axios from "axios";
 import { apis } from "../store/api";
 
 import MapContainer from "./MapContainer";
@@ -224,7 +223,7 @@ function Home() {
 			<IndexPage>
 				<FilterArea ref={filterAreaRef}>
 					<div style={{position: 'relative', zIndex: 2}}>
-						<input type="text" value={dates?.length > 0 ? dates : ''} onClick={()=>setDatepickerDisplay(true)} style={{display: 'block', width: '100%', height: '46px', lineHeight: '46px', border: '1px solid #999', margin: '10px 0 0', padding: '0 15px'}} readOnly/>
+						<input type="text" placeholder="날짜를 검색해주세요." value={dates?.length > 0 ? dates : ''} onClick={()=>setDatepickerDisplay(true)} style={{display: 'block', width: '100%', height: '46px', lineHeight: '46px', border: '1px solid #999', margin: '10px 0 0', padding: '0 15px'}} readOnly/>
 						<DatepickerWrap style={{display: datepickerDisplay === true ? 'block' : 'none', position: 'absolute', left: '0', right: '0', top: '100%'}}>
 							<Calendar
 								ref={datepickerRef}
@@ -242,7 +241,7 @@ function Home() {
 						</DatepickerWrap>
 					</div>
 					<div style={{position: 'relative'}}>
-					<input type="text" value={addressInfo?.address_name && addressInfo?.address_name} onClick={()=>setIframeDisplay(true)} style={{display: 'block', width: '100%', height: '46px', lineHeight: '46px', border: '1px solid #999', margin: '10px 0 0', padding: '0 15px'}} readOnly/>
+					<input type="text" placeholder="지역를 검색해주세요." value={addressInfo?.address_name && addressInfo?.address_name} onClick={()=>setIframeDisplay(true)} style={{display: 'block', width: '100%', height: '46px', lineHeight: '46px', border: '1px solid #999', margin: '10px 0 0', padding: '0 15px'}} readOnly/>
 					{
 						iframeDisplay && (
 							<AddressWrap>
