@@ -17,23 +17,11 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus}) => {
       return {checkList, inputValues, checked, images, imageUrls, files, text};
     })
   },[checkList, inputValues, checked, images, imageUrls, files, text]);
+  const [dataForModify, setDataForModify] = useState();
 
   useEffect(()=>{
     setDiaryData(datas);
   },[datas]); // state 하나 바뀔때마다 refresh 되니까 비효율적인 것 같은데...
-
-  // useEffect(()=>{
-  //   if(mode === 'view' && diaryData){
-  //     setCheckList(diaryData.checkList);
-  //     setInputValues(diaryData.inputValues);
-  //     setChecked(diaryData.checked);
-  //     setImages(diaryData.images);
-  //     setImageUrls(diaryData.imageUrls);
-  //     setFiles(diaryData.files);
-  //     setText(diaryData.text);
-  //   }
-  // },[mode])
-  console.log(mode, diaryData)
 
   useEffect(()=>{
     if(diaryStatus === 'get') {
@@ -56,8 +44,10 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus}) => {
     }
   },[diaryStatus]);
   
-  console.log(inputValues,checkList,checked,files);
 
+
+  // console.log(inputValues,checkList,checked,files);
+  console.log(mode, datas)
   return (
     <CareDiaryPage ref={diaryPageRef}>
       <section>
@@ -166,12 +156,22 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus}) => {
                         const thisInput = e.target;
                         const thisFile = e.target.files[0];
                         if (e.target.files[0]) {
-                          console.log('?')
-                          setFiles((prev)=>{
-                            const _prev = [...prev];
-                            _prev[i] = thisFile;
-                            return _prev;
-                          })
+                          if(mode === 'write'){
+                            console.log('write mode~~~')
+                            setFiles((prev)=>{
+                              const _prev = [...prev];
+                              _prev[i] = thisFile;
+                              return _prev;
+                            })
+                            return;
+                          }else{
+                            console.log('view mode~~~')
+                            setDatas((prev)=>{
+                              let _new = prev.deleteImage ? {...prev} : {...datas};
+                              _new.files.push(e.target.files[0]);
+                              return _new;
+                            });
+                          }
                           const reader = new FileReader();
                           reader.onload = function (event) {
                             thisInput.nextElementSibling.setAttribute(
@@ -195,7 +195,20 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus}) => {
                           })
                         }
                       }}/>
-                      <span style={{backgroundImage: `url(${imageUrls[i]&&imageUrls[i]})`}}></span>
+                      <span style={{backgroundImage: `url(${imageUrls[i]&&imageUrls[i]})`}}>{imageUrls[i] && <button type="button" className="removeImageButton"
+                        onClick={()=>{
+                          console.log('cliocked', imageUrls[i].split(':')[0])
+                          setDatas((prev)=>{
+                            let _new = prev.addImage || prev.deleteImage ? {...prev} : {...datas};
+                            if(_new.deleteImage){
+                              _new.deleteImage.push(imageUrls[i]);
+                            }else{
+                              _new.deleteImage = [imageUrls[i]];
+                            }
+                            return _new;
+                          });
+                        }}
+                      >삭제</button>}</span>
                     </label>
                   </FileItem>
                 )
@@ -236,6 +249,15 @@ const CareDiaryPage = styled.div`
       resize: none;
 
     }
+  }
+  .removeImageButton{
+    position: absolute;
+    right: 0;
+    top: -20px;
+    background: #fff;
+    padding: 0 3px;
+    line-height: 14px;
+    font-size: 11px;
   }
 `
 const FileItem = styled.li`

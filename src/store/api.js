@@ -127,4 +127,5 @@ export const apis = {
 	loadReview: (reservationId) => jsonApi.get(`/reviews/${reservationId}`),
 	registerDiary: (reservationId, formdata, config) => jsonApi.post(`/diarys/${reservationId}`, formdata, config),
 	loadDiaryData: (reservationId) => jsonApi.get(`/diarys/${reservationId}`),
+	modifyDiary: (reservationId, formData) => jsonApi.put(`/diarys/${reservationId}`, formData)
 }

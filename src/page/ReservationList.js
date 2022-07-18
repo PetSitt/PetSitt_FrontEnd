@@ -181,6 +181,18 @@ const ReservationList = () => {
       setModalType(modalContent.diary);
       setModalDisplay(true);
     }
+  });
+  const modifyDiaryApi = () => {
+
+    // return apis.modifyDiary();
+  }
+  const {mutate: diaryModify} = useMutation(()=>modifyDiaryApi(), {
+    onSuccess: (data) => {
+      console.log(data, 'diary modify success');
+    },
+    onError: (data) => {
+      console.log(data, 'diary modify failed');
+    },
   })
   const confirmWritingReview = () => {
     if(starRef.current > 0 && reviewTextRef.current?.value.length > 0){
@@ -204,8 +216,13 @@ const ReservationList = () => {
     setModalType(modalContent.diaryCancel);
   }
   const confirmWritingDiary = async() => {
-    setDiaryStatus('save');
-    setDiarySave(true);
+    if(diaryData === 'view'){
+      setDiaryStatus('clear');
+      diaryModify();
+    }else{
+      setDiaryStatus('save');
+      setDiarySave(true);
+    }
   }
   const closeDiaryPage = () => {
     setModalDisplay(false);
