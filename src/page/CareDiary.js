@@ -2,7 +2,7 @@ import React, {useState, useRef, useEffect} from 'react';
 import styled from 'styled-components';
 import StyledButton from '../elements/StyledButton';
 
-const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus}) => {
+const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => {
   const diaryPageRef = useRef();
   const [checkList, setCheckList] = useState(0);
   const [inputValues, setInputValues] = useState([]);
@@ -12,12 +12,13 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus}) => {
   const [files, setFiles] = useState([]);
   const [text, setText] = useState(null);
   const [datas, setDatas] = useState({checkList, inputValues, checked, images, imageUrls, files, text});
+  const [dataForModify, setDataForModify] = useState({addImage: [], deleteImage: []});
   useEffect(()=>{
     setDatas(()=>{
       return {checkList, inputValues, checked, images, imageUrls, files, text};
     })
-  },[checkList, inputValues, checked, images, imageUrls, files, text]);
-  const [dataForModify, setDataForModify] = useState();
+  },[checkList, inputValues, checked, images, imageUrls, files, text, dataForModify]);
+
 
   useEffect(()=>{
     setDiaryData(datas);
@@ -32,6 +33,9 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus}) => {
       setImageUrls(diaryData.imageUrls);
       setFiles(diaryData.files);
       setText(diaryData.text);
+      if(mode.current === 'view'){ // 수정모드일 경우
+        setDataForModify(modifyData.current);
+      }
     }
     if(diaryStatus === 'clear'){
       setCheckList(0);
@@ -41,17 +45,20 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus}) => {
       setImageUrls([]);
       setFiles([]);
       setText(null);
+      if(mode.current === 'view'){ // 수정모드일 경우
+        setDataForModify({addImage: [], deleteImage: []});
+      }
+    }
+    if(diaryStatus === 'save'){ // 수정모드일 때 데이터 저장
+      modifyData.current = dataForModify;
     }
   },[diaryStatus]);
-  
 
-
-  // console.log(inputValues,checkList,checked,files);
-  console.log(mode, datas)
+  console.log(mode.current, datas, dataForModify)
   return (
     <CareDiaryPage ref={diaryPageRef}>
       <section>
-        <h3>{mode === 'write' ? '돌봄 일지 작성' : '돌봄 일지'}</h3>
+        <h3>{mode.current === 'write' ? '돌봄 일지 작성' : '돌봄 일지'}</h3>
         <div className="checklistArea">
           <ul>
           {
@@ -70,154 +77,225 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus}) => {
                         return _prev;
                       })
                     }}
+                    disabled={mode.current === 'readonly'}
                     />
                     <span></span>
                   </label>
-                  <input placeholder="체크리스트를 작성해주세요." type="text" 
-                  defaultValue={inputValues[i]&&inputValues[i]}
-                  onChange={(e)=>{
-                    if(e.target.value.trim().length > 0){
-                      setInputValues((prev)=>{
-                        const _prev = [...prev];
-                        _prev[i] = e.target.value;
-                        return _prev;
-                      })
-                    }
-                  }}
-                  onBlur={(e)=>{
-                    e.target.style.display = 'none';
-                    e.target.nextElementSibling.style.display = 'block';
-                    if(e.target.value.trim().length <= 0){
-                      setInputValues((prev)=>{
-                        if(prev.length > 0){
-                          return [...prev].filter((text,idx)=>idx !== i);
-                        }else{
-                          return [...prev];
-                        }
-                      });
-                      setCheckList((prev)=>{
-                        return prev - 1;
-                      })
-                      setChecked((prev)=>{
-                        return [...prev].filter((check, idx)=>idx!==i);
-                      })
-                    }
-                  }}
-                  />
-                  <p style={{display: 'none'}}
-                  onClick={(e)=>{
-                    e.target.style.display = 'none';
-                    e.target.previousElementSibling.style.display = 'block';
-                    e.target.previousElementSibling.focus();
-                    if(inputValues.length < checkList){
-                      setCheckList(inputValues.length);
-                      setChecked((prev)=>{
-                        const _prev = [...prev];
-                        const new_checked = [];
-                        for(let i=0; i<_prev.length; i++){
-                          for(let j=0; j<inputValues.length; j++){
-                            if(i === j) new_checked.push(_prev[i]);
-                          }
-                        }
-                        return new_checked;
-                      })
-                    }
-                  }}
-                  >{inputValues[i] && inputValues[i]}</p>
+                  {
+                    mode.current === 'readonly' ? (
+                      <p>{inputValues[i]}</p>
+                    ) : (
+                      <>
+                        <input placeholder="체크리스트를 작성해주세요." type="text" 
+                          defaultValue={inputValues[i]&&inputValues[i]}
+                          onChange={(e)=>{
+                            if(e.target.value.trim().length > 0){
+                              setInputValues((prev)=>{
+                                const _prev = [...prev];
+                                _prev[i] = e.target.value;
+                                return _prev;
+                              })
+                            }
+                          }}
+                          onBlur={(e)=>{
+                            e.target.style.display = 'none';
+                            e.target.nextElementSibling.style.display = 'block';
+                            if(e.target.value.trim().length <= 0){
+                              setInputValues((prev)=>{
+                                if(prev.length > 0){
+                                  return [...prev].filter((text,idx)=>idx !== i);
+                                }else{
+                                  return [...prev];
+                                }
+                              });
+                              setCheckList((prev)=>{
+                                return prev - 1;
+                              })
+                              setChecked((prev)=>{
+                                return [...prev].filter((check, idx)=>idx!==i);
+                              })
+                            }
+                          }}
+                          />
+                          <p style={{display: 'none'}}
+                          onClick={(e)=>{
+                            e.target.style.display = 'none';
+                            e.target.previousElementSibling.style.display = 'block';
+                            e.target.previousElementSibling.focus();
+                            if(inputValues.length < checkList){
+                              setCheckList(inputValues.length);
+                              setChecked((prev)=>{
+                                const _prev = [...prev];
+                                const new_checked = [];
+                                for(let i=0; i<_prev.length; i++){
+                                  for(let j=0; j<inputValues.length; j++){
+                                    if(i === j) new_checked.push(_prev[i]);
+                                  }
+                                }
+                                return new_checked;
+                              })
+                            }
+                          }}
+                          >{inputValues[i] && inputValues[i]}</p>
+                      </>
+                    )
+                  }
+                  
                 </CheckList>
               )
             })
           }
           </ul>
-          <StyledButton _title={'체크리스트 추가하기'} color={'#FC9215'} _bgColor={'transparent'} _border={'1px solid #FC9215'}
-          _onClick={()=>{
-            if(inputValues.length < checkList){
-              setCheckList(inputValues.length);
-            }else{
-              setChecked((prev)=>{
-                return [...prev, false];
-              });
-            }
-            setCheckList((prev)=>{
-              return prev + 1;
-            })
-          }}
-          />
+          {
+            mode.current !== 'readonly' && (
+              <StyledButton _title={'체크리스트 추가하기'} color={'#FC9215'} _bgColor={'transparent'} _border={'1px solid #FC9215'} _margin={'20px 0 0'}
+                _onClick={()=>{
+                  if(inputValues.length < checkList){
+                    setCheckList(inputValues.length);
+                  }else{
+                    setChecked((prev)=>{
+                      return [...prev, false];
+                    });
+                  }
+                  setCheckList((prev)=>{
+                    return prev + 1;
+                  })
+                }}
+              />
+            )
+          }
         </div>
-        <div className="imageArea">
-          <ul style={{display: 'flex', margin: '-3px'}}>
-            {
-              Array.from({length: images < 6 ? images+1 : 6}, (v,i)=>{
-                return(
-                  <FileItem key={`image_${i}`}>
-                    <label>
-                      <input type="file" onChange={(e) => {
-                        e.preventDefault();
-                        const thisInput = e.target;
-                        const thisFile = e.target.files[0];
-                        if (e.target.files[0]) {
-                          if(mode === 'write'){
-                            console.log('write mode~~~')
-                            setFiles((prev)=>{
-                              const _prev = [...prev];
-                              _prev[i] = thisFile;
-                              return _prev;
-                            })
-                            return;
-                          }else{
-                            console.log('view mode~~~')
-                            setDatas((prev)=>{
-                              let _new = prev.deleteImage ? {...prev} : {...datas};
-                              _new.files.push(e.target.files[0]);
-                              return _new;
-                            });
-                          }
-                          const reader = new FileReader();
-                          reader.onload = function (event) {
-                            thisInput.nextElementSibling.setAttribute(
-                              "style",
-                              `background-image: url(${event.target.result})`
-                            );
-                            thisInput.nextElementSibling.setAttribute("class", "hasImage");
-                            setImageUrls((prev)=>{
-                              if(prev[i]){
+        <div className="imageArea" style={{margin: '30px 0'}}>
+          {
+            mode.current === 'readonly' ? (
+              <ul style={{display: 'flex', margin: '-3px'}}>
+                {
+                Array.from({length: imageUrls.length}, (v,i)=>{
+                  return(
+                    <FileItem key={`image_${i}`}>
+                      <label>
+                        <input/>
+                        <span style={{backgroundImage: `url(${imageUrls[i]&&imageUrls[i]})`}} className={imageUrls[i] && 'hasImage'}></span>
+                      </label>
+                    </FileItem>
+                  )
+                })
+              }
+              </ul>
+            ) : (
+              <ul style={{display: 'flex', margin: '-3px'}}>
+              {
+                Array.from({length: images < 6 ? images+1 : 6}, (v,i)=>{
+                  return(
+                    <FileItem key={`image_${i}`}>
+                      <label>
+                        <input type="file" onChange={(e) => {
+                          e.preventDefault();
+                          const thisInput = e.target;
+                          const thisFile = e.target.files[0];
+                          if (e.target.files[0]) {
+                            if(mode.current === 'write'){
+                              // 일지 처음 등록할 때
+                              setFiles((prev)=>{
                                 const _prev = [...prev];
-                                _prev[i] = event.target.result;
+                                _prev[i] = thisFile;
                                 return _prev;
-                              }else{
-                                return [...prev, event.target.result];
-                              }
-                            })
-                          };
-                          reader.readAsDataURL(e.target.files[0]);
-                          setImages((prev)=>{
-                            if(prev < 6) return prev+1;
-                          })
-                        }
-                      }}/>
-                      <span style={{backgroundImage: `url(${imageUrls[i]&&imageUrls[i]})`}}>{imageUrls[i] && <button type="button" className="removeImageButton"
-                        onClick={()=>{
-                          console.log('cliocked', imageUrls[i].split(':')[0])
-                          setDatas((prev)=>{
-                            let _new = prev.addImage || prev.deleteImage ? {...prev} : {...datas};
-                            if(_new.deleteImage){
-                              _new.deleteImage.push(imageUrls[i]);
+                              })
                             }else{
-                              _new.deleteImage = [imageUrls[i]];
+                              // 일지 수정할 때
+                              setDataForModify((prev)=>{
+                                const _new = {...prev};
+                                _new.addImage.push(thisFile);
+                                return _new;
+                              })
                             }
-                            return _new;
-                          });
-                        }}
-                      >삭제</button>}</span>
-                    </label>
-                  </FileItem>
-                )
-              })
-            }
-          </ul>
+                            const reader = new FileReader();
+                            reader.onload = function (event) {
+                              thisInput.nextElementSibling.setAttribute(
+                                "style",
+                                `background-image: url(${event.target.result})`
+                              );
+                              thisInput.nextElementSibling.setAttribute("class", "hasImage");
+                              setImageUrls((prev)=>{
+                                if(prev[i]){
+                                  const _prev = [...prev];
+                                  _prev[i] = event.target.result;
+                                  return _prev;
+                                }else{
+                                  return [...prev, event.target.result];
+                                }
+                              })
+                            };
+                            reader.readAsDataURL(e.target.files[0]);
+                            setImages((prev)=>{
+                              if(prev < 6) return prev+1;
+                            })
+                          }
+                        }} disabled={mode.current === 'readonly'}/>
+                        <span style={{backgroundImage: `url(${imageUrls[i]&&imageUrls[i]})`}}>{imageUrls[i] && <button type="button" className="removeImageButton"
+                          onClick={async(e)=>{
+                            e.preventDefault();
+                            console.log('삭제 버튼 clicked', imageUrls[i].split(':')[0]);
+                            if(mode === 'write'){
+                              // 작성 모드일 경우
+                              // 미리보기 이미지 배열에서 해당 주소 삭제
+                              await setImageUrls((prev)=>{
+                                const _new = [...prev].filter((image,idx)=>i !== idx);
+                                return _new;
+                              });
+                              await setFiles((prev)=>{
+                                const _new = [...prev].filter((file,idx)=>i !== idx);
+                                return _new;
+                              });
+                            }else{
+                              // 수정 모드일 경우
+                              // 미리보기 이미지 배열에서 해당 주소 삭제
+                              await setImageUrls((prev)=>{ 
+                                const _new = [...prev].filter((image,idx)=>i !== idx);
+                                return _new;
+                              });
+                              if(imageUrls[i].split(':')[0] === 'https'){
+                                console.log('기존에 등록된 이미지 삭제');
+                                setDataForModify((prev)=>{
+                                  const _new = {...prev};
+                                  _new.deleteImage.push(imageUrls[i]);
+                                  return _new;
+                                })
+                              }else{
+                                console.log('새로 추가한 이미지 다시 삭제');
+                                let index = 0;
+                                let addFileIndex = i;
+                                while(index < i){
+                                  // 기존에 등록한 이미지 말고 file로 새로 등록한 이미지 파일 중에서 삭제할 파일 index 찾기
+                                  if(imageUrls[index].split(':')[0] === 'https'){
+                                    addFileIndex--;
+                                  }
+                                  index ++;
+                                };
+                                setDataForModify((prev)=>{
+                                  const _new_addImage = [...prev.addImage].filter((file,fileIndex)=>{
+                                    return fileIndex !== addFileIndex;
+                                  });
+                                  const _new = {...prev, addImage: _new_addImage};
+                                  return _new;
+                                });
+                              }
+                            }
+                            setImages((prev)=>prev-1);
+                          }}
+                        >삭제</button>}</span>
+                      </label>
+                    </FileItem>
+                  )
+                })
+              }
+            </ul>
+            )
+          }
+          
         </div>
         <div className="inputArea">
-          <textarea placeholder='돌봄 일지를 작성해주세요.' onInput={(e)=>setText(e.target.value)} defaultValue={text&&text}></textarea>
+          <textarea placeholder='돌봄 일지를 작성해주세요.' onInput={(e)=>setText(e.target.value)} defaultValue={text&&text} disabled={mode.current === 'readonly'}></textarea>
         </div>
       </section>
     </CareDiaryPage>
@@ -253,7 +331,7 @@ const CareDiaryPage = styled.div`
   .removeImageButton{
     position: absolute;
     right: 0;
-    top: -20px;
+    top: 0;
     background: #fff;
     padding: 0 3px;
     line-height: 14px;
@@ -261,6 +339,7 @@ const CareDiaryPage = styled.div`
   }
 `
 const FileItem = styled.li`
+  position: relative;
   flex-basis: 16.6666%;
   flex-shrink: 0;
   flex-grow: 0;
@@ -284,24 +363,38 @@ const FileItem = styled.li`
         background-repeat: no-repeat;
         background-color: #eee;
         background-position: center;
-        &::before,
-        &::after{
-          position: absolute;
-          left: 0;
-          right: 0;
-          width: 10px;
-          height: 1px;
-          background-color: #999;
-          content: '';
-          margin: 0 auto;
-          top: 50%;
-        }
-        &::after{
-          transform: rotate(90deg);
-        }
       }
     }
-
+    & > span{
+      position: relative;
+      display: block;
+      height: 0;
+      padding-bottom: 100%;
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-color: #eee;
+      background-position: center;
+    }
+  }
+  &:last-of-type span::before,
+  &:last-of-type span::after{
+    position: absolute;
+    left: 0;
+    right: 0;
+    width: 10px;
+    height: 1px;
+    background-color: #999;
+    content: '';
+    margin: 0 auto;
+    top: 50%;
+    z-index: 1;
+  }
+  &:last-of-type span::after{
+    transform: rotate(90deg);
+  }
+  &:last-of-type span.hasImage::before,
+  &:last-of-type span.hasImage::after{
+    display: none;
   }
 `
 const CheckList = styled.li`
