@@ -1,22 +1,17 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-const InputBox = ({
-  children
-}) => {
-  return (
-    <InputWrap>
-      {children}
-    </InputWrap>
-  );
+const InputBox = ({ children, outlined }) => {
+  return <InputWrap>{children}</InputWrap>;
 };
 
 InputBox.defaultProps = {
-  _label: "라벨",
+  _label: '라벨',
 };
 
 const InputWrap = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: center;
   margin-top: 24px;
   & label {
     font-size: 16px;
@@ -27,7 +22,7 @@ const InputWrap = styled.div`
     border-bottom: 1px solid rgba(120, 120, 120, 0.2);
     padding: 9px 0px;
     :focus {
-      border-bottom: 1px solid #FC9215;
+      border-bottom: 1px solid #fc9215;
     }
     ::placeholder {
       color: rgba(120, 120, 120, 0.6);

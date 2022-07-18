@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { Calendar, DateObject } from "react-multi-date-picker";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { apis } from "../store/api";
 import { comma } from "../shared/common";
 
 const SitterProfile = () => {
+  const navigate = useNavigate();
   const today = new DateObject();
   const queryClient = useQueryClient();
   const [caresizeData, setCaresizeData] = useState(["소형견", "중형견", "대형견"])
@@ -73,11 +74,17 @@ const SitterProfile = () => {
             </div>
           </div>
         ) : (
-          <div className="inner">
-            <Link to={`/mypage/SitterProfileForm1`}>
-              <button>돌보미로 등록하세요</button>
-            </Link>
-          </div>
+          <SitterProfileInsertBox>
+          <h3>돌보미로 등록하세요</h3>
+          <p>돌보미 프로필을 등록해보세요</p>
+          <SitterProfileInsertButton
+            onClick={() => {
+              navigate('/mypage/SitterProfileForm1');
+            }}
+          >
+            돌보미로 등록하기
+          </SitterProfileInsertButton>
+        </SitterProfileInsertBox>
         )
       }
     </SitterProfileInner>
@@ -108,4 +115,38 @@ const SitterProfileInner = styled.div`
     border: 1px solid #000;
   }
 `;
+
+const SitterProfileInsertBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 180px;
+  h3 {
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 22px;
+    padding-bottom: 16px;
+  }
+
+  p {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    color: #676767;
+    padding-bottom: 24px;
+  }
+`;
+
+const SitterProfileInsertButton = styled.button`
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 19px;
+  padding: 12px 20px;
+  background: #ffffff;
+  border: 1px solid #fc9215;
+  border-radius: 54px;
+  color: #fc9215;
+`;
+
 export default SitterProfile;

@@ -36,6 +36,16 @@ jsonApi.interceptors.request.use((config)=> {
 	return Promise.reject(err);
 });
 
+jsonApi.interceptors.response.use((response)=>{ // access 토큰 만료됐을 경우 login화면으으로 (임시)
+  return response
+}, async function (error) {
+  const originalRequest = error.config;
+  if (error.response.status === 401 && !originalRequest._retry) {
+		window.location.href='/login';
+  }
+  return Promise.reject(error);
+});
+
 formDataApi.interceptors.request.use((config) => {
 	config.headers['Content-type'] = 'multipart/form-data';
 	config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
@@ -82,6 +92,11 @@ authApi.interceptors.response.use((response) => {
 });
 
 
+const formdataConfig = {
+	headers: {
+		"Content-Type": "multipart/form-data",
+	},
+};
 export const apis = {
 	// user
 	signupAdd: (data) => jsonApi.post('/api/signup', data),
@@ -125,6 +140,7 @@ export const apis = {
 	registerReview: (reservationId, data) => jsonApi.post(`/reviews/${reservationId}`, data),
 	loadMorePastReservation: (reservationId, type) => jsonApi.get(`/reservations/lists/${reservationId}?searchCase=${type}`),
 	loadReview: (reservationId) => jsonApi.get(`/reviews/${reservationId}`),
-	registerDiary: (reservationId, formdata, config) => jsonApi.post(`/diarys/${reservationId}`, formdata, config),
+	registerDiary: (reservationId, formdata, config) => jsonApi.post(`/diarys/${reservationId}`, formdata, formdataConfig),
 	loadDiaryData: (reservationId) => jsonApi.get(`/diarys/${reservationId}`),
+	modifyDiary: (reservationId, formData) => jsonApi.put(`/diarys/${reservationId}`, formData, formdataConfig)
 }
