@@ -43,7 +43,6 @@ function SitterProfileForm4() {
     e.preventDefault();
     const formData = new FormData();
     formData.append("sitterName", data.sitterName);
-    formData.append("gender", data.gender);
     formData.append("address", data.address);
     formData.append("detailAddress", data.detailAddress);
     formData.append("region_1depth_name", data.region_1depth_name);
