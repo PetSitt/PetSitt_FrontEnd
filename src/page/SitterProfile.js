@@ -24,13 +24,14 @@ const SitterProfile = () => {
   });
 
   useEffect(() => {
+    console.log(values);
     (sitterSuccessGet || sitterSuccessDelete) && setValues(sitterData.data.sitterprofile);
   },[sitterSuccessGet, sitterSuccessDelete, sitterData.data.sitterprofile])
 
   return (
     <SitterProfileInner>
       <h1>돌보미 프로필</h1>
-      {console.log(values)}
+      
       {values && <Link to={`/mypage/SitterProfileForm1`} state={{data: values}}>수정</Link>}
       {values && <button onClick={delect}>삭제</button>}
       {
