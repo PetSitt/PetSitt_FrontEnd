@@ -1,6 +1,6 @@
-import React from "react";
-import styled from "styled-components";
-import Input from "../elements/Input";
+import React from 'react';
+import styled from 'styled-components';
+import Input from '../elements/Input';
 
 const AddressInfo = ({
   _address,
@@ -10,31 +10,31 @@ const AddressInfo = ({
   onChange,
 }) => {
   return (
-    <ContensInner className={"contents"}>
-      <div className="postNumber box">
+    <ContensInner className={'contents'}>
+      <div className='postNumber box'>
         <Input
-          _type="text"
-          _placeholder={"우편번호"}
+          _type='text'
+          _placeholder={'우편번호'}
           defaultValue={_zonecode}
           onChange={onChange}
         />
-        <div className="postLink" onClick={handlePost}>
+        <div className='postLink' onClick={handlePost}>
           우편번호
         </div>
       </div>
-      <div className="box">
+      <div className='box'>
         <Input
-          _type="text"
-          _placeholder={"주소"}
+          _type='text'
+          _placeholder={'주소'}
           defaultValue={_address}
           onChange={onChange}
         />
       </div>
-      <div className="box">
+      <div className='box'>
         <Input
-          _name="detailAddress"
-          _type="text"
-          _placeholder={"상세주소"}
+          _name='detailAddress'
+          _type='text'
+          _placeholder={'상세주소'}
           defaultValue={detailAddress}
           onChange={onChange}
         >
@@ -46,6 +46,9 @@ const AddressInfo = ({
 };
 
 const ContensInner = styled.div`
+  div {
+    margin-bottom: 10px;
+  }
   .postNumber {
     display: flex;
     justify-content: center;

@@ -1,17 +1,30 @@
-import { useEffect, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "react-query";
-import { Link } from "react-router-dom";
-import styled from "styled-components";
-import { apis } from "../store/api";
+import { useEffect, useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { Link, useNavigate } from 'react-router-dom';
+import styled from 'styled-components';
+import Modal from '../elements/Modal';
+import NavBox from '../elements/NavBox';
+import StyledContainer from '../elements/StyledContainer';
+import { apis } from '../store/api';
 
 const Petprofile = () => {
+  const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
   const queryClient = useQueryClient();
-  const {isLoading, data: petprofileData, isSuccess: petSuccessGet} = useQuery("petprofile", apis.petprofileGet);
+  const {
+    isLoading,
+    data: petprofileData,
+    isSuccess: petSuccessGet,
+  } = useQuery('petprofile', apis.petprofileGet);
   const [values, setValues] = useState(petprofileData.data.petprofile);
 
-  const { mutate: delect, error, isSuccess: petSuccessDelete,} = useMutation(apis.petprofileDelete, {
+  const {
+    mutate: delect,
+    error,
+    isSuccess: petSuccessDelete,
+  } = useMutation(apis.petprofileDelete, {
     onSuccess: (data) => {
-      queryClient.invalidateQueries("petprofile");
+      queryClient.invalidateQueries('petprofile');
     },
   });
 
@@ -21,64 +34,164 @@ const Petprofile = () => {
   }, [petSuccessGet, petSuccessDelete, petprofileData.data.petprofile]);
 
   return (
-    <PetprofileInner>
-      <h1>반려동물 프로필</h1>
+    <StyledContainer>
+      <NavBox _title='반려동물 프로필' />
       {values.length > 0 ? (
         values.map((el, idx) => {
           const { petId, petName, petType, petImage } = el;
           return (
-            <div key={petId} className="petprofileItem">
-              <div>
-                <span
-                  className="bgImg"
+            <PetList key={petId}>
+              <PetInfo>
+                <div
+                  className='bgImg'
                   style={{ backgroundImage: `url(${petImage})` }}
-                ></span>
-                <span>
-                  {petName}
-                  <span>{petType}</span>
-                </span>
-              </div>
-              <div>
-                <Link
-                  to={`/mypage/${petId}/petprofileform`}
-                  state={{ data: el }}
-                >
-                  수정
-                </Link>
+                ></div>
+                <div>
+                  <p className='petName'>{petName}</p>
+                  <p className='petType'>{petType}</p>
+                </div>
+              </PetInfo>
+              <EditButton>
                 <button
                   onClick={() => {
-                    delect(petId);
+                    navigate(`/mypage/${petId}/petprofileform`, {
+                      state: { data: el },
+                    });
+                  }}
+                >
+                  수정
+                </button>
+
+                <button
+                  onClick={() => {
+                    setShowModal(true);
                   }}
                 >
                   삭제
                 </button>
-              </div>
-            </div>
+              </EditButton>
+              <Modal
+                _display={showModal}
+                _confirm='삭제'
+                _cancel='취소'
+                _alert
+                confirmOnClick={() => {
+                  delect(petId);
+                }}
+                cancelOnclick={() => {
+                  setShowModal(false);
+                }}
+              >
+                <div className='text_area'>
+                  <h2>반려동물 프로필 삭제</h2>
+                  <h3>
+                    해당 반려동물의
+                    <br /> 프로필을 삭제하시겠습니까?
+                  </h3>
+                </div>
+              </Modal>
+            </PetList>
           );
         })
       ) : (
-        <Link to={{ pathname: `/mypage/petprofileform` }}>
-          <button>반려동물을 등록하세요</button>
-        </Link>
+        <PetProfileInsertBox>
+          <h3>등록한 반려동물이 없어요</h3>
+          <p>반려동물 프로필을 등록해보세요</p>
+          <PetProfileInsertButton
+            onClick={() => {
+              navigate('/mypage/petprofileform');
+            }}
+          >
+            반려동물 등록하기
+          </PetProfileInsertButton>
+        </PetProfileInsertBox>
       )}
-    </PetprofileInner>
+    </StyledContainer>
   );
 };
 
-const PetprofileInner = styled.div`
-  .petprofileItem {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    .bgImg {
-      width: 100px;
-      height: 100px;
-      display: inline-block;
-      background-position: center;
-      background-size: cover;
-      vertical-align: middle;
+const PetList = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  .text_area h2 {
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 22px;
+  }
+`;
+
+const PetInfo = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  .bgImg {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: inline-block;
+    background-position: center;
+    background-size: cover;
+    vertical-align: middle;
+    margin-right: 16px;
+  }
+  .petName {
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 19px;
+  }
+  .petType {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    color: #676767;
+  }
+`;
+
+const EditButton = styled.div`
+  button {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    color: rgba(120, 120, 120, 0.7);
+    &:first-child {
+      padding-right: 12px;
     }
   }
+`;
+
+const PetProfileInsertBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 180px;
+  h3 {
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 22px;
+    padding-bottom: 16px;
+  }
+
+  p {
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    color: #676767;
+    padding-bottom: 24px;
+  }
+`;
+
+const PetProfileInsertButton = styled.button`
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 19px;
+  padding: 12px 20px;
+  background: #ffffff;
+  border: 1px solid #fc9215;
+  border-radius: 54px;
+  color: #fc9215;
 `;
 export default Petprofile;
