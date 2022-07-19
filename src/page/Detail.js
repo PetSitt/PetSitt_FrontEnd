@@ -501,6 +501,11 @@ const FloatingTabsSection = styled.section`
     position: fixed;
     padding: 16px 20px;
     margin: 0;
+    @media (min-width: 768px){
+      left: auto;
+      right: 10%;
+      width: 412px;
+    }
   }
 	ul{
 		display: inline-flex;
