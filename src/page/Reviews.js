@@ -5,16 +5,14 @@ import {apis} from '../store/api';
 
 const Reviews = ({reviewCount, sitterId}) => {
   const [reviews, setReviews] = useState();
-  const [requestReviews, setRequestReviews] = useState(false);
-  const [reviewIdValue, setReviewIdValue] = useState(0);
-  const {data: reviewsData} = useQuery(['reviewsData', sitterId, reviewIdValue], () => apis.getReviews(sitterId, {reviewId: reviewIdValue}), {
+  const reviewIdValue = useRef(0);
+  const {data: reviewsData, refetch: refetchReviews} = useQuery(['reviewsData', sitterId, reviewIdValue.current], () => apis.getReviews(sitterId, {reviewId: reviewIdValue.current}), {
     onSuccess: (data) => {
-      console.log('review loading success')
+      console.log(data,'review loading success')
     },
     onError: (data) => {
       //console.error(data);
     },
-    enabled: !!requestReviews,
     staleTime: Infinity,
     refetchOnMount: 'always',
   })
@@ -41,24 +39,18 @@ const Reviews = ({reviewCount, sitterId}) => {
     }
   },[reviewsData])
 
-  useEffect(()=>{
-    if(lastReviewRef.current){
-      console.log(lastReviewRef?.current.offsetTop)
-      document.querySelector(".AppInner").scrollTo(0,lastReviewRef?.current.offsetTop)
-      // setTimeout(()=>{
-      //   window.scrollTo(0, lastReviewRef?.current.offsetTop)
-      // }, 100)
-    }
-    
-  },[reviews])
+  // useEffect(()=>{
+  //   if(lastReviewRef.current){
+  //     document.querySelector(".AppInner").scrollTo(0,lastReviewRef?.current.offsetTop);
+  //   }    
+  // },[reviews])
 
   useEffect(()=>{
     setReviews(null);
-    setReviewIdValue(0);
-    setRequestReviews(true);
+    reviewIdValue.current = 0;
     return () => {
       setReviews(null);
-      setReviewIdValue(0);
+      reviewIdValue.current = 0;
     }
   },[])
 
@@ -84,7 +76,7 @@ const Reviews = ({reviewCount, sitterId}) => {
       {
         (reviews.length < reviewCount) && (
           <div style={{textAlign: 'center', paddingTop: '40px'}}>
-            <button type="button" className="more_review" onClick={()=>setReviewIdValue(reviews[reviews.length-1].id)}>리뷰 더보기</button>
+            <button type="button" className="more_review" onClick={()=>{reviewIdValue.current = reviews[reviews.length-1].id; refetchReviews()}}>리뷰 더보기</button>
           </div>
         )
       }
