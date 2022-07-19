@@ -20,6 +20,8 @@ function App() {
 const AppWrapper = styled.div`
   height: 100vh;
   overflow: hidden;
+  background: rgb(217, 227, 238);
+
   .AppInner{
     width: 100%;
     height: 100%;
