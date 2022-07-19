@@ -1,3 +1,4 @@
+/*global kakao*/
 import axios from "axios";
 import React, { useState, useEffect, useRef } from "react";
 import {
@@ -13,7 +14,7 @@ import marker from '../assets/img/marker.png';
 import star from '../assets/img/icon_star.png';
 
 const MapContainer = ({ centerElement, showOnly, items, _height, setSitterCardShow }) => {
-  const [level, setLevel] = useState();
+  const [level, setLevel] = useState(3);
   const [centerElem, setCenterElem] = useState(centerElement && centerElement);
   const [positions, setPositions] = useState([]);
   const [sitters, setSitters] = useState([]);
@@ -27,11 +28,15 @@ const MapContainer = ({ centerElement, showOnly, items, _height, setSitterCardSh
     map.setLevel(level, { anchor: cluster.getCenter() });
   };
 
-  const markerClickEvent = (sitterIndex) => {
+  const markerClickEvent = (markerIndex, sitterIndex) => {
     setSitterCardShow({
       display: true,
       index: sitterIndex
     });
+    console.log(items[markerIndex])
+    const newCenter = {x: items[markerIndex].x, y: items[markerIndex].y + .0004}
+    setCenterElem(newCenter);
+    setLevel(3);
   };
 
   useEffect(()=>{
@@ -42,6 +47,8 @@ const MapContainer = ({ centerElement, showOnly, items, _height, setSitterCardSh
       setCenterElem(positions[0]);
     }
   }, [positions]);
+  const bounds = new kakao.maps.LatLngBounds();
+
 
   if (!centerElem) return <p>로딩중입니다</p>;
   else
@@ -53,6 +60,7 @@ const MapContainer = ({ centerElement, showOnly, items, _height, setSitterCardSh
           style={{ width: "100%", height: _height ? _height :  "360px" }}
           onZoomChanged={(map) => setLevel(map.getLevel())}
           draggable={showOnly ? false : true}
+          level={level}
         >
           {showOnly ? (
             <Circle
@@ -101,7 +109,7 @@ const MapContainer = ({ centerElement, showOnly, items, _height, setSitterCardSh
                     }}
                   >
                     <div style={{textAlign: 'center', transform: 'translate(0, -47px)'}}>
-                      <div style={{display: 'flex', alignItems: 'center', height: '40px', padding: '0 15px', background: '#fff', borderRadius: '20px', border: '1px solid #FC9215', boxSizing: 'border-box'}} onClick={()=>markerClickEvent(pos.index)}>
+                      <div style={{display: 'flex', alignItems: 'center', height: '40px', padding: '0 15px', background: '#fff', borderRadius: '20px', border: '1px solid #FC9215', boxSizing: 'border-box'}} onClick={()=>markerClickEvent(idx, pos.index)}>
                         <strong style={{fontWeight: 700}}>{pos.sitterName}</strong>
                         <span style={{fontSize: '14px'}}><img src={star} alt="star" style={{display: 'inline-block', width: '13px', height: '13px', verticalAlign: 'middle', margin: '-3px 1px 0 5px'}}/>{pos.averageStar}</span>
                       </div>

@@ -49,7 +49,8 @@ function Home() {
 	const showModal = useRef(false);
 	const datesTransformed= useRef(null);
 	const [sitterCardShow, setSitterCardShow] = useState({display: false, index: null});
-	console.log(sitterCardShow)
+	const categoryClicked = useRef(false);
+
 	const getSittersList = (queriesData, category) => {
 		const _queriesData = {...queriesData};
 		if(category.length >= 1 && category.length < 5){
@@ -113,7 +114,7 @@ function Home() {
 	});
 	
 	const getListApi = (currentPosition, category) =>{
-		console.log(currentPosition)
+		console.log(currentPosition,category,'get list api')
 		const categoryData = {}
 		if(category.length > 0 && category.length < 5){
 			for(let i=0; i<category.length; i++){
@@ -122,7 +123,6 @@ function Home() {
 				categoryData[cate_key] = cate_value;
 			}
 		}
-		console.log(currentPosition, categoryData)
 		return apis.getSittersDefault({...currentPosition, ...categoryData});
 	}
 	const {data: sittersBeforeSearch, isLoading: sittersIsLoading, isFetched: sittersIsFetched, refetch: refetchSitters, isRefetching: sittersIsRefetching} = useQuery(
@@ -140,6 +140,7 @@ function Home() {
 			},
 			enabled: !!defaultSearch,
 			staleTime: Infinity,
+			refetchOnMount: 'always'
 		},
 	);
 	const getLocation = () => {
@@ -152,6 +153,7 @@ function Home() {
 					setDefaultSearch(true);
         },
         (error) => {
+					console.log(error)
           console.error(error);
         },
         {
@@ -170,16 +172,22 @@ function Home() {
 		const fullHeight = window.innerHeight;
 		const filterHeight = filterAreaRef.current.clientHeight;
 		setMapHeight(fullHeight - filterHeight - 74);
-		console.log(fullHeight, filterHeight, fullHeight - filterHeight)
+		return()=>{
+			setDefaultSearch(false);
+		}
 	},[])
 	useEffect(()=>{
-		if(addressInfo &&  dates?.length > 0){
-			console.log('검색 후 categorizing');
-			refetchSittersAfter();
-		}else{
-			console.log('검색 전 categorizing');
-			refetchSitters();
-		} 
+		if(categoryClicked.current){
+			if(addressInfo &&  dates?.length > 0){
+				console.log('검색 후 categorizing');
+				refetchSittersAfter();
+			}else{
+				console.log('검색 전 categorizing');
+				refetchSitters();
+			} 
+		}
+		categoryClicked.current = false;
+		
 	},[category])
 
 	useEffect(()=>{
@@ -268,21 +276,24 @@ function Home() {
 								<li key={i}>
 									<label>
 										<input type="checkbox" onChange={(e) => {
-											if(e.target.checked){ 
-												console.log('?? checked')
-												setCategory((prev)=>{
-													const new_category = [...prev];
-													return new_category.filter(item=>{
-														return Object.values(item)[0] !== Object.values(v)[0]
+											categoryClicked.current = true;
+											if(categoryClicked.current){
+												if(e.target.checked){ 
+													console.log('?? checked')
+													setCategory((prev)=>{
+														const new_category = [...prev];
+														return new_category.filter(item=>{
+															return Object.values(item)[0] !== Object.values(v)[0]
+														})
 													})
-												})
-											}else{
-												console.log('?? not checked')
-												setCategory((prev)=>{
-													const new_category = [...prev];
-													new_category.push(v);
-													return new_category;
-												})
+												}else{
+													console.log('?? not checked')
+													setCategory((prev)=>{
+														const new_category = [...prev];
+														new_category.push(v);
+														return new_category;
+													})
+												}
 											}
 										}}/>
 										<span>{Object.values(v)}</span>
