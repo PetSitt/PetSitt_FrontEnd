@@ -5,7 +5,6 @@ import styled from "styled-components";
 import { DateObject, Calendar } from "react-multi-date-picker";
 import MapContainer from "./MapContainer";
 import { apis } from "../store/api";
-import Settings from "react-multi-date-picker/plugins/settings"
 
 import StyledButton from '../elements/StyledButton';
 import Reviews from './Reviews';
@@ -40,12 +39,27 @@ const Detail = () => {
   const selectAreaRef = useRef();
   const [scrollY, setScrollY] = useState();
   const [scrollDirection, setScrollDirection] = useState();
+  const datesTransformed = useRef([]);
   const [floatingTabs, setFloatingTabs] = useState([
     {text: '서비스 예약하기', isActive: true, visibility: null, function: ()=>reservationRef.current.scrollIntoView({behavior: 'smooth'})},
     {text: '케어 가능한 반려견 사이즈', isActive: false, visibility: detail?.sitter.careSize.length > 0, function: ()=>careSizeRef.current.scrollIntoView({behavior: 'smooth'})},
     {text: '추가 제공 가능한 서비스', isActive: false, visibility: detail?.sitter.plusService.length, function: ()=>plusService.current.scrollIntoView({behavior: 'smooth'})},
     {text: '후기', isActive: false, visibility: null, function: ()=>reviewRef.current.scrollIntoView({behavior: 'smooth'})},
   ]) 
+  const iconClasses = {
+    '목욕, 모발 관리' : 'ic-wash',
+    '1박 케어': 'ic-boarding',
+    '데이 케어': 'ic-daycare',
+    '훈련': 'ic-prac',
+    '산책': 'ic-stroll',
+    '집앞 픽업 가능': 'ic-pickup',
+    '응급 처치': 'ic-first-aid',
+    '장기 예약 가능': 'ic-longterm',
+    '퍼피 케어': 'ic-puppy',
+    '노견 케어': 'ic-puppy',
+    '실내놀이': 'ic-activity',
+    '마당있음': 'ic-yard',
+  };
   const disableDate = () => {
     const datesArray = [];
     detail.sitter.noDate.map(v=>{
@@ -63,6 +77,8 @@ const Detail = () => {
 	} = useQuery("detail_data", () => apis.getUserDetail(sitterId), {
 		onSuccess: (data) => {
 			console.log(data.data, "data loaded");
+      setDetail(data.data);
+      setServices(Array.from({length: data?.data?.sitter?.category.length}, () => false));
 		},
 		onError: (data) => {
 			console.error(data);
@@ -117,11 +133,7 @@ const Detail = () => {
       }
     }
   },[unavailable])
-
-  useEffect(() => {
-		setDetail(detailData.data);
-    setServices(Array.from({length: detailData?.data?.sitter?.category.length}, () => false));
-	}, [detailData.data]);
+  
   useEffect(()=>{
     if(detail){
       disableDate();
@@ -130,9 +142,11 @@ const Detail = () => {
 
 	useEffect(() => {
 		window.addEventListener("click", checkSelectArea);
-    
 		return()=>{
-			setDetail('');
+      window.removeEventListener("click", checkSelectArea);
+      console.log(['??'])
+      queryClient.invalidateQueries('detail_data');
+			setDetail(null);
 		}
 	}, []);
   useEffect(()=>{
@@ -148,14 +162,28 @@ const Detail = () => {
       });
     }
   }, [services]);
-  
+
   useEffect(() => {
     if (date?.length >= 0) {
-      const getDates = date.map((v) => {
-        return v.format(v._format);
-      });
+			const getDates = date.map((v,i) => {
+				return v.format(v._format);
+			});
       setDates(getDates);
+
+      if(date?.length < 4){
+        datesTransformed.current = [];
+        for(let i = 0; i<date.length; i++){
+          const dateItem = `${date[i].month.number < 10 ? '0' + date[i].month.number : date[i].month.number}. ${date[i].day} (${weekDays[date[i].weekDay.index]})`;
+          datesTransformed.current.push(dateItem)
+        }
+      }else{
+        const dateItem = `${date[0].month.number < 10 ? '0' + date[0].month.number : date[0].month.number}. ${date[0].day} (${weekDays[date[0].weekDay.index]})`;
+        datesTransformed.current = [`${dateItem} 외 ${date.length - 1}개`]
+      }
+    }else{
+      datesTransformed.current = [];
     }
+    selectAreaRef.current?.classList.add('isActive');
   }, [date]);
   
   useEffect(()=>{
@@ -252,10 +280,11 @@ const Detail = () => {
                           const new_data = [...prev];
                           new_data[i] = e.target.checked;
                           return new_data;
-                        })
+                        });
+                        selectAreaRef.current.classList.add('isActive');
                       }}/>
                       <span>
-                        <i></i>
+                        <i className={iconClasses[v]}></i>
                         {v}
                       </span>
                     </label>
@@ -287,9 +316,10 @@ const Detail = () => {
             <ul className="serviceList">
               {detail.sitter.careSize.map((v, i) => {
                 return (
+                  v && (
                   <li key={`careSize_${i}`}>
-                    {v && (i === 0 ? "소" : i === 1 ? "중" : "대")}
-                  </li>
+                    <i className="ic-check"></i><span>{i === 0 ? "소" : i === 1 ? "중" : "대"}</span>
+                  </li>)
                 );
               })}
             </ul>
@@ -302,7 +332,7 @@ const Detail = () => {
               <h3>추가 제공 가능한 서비스</h3>
               <ul className="serviceList">
                 {detail.sitter.plusService.map((v, i) => {
-                  return <li key={`plusService_${i}`}>{v}</li>;
+                  return <li key={`plusService_${i}`}><i className={iconClasses[v]}></i><span>{v}</span></li>;
                 })}
               </ul>
             </section>
@@ -451,10 +481,18 @@ const Detail = () => {
           >
             <span>날짜</span>
             <strong>
-              {dates.length > 0 && dates.length < 4
-                ? dates.sort().join(", ")
-                : dates.length >= 4
-                ? `4일 이상 선택(총 ${dates.length}일)`
+              {datesTransformed.current?.length > 0
+                ? (
+                  <>
+                    {
+                      datesTransformed.current.map((date,idx)=>{
+                        return (
+                          idx > 0 ? ', ' + date : date
+                        )
+                      })
+                    }
+                  </>
+                )
                 : "날짜를 선택해주세요."}
             </strong>
           </li>
@@ -734,6 +772,13 @@ const SitterDetailPage = styled.div`
     .serviceList{
       li{
         font-weight: 500;
+        display: flex;
+        align-items: center;
+        i{
+          font-size: 18px;
+          flex-basis: 30px;
+          flex-shrink: 0;
+        }
         & + li{
           margin-top: 8px;
         }
@@ -846,6 +891,10 @@ const ServiceList = styled.ul`
           border-color: #FC9215;
           color: #FC9215;
         }
+      }
+      i{
+        display: block;
+        font-size: 28px;
       }
       span{
         display: block;

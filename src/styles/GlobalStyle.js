@@ -61,12 +61,17 @@ const GlobalStyles = createGlobalStyle`
     right: 6px;
     top: 6px;
     bottom: 6px;
+    font-size: 14px;
+    color: #1a1a1a;
   }
   .rmdp-day.rmdp-today span{
     border: 1px solid #FC9215;
     box-sizing: border-box;
     background-color: transparent;
     color: #000;
+  }
+  .rmdp-day.rmdp-disabled.rmdp-today span{
+    border: none;
   }
   .rmdp-day:not(.rmdp-disabled):not(.rmdp-day-hidden) span:hover{
     background-color: transparent;
@@ -131,6 +136,11 @@ const GlobalStyles = createGlobalStyle`
   }
   .rmdp-disabled{
     pointer-events: none;
+  }
+  .rmdp-day.rmdp-deactive span,
+  .rmdp-day.rmdp-disabled span{
+    color: rgba(120,120,120,.4);
+    text-decoration: line-through;
   }
  
   
