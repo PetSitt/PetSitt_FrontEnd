@@ -24,9 +24,8 @@ const SitterProfile = () => {
   });
 
   useEffect(() => {
-    console.log(values);
     (sitterSuccessGet || sitterSuccessDelete) && setValues(sitterData.data.sitterprofile);
-  },[sitterSuccessGet, sitterSuccessDelete, sitterData.data.sitterprofile])
+  },[sitterSuccessGet, sitterSuccessDelete, sitterData])
 
   return (
     <SitterProfileInner>
