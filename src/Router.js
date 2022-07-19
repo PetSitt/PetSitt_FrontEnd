@@ -21,6 +21,7 @@ import SitterProfileForm1 from './page/SitterProfileForm1';
 import SitterProfileForm2 from './page/SitterProfileForm2';
 import SitterProfileForm3 from './page/SitterProfileForm3';
 import SitterProfileForm4 from './page/SitterProfileForm4';
+import Chat from './components/Chat';
 
 const Router = () => {
   return (
@@ -65,6 +66,7 @@ const Router = () => {
         path='/reservation/detail/:type/:id'
         element={<ReservationDetail />}
       ></Route>
+      <Route path='/chat' element={<Chat />} />
       <Route path='*' element={<Home replace to='/' />} />
     </Routes>
   );
