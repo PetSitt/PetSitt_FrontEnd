@@ -7,7 +7,7 @@ import Menu from './components/Menu';
 function App() {
   return (
     <AppWrapper className="App">
-      <div className='AppInner' style={{paddingBottom: '74px'}}>
+      <div className='AppInner'>
         <Suspense fallback={<div>로딩중!!</div>}>
           <Router />
         </Suspense>
@@ -19,17 +19,20 @@ function App() {
 
 const AppWrapper = styled.div`
   height: 100vh;
-  background: rgb(217, 227, 238);
   overflow: hidden;
   .AppInner{
     width: 100%;
     height: 100%;
-    padding: 0 20px;
-    box-sizing: border-box;
-    background-color: #fff;
-    overflow: hidden;
-    overflow-y: auto;
-
+    & > div:first-of-type,
+    & > section:first-of-type {
+      height: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+      background-color: #fff;
+      overflow: hidden;
+      overflow-y: auto;
+      padding-bottom: 74px;
+    }
     @media (min-width:768px) {
       max-width: 412px;
       position: absolute;

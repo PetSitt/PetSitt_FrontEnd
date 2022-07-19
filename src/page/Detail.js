@@ -11,7 +11,6 @@ import StyledButton from '../elements/StyledButton';
 import Reviews from './Reviews';
 
 const Detail = () => {
-	// 62c63d6f25208ae3d3cda472
 	const queryClient = useQueryClient();
 	const param = useParams();
   const navigate = useNavigate();
@@ -32,6 +31,21 @@ const Detail = () => {
   });
   const [calendar, setCalendar] = useState('body');
   const [errorMessage, setErrorMessage] = useState();
+  const reservationRef = useRef();
+  const careSizeRef = useRef();
+  const plusService = useRef();
+  const reviewRef = useRef();
+  const pageBodyRef = useRef();
+  const floatingTabsRef = useRef();
+  const selectAreaRef = useRef();
+  const [scrollY, setScrollY] = useState();
+  const [scrollDirection, setScrollDirection] = useState();
+  const [floatingTabs, setFloatingTabs] = useState([
+    {text: '서비스 예약하기', isActive: true, visibility: null, function: ()=>reservationRef.current.scrollIntoView({behavior: 'smooth'})},
+    {text: '케어 가능한 반려견 사이즈', isActive: false, visibility: detail?.sitter.careSize.length > 0, function: ()=>careSizeRef.current.scrollIntoView({behavior: 'smooth'})},
+    {text: '추가 제공 가능한 서비스', isActive: false, visibility: detail?.sitter.plusService.length, function: ()=>plusService.current.scrollIntoView({behavior: 'smooth'})},
+    {text: '후기', isActive: false, visibility: null, function: ()=>reviewRef.current.scrollIntoView({behavior: 'smooth'})},
+  ]) 
   const disableDate = () => {
     const datesArray = [];
     detail.sitter.noDate.map(v=>{
@@ -41,8 +55,7 @@ const Detail = () => {
     })
     setUnavailable(datesArray);
   }
-  console.log(detail)
-	const {
+  const {
 		isLoading: detailIsLoading,
 		isSuccess,
 		isFetched,
@@ -114,8 +127,10 @@ const Detail = () => {
       disableDate();
     }
   },[detail, month, selectBoxToggle]);
+
 	useEffect(() => {
 		window.addEventListener("click", checkSelectArea);
+    
 		return()=>{
 			setDetail('');
 		}
@@ -133,9 +148,7 @@ const Detail = () => {
       });
     }
   }, [services]);
-
   
-
   useEffect(() => {
     if (date?.length >= 0) {
       const getDates = date.map((v) => {
@@ -144,11 +157,33 @@ const Detail = () => {
       setDates(getDates);
     }
   }, [date]);
+  
+  useEffect(()=>{
+    if(scrollDirection === 'up'){
+      selectAreaRef.current?.classList.add('isActive');
+    }else{
+      selectAreaRef.current?.classList.remove('isActive');
+    }
+  },[scrollDirection])
 
+  const scrollEvent = (e) => {
+    if(e.target.scrollTop >= pageBodyRef.current.offsetTop){
+      floatingTabsRef.current.classList.add('isFixed');
+    }else{
+      floatingTabsRef.current.classList.remove('isFixed');
+    }
+  }
+  
 
   if (detailIsLoading || !detail ) return <p>로딩중입니다</p>;
 	return (
-		<SitterDetailPage>
+		<SitterDetailPage style={{paddingTop: 0}} onScroll={(e)=>{
+      scrollEvent(e);
+      setScrollY((prev)=>{
+        if (prev > e.target.scrollTop) setScrollDirection('up');
+        else setScrollDirection('down');
+        return e.target.scrollTop;
+    })}}>
 			<section className="page_top">
         <section>
           <TopImage style={{backgroundImage: `url(${detail.sitter.mainImageUrl})`, margin: '0 -20px'}}></TopImage>
@@ -178,8 +213,28 @@ const Detail = () => {
           </SitterProfile>
         </section>
 			</section>
-      <section className="page_body">
-        <section>
+      <section className="page_body" ref={pageBodyRef}>
+        <FloatingTabsSection className="floatingTabs" ref={floatingTabsRef}>
+          <ul>
+            {
+              floatingTabs.map((v,i)=>{
+                return (
+                  <li key={`tab_${i}`}>
+                    <button type="button" className={v.isActive ? 'isActive' : ''} onClick={()=>{
+                      v.function();
+                      for(let idx=0; idx<floatingTabs.length; idx++){
+                        if(idx === i) floatingTabs[idx].isActive = true;
+                        else floatingTabs[idx].isActive = false;
+                      }
+
+                    }}>{v.text}</button>
+                  </li>
+                )
+              })
+            }
+          </ul>
+        </FloatingTabsSection>
+        <section ref={reservationRef}>
           <h3 style={{ display: "flex", justifyContent: "space-between" }}>
             서비스 예약하기
             <p>
@@ -227,9 +282,9 @@ const Detail = () => {
         </section>
         {
           detail.sitter.careSize.length > 0 && (
-          <section>
+          <section ref={careSizeRef}>
             <h3>서비스 가능한 반려견 사이즈</h3>
-            <ul>
+            <ul className="serviceList">
               {detail.sitter.careSize.map((v, i) => {
                 return (
                   <li key={`careSize_${i}`}>
@@ -243,9 +298,9 @@ const Detail = () => {
         }
         {
           detail.sitter.plusService.length > 0 && (
-            <section>
+            <section ref={plusService}>
               <h3>추가 제공 가능한 서비스</h3>
-              <ul>
+              <ul className="serviceList">
                 {detail.sitter.plusService.map((v, i) => {
                   return <li key={`plusService_${i}`}>{v}</li>;
                 })}
@@ -274,7 +329,7 @@ const Detail = () => {
             </section>
           )
         }
-        <section className="review_section">
+        <section className="review_section" ref={reviewRef}>
           <h3>{detail.sitter.sitterName}님에 대한 후기</h3>
           {
             detail.sitter.reviewCount <= 0 ? (
@@ -314,31 +369,6 @@ const Detail = () => {
                 </p>
               </h3>
               <div>
-              {/* <ServiceList>
-            {detail.sitter.category.map((v, i) => {
-              return (
-                <li key={`category_${i}`}>
-                  <div>
-                    <label>
-                      <input type="checkbox" checked={services[i]} onChange={(e)=>{
-                        setServices((prev)=>{
-                          const new_data = [...prev];
-                          new_data[i] = e.target.checked;
-                          return new_data;
-                        })
-                      }}/>
-                      <span>
-                        <i></i>
-                        {v}
-                      </span>
-                    </label>
-                  </div>
-                </li>
-              );
-            })}
-          </ServiceList> */}
-
-
                 <ServiceList style={{ margin: "10px 0" }}>
                   {detail.sitter.category.map((v, i) => {
                     return (
@@ -388,8 +418,7 @@ const Detail = () => {
               </div>
             </div>
           ))}
-
-        <ul className="select_area">
+        <ul className="select_area" ref={selectAreaRef}>
           <li
             onClick={() => {
               setSelectBoxToggle(()=>{
@@ -453,6 +482,51 @@ const Detail = () => {
   );
 };
 
+
+const FloatingTabsSection = styled.section`
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  overflow: hidden;
+	overflow-x: auto;
+	margin: 0 -20px;
+	padding: 16px 20px;
+  box-sizing: border-box;
+  z-index: 10;
+  background: linear-gradient(0deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 65%);
+	&{-ms-overflow-style:none; }
+	&::-webkit-scrollbar { display:none; }
+  &.isFixed{
+    position: fixed;
+    padding: 16px 20px;
+    margin: 0;
+  }
+	ul{
+		display: inline-flex;
+		white-space: nowrap;
+		gap: 10px;
+    li{
+      display: inline-block;
+      button{
+        padding: 0 12px;
+        font-size: 14px;
+        color: #787878;
+        height: 32px;
+        line-height: 32px;
+        border-radius: 16px;
+        box-sizing: border-box;
+        border: 1px solid rgba(120, 120, 120, 0.2);
+        background-color: #fff;
+        &.isActive{
+          color: #1A1A1A;
+          border: 1px solid #1A1A1A;
+          font-weight: 700;
+        }
+      }
+    }
+	}
+`
 const ReservationFunctions = styled.div`
   position: fixed;
   left: 0;
@@ -477,43 +551,52 @@ const ReservationFunctions = styled.div`
       padding: 20px;
     }
   }
-  .select_area li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 16px;
-    height: 40px;
-    padding: 0 20px;
-    cursor: pointer;
-    border-bottom: 1px solid #C9C9C9;
-    label {
-      display: block;
-      width: 100%;
+  .select_area{
+    margin-bottom: -120px;
+    transition: ease-out 240ms;
+    &.isActive{
+      margin-bottom: 0;
     }
-    span {
-      color: #676767;
-    }
-    strong {
-      font-size: 14px;
-      font-weight: 500;
-    }
-    &.price{
-      cursor: default;
-      strong{
-        font-weight: normal;
-        color: #1A1A1A;
-        em{
-          color: #FC9215;
-          font-weight: 500;
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 16px;
+      height: 40px;
+      padding: 0 20px;
+      cursor: pointer;
+      border-bottom: 1px solid #C9C9C9;
+      label {
+        display: block;
+        width: 100%;
+      }
+      span {
+        color: #676767;
+      }
+      strong {
+        font-size: 14px;
+        font-weight: 500;
+      }
+      &.price{
+        cursor: default;
+        strong{
+          font-weight: normal;
+          color: #1A1A1A;
+          em{
+            color: #FC9215;
+            font-weight: 500;
+          }
         }
       }
     }
   }
   .buttons {
+    position: relative;
     display: flex;
     align-items: center;
     gap: 10px;
     padding: 10px 20px 30px;
+    background-color: #fff;
     button {
       flex-basis: 50%;
     }
@@ -536,7 +619,8 @@ const SitterDetailPage = styled.div`
       }
     }
     &.page_body{
-      padding: 70px 0 200px;
+      position: relative;
+      padding: 50px 0 70px;
       .rmdp-border{
         margin-top: 46px;
       }
@@ -545,7 +629,7 @@ const SitterDetailPage = styled.div`
       h3 {
         font-size: 18px;
         font-weight: 700;
-        margin-bottom: 22px;
+        margin-bottom: 20px;
         line-height: 1.2;
         p{
           font-size: 14px;
@@ -559,6 +643,13 @@ const SitterDetailPage = styled.div`
       }
       & + section {
         padding: 70px 0 0;
+      }
+      &.floatingTabs + section{
+        padding: 48px 0 0;
+      }
+      &.floatingTabs.isFixed + section{
+        padding: 70px 0 0;
+        margin-top: -22px;
       }
       &.pets_info_section {
         ul {
@@ -614,13 +705,13 @@ const SitterDetailPage = styled.div`
                 display: block;
                 font-weight: 500;
                 font-size: 16px;
-                margin-bottom: 10px;
+                margin-bottom: 8px;
               }
             }
             p{
               line-height: 1.6;
               color: #676767;
-              margin-top: 15px;
+              margin-top: 13px;
             }
           }
         }
@@ -632,6 +723,14 @@ const SitterDetailPage = styled.div`
           padding: 0 12px;
           border: 1px solid rgba(120, 120, 120, 0.2);
           border-radius: 17px;
+        }
+      }
+    }
+    .serviceList{
+      li{
+        font-weight: 500;
+        & + li{
+          margin-top: 8px;
         }
       }
     }
