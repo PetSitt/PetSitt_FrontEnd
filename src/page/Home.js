@@ -6,6 +6,7 @@ import { DateObject,Calendar } from "react-multi-date-picker";
 import styled from 'styled-components';
 import { apis } from "../store/api";
 
+import Modal from "../elements/Modal";
 import MapContainer from "./MapContainer";
 import SearchAddress from "./SearchAddress";
 import icon_star from '../assets/img/icon_star.png';
@@ -21,6 +22,8 @@ function Home() {
 	const filterAreaRef = useRef();
 	const [date, setDate] = useState(new Date());
 	const [dates, setDates] = useState(new Date());
+	const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
+  const months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"];
 	const [addressInfo, setAddressInfo] = useState();
 	const [address, setAddress] = useState();
 	const [iframeDisplay, setIframeDisplay] = useState(false);
@@ -42,24 +45,32 @@ function Home() {
 	const [mapHeight, setMapHeight] = useState();
 	const getLocationButtonRef = useRef();
 	const [datepickerDisplay, setDatepickerDisplay] = useState(false);
+	const [modalDisplay, setModalDisplay] = useState(false);
+	const showModal = useRef(false);
+	const datesTransformed= useRef(null);
+	const [sitterCardShow, setSitterCardShow] = useState({display: false, index: null});
+	console.log(sitterCardShow)
 	const getSittersList = (queriesData, category) => {
-		console.log(queriesData, category)
-		if(category.length > 0 && category.length < 5){
+		const _queriesData = {...queriesData};
+		if(category.length >= 1 && category.length < 5){
 			for(let i=0; i<category.length; i++){
 				const cate_key = Object.keys(category[i])[0];
 				const cate_value = Object.values(category[i])[0];
-				queriesData[cate_key] = cate_value;
+				_queriesData[cate_key] = cate_value;
 			}
 		}
-		return apis.getSittersList(queriesData);
+		console.log('검색 api t실행', _queriesData, category)
+		return apis.getSittersList(_queriesData);
 	};
-	const {data: sittersFilteredSearch, isLoading: sittersFilteredIsLoading, isFetched: sittersFilteredIsFetched, isRefetching: sittersAfterIsRefetching} = useQuery(
+	const {data: sittersFilteredSearch, isLoading: sittersFilteredIsLoading, isFetched: sittersFilteredIsFetched, isRefetching: sittersAfterIsRefetching, refetch: refetchSittersAfter} = useQuery(
 		["sitter_list", queriesData, category],
 		() => getSittersList(queriesData, category),
 		{
 			onSuccess: (data) => {
-				console.log(data);
+				console.log(data.data);
 				setSearched(false);
+				const sittersData = data.data.sitter2 ? data.data.sitter2 : data.data.sitters;
+				setSitters(sittersData);
 			},
 			onError: (data) => {
 				console.error(data);
@@ -69,20 +80,18 @@ function Home() {
 			staleTime: Infinity,
 		},
 	);
-	// useEffect(() => {
-	// 	if (date.length) {
-	// 		const getDates = date.map((v) => {
-	// 			return v.format(v._format);
-	// 		});
-	// 		setDates(getDates);
-	// 	}
-	// }, [date]);
 	const setDatesFormat = () => {
-		if (date.length) {
-			const getDates = date.map((v) => {
+		if (date.length > 0) {
+			datesTransformed.current = null;
+			const getDates = date.map((v,i) => {
 				return v.format(v._format);
 			});
 			setDates(getDates);
+			const dateItem = `${date[0].month.number < 10 ? '0' + date[0].month.number : date[0].month.number}. ${date[0].day} (${weekDays[date[0].weekDay.index]})`;
+			datesTransformed.current = dateItem;
+			if(date.length > 1){
+				datesTransformed.current = `${dateItem} 외 ${date.length-1}일`
+			}
 		}
 	}
 
@@ -120,8 +129,10 @@ function Home() {
 		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
 		{
 			onSuccess: (data) => {
-				console.log(data);
+				console.log(data)
+				queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(false);
+				setSitters(data.data.sitters);
 			},
 			onError: (data) => {
 				console.error(data);
@@ -161,32 +172,14 @@ function Home() {
 		setMapHeight(fullHeight - filterHeight - 74);
 		console.log(fullHeight, filterHeight, fullHeight - filterHeight)
 	},[])
-
 	useEffect(()=>{
-		queryClient.invalidateQueries('sitter_default');
-		if(sittersFilteredIsFetched){
-			const sittersData = sittersFilteredSearch.data.sitter2 ? sittersFilteredSearch.data.sitter2 : sittersFilteredSearch.data.sitters;
-			setSitters(sittersData);
-			return;
-		}
-		if(sittersIsFetched){
-			setSitters(sittersBeforeSearch?.data.sitters);
-			return;
-		}
-	}, [sittersFilteredIsFetched, sittersIsFetched])
-
-	useEffect(()=>{
-		if(sitters?.length > 0){
-			if(addressInfo &&  dates?.length > 0){
-				// 검색 후 categorizing
-				console.log('검색 후 categorizing')
-				setSearched(true);
-			}else{
-				// 검색 전 categorizing
-				console.log('검색 전 categorizing')
-				refetchSitters(category);			
-			}
-		}
+		if(addressInfo &&  dates?.length > 0){
+			console.log('검색 후 categorizing');
+			refetchSittersAfter();
+		}else{
+			console.log('검색 전 categorizing');
+			refetchSitters();
+		} 
 	},[category])
 
 	useEffect(()=>{
@@ -199,8 +192,8 @@ function Home() {
 			// 카카오맵에 전달할 위도,경도 정보 저장
 			setLocationItems(()=>{
 				const positionItems = [];
-				sitters.map(v=>{
-					const obj = {x: v.location.coordinates[0], y: v.location.coordinates[1], sitterName: v.sitterName ? v.sitterName : '돌보미', averageStar: v.averageStar};
+				sitters.map((v,i)=>{
+					const obj = {x: v.location.coordinates[0], y: v.location.coordinates[1], sitterName: v.sitterName ? v.sitterName : '돌보미', averageStar: v.averageStar, index: i};
 					positionItems.push(obj);
 				})
 				return positionItems;
@@ -216,15 +209,34 @@ function Home() {
 	// 	}
 	// }, []);
 
+	console.log(category)
 	if (sittersFilteredIsLoading) return null;
 	return (
+		<>
 		<div className="home" style={{position: 'relative'}}>
 			<button type="button" onClick={getLocation} ref={getLocationButtonRef} style={{position: 'absolute', left: 0, top: 0, width: 0, height: 0}}></button>
 			<IndexPage>
 				<FilterArea ref={filterAreaRef}>
+					<div style={{position: 'relative'}}>
+						<div className="inputBox">
+							<input type="text" placeholder="구, 동을 검색해주세요. (예: 강남구 논현동)" value={addressInfo?.address_name && addressInfo?.address_name} onClick={()=>{setIframeDisplay(true); setDatepickerDisplay(false)}} readOnly/>
+							<i className="ic-search"></i>
+						</div>
+						{
+							iframeDisplay && (
+								<AddressWrap style={{margin: '0 -1px'}}>
+									<SearchAddress setAddressInfo={setAddressInfo} iframeDisplay={iframeDisplay} setIframeDisplay={setIframeDisplay}/>
+									<StyledButton _title="닫기" _margin="0" _onClick={()=>setIframeDisplay(false)}/>
+								</AddressWrap>
+							)
+						}
+					</div>
 					<div style={{position: 'relative', zIndex: 2}}>
-						<input type="text" placeholder="날짜를 검색해주세요." value={dates?.length > 0 ? dates : ''} onClick={()=>setDatepickerDisplay(true)} style={{display: 'block', width: '100%', height: '46px', lineHeight: '46px', border: '1px solid #999', margin: '10px 0 0', padding: '0 15px'}} readOnly/>
-						<DatepickerWrap style={{display: datepickerDisplay === true ? 'block' : 'none', position: 'absolute', left: '0', right: '0', top: '100%'}}>
+						<div className="inputBox date">
+							<input type="text" placeholder="날짜를 검색해주세요." value={datesTransformed.current?.length > 0 ? datesTransformed.current : ''} onClick={()=>{setDatepickerDisplay(true); setIframeDisplay(false)}} readOnly/>
+							<i className="ic-calendar"></i>
+						</div>
+						<DatepickerWrap style={{display: datepickerDisplay === true ? 'block' : 'none', position: 'absolute', left: '-1px', right: '-1px', top: '100%'}}>
 							<Calendar
 								ref={datepickerRef}
 								onChange={setDate}
@@ -233,38 +245,22 @@ function Home() {
 								minDate={new Date()}
 								maxDate={new Date(today.year + 1, today.month.number, today.day)}
 								shadow={false}
+								weekDays={weekDays}
+              	months={months}
 								style={{
 									borderRadius: 0,
 								}}
 							/>
-							<StyledButton _title="닫기" _margin="0" _onClick={()=>{setDatepickerDisplay(false); setDatesFormat()}}/>
+							<StyledButton _title="날짜 적용" _margin="0" _onClick={()=>{setDatepickerDisplay(false); setDatesFormat()}}/>
 						</DatepickerWrap>
-					</div>
-					<div style={{position: 'relative'}}>
-					<input type="text" placeholder="지역를 검색해주세요." value={addressInfo?.address_name && addressInfo?.address_name} onClick={()=>setIframeDisplay(true)} style={{display: 'block', width: '100%', height: '46px', lineHeight: '46px', border: '1px solid #999', margin: '10px 0 0', padding: '0 15px'}} readOnly/>
-					{
-						iframeDisplay && (
-							<AddressWrap>
-								<SearchAddress setAddressInfo={setAddressInfo} iframeDisplay={iframeDisplay} setIframeDisplay={setIframeDisplay}/>
-								<StyledButton _title="닫기" _margin="0" _onClick={()=>setIframeDisplay(false)}/>
-							</AddressWrap>
-						)
-					}
 					</div>
 					<StyledButton _onClick={()=>{
 						if(addressInfo &&  dates?.length > 0){
 							setSearched(true);
 						}else{
-							window.alert('날짜와 장소를 선택해주세요.')
+							setModalDisplay(true);
 						}
-					}} _title="검색하기"/>
-					{/* <button type="button" style={{border: '1px solid #333', fontSize: '16px', height: '40px', lineHeight: '42px', padding: '0 20px'}} onClick={()=>{
-						if(addressInfo &&  dates?.length > 0){
-							setSearched(true);
-						}else{
-							window.alert('날짜와 장소를 선택해주세요.')
-						}
-					}}>검색하기</button> */}
+					}} _title="검색하기" _margin="20px 0 0"/>
 					<Categories>
 						<ul>
 						{categories.map((v, i) => {
@@ -272,9 +268,8 @@ function Home() {
 								<li key={i}>
 									<label>
 										<input type="checkbox" onChange={(e) => {
-											console.log('??')
 											if(e.target.checked){ 
-												console.log('??')
+												console.log('?? checked')
 												setCategory((prev)=>{
 													const new_category = [...prev];
 													return new_category.filter(item=>{
@@ -282,6 +277,7 @@ function Home() {
 													})
 												})
 											}else{
+												console.log('?? not checked')
 												setCategory((prev)=>{
 													const new_category = [...prev];
 													new_category.push(v);
@@ -308,7 +304,7 @@ function Home() {
 									{
 										sitters?.map((v,i)=>{
 											return (
-												<li key={`sitter_${i}`}>
+												<SitterCard key={`sitter_${i}`}>
 													<Link to={`/detail/${v.sitterId}`}>
 													<div className="image_area" style={{backgroundImage: `url(${v.mainImageUrl})`}}>
 														<span className="sitter_image" style={{backgroundImage: `url(${v.imageUrl})`}}></span>
@@ -329,20 +325,53 @@ function Home() {
 														</div>
 													</div>
 													</Link>
-												</li>
+												</SitterCard>
 											)
 										})
 									}
 								</ul>
 								) : (
-									<MapContainer items={locationItems} _height={mapHeight}/>
+									<MapArea>
+										<MapContainer items={locationItems} _height={mapHeight} setSitterCardShow={setSitterCardShow}/>
+										{
+											<ul>
+												{
+													sitterCardShow.display && (
+														<SitterCard>
+															<Link to={`/detail/${sitters[sitterCardShow.index].sitterId}`}>
+															<div className="image_area" style={{backgroundImage: `url(${sitters[sitterCardShow.index].mainImageUrl})`}}>
+																<span className="sitter_image" style={{backgroundImage: `url(${sitters[sitterCardShow.index].imageUrl})`}}></span>
+															</div>
+															<div className="info_area">
+																<p className="sitter">
+																	<em>{sitters[sitterCardShow.index].sitterName}</em>
+																	<span>재고용률 {sitters[sitterCardShow.index].rehireRate}%</span>
+																</p>
+																<p className="address">{sitters[sitterCardShow.index].address}</p>
+																<div className="bottom_info">
+																	<div className="star">
+																		<img src={icon_star} alt="star"/>
+																		<span>{sitters[sitterCardShow.index].averageStar} </span>
+																		<span>{`(${sitters[sitterCardShow.index].reviewCount})`}</span>
+																	</div>
+																	<p className="price"><strong>{sitters[sitterCardShow.index].servicePrice}</strong><span>원~</span></p>
+																</div>
+															</div>
+															</Link>
+															<button type="button" className="closeSitterCard" onClick={()=>setSitterCardShow({display: false, index: null})}>닫기</button>
+														</SitterCard>
+													)
+												}
+											</ul>
+										}
+									</MapArea>
 								)
 							}
 							</>
 						) : (
 							<>
 								{
-									(!sittersIsFetched || !sittersFilteredIsFetched) ? <p>돌보미 리스트를 검색중입니다.</p> : <p>검색된 돌보미가 없습니다.</p>
+									(sitters?.length <= 0 ) && <p>검색된 돌보미가 없습니다.</p>
 								}
 							</>
 						)
@@ -362,6 +391,12 @@ function Home() {
 				</Buttons>
 			</IndexPage>
 		</div>
+		<Modal _alert={true} _display={modalDisplay} confirmOnClick={()=>setModalDisplay(false)}>
+			<div className="text_area">
+				<h3>장소와 날짜를 모두 선택해주세요.</h3>
+			</div>
+		</Modal>
+		</>
 	);
 }
 
@@ -427,6 +462,52 @@ const Buttons = styled.div`
 }
 `
 const FilterArea = styled.div`
+.inputBox{
+	position: relative;
+	input{
+		display: block;
+		width: 100%;
+		height: 48px;
+		padding: 0 15px 0 44px;
+		border-radius: 6px;
+		border: 1px solid rgba(120,120,120,.4);
+		box-sizing: border-box;
+			font-size: 16px;
+		&::placeholder{
+			color: rgba(120, 120, 120, 0.7);
+		}
+	}
+	i{
+		position: absolute;
+		left: 0;
+		top: 0;
+		font-size: 26px;
+		width: 44px;
+		height: 48px;
+		text-align: center;
+		line-height: 48px;
+		&::before{
+			color: #676767;
+		}
+		&.ic-calendar{
+			line-height: 42px;
+			&::before{
+				font-size: 20px;
+				color: #1a1a1a;
+				margin-top: -3px;
+			}
+		}
+	}
+	& + div{
+		border-radius: 6px;
+		overflow: hidden;
+		border: 1px solid rgba(120,120,120,.4);
+	}
+	&.date{
+		max-width: 50%;
+		margin-top: 16px;
+	}
+}
 .rmdp-container {
 	position: relative;
 }
@@ -444,6 +525,7 @@ const FilterArea = styled.div`
  }
  .rmdp-border{
 	border-radius: 0;
+	border: none;
  }
 
 `
@@ -487,103 +569,110 @@ const Categories = styled.div`
 		}
 	}
 `
-const SittersListArea = styled.div`
-	li{
-		border-radius: 10px;
-		overflow: hidden;
-		box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15);
-		&+li{
-			margin-top: 16px;
-		}
-		.image_area{
-			position: relative;
-			height: 0;
-			padding-bottom: 29.2397%;
+const SitterCard = styled.li`
+	border-radius: 10px;
+	overflow: hidden;
+	box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15);
+	&+li{
+		margin-top: 16px;
+	}
+	.image_area{
+		position: relative;
+		height: 0;
+		padding-bottom: 29.2397%;
+		background-size: cover;
+		background-position: center;
+		background-repeat: no-repeat;
+		.sitter_image{
+			position: absolute;
+			right: 23px;
+			bottom: -23px;
+			width: 60px;
+			height: 60px;
+			border-radius: 10px;
 			background-size: cover;
 			background-position: center;
 			background-repeat: no-repeat;
-			.sitter_image{
-				position: absolute;
-				right: 23px;
-				bottom: -23px;
-				width: 60px;
-				height: 60px;
-				border-radius: 10px;
-				background-size: cover;
-				background-position: center;
-				background-repeat: no-repeat;
+		}
+	}
+	.info_area{
+		padding: 14px 18px;
+		color: #1A1A1A;
+		.sitter{
+			display: flex;
+			align-items: center;
+			gap: 10px;
+			em{
+				font-size: 18px;
+				line-height: 1;
+			}
+			span{
+				display: inline-block;
+				background: rgba(252, 146, 21, 0.1);
+				border-radius: 3px;
+				padding: 0 5px;
+				line-height: 18px;
+				height: 16px;
+				font-size: 12px;
+				font-weight: 500;
+				color: #FC9215;
+				margin-top: -3px;
 			}
 		}
-		.info_area{
-			padding: 14px 18px;
-			color: #1A1A1A;
-			.sitter{
+		.address{
+			font-size: 12px;
+			color: #787878;
+			margin-top: 6px;
+		}
+		.bottom_info{
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			margin-top: 10px;
+			.star{
 				display: flex;
 				align-items: center;
-				gap: 10px;
-				em{
-					font-size: 18px;
-					line-height: 1;
+				font-size: 14px;
+				font-weight: 500;
+				img{
+					display: inline-block;
+					width: 13px;
+					margin-top: -1px;
+					margin-right: 4px;
 				}
 				span{
-					display: inline-block;
-					background: rgba(252, 146, 21, 0.1);
-					border-radius: 3px;
-					padding: 0 5px;
-					line-height: 18px;
-					height: 16px;
-					font-size: 12px;
 					font-weight: 500;
-					color: #FC9215;
-					margin-top: -3px;
+					& + span{
+						font-weight: 400;
+						margin-left: 2px;
+					}
 				}
 			}
-			.address{
-				font-size: 12px;
-				color: #787878;
-				margin-top: 6px;
-			}
-			.bottom_info{
+			.price{
 				display: flex;
 				align-items: center;
-				justify-content: space-between;
-				margin-top: 10px;
-				.star{
-					display: flex;
-					align-items: center;
-					font-size: 14px;
-					font-weight: 500;
-					img{
-						display: inline-block;
-						width: 13px;
-						margin-top: -1px;
-						margin-right: 4px;
-					}
-					span{
-						font-weight: 500;
-						& + span{
-							font-weight: 400;
-							margin-left: 2px;
-						}
-					}
+				font-size: 14px;
+				color: #787878;
+				gap: 2px;
+				strong{
+					color: #1A1A1A;
+					font-size: 24px;
+					font-weight: 700;
 				}
-				.price{
-					display: flex;
-					align-items: center;
-					font-size: 14px;
-					color: #787878;
-					gap: 2px;
-					strong{
-						color: #1A1A1A;
-						font-size: 24px;
-						font-weight: 700;
-					}
-					span{
-						margin-top: 2px;
-					}
+				span{
+					margin-top: 2px;
 				}
 			}
 		}
+	}
+`
+const SittersListArea = styled.div`
+	&::before{
+		display: block;
+		height: 6px;
+		margin: 0 -20px 20px;
+		content: '';
+		background-color: #F5F5F5;
 	}
 `
 const AddressWrap = styled.div`
@@ -594,9 +683,45 @@ const AddressWrap = styled.div`
 	border: 1px solid #999;
 	margin-bottom: 10px;
 	z-index: 100;
-	& > div{
-		/* margin-top: -32px; */
-	}
-	
 `
+const MapArea = styled.div`
+	position: relative;
+	border-radius: 10px;
+	overflow: hidden;
+	ul{
+		position: absolute;
+		left: 10px;
+		right: 10px;
+		top: 10px;
+		z-index: 2;
+		background-color: #fff;
+		.closeSitterCard{
+			position: absolute;
+			right: 10px;
+			top: 10px;
+			width: 24px;
+			height: 24px;
+			background: rgba(0,0,0,.6);
+			border-radius: 50%;
+			font-size: 0;
+			&::before,
+			&::after{
+				position: absolute;
+				left: 0;
+				right: 0;
+				top: 50%;
+				height: 1px;
+				background-color: #fff;
+				width: 12px;
+				margin: 0 auto;
+				content: '';
+				transform: rotate(-45deg);
+			}
+			&::after{
+				transform: rotate(45deg);
+			}
+		}
+	}
+`
+
 export default Home;

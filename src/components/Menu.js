@@ -41,6 +41,7 @@ const MenuInner = styled.nav`
   border-top: 1px solid rgba(120, 120, 120, 0.2);
   margin-top: 100px;
   background-color: #fff;
+  z-index: 2;
   @media (min-width: 768px) {
     max-width: 412px;
     right: 10%;

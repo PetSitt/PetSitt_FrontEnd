@@ -12,7 +12,7 @@ import {
 import marker from '../assets/img/marker.png';
 import star from '../assets/img/icon_star.png';
 
-const MapContainer = ({ centerElement, showOnly, items, _height }) => {
+const MapContainer = ({ centerElement, showOnly, items, _height, setSitterCardShow }) => {
   const [level, setLevel] = useState();
   const [centerElem, setCenterElem] = useState(centerElement && centerElement);
   const [positions, setPositions] = useState([]);
@@ -20,27 +20,24 @@ const MapContainer = ({ centerElement, showOnly, items, _height }) => {
   const mapRef = useRef();
 
   const onClusterclick = (_target, cluster) => {
-    console.log("cluster clicked", _target, cluster);
     const map = mapRef.current;
     // 현재 지도 레벨에서 1레벨 확대한 레벨
     const level = map.getLevel() - 1;
-    // 지도를 클릭된 클러스터의 마커의 위치를 기준으로 확대합니다
+    // 지도를 클릭된 클러스터의 마커의 위치를 기준으로 확대
     map.setLevel(level, { anchor: cluster.getCenter() });
   };
 
-  const markerClickEvent = (idx) => {
-    const map = mapRef.current;
-    map.setPosition({
-      lat: positions[idx].x,
-      lng: positions[idx].y,
+  const markerClickEvent = (sitterIndex) => {
+    setSitterCardShow({
+      display: true,
+      index: sitterIndex
     });
   };
 
   useEffect(()=>{
     items && setPositions(items);
-  },[])
+  },[items])
   useEffect(() => {
-    console.log(positions, positions[0])
     if (positions.length > 0) {
       setCenterElem(positions[0]);
     }
@@ -88,8 +85,6 @@ const MapContainer = ({ centerElement, showOnly, items, _height }) => {
                       lat: pos.y,
                       lng: pos.x,
                     }}
-                    clickable={true} // 마커를 클릭했을 때 지도의 클릭 이벤트가 발생하지 않도록 설정합니다
-                    onClick={() => markerClickEvent(idx)}
                     image={{
                       src: marker,
                       size: {
@@ -106,12 +101,11 @@ const MapContainer = ({ centerElement, showOnly, items, _height }) => {
                     }}
                   >
                     <div style={{textAlign: 'center', transform: 'translate(0, -47px)'}}>
-                      <div style={{display: 'flex', alignItems: 'center', height: '40px', padding: '0 15px', background: '#fff', borderRadius: '20px', border: '1px solid #FC9215', boxSizing: 'border-box'}}>
+                      <div style={{display: 'flex', alignItems: 'center', height: '40px', padding: '0 15px', background: '#fff', borderRadius: '20px', border: '1px solid #FC9215', boxSizing: 'border-box'}} onClick={()=>markerClickEvent(pos.index)}>
                         <strong style={{fontWeight: 700}}>{pos.sitterName}</strong>
                         <span style={{fontSize: '14px'}}><img src={star} alt="star" style={{display: 'inline-block', width: '13px', height: '13px', verticalAlign: 'middle', margin: '-3px 1px 0 5px'}}/>{pos.averageStar}</span>
                       </div>
                       <img src={marker} alt="star" style={{width: '40px', height: '47px', margin: '2px 0 0'}}/>
-
                     </div>
                   </CustomOverlayMap>
                 ))}
