@@ -27,7 +27,6 @@ const SearchAddress = ({ setAddressInfo, iframeDisplay, setIframeDisplay }) => {
 									setIframeDisplay(false);
 								}
 							})
-							
 						}
 					})
 				}
@@ -42,6 +41,7 @@ const SearchAddress = ({ setAddressInfo, iframeDisplay, setIframeDisplay }) => {
 			style={{ width: "100%"}}
 			useBannerLink={false}
 			submitMode={false}
+			className='daum-postcode-wrap'
 		/>
 	);
 };

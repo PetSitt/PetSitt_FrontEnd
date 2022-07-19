@@ -25,6 +25,12 @@ i {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.ic-calendar:before {
+  content: "\e90c";
+}
+.ic-search:before {
+  content: "\e90b";
+}
 .ic-book:before {
   content: '\e900';
   color: #787878;

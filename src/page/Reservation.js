@@ -143,7 +143,7 @@ const Reservation = () => {
           </section>
           <section>
             <div className="info_box">
-              {info.userName} 님이 제공하는 서비스의
+              {info.sitterName} 님이 제공하는 서비스의
               일당 금액은 {info.price}원 입니다.
               <ol style={{fontSize: '14px', color: '#797979', padding: '10px', backgroundColor: '#eee', margin: '10px 0'}}>
                 <li>* 위 금액은 확정된 금액이 아닌 돌보미가 제공하는 평균적인 금액입니다.</li>
