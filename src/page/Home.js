@@ -49,7 +49,6 @@ function Home() {
 	const showModal = useRef(false);
 	const datesTransformed= useRef(null);
 	const [sitterCardShow, setSitterCardShow] = useState({display: false, index: null});
-	console.log(sitterCardShow)
 	const getSittersList = (queriesData, category) => {
 		const _queriesData = {...queriesData};
 		if(category.length >= 1 && category.length < 5){
@@ -104,16 +103,19 @@ function Home() {
 	// 로그인 여부 확인하는 api
 	const { mutate: checkUser } = useMutation(()=>apis.checkUser(), { 
 		onSuccess: (data) => {
-			console.log(data);
+			console.log(data, 'auth api 성공!!!');
+			localStorage.setItem('userName', data.data.user.userName);
+			localStorage.setItem('userEmail', data.data.user.userEmail);
 		},
 		onError: (data) => {
-			console.log(data);
+			console.log(data, 'auth api 실패');
+			localStorage.removeItem('userName');
+			localStorage.removeItem('userEmail');
 		},
 		staleTime: Infinity,
 	});
 	
 	const getListApi = (currentPosition, category) =>{
-		console.log(currentPosition)
 		const categoryData = {}
 		if(category.length > 0 && category.length < 5){
 			for(let i=0; i<category.length; i++){
@@ -122,14 +124,12 @@ function Home() {
 				categoryData[cate_key] = cate_value;
 			}
 		}
-		console.log(currentPosition, categoryData)
 		return apis.getSittersDefault({...currentPosition, ...categoryData});
 	}
 	const {data: sittersBeforeSearch, isLoading: sittersIsLoading, isFetched: sittersIsFetched, refetch: refetchSitters, isRefetching: sittersIsRefetching} = useQuery(
 		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
 		{
 			onSuccess: (data) => {
-				console.log(data)
 				queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(false);
 				setSitters(data.data.sitters);
@@ -201,13 +201,13 @@ function Home() {
 		}
 	},[sitters])
 
-	// useEffect(() => {
-	// 	if(localStorage.getItem('accessToken')){
-	// 		checkUser();
-	// 	}else{
-	// 		console.log('액세스 토큰 없음')
-	// 	}
-	// }, []);
+	useEffect(() => {
+		if(localStorage.getItem('accessToken')){
+			checkUser();
+		}else{
+			console.log('액세스 토큰 없음')
+		}
+	}, []);
 
 	console.log(category)
 	if (sittersFilteredIsLoading) return null;
