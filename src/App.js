@@ -18,7 +18,7 @@ function App() {
         </Suspense>
         <Menu popup={popup} setPopup={setPopup} socket={socket}/>
         {popup && ( 
-          <Chat popup={popup} setPopup={setPopup} socket={socket}/>
+          <Chat popup={popup} setPopup={setPopup}/>
         )}
       </div>
     </AppWrapper>
