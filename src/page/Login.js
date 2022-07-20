@@ -19,13 +19,11 @@ const Login = () => {
     return apis.login(data);
   };
   const { mutate: loginQuery } = useMutation(login, {
-    onSuccess: async (data) => {
-      await localStorage.setItem('accessToken', data.data.accessToken);
-      await cookies.set('refreshToken', data.data.refreshToken);
-      // await localStorage.setItem('userEmail', data.data.userEmail)
-      await sessionStorage.removeItem('foundId');
-
-      console.log(data);
+    onSuccess: (data) => {      
+      // console.log(data);
+      localStorage.setItem('accessToken', data.data.accessToken);
+      cookies.set('refreshToken', data.data.refreshToken);
+      sessionStorage.removeItem('foundId');
       navigate('/');
     },
     onError: (data) => {
@@ -33,16 +31,6 @@ const Login = () => {
       alert(data.response.data.errorMessage);
     },
   });
-  // 로그인 여부 확인하는 api
-  // const { mutate: checkUser } = useMutation(()=>apis.checkUser(), {
-  // 	onSuccess: (data) => {
-  // 		if(cookies.get('accessToken')){
-  // 			cookies.remove('accessToken');
-  // 			localStorage.removeItemItem('refreshToken');
-  // 		}
-  // 		console.log(data);
-  // 	},
-  // });
   
   useEffect(() => {
     const foundId = sessionStorage.getItem('foundId');
