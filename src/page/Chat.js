@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import io from "socket.io-client";
 import styled, {keyframes} from "styled-components";
+import { chatApis } from "../store/chatApi";
 import ChatRoom from "../components/ChatRoom";
 
 const socket = io.connect("http://3.39.230.232");
@@ -9,13 +10,17 @@ function Chat({popup, setPopup}) {
   const [username, setUsername] = useState("");
   const [room, setRoom] = useState("");
   const [showChat, setShowChat] = useState(false);
-  console.log(socket)
   const joinRoom = () => {
     if (username !== "" && room !== "") {
       socket.emit("join_room", room);
       setShowChat(true);
     }
   };
+
+  useEffect(() => {
+    console.log(chatApis.chatListGet())
+    
+  },[])
 
   return (
     <ChatInner>
