@@ -68,7 +68,6 @@ authApi.interceptors.request.use((config)=> {
 /* refresh 토큰을 활용하여 access 토큰을 재발급받기 위한 코드 - 수정중 */
 authApi.interceptors.response.use(
   (response) => {
-		console.log(response, 'auth api response 성공')
     return response;
   },
   async (error) => {
@@ -76,12 +75,9 @@ authApi.interceptors.response.use(
       config,
       response: { status },
     } = error;
-		console.log(error, error.response, error.config, config, 'auth api response 오류')
     if (status === 401) {
-			console.log(error.response.data)
       const originalRequest = config;
 			const refreshToken = await cookies.get('refreshToken');
-			console.log('401 에러, refreshToken: ', {refreshToken}, refreshToken)
 			// token refresh 요청
 			const { data } = await authApi.post('/api/refresh', {refreshToken});
 
@@ -89,48 +85,16 @@ authApi.interceptors.response.use(
 			const {
 				accessToken: newAccessToken,
 			} = data;
-			console.log('data????', data, {data}, newAccessToken)
-			// await AsyncStorage.multiSet([
-			//   ["accessToken", newAccessToken],
-			//   ["refreshToken", newRefreshToken],
-			// ]);
+			
 			await localStorage.setItem('accessToken', newAccessToken)
 			authApi.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
 			originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
 			// // 401로 요청 실패했던 요청 새로운 accessToken으로 재요청
-			console.log(originalRequest.headers, authApi.defaults.headers)
 			return axios(originalRequest);
     }
-		console.log(error, '401아닐 때')
     return Promise.reject(error);
   }
 );
-
-
-// authApi.interceptors.response.use((response) => {
-//   return response
-// }, async function (error) {
-//   const originalRequest = error.config;
-//   if (error.response.status === 401 && !originalRequest._retry) {
-//     console.log('토큰 만료')
-//     originalRequest._retry = true;
-//     // const sessionObj = window.sessionStorage.getItem('userInfo');
-//     // let userInfo = sessionObj ? JSON.parse(sessionObj) : null;
-// 		const refreshToken = cookies.get('refreshToken');
-//     const access_token = await authApi.post('api/refresh', // token refresh api
-// 			{
-// 				refreshToken,
-// 			}
-// 		);
-//     console.log(access_token.data.accessToken)
-// 			const newAccessToken = access_token.data.accessToken;
-//       originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
-//       localStorage.setItem('accessToken', newAccessToken);
-//     return axios(originalRequest);
-//   }
-//   return Promise.reject(error);
-// });
-
 
 const formdataConfig = {
 	headers: {
