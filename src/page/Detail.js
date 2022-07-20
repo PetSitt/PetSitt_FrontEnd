@@ -5,6 +5,7 @@ import styled from "styled-components";
 import { DateObject, Calendar } from "react-multi-date-picker";
 import MapContainer from "./MapContainer";
 import { apis } from "../store/api";
+import Auth from "../Auth";
 
 import StyledButton from '../elements/StyledButton';
 import Reviews from './Reviews';
@@ -392,12 +393,8 @@ const Detail = () => {
         {selectBoxToggle.status &&
           (selectBoxToggle.type === "service" ? (
             <div className="select_wrap service">
-              <h3 style={{ display: "flex", justifyContent: "space-between" }}>
-                서비스 선택하기
-                <p style={{ fontSize: "16px" }}>
-                  <strong>{detail.sitter.servicePrice}원</strong>/일
-                </p>
-              </h3>
+              <h3 style={{ display: "flex", justifyContent: "space-between" }}>서비스 선택</h3>
+              <button type="button" className="closeSelectWrap">닫기</button>
               <div>
                 <ServiceList style={{ margin: "10px 0" }}>
                   {detail.sitter.category.map((v, i) => {
@@ -431,6 +428,7 @@ const Detail = () => {
           ) : (
             <div className="select_wrap date">
               <h3>날짜 선택하기</h3>
+              <button type="button" className="closeSelectWrap">닫기</button>
               <div>
                 <Calendar
                   className="calendar_onModal"
@@ -587,8 +585,14 @@ const ReservationFunctions = styled.div`
     h3 {
       font-size: 18px;
       font-weight: bold;
-      padding: 10px 20px;
+      padding: 23px 16px;
       border-bottom: 1px solid #ddd;
+    }
+    .closeSelectWrap{
+      position: absolute;
+      right: 0;
+      width: 24px;
+      height: 24px;
     }
     & > div {
       padding: 20px;
