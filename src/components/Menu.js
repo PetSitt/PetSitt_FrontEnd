@@ -4,7 +4,6 @@ import jwt_decode from "jwt-decode"
 import { Link } from 'react-router-dom';
 
 const Menu = ({popup, setPopup, socket}) => {
-
   useEffect(() => { 
     if(localStorage.getItem('accessToken')){
       const {userEmail} = jwt_decode(localStorage.getItem('accessToken'));

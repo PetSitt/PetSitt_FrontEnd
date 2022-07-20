@@ -17,4 +17,4 @@ export const chatApis = {
 	chatListGet: () => jsonApi.get('/chats/chatList'),
 	chatRoomGet: (roomId) => jsonApi.get(`/chats/${roomId}`),
 	chatMessagePost: (data) => jsonApi.post('/chats/chatting', data)
-}
+};

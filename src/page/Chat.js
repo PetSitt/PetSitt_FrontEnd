@@ -4,24 +4,24 @@ import styled, {keyframes} from "styled-components";
 import ChatRoom from "../components/ChatRoom";
 import { chatApis } from "../store/chatApi";
 
-function Chat({popup, setPopup, socket}) {
+function Chat({popup, setPopup}) {
   const [username, setUsername] = useState("");
   const [room, setRoom] = useState("");
   const [showChat, setShowChat] = useState(false);
+  const [chatsdata, setChatsdata] = useState([]);
 
-  const {data: chatList} = useQuery('petsData', chatApis.chatListGet, {
+  const { isLoading: dataLoading, data: chats } = useQuery("chats", chatApis.chatListGet, {
     onSuccess: (data) => {
-      console.log(data, 'success');
+      console.log("success1:", data);
+      setChatsdata(data)
     },
     onError: (data) => {
-      console.log(data, 'error');
+      console.error("onErrord", data);
     }
-  })
+  });
 
- 
-  useEffect(() => {
-    console.log(chatList);
-  },[])
+  console.log("success2:", chats)
+  console.log("success3:", chatsdata)
 
   return (
     <ChatInner>
@@ -46,7 +46,7 @@ function Chat({popup, setPopup, socket}) {
           <button>Join A Room</button>
         </div>
       ) : (
-        <ChatRoom socket={socket} username={username} room={room} />
+        <ChatRoom username={username} room={room} />
       )}
     </ChatInner>
   );
