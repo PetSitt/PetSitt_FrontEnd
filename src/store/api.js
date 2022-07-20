@@ -110,7 +110,7 @@ export const apis = {
 	signupAdd: (data) => jsonApi.post('/api/signup', data),
 	passwordFind: (data) => pwfindApi.post('/api/password_check', data),
 	idFind: (data) => pwfindApi.post('/api/id_check', data),
-	login: (data) => pwfindApi.post('/api/login', data),
+	login: (data) => jsonApi.post('/api/login', data),
 	checkUser: () => authApi.get('/api/auth'),
 
 	// mypage
