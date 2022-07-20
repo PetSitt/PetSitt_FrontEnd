@@ -105,16 +105,19 @@ function Home() {
 	// 로그인 여부 확인하는 api
 	const { mutate: checkUser } = useMutation(()=>apis.checkUser(), { 
 		onSuccess: (data) => {
-			console.log(data);
+			console.log(data, 'auth api 성공!!!');
+			localStorage.setItem('userName', data.data.user.userName);
+			localStorage.setItem('userEmail', data.data.user.userEmail);
 		},
 		onError: (data) => {
-			console.log(data);
+			console.log(data, 'auth api 실패');
+			localStorage.removeItem('userName');
+			localStorage.removeItem('userEmail');
 		},
 		staleTime: Infinity,
 	});
 	
 	const getListApi = (currentPosition, category) =>{
-		console.log(currentPosition,category,'get list api')
 		const categoryData = {}
 		if(category.length > 0 && category.length < 5){
 			for(let i=0; i<category.length; i++){
@@ -129,7 +132,6 @@ function Home() {
 		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
 		{
 			onSuccess: (data) => {
-				console.log(data)
 				queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(false);
 				setSitters(data.data.sitters);
@@ -209,13 +211,13 @@ function Home() {
 		}
 	},[sitters])
 
-	// useEffect(() => {
-	// 	if(localStorage.getItem('accessToken')){
-	// 		checkUser();
-	// 	}else{
-	// 		console.log('액세스 토큰 없음')
-	// 	}
-	// }, []);
+	useEffect(() => {
+		if(localStorage.getItem('accessToken')){
+			checkUser();
+		}else{
+			console.log('액세스 토큰 없음')
+		}
+	}, []);
 
 	console.log(category)
 	if (sittersFilteredIsLoading) return null;

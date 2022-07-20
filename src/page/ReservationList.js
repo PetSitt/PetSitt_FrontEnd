@@ -281,6 +281,26 @@ const ReservationList = () => {
 		}
 	}, [reservatioinList]);
 
+
+  	// 로그인 여부 확인하는 api
+	const { mutate: checkUser } = useMutation(()=>apis.checkUser(), { 
+		onSuccess: (data) => {
+			console.log(data, 'auth api 성공!!!');
+		},
+		onError: (data) => {
+			console.log(data, 'auth api 실패');
+		},
+		staleTime: Infinity,
+	});
+  
+  useEffect(() => {
+		if(localStorage.getItem('accessToken')){
+			checkUser();
+		}else{
+			console.log('액세스 토큰 없음')
+		}
+	}, []);
+
 	return (
     <>
 		<ReservationListPage style={{paddingBottom: '100px'}}>
