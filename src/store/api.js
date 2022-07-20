@@ -27,6 +27,15 @@ const authApi = axios.create({
 	baseURL: process.env.REACT_APP_PWFINDAPI,
 })
 
+pwfindApi.interceptors.request.use((config) => {
+	config.headers['Content-type'] = 'application/json; charset=UTF-8';
+	config.headers['Accept'] = 'application/json;';
+	config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
+	return config;
+}, (err) => {
+	return Promise.reject(err);
+})
+
 jsonApi.interceptors.request.use((config)=> {
 	config.headers['Content-type'] = 'application/json; charset=UTF-8';
 	config.headers['Accept'] = 'application/json;';
@@ -58,10 +67,11 @@ authApi.interceptors.request.use((config)=> {
 	config.headers['Content-type'] = 'application/json; charset=UTF-8';
 	config.headers['Accept'] = 'application/json;'
 	config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
-	console.log('auth api request success', config, localStorage.getItem('accessToken'))
+	console.log('request success', config)
 	return config;
 }, (err) => {
-	console.log('auth api request err')
+	console.log('request err')
+
 	return Promise.reject(err);
 });
 
@@ -106,10 +116,11 @@ export const apis = {
 	signupAdd: (data) => jsonApi.post('/api/signup', data),
 	passwordFind: (data) => pwfindApi.post('/api/password_check', data),
 	idFind: (data) => pwfindApi.post('/api/id_check', data),
-	login: (data) => pwfindApi.post('/api/login', data),
+	login: (data) => jsonApi.post('/api/login', data),
 	checkUser: () => authApi.get('/api/auth'),
 
 	// mypage
+	passwordChange: (data) => pwfindApi.put('/api/password_change', data),
 	myprofile: () => jsonApi.get('/mypage/myprofile'),
 	myprofileGet: () => jsonApi.get('/mypage/myprofile'),
 	myprofilePatch: (data) => jsonApi.patch('/mypage/myprofile', data),

@@ -3,7 +3,7 @@ import Router from './Router';
 import styled from "styled-components";
 import "./assets/font/index.css"
 import Menu from './components/Menu';
-import Chat from './components/Chat';
+import Chat from './page/Chat';
 
 function App() {
   const [popup, setPopup] = useState(false);
