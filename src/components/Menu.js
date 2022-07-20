@@ -1,25 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import styled from 'styled-components';
 import { Link } from 'react-router-dom';
 
-const Menu = () => {
+const Menu = ({popup, setPopup}) => {
   return (
-    // <MenuInner>
-    // 	<div className='item'><a href='/home'><i className='ic-home'></i></a> </div>
-    // 	<div className='item'><a href='/#0'><i className='ic-contact'></i></a></div>
-    // 	<div className='item'><a href='/reservation/list'><i className='ic-book'></i></a></div>
-    // 	<div className='item'><a href='/mypage'><i className='ic-user'></i></a></div>
-    // </MenuInner>
     <MenuInner>
       <div className='item'>
         <Link className='nav-link' to='/home'>
           <i className='ic-home'></i>
         </Link>
       </div>
-      <div className='item'>
-        <Link className='nav-link' to='/#0'>
-          <i className='ic-contact'></i>
-        </Link>
+      <div className='item' onClick={() => setPopup(!popup)}>
+        <i className='ic-contact'></i>
       </div>
       <div className='item'>
         <Link className='nav-link' to='/reservation/list'>
@@ -58,6 +50,7 @@ const MenuInner = styled.nav`
   .item {
     font-size: 22px;
     color: #787878;
+    cursor: pointer;
   }
   .active {
     color: #fc9215;

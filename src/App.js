@@ -1,18 +1,23 @@
-import React, {Suspense} from 'react'
+import React, {Suspense, useState} from 'react'
 import Router from './Router';
 import styled from "styled-components";
 import "./assets/font/index.css"
 import Menu from './components/Menu';
+import Chat from './components/Chat';
 
 
 function App() {
+  const [popup, setPopup] = useState(false);
   return (
     <AppWrapper className="App">
       <div className='AppInner'>
         <Suspense fallback={<div>로딩중!!</div>}>
           <Router />
         </Suspense>
-        <Menu />
+        <Menu popup={popup} setPopup={setPopup}/>
+        {popup && ( 
+          <Chat popup={popup} setPopup={setPopup}/>
+        )}
       </div>
     </AppWrapper>
   );
