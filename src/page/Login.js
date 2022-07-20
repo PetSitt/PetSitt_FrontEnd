@@ -9,9 +9,14 @@ import InputBox from '../elements/InputBox';
 import StyledButton from '../elements/StyledButton';
 import NavBox from '../elements/NavBox';
 import StyledContainer from '../elements/StyledContainer';
+import Auth from "../Auth";
 
 const Login = () => {
   const navigate = useNavigate();
+  const REST_API_KEY = process.env.REACT_APP_KAKAO_RESTAPI;
+  const REDIRECT_URL = process.env.REACT_APP_REDIRECT_URL;
+  const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URL}&response_type=code`;
+
   const cookies = new Cookies();
   const email_ref = useRef();
   const pw_ref = useRef();
@@ -122,7 +127,7 @@ const Login = () => {
           _title={'이메일로 시작하기'}
         />
         <StyledButton
-          _onClick={() => navigate('/signup')}
+          _onClick={() => window.location.href = `${KAKAO_AUTH_URL}`}
           color={'#381E1F'}
           _bgColor={'#fde40b'}
           _title={'카카오로 시작하기'}
