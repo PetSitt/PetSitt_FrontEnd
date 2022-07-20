@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useQuery, useQueryClient } from "react-query";
+import { useQuery, useQueryClient, useMutation } from "react-query";
 import styled from "styled-components";
 import { DateObject, Calendar } from "react-multi-date-picker";
 import MapContainer from "./MapContainer";
@@ -87,6 +87,14 @@ const Detail = () => {
 		staleTime: Infinity,
 		refetchOnMount: "always",
 	});
+  const {mutate: openChatRoom} = useMutation(()=>apis.inquireToSitter(detail.sitter.sitterId), {
+    onSuccess: (data)=>{
+      console.log('문의하기 api success', data);
+    },
+    onError: (data) => {
+      console.log('문의하기 api failed', data);
+    }
+  })
 	const checkSelectArea = (e) => {
 		if (!e.target.closest(".select_area") && !e.target.closest('.select_wrap')) {
 			setSelectBoxToggle({ type: "", status: false });
@@ -501,7 +509,7 @@ const Detail = () => {
         </ul>
         <div className="buttons">
           <StyledButton
-            _onClick={() => console.log('')}
+            _onClick={() => openChatRoom()}
             _bgColor={'rgba(252, 146, 21, 0.1)'}
             color={'#fc9215'}
             _title="문의하기"
