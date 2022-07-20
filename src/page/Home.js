@@ -209,7 +209,7 @@ function Home() {
 				return positionItems;
 			})
 		}
-	},[sitters])
+	},[sitters, sittersIsRefetching])
 
 	useEffect(() => {
 		if(localStorage.getItem('accessToken')){
