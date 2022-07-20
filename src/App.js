@@ -1,21 +1,24 @@
 import React, {Suspense, useState} from 'react'
-import Router from './Router';
+import io from "socket.io-client";
 import styled from "styled-components";
+import Router from './Router';
 import "./assets/font/index.css"
 import Menu from './components/Menu';
 import Chat from './page/Chat';
 
 function App() {
+  const socket = io.connect("http://3.39.230.232");
   const [popup, setPopup] = useState(false);
+  
   return (
     <AppWrapper className="App">
       <div className='AppInner'>
         <Suspense fallback={<div>로딩중!!</div>}>
           <Router />
         </Suspense>
-        <Menu popup={popup} setPopup={setPopup}/>
+        <Menu popup={popup} setPopup={setPopup} socket={socket}/>
         {popup && ( 
-          <Chat popup={popup} setPopup={setPopup}/>
+          <Chat popup={popup} setPopup={setPopup} socket={socket}/>
         )}
       </div>
     </AppWrapper>

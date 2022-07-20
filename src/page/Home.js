@@ -210,7 +210,7 @@ function Home() {
 				return positionItems;
 			})
 		}
-	},[sitters])
+	},[sitters, sittersIsRefetching])
 
 	useEffect(() => {
 		console.log('loaded', sitters)

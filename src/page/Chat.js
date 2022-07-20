@@ -1,25 +1,26 @@
 import { useEffect, useState } from "react";
-import io from "socket.io-client";
+import { useQuery } from "react-query";
 import styled, {keyframes} from "styled-components";
-import { chatApis } from "../store/chatApi";
 import ChatRoom from "../components/ChatRoom";
+import { chatApis } from "../store/chatApi";
 
-const socket = io.connect("http://3.39.230.232");
-
-function Chat({popup, setPopup}) {
+function Chat({popup, setPopup, socket}) {
   const [username, setUsername] = useState("");
   const [room, setRoom] = useState("");
   const [showChat, setShowChat] = useState(false);
-  const joinRoom = () => {
-    if (username !== "" && room !== "") {
-      socket.emit("join_room", room);
-      setShowChat(true);
-    }
-  };
 
+  const {data: chatList} = useQuery('petsData', chatApis.chatListGet, {
+    onSuccess: (data) => {
+      console.log(data, 'success');
+    },
+    onError: (data) => {
+      console.log(data, 'error');
+    }
+  })
+
+ 
   useEffect(() => {
-    console.log(chatApis.chatListGet())
-    
+    console.log(chatList);
   },[])
 
   return (
@@ -42,7 +43,7 @@ function Chat({popup, setPopup}) {
               setRoom(event.target.value);
             }}
           />
-          <button onClick={joinRoom}>Join A Room</button>
+          <button>Join A Room</button>
         </div>
       ) : (
         <ChatRoom socket={socket} username={username} room={room} />
