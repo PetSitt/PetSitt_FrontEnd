@@ -5,7 +5,8 @@ import { handleChange } from "../shared/common";
 import { apis } from "../store/api";
 
 const INITIAL_VALUES = {
-  oldPassword: '',
+	userEmail: '',
+  password: '',
 	newPassword: '',
 };
 
@@ -19,12 +20,12 @@ const PwChange = () => {
   const [isPw2, setIsPw2] = useState(false);
 
 	// useMutation 세팅 함수
-	const {mutate: passwordChang} = useMutation(apis.passwordChang, {
-    onSuccess: (data) => {
-			console.log(data)
+	const {mutate: passwordChang} = useMutation(apis.passwordChange, {
+    onSuccess: ({data}) => {
+			alert(data.message)
     },
 		onError: (data) => {
-			console.log(data)
+			alert(data.response.data.errorMessage)
 		}
   });
 
@@ -62,19 +63,24 @@ const PwChange = () => {
 	// 전송하는 함수
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		passwordChang(values)
+		const datas = {	
+			userEmail: localStorage.getItem('userEmail'),
+			password: values.password,
+			newPassword: values.newPassword
+		}
+		passwordChang(datas)
   };
 
 	return (
 		<Form onSubmit={handleSubmit}>
 			<h1>비밀번호 변경</h1>
 			<div className="inner">
-				<label htmlFor="oldPassword" className="tit">기존 비밀번호</label>
+				<label htmlFor="password" className="tit">기존 비밀번호</label>
 				<input
 					type="text"
-					id="oldPassword"
+					id="password"
 					ref={pwOrdInput}
-					name="oldPassword"
+					name="password"
 					onChange={handleInputChange}
 					required
 				/>
