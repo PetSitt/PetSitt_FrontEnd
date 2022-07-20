@@ -6,6 +6,7 @@ import AddressInfo from '../components/AddressInfo';
 import KakaoMapContainer from '../components/KakaoMapContainer';
 import InputBox from '../elements/InputBox';
 import NavBox from '../elements/NavBox';
+import StyledButton from '../elements/StyledButton';
 import StyledContainer from '../elements/StyledContainer';
 import { handleChange } from '../shared/common';
 
@@ -25,7 +26,6 @@ const SitterProfileForm1 = () => {
   const location = useLocation();
   const data = location.state;
   const [values, setValues] = useState(data ? data.data : INITIAL_VALUES);
-  const [gender, setGender] = useState();
   const open = useDaumPostcodePopup(
     'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js'
   );
@@ -65,12 +65,6 @@ const SitterProfileForm1 = () => {
     handleChange(name, value, setValues);
   };
 
-  const handleClickRadioButton = (e) => {
-    e.preventDefault();
-    console.log(e.target.value);
-    setGender(e.target.value);
-  };
-
   useEffect(() => {
     console.log(values);
   }, []);
@@ -93,33 +87,6 @@ const SitterProfileForm1 = () => {
             defaultValue={values.sitterName}
           />
         </InputBox>
-        <RadioBox>
-          <label className='tit'>성별*</label>
-          <RadioGroup>
-            <label htmlFor='male'>
-              <input
-                id='male'
-                type='radio'
-                value='male'
-                name='male'
-                checked={gender === 'male'}
-                onChange={handleClickRadioButton}
-              />
-              남
-            </label>
-            <label htmlFor='female'>
-              <input
-                id='female'
-                type='radio'
-                value='female'
-                name='female'
-                checked={gender === 'female'}
-                onChange={handleClickRadioButton}
-              />
-              여
-            </label>
-          </RadioGroup>
-        </RadioBox>
         <InputBox>
           <label className='tit'>돌보미 지역*</label>
           <AddressInfo
@@ -130,6 +97,10 @@ const SitterProfileForm1 = () => {
             handlePost={handlePost}
           />
         </InputBox>
+        <StyledButton
+          _onClick={() => console.log('다음으로')}
+          _title={'다음으로'}
+        />
         {data ? (
           <Link
             to={`/mypage/SitterProfileForm2`}
@@ -158,42 +129,6 @@ const SitterProfileFormInner = styled.div`
     border: 1px solid rgba(120, 120, 120, 0.4);
     border-radius: 6px;
     padding: 12px;
-  }
-`;
-
-const RadioBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin-top: 24px;
-`;
-
-const RadioGroup = styled.div`
-  margin-top: 10px;
-  label {
-    display: inline-block;
-    width: 48%;
-    text-align: center;
-    background: #ffffff;
-    border: 1px solid rgba(120, 120, 120, 0.4);
-    border-radius: 6px;
-    padding: 21px;
-    font-weight: 400;
-    font-size: 16px;
-    line-height: 19px;
-    color: #676767;
-    cursor: pointer;
-    :first-child {
-      margin-right: 10px;
-    }
-  }
-
-  input[type='radio'] {
-    display: none;
-  }
-
-  input[type='radio']:checked + label {
-    background-color: #c4c4c4;
   }
 `;
 

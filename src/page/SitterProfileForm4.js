@@ -5,6 +5,9 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { apis } from "../store/api";
+import NavBox from "../elements/NavBox";
+import StyledContainer from "../elements/StyledContainer";
+import StyledButton from "../elements/StyledButton";
 
 const format = "YYYY/MM/DD";
 
@@ -67,12 +70,16 @@ function SitterProfileForm4() {
 
 
   return (
+    <StyledContainer>
     <Form onSubmit={handleSubmit}>
-      <h1>돌보미 등록<span>4/4</span></h1>
+      <NavBox _title='서비스 불가능한 날짜' _subTitle='4/4' sitterProfile />
       <Calendar required multiple sort format={format} value={ dates } onChange={ setDates } minDate={new Date()} maxDate={new Date(today.year + 1, today.month.number, today.day)}></Calendar>
-      
-      <Button _color={"#fff"}>{ update ? "수정하기" : "등록하기"}</Button>
+      <StyledButton
+          _onClick={() => console.log(update ? "수정하기" : "등록하기")}
+          _title={ update ? "수정하기" : "등록하기"}
+        />
     </Form>
+    </StyledContainer>
   );
 }
 

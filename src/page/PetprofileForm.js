@@ -1,21 +1,21 @@
-import { useRef, useState } from 'react';
-import { useMutation, useQueryClient } from 'react-query';
-import { useNavigate, useLocation } from 'react-router-dom';
-import styled from 'styled-components';
-import { apis } from '../store/api';
-import { handleChange } from '../shared/common';
-import StyledContainer from '../elements/StyledContainer';
-import NavBox from '../elements/NavBox';
-import InputBox from '../elements/InputBox';
-import StyledButton from '../elements/StyledButton';
+import { useRef, useState } from "react";
+import { useMutation, useQueryClient } from "react-query";
+import { useNavigate, useLocation } from "react-router-dom";
+import styled from "styled-components";
+import { apis } from "../store/api";
+import { handleChange } from "../shared/common";
+import StyledContainer from "../elements/StyledContainer";
+import NavBox from "../elements/NavBox";
+import InputBox from "../elements/InputBox";
+import StyledButton from "../elements/StyledButton";
 
 const INITIAL_VALUES = {
-  petName: '',
-  petAge: '',
-  petWeight: '',
-  petType: '',
+  petName: "",
+  petAge: "",
+  petWeight: "",
+  petType: "",
   petSpay: false,
-  petIntro: '',
+  petIntro: "",
   petImage: {},
 };
 
@@ -24,7 +24,7 @@ const PetprofileForm = () => {
   const data = location.state;
   const [values, setValues] = useState(data ? data.data : INITIAL_VALUES);
   const [txt, setTxt] = useState(data ? data.data : false);
-  const [imageSrc, setImageSrc] = useState('');
+  const [imageSrc, setImageSrc] = useState("");
   const navigate = useNavigate();
   const photoInput = useRef();
 
@@ -53,7 +53,7 @@ const PetprofileForm = () => {
     const reader = new FileReader();
     reader.readAsDataURL(fileBlob);
 
-    handleChange('petImage', fileBlob, setValues);
+    handleChange("petImage", fileBlob, setValues);
 
     return new Promise(async (resolve) => {
       reader.onload = () => {
@@ -73,7 +73,7 @@ const PetprofileForm = () => {
   } = useMutation(apis.petprofilePost, {
     onSuccess: () => {
       //무효화 시킴
-      queryClient.invalidateQueries('petprofile');
+      queryClient.invalidateQueries("petprofile");
       // navigate("/mypage/petprofile");
     },
     onError: (data) => {
@@ -84,9 +84,9 @@ const PetprofileForm = () => {
   // useMutation 수정하는 세팅 함수
   const { mutate: update } = useMutation(apis.petprofilePatch, {
     onSuccess: (data) => {
-      queryClient.setQueryData(['petprofile', values.petId], data);
-      queryClient.invalidateQueries('petprofile');
-      navigate('/mypage/petprofile');
+      queryClient.setQueryData(["petprofile", values.petId], data);
+      queryClient.invalidateQueries("petprofile");
+      navigate("/mypage/petprofile");
     },
     onError: (data) => {
       console.log(data);
@@ -97,13 +97,13 @@ const PetprofileForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const formData = new FormData();
-    formData.append('petName', values.petName);
-    formData.append('petAge', values.petAge);
-    formData.append('petWeight', values.petWeight);
-    formData.append('petType', values.petType);
-    formData.append('petSpay', values.petSpay);
-    formData.append('petIntro', values.petIntro);
-    formData.append('petImage', values.petImage);
+    formData.append("petName", values.petName);
+    formData.append("petAge", values.petAge);
+    formData.append("petWeight", values.petWeight);
+    formData.append("petType", values.petType);
+    formData.append("petSpay", values.petSpay);
+    formData.append("petIntro", values.petIntro);
+    formData.append("petImage", values.petImage);
 
     const fields = {
       id: values.petId,
@@ -114,27 +114,29 @@ const PetprofileForm = () => {
 
   return (
     <StyledContainer>
-      <NavBox _title='반려동물 프로필' />
+      <NavBox _title="반려동물 프로필" />
       {!isSuccess ? (
         <Form onSubmit={handleSubmit}>
           <ImageBox onClick={handleClickUpload}>
             <PreviewImage
-              src={imageSrc || '/images/placeholder_150.png'}
-              width='90'
-              alt='petPhoto'
+              src={imageSrc || "/images/placeholder_150.png"}
+              width="90"
+              alt="petPhoto"
             />
             <input
-              type='file'
-              id='petImage'
-              name='petImage'
+              type="file"
+              id="petImage"
+              name="petImage"
               ref={photoInput}
-              accept='image/png, image/jpeg'
-              style={{ display: 'none', paddingTop: '8px' }}
+              accept="image/png, image/jpeg"
+              style={{ display: "none", paddingTop: "8px" }}
               onChange={(e) => {
                 encodeFileToBase64(e.target.files[0]);
               }}
             />
-            <i className="ic-camera"></i>
+            <div>
+              <i className="ic-camera"></i>
+            </div>
           </ImageBox>
           {/* <input
             type='file'
@@ -143,44 +145,44 @@ const PetprofileForm = () => {
             onChange={handleFileChange}
           /> */}
           <InputBox>
-            <label className='tit'>이름</label>
+            <label className="tit">이름</label>
             <input
-              type='text'
-              name='petName'
-              placeholder='이름을 적어주세요.'
+              type="text"
+              name="petName"
+              placeholder="이름을 적어주세요."
               onChange={handleInputChange}
               defaultValue={data && values.petName}
             />
           </InputBox>
           <InputBox>
-            <label className='tit'>나이</label>
+            <label className="tit">나이</label>
             <input
-              type='text'
-              name='petAge'
-              placeholder='나이를 적어주세요.'
+              type="text"
+              name="petAge"
+              placeholder="나이를 적어주세요."
               onChange={handleInputChange}
               defaultValue={data && values.petAge}
             />
           </InputBox>
           <InputBox outlined>
-            <label className='tit'>몸무게</label>
+            <label className="tit">몸무게</label>
             <input
-              type='text'
-              name='petWeight'
-              placeholder='몸무게를 적어주세요.'
+              type="text"
+              name="petWeight"
+              placeholder="몸무게를 적어주세요."
               onChange={handleInputChange}
               defaultValue={data && values.petWeight}
             />
           </InputBox>
           <RadioBox>
-            <label className='tit'>중성화</label>
+            <label className="tit">중성화</label>
             <RadioGroup>
-              <label htmlFor='1'>
+              <label htmlFor="1">
                 <input
-                  id='1'
-                  type='radio'
+                  id="1"
+                  type="radio"
                   value={1}
-                  name='petSpay'
+                  name="petSpay"
                   defaultChecked={
                     data ? values.petSpay : values.petSpay && true
                   }
@@ -188,12 +190,12 @@ const PetprofileForm = () => {
                 />
                 수술 했음
               </label>
-              <label htmlFor='0'>
+              <label htmlFor="0">
                 <input
-                  id='0'
-                  type='radio'
+                  id="0"
+                  type="radio"
                   value={0}
-                  name='petSpay'
+                  name="petSpay"
                   defaultChecked={
                     data ? !values.petSpay : !values.petSpay && true
                   }
@@ -205,32 +207,32 @@ const PetprofileForm = () => {
           </RadioBox>
 
           <InputBox>
-            <label htmlFor='kind' className='tit'>
+            <label htmlFor="kind" className="tit">
               품종
             </label>
             <input
-              type='text'
-              id='kind'
-              name='petType'
-              placeholder='품종을 적어주세요.'
+              type="text"
+              id="kind"
+              name="petType"
+              placeholder="품종을 적어주세요."
               onChange={handleInputChange}
               defaultValue={data && values.petType}
             />
           </InputBox>
           <InputBox>
-            <label htmlFor='intro' className='tit'>
+            <label htmlFor="intro" className="tit">
               반려동물 소개글
             </label>
             <textarea
-              type='text'
-              id='intro'
-              name='petIntro'
+              type="text"
+              id="intro"
+              name="petIntro"
               onChange={handleInputChange}
-              placeholder='성격 취미 등을 적어주세요.'
+              placeholder="성격 취미 등을 적어주세요."
               defaultValue={data && values.petIntro}
             ></textarea>
           </InputBox>
-          <StyledButton _title='등록하기' />
+          <StyledButton _title="등록하기" />
         </Form>
       ) : (
         <PetProfileInsertBox>
@@ -238,7 +240,7 @@ const PetprofileForm = () => {
           <p>반려동물 프로필을 등록해보세요</p>
           <PetProfileInsertButton
             onClick={() => {
-              navigate('/petprofileform');
+              navigate("/petprofileform");
             }}
           >
             반려동물 등록하기
@@ -250,7 +252,7 @@ const PetprofileForm = () => {
 };
 
 const Form = styled.form`
-  input[type='text'] {
+  input[type="text"] {
     width: 100%;
     min-height: 48px;
     background: #ffffff;
@@ -299,7 +301,7 @@ const RadioGroup = styled.div`
     padding-right: 10px;
   }
 
-  input[type='radio'] {
+  input[type="radio"] {
     width: auto;
     appearance: none;
     outline: 0;
@@ -309,8 +311,8 @@ const RadioGroup = styled.div`
     margin: 0;
   }
 
-  input[type='radio']:before {
-    content: '';
+  input[type="radio"]:before {
+    content: "";
     display: inline-block;
     width: 24px;
     height: 24px;
@@ -321,8 +323,8 @@ const RadioGroup = styled.div`
     cursor: pointer;
   }
 
-  input[type='radio']:checked:before {
-    content: '';
+  input[type="radio"]:checked:before {
+    content: "";
     width: 16px;
     height: 16px;
     background-color: #ffffff;

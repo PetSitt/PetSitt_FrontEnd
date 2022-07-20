@@ -1,8 +1,34 @@
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-const NavBox = ({ _title, _subTitle, sitterProfile }) => {
+const NavBox = ({
+  _title,
+  _subTitle,
+  _buttonTitle,
+  _onClick,
+  sitterProfile,
+  myProfile,
+}) => {
   const navigate = useNavigate();
+  if (myProfile) {
+    return (
+      <NavWrap>
+        <button
+          onClick={() => {
+            navigate(-1);
+          }}
+        >
+          <img src='/images/left_arrow.svg' alt='left_arrow' />
+        </button>
+        <TitleBox>
+          <h1>{_title}</h1>
+          <span>{_subTitle}</span>
+        </TitleBox>
+        <CancelButton onClick={_onClick}>{_buttonTitle}</CancelButton>
+      </NavWrap>
+    );
+  }
+
   if (sitterProfile) {
     return (
       <NavWrap>
@@ -12,7 +38,7 @@ const NavBox = ({ _title, _subTitle, sitterProfile }) => {
         </TitleBox>
         <CancelButton
           onClick={() => {
-            navigate(-1);
+            navigate('/mypage');
           }}
         >
           취소
