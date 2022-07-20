@@ -3,7 +3,7 @@ import { useDaumPostcodePopup } from 'react-daum-postcode';
 import { Link, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import AddressInfo from '../components/AddressInfo';
-import KakaoMapContainer from '../components/KakaoMapContainer';
+// import KakaoMapContainer from '../components/KakaoMapContainer';
 import InputBox from '../elements/InputBox';
 import NavBox from '../elements/NavBox';
 import StyledButton from '../elements/StyledButton';
@@ -72,10 +72,10 @@ const SitterProfileForm1 = () => {
   return (
     <StyledContainer>
       <SitterProfileFormInner>
-        <KakaoMapContainer
+        {/* <KakaoMapContainer
           address={values.address}
           onChange={handleGeolocation}
-        />
+        /> */}
         <NavBox _title='기본 프로필' _subTitle='1/4' sitterProfile />
         <InputBox>
           <label className='tit'>이름*</label>
