@@ -17,7 +17,7 @@ const Auth = () => {
       redirect_uri: REDIRECT_URL,
       code: code,
       client_secret: CLIENT_SECRET,
-    });
+    }); 
     try {
       // access token 가져오기
       const res = await axios.post(
