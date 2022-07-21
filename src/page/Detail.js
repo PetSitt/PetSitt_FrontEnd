@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient, useMutation } from "react-query";
 import styled from "styled-components";
@@ -30,7 +30,7 @@ const Detail = () => {
     status: false,
   });
   const errorMessages = {
-    'noPet': '등록된 펫 정보가 없습니다. 펫 정보 등록 후 서비스를 신청해주세요.',
+    'notLogin': '로그인 후 예약이 가능합니다.',
     'noDate': '날짜를 선택해주세요',
     'noService': '서비스를 선택해주세요.'
   }
@@ -104,7 +104,6 @@ const Detail = () => {
     }
   })
   
-  const petsQuery = useQuery('petsData', apis.reservation)
 	const checkSelectArea = (e) => {
 		if (!e.target.closest(".select_area") && !e.target.closest('.select_detail')) {
 			setSelectBoxToggle({ type: "", status: false });
@@ -225,7 +224,7 @@ const Detail = () => {
   if (detailIsLoading || !detail ) return <p>로딩중입니다</p>;
 	return (
 		<>
-      <SitterDetailPage style={{paddingTop: 0}} onScroll={(e)=>{
+      <SitterDetailPage className="detailPageWrap" style={{paddingTop: 0}} onScroll={(e)=>{
         scrollEvent(e);
         setScrollY((prev)=>{
           if (prev > e.target.scrollTop) setScrollDirection('up');
@@ -525,11 +524,11 @@ const Detail = () => {
             />
             <StyledButton
               _onClick={()=>{
-                if(petsQuery.data.data.pets.length <= 0){
-                  setErrorMessage(errorMessages.noPet);
-                  setModalDisplay(true);
-                }else{
+                if(localStorage.getItem('accessToken')){
                   requestReservation();
+                }else{
+                  setErrorMessage(errorMessages.notLogin);
+                  setModalDisplay(true);
                 }
               }}
               _title="예약하기"
@@ -539,17 +538,16 @@ const Detail = () => {
         </ReservationFunctions>
       </SitterDetailPage>
       {
-        (modalDisplay && errorMessage === errorMessages.noPet) && (
-          <Modal _display={modalDisplay} _alert={false} _confirm={'등록하러 가기'} _cancel={'취소'} cancelOnclick={()=>{setErrorMessage(null); setModalDisplay(false)}} confirmOnClick={()=>{navigate('/mypage/petprofile')}}>
+        (modalDisplay && errorMessage === errorMessages.notLogin) && (
+          <Modal _display={modalDisplay} _alert={false} _confirm={'로그인하기'} _cancel={'취소'} cancelOnclick={()=>{setErrorMessage(null); setModalDisplay(false)}} confirmOnClick={()=>{navigate('/login')}}>
             <div className="text_area">
-            <p>등록된 펫 정보가 없습니다.</p>
-            <p>펫 정보 등록 후 서비스를 신청해주세요.</p>
+              <p>{errorMessage}</p>
             </div>
           </Modal>
         )
       }
       {
-        (modalDisplay && errorMessage !== errorMessages.noPet) && (
+        (modalDisplay && errorMessage !== errorMessages.notLogin) && (
           <Modal _display={modalDisplay} _alert={true} confirmOnClick={()=>{setErrorMessage(null); setModalDisplay(false); selectAreaRef.current.classList.add('isActive');}}>
             <div className="text_area">
               <p>{errorMessage}</p>
@@ -763,6 +761,9 @@ const ReservationFunctions = styled.div`
 `;
 const SitterDetailPage = styled.div`
   position: relative;
+  height: 100%;
+  overflow: hidden;
+  overflow-y: auto;
   line-height: 1.4;
   & > section {
     &.page_top{
@@ -1055,4 +1056,6 @@ const MapWrapper = styled.div`
     margin-top: 8px;
   }
 `
+
 export default Detail;
+
