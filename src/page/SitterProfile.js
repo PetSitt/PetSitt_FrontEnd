@@ -12,7 +12,6 @@ const SitterProfile = () => {
   const queryClient = useQueryClient();
   const [caresizeData, setCaresizeData] = useState(["소형견", "중형견", "대형견"])
   const {data: sitterData, isSuccess: sitterSuccessGet } = useQuery("sitterprofile", apis.sitterprofileGet);
-  
   const [values, setValues] = useState(sitterData.data.sitterprofile);
   const { mutate: delect, isSuccess: sitterSuccessDelete} = useMutation(apis.sitterprofileDelete, {
     onSuccess: () => {
