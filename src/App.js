@@ -1,4 +1,4 @@
-import React, {Suspense, useState} from 'react'
+import React, {Suspense, useState, useContext} from 'react'
 import io from "socket.io-client";
 import styled from "styled-components";
 import Router from './Router';
@@ -56,7 +56,8 @@ const AppWrapper = styled.div`
       position: absolute;
       right: 10%;
       top: 0%;
-      overflow: auto;
+      overflow: hidden;
+      overflow-y: auto;
     }
   }
 `

@@ -13,7 +13,6 @@ const Menu = ({popup, setPopup, socket}) => {
     }
   },[socket])
   const activateMenu = () => {
-    console.log(activeMenu, location)
     if(location.pathname === '/'){
       setActiveMenu('home')
     }else if(location.pathname.indexOf('reservation') > -1){
