@@ -28,10 +28,11 @@ const Modal = ({
           />
           {_cancel && (
             <StyledButton
-              _bgColor={'rgba(252, 146, 21, 0.1)'}
-              color={'#fc9215'}
+              _bgColor={'transparent'}
+              color={'#1A1A1A'}
               _title={_cancel ? _cancel : '취소'}
               _margin='0'
+              _fontWeight={'500'}
               _onClick={cancelOnclick ? cancelOnclick : setDisplay(false)}
             />
           )}
@@ -53,36 +54,33 @@ const ModalContainer = styled.div`
   background: rgba(0, 0, 0, 0.4);
   z-index: 10;
   .modal {
-    max-width: 95%;
+    max-width: 90%;
     width: 100%;
-    padding: 24px;
+    padding: 24px 24px 16px;
     margin: 299px auto;
     background-color: #fff;
     text-align: center;
     line-height: 1.4;
     border-radius: 6px;
     h3 {
-      font-weight: 400;
+      font-weight: 700;
       font-size: 18px;
       line-height: 22px;
       text-align: center;
       & span {
         color: #fc9215;
       }
+      & + p{
+        margin-top: 14px;
+      }
+    }
+    p{
+      font-size: 18px;
+      font-weight: 400;
+      word-break: keep-all;
     }
     .button_area {
       padding: 20px 0 0;
-      & button {
-        margin-bottom: 8px;
-      }
-    }
-    .button_x2 {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      button {
-        margin-top: 8px;
-      }
     }
   }
   @media (min-width: 768px) {

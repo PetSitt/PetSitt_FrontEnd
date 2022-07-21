@@ -70,7 +70,7 @@ const Router = () => {
       ></Route>
       <Route path="/oauth/kakao/callback" element={<Auth />}></Route>
       <Route path="/profile" element={<Profile />}></Route>
-      <Route path='/chat' element={<Chat />} />
+      {/* <Route path='/chat' element={<Chat />} /> */}
       <Route path='*' element={<Home replace to='/' />} />
     </Routes>
   );

@@ -5,8 +5,8 @@ import styled from "styled-components";
 import { DateObject, Calendar } from "react-multi-date-picker";
 import MapContainer from "./MapContainer";
 import { apis } from "../store/api";
-import Auth from "../Auth";
 
+import Modal from '../elements/Modal';
 import StyledButton from '../elements/StyledButton';
 import Reviews from './Reviews';
 
@@ -30,7 +30,12 @@ const Detail = () => {
     status: false,
   });
   const [calendar, setCalendar] = useState('body');
-  const [errorMessage, setErrorMessage] = useState();
+  const errorMessages = {
+    'noPet': '등록된 펫 정보가 없습니다. 펫 정보 등록 후 서비스를 신청해주세요.',
+    'noDate': '날짜를 선택해주세요',
+    'noService': '서비스를 선택해주세요.'
+  }
+  const [errorMessage, setErrorMessage] = useState(null);
   const reservationRef = useRef();
   const careSizeRef = useRef();
   const plusService = useRef();
@@ -38,6 +43,7 @@ const Detail = () => {
   const pageBodyRef = useRef();
   const floatingTabsRef = useRef();
   const selectAreaRef = useRef();
+  const [modalDisplay, setModalDisplay] = useState(false)
   const [scrollY, setScrollY] = useState();
   const [scrollDirection, setScrollDirection] = useState();
   const datesTransformed = useRef([]);
@@ -78,7 +84,10 @@ const Detail = () => {
 	} = useQuery("detail_data", () => apis.getUserDetail(sitterId), {
 		onSuccess: (data) => {
 			console.log(data.data, "data loaded");
-      setDetail(data.data);
+      const _newPrice = data.data.sitter.servicePrice.toString().replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
+      const _newData = {...data.data};
+      _newData.sitter.servicePrice = _newPrice;
+      setDetail(_newData);
       setServices(Array.from({length: data?.data?.sitter?.category.length}, () => false));
 		},
 		onError: (data) => {
@@ -95,12 +104,14 @@ const Detail = () => {
       console.log('문의하기 api failed', data);
     }
   })
+  
+  const petsQuery = useQuery('petsData', apis.reservation)
 	const checkSelectArea = (e) => {
-		if (!e.target.closest(".select_area") && !e.target.closest('.select_wrap')) {
+		if (!e.target.closest(".select_area") && !e.target.closest('.select_detail')) {
 			setSelectBoxToggle({ type: "", status: false });
 		}
 	};
-  const requestReservation = async () => {
+  const requestReservation = () => {
     let trueLength = 0;
     for (let i = 0; i < services.length; i++) {
       if (services[i]) {
@@ -108,13 +119,13 @@ const Detail = () => {
       }
     }
     if (trueLength === 0) {
-      setErrorMessage("서비스를 선택해주세요.");
-      alert("서비스를 선택해주세요.");
+      setErrorMessage(errorMessages.noService);
+      setModalDisplay(true);
       return;
     }
     if (dates.length === 0) {
-      setErrorMessage("날짜를 선택해주세요.");
-      alert("날짜를 선택해주세요.");
+      setErrorMessage(errorMessages.noDate);
+      setModalDisplay(true);
       return;
     }
     const reservationInfo = {
@@ -124,7 +135,8 @@ const Detail = () => {
       price: detail.sitter.servicePrice,
       sitterId: detail.sitter.sitterId,
     }
-    await localStorage.setItem('reservationInfo', JSON.stringify(reservationInfo));
+
+    localStorage.setItem('reservationInfo', JSON.stringify(reservationInfo));
     navigate('/reservation');
   }
   useEffect(()=>{
@@ -153,7 +165,6 @@ const Detail = () => {
 		window.addEventListener("click", checkSelectArea);
 		return()=>{
       window.removeEventListener("click", checkSelectArea);
-      console.log(['??'])
       queryClient.invalidateQueries('detail_data');
 			setDetail(null);
 		}
@@ -201,6 +212,7 @@ const Detail = () => {
     }else{
       selectAreaRef.current?.classList.remove('isActive');
     }
+    setSelectBoxToggle({ type: "", status: false });
   },[scrollDirection])
 
   const scrollEvent = (e) => {
@@ -213,315 +225,339 @@ const Detail = () => {
 
   if (detailIsLoading || !detail ) return <p>로딩중입니다</p>;
 	return (
-		<SitterDetailPage className="detail" style={{paddingTop: 0}} onScroll={(e)=>{
-      scrollEvent(e);
-      setScrollY((prev)=>{
-        if (prev > e.target.scrollTop) setScrollDirection('up');
-        else setScrollDirection('down');
-        return e.target.scrollTop;
-    })}}>
-			<section className="page_top">
-        <section>
-          <TopImage style={{backgroundImage: `url(${detail.sitter.mainImageUrl})`, margin: '0 -20px'}}></TopImage>
-          <SitterProfile>
-            <li className="profile">
-              <span
-                style={{ backgroundImage: `url(${detail.sitter.imageUrl})` }}
-              ></span>
-            </li>
-            <li className="user">
-              <p className="userName">{detail.sitter.sitterName}</p>
-              <p className="score">
-                <i className="ic-star"></i>
-                <strong>{detail.sitter.averageStar}</strong>({detail.sitter.reviewCount})
-              </p>
-            </li>
-            <li className="address"><i className="ic-location"></i>{detail.sitter.address}</li>
-            <li>
-              <p className="rehire">재고용률 <strong>{detail.sitter.rehireRate}%</strong></p>	
-            </li>
-            <li className="introduce">
-              <dl>
-                <dt>{detail.sitter.introTitle}</dt>
-                <dd>{detail.sitter.myIntro}</dd>
-              </dl>
-            </li>
-          </SitterProfile>
+		<>
+      <SitterDetailPage style={{paddingTop: 0}} onScroll={(e)=>{
+        scrollEvent(e);
+        setScrollY((prev)=>{
+          if (prev > e.target.scrollTop) setScrollDirection('up');
+          else setScrollDirection('down');
+          return e.target.scrollTop;
+      })}}>
+        <section className="page_top">
+          <section>
+            <TopImage style={{backgroundImage: `url(${detail.sitter.mainImageUrl})`, margin: '0 -20px'}}></TopImage>
+            <SitterProfile>
+              <li className="profile">
+                <span
+                  style={{ backgroundImage: `url(${detail.sitter.imageUrl})` }}
+                ></span>
+              </li>
+              <li className="user">
+                <p className="userName">{detail.sitter.sitterName}</p>
+                <p className="score">
+                  <i className="ic-star"></i>
+                  <strong>{detail.sitter.averageStar}</strong>({detail.sitter.reviewCount})
+                </p>
+              </li>
+              <li className="address"><i className="ic-location"></i>{detail.sitter.address}</li>
+              <li>
+                <p className="rehire">재고용률 <strong>{detail.sitter.rehireRate}%</strong></p>	
+              </li>
+              <li className="introduce">
+                <dl>
+                  <dt>{detail.sitter.introTitle}</dt>
+                  <dd>{detail.sitter.myIntro}</dd>
+                </dl>
+              </li>
+            </SitterProfile>
+          </section>
         </section>
-			</section>
-      <section className="page_body" ref={pageBodyRef}>
-        <FloatingTabsSection className="floatingTabs" ref={floatingTabsRef}>
-          <ul>
-            {
-              floatingTabs.map((v,i)=>{
-                return (
-                  <li key={`tab_${i}`}>
-                    <button type="button" className={v.isActive ? 'isActive' : ''} onClick={()=>{
-                      v.function();
-                      for(let idx=0; idx<floatingTabs.length; idx++){
-                        if(idx === i) floatingTabs[idx].isActive = true;
-                        else floatingTabs[idx].isActive = false;
-                      }
+        <section className="page_body" ref={pageBodyRef}>
+          <FloatingTabsSection className="floatingTabs" ref={floatingTabsRef}>
+            <ul>
+              {
+                floatingTabs.map((v,i)=>{
+                  return (
+                    <li key={`tab_${i}`}>
+                      <button type="button" className={v.isActive ? 'isActive' : ''} onClick={()=>{
+                        v.function();
+                        for(let idx=0; idx<floatingTabs.length; idx++){
+                          if(idx === i) floatingTabs[idx].isActive = true;
+                          else floatingTabs[idx].isActive = false;
+                        }
 
-                    }}>{v.text}</button>
-                  </li>
-                )
-              })
-            }
-          </ul>
-        </FloatingTabsSection>
-        <section ref={reservationRef}>
-          <h3 style={{ display: "flex", justifyContent: "space-between" }}>
-            서비스 예약하기
-            <p>
-              <strong>{detail.sitter.servicePrice}원</strong>/일
-            </p>
-          </h3>
-          <ServiceList>
-            {detail.sitter.category.map((v, i) => {
-              return (
-                <li key={`category_${i}`}>
-                  <div>
-                    <label>
-                      <input type="checkbox" checked={services[i]} onChange={(e)=>{
-                        setServices((prev)=>{
-                          const new_data = [...prev];
-                          new_data[i] = e.target.checked;
-                          return new_data;
-                        });
-                        selectAreaRef.current.classList.add('isActive');
-                      }}/>
-                      <span>
-                        <i className={iconClasses[v]}></i>
-                        {v}
-                      </span>
-                    </label>
-                  </div>
-                </li>
-              );
-            })}
-          </ServiceList>
-          <div>
-            <Calendar
-              className="calendar_onBody"
-              value={date && date}
-              onChange={setDate}
-              multiple={true}
-              format="YYYY/MM/DD"
-              minDate={new Date()}
-              maxDate={new Date(today.year + 1, today.month.number, today.day)}
-              shadow={false}
-              weekDays={weekDays}
-              months={months}
-              onMonthChange={(date) => setMonth(new Date(date).getMonth()+1)}
-            />
-          </div>
-        </section>
-        {
-          detail.sitter.careSize.length > 0 && (
-          <section ref={careSizeRef}>
-            <h3>서비스 가능한 반려견 사이즈</h3>
-            <ul className="serviceList">
-              {detail.sitter.careSize.map((v, i) => {
+                      }}>{v.text}</button>
+                    </li>
+                  )
+                })
+              }
+            </ul>
+          </FloatingTabsSection>
+          <section ref={reservationRef}>
+            <h3 style={{ display: "flex", justifyContent: "space-between" }}>
+              서비스 예약하기
+              <p>
+                <strong>{detail.sitter.servicePrice}원</strong>/일
+              </p>
+            </h3>
+            <ServiceList>
+              {detail.sitter.category.map((v, i) => {
                 return (
-                  v && (
-                  <li key={`careSize_${i}`}>
-                    <i className="ic-check"></i><span>{i === 0 ? "소" : i === 1 ? "중" : "대"}</span>
-                  </li>)
+                  <li key={`category_${i}`}>
+                    <div>
+                      <label>
+                        <input type="checkbox" checked={services[i]} onChange={(e)=>{
+                          setServices((prev)=>{
+                            const new_data = [...prev];
+                            new_data[i] = e.target.checked;
+                            return new_data;
+                          });
+                          selectAreaRef.current.classList.add('isActive');
+                        }}/>
+                        <span>
+                          <i className={iconClasses[v]}></i>
+                          {v}
+                        </span>
+                      </label>
+                    </div>
+                  </li>
                 );
               })}
-            </ul>
+            </ServiceList>
+            <div>
+              <Calendar
+                className="calendar_onBody"
+                value={date && date}
+                onChange={setDate}
+                multiple={true}
+                format="YYYY/MM/DD"
+                minDate={new Date()}
+                maxDate={new Date(today.year + 1, today.month.number, today.day)}
+                shadow={false}
+                weekDays={weekDays}
+                months={months}
+                onMonthChange={(date) => setMonth(new Date(date).getMonth()+1)}
+              />
+            </div>
           </section>
-          )
-        }
-        {
-          detail.sitter.plusService.length > 0 && (
-            <section ref={plusService}>
-              <h3>추가 제공 가능한 서비스</h3>
+          {
+            detail.sitter.careSize.length > 0 && (
+            <section ref={careSizeRef}>
+              <h3>서비스 가능한 반려견 사이즈</h3>
               <ul className="serviceList">
-                {detail.sitter.plusService.map((v, i) => {
-                  return <li key={`plusService_${i}`}><i className={iconClasses[v]}></i><span>{v}</span></li>;
-                })}
-              </ul>
-            </section>
-          )
-        }
-        {
-          detail.pets.length > 0 && (
-            <section className="pets_info_section">
-              <h3>{detail.sitter.sitterName}님과 함께사는 반려견</h3>
-              <ul>
-                {detail.pets.map((v, i) => {
+                {detail.sitter.careSize.map((v, i) => {
                   return (
-                    <li key={`pet_${i}`}>
-                      <span
-                        className="pet_image"
-                        style={{ backgroundImage: `url(${v.petImage})` }}
-                      ></span>
-                      <p className="pet_name">{v.petName}</p>
-                      <p className="pet_type">{v.petAge}살 {v.petType}</p>
-                    </li>
+                    v && (
+                    <li key={`careSize_${i}`}>
+                      <i className="ic-check"></i><span>{i === 0 ? "소" : i === 1 ? "중" : "대"}</span>
+                    </li>)
                   );
                 })}
               </ul>
             </section>
-          )
-        }
-        <section className="review_section" ref={reviewRef}>
-          <h3>{detail.sitter.sitterName}님에 대한 후기</h3>
-          {
-            detail.sitter.reviewCount <= 0 ? (
-              <p>{detail.sitter.sitterName}님에 대한 후기가 없습니다.</p>
-            ) : (
-              <>
-                <div className="summary">
-                  <i className="ic-star" style={{fontSize: '24px'}}></i>
-                  <strong style={{fontSize: '32px', fontWeight: '500'}}>{detail.sitter.averageStar}</strong>
-                  <span>{detail.sitter.reviewCount}개의 후기</span>
-                </div>
-                <Reviews reviewCount={detail.sitter.reviewCount} sitterId={detail.sitter.sitterId}/>
-              </>
             )
           }
-        </section>
-        <section>
-          <h3>{detail.sitter.sitterName}님의 위치</h3>
-          <MapWrapper>
-            <MapContainer
-              centerElement={{x: detail.sitter.x, y: detail.sitter.y, sitterName: detail.sitter.sitterName, reviewStar: detail.sitter.averageStar}}
-              showOnly={true}
-              _height="100%"
-            />
-          </MapWrapper>
-          <p>{detail.sitter.address}</p>
-        </section>
-      </section>
-      <ReservationFunctions>
-        {selectBoxToggle.status &&
-          (selectBoxToggle.type === "service" ? (
-            <div className="select_wrap service">
-              <h3 style={{ display: "flex", justifyContent: "space-between" }}>서비스 선택</h3>
-              <button type="button" className="closeSelectWrap">닫기</button>
-              <div>
-                <ServiceList style={{ margin: "10px 0" }}>
-                  {detail.sitter.category.map((v, i) => {
+          {
+            detail.sitter.plusService.length > 0 && (
+              <section ref={plusService}>
+                <h3>추가 제공 가능한 서비스</h3>
+                <ul className="serviceList">
+                  {detail.sitter.plusService.map((v, i) => {
+                    return <li key={`plusService_${i}`}><i className={iconClasses[v]}></i><span>{v}</span></li>;
+                  })}
+                </ul>
+              </section>
+            )
+          }
+          {
+            detail.pets.length > 0 && (
+              <section className="pets_info_section">
+                <h3>{detail.sitter.sitterName}님과 함께사는 반려견</h3>
+                <ul>
+                  {detail.pets.map((v, i) => {
                     return (
-                      <li key={`category_${i}`}>
-                        <div>
-                          <label>
-                            <input
-                              type="checkbox"
-                              checked={services[i]}
-                              onChange={(e) => {
-                                setServices((prev) => {
-                                  const new_data = [...prev];
-                                  new_data[i] = e.target.checked;
-                                  return new_data;
-                                });
-                              }}
-                            />
-                            <span>
-                              <i></i>
-                              {v}
-                            </span>
-                          </label>
-                        </div>
+                      <li key={`pet_${i}`}>
+                        <span
+                          className="pet_image"
+                          style={{ backgroundImage: `url(${v.petImage})` }}
+                        ></span>
+                        <p className="pet_name">{v.petName}</p>
+                        <p className="pet_type">{v.petAge}살 {v.petType}</p>
                       </li>
                     );
                   })}
-                </ServiceList>
+                </ul>
+              </section>
+            )
+          }
+          <section className="review_section" ref={reviewRef}>
+            <h3>{detail.sitter.sitterName}님에 대한 후기</h3>
+            {
+              detail.sitter.reviewCount <= 0 ? (
+                <p>{detail.sitter.sitterName}님에 대한 후기가 없습니다.</p>
+              ) : (
+                <>
+                  <div className="summary">
+                    <i className="ic-star" style={{fontSize: '24px'}}></i>
+                    <strong style={{fontSize: '32px', fontWeight: '500'}}>{detail.sitter.averageStar}</strong>
+                    <span>{detail.sitter.reviewCount}개의 후기</span>
+                  </div>
+                  <Reviews reviewCount={detail.sitter.reviewCount} sitterId={detail.sitter.sitterId}/>
+                </>
+              )
+            }
+          </section>
+          <section>
+            <h3>{detail.sitter.sitterName}님의 위치</h3>
+            <MapWrapper>
+              <MapContainer
+                centerElement={{x: detail.sitter.x, y: detail.sitter.y, sitterName: detail.sitter.sitterName, reviewStar: detail.sitter.averageStar}}
+                showOnly={true}
+                _height="100%"
+              />
+            </MapWrapper>
+            <p>{detail.sitter.address}</p>
+          </section>
+        </section>
+        <ReservationFunctions>
+          <div className="select_area" ref={selectAreaRef}>
+            <div className={`select_detail service ${selectBoxToggle.status && selectBoxToggle.type === "service" ? 'isShow' : ''}`}>
+                <h3>서비스 선택 <button type="button" className="closeSelectWrap" onClick={()=>setSelectBoxToggle({status: false, type: null})}>닫기</button></h3>
+                <div>
+                  <ServiceList>
+                    {detail.sitter.category.map((v, i) => {
+                      return (
+                        <li key={`category_${i}`}>
+                          <div>
+                            <label>
+                              <input
+                                type="checkbox"
+                                checked={services[i]}
+                                onChange={(e) => {
+                                  setServices((prev) => {
+                                    const new_data = [...prev];
+                                    new_data[i] = e.target.checked;
+                                    return new_data;
+                                  });
+                                }}
+                              />
+                              <span>
+                                <i className={iconClasses[v]}></i>
+                                {v}
+                              </span>
+                            </label>
+                          </div>
+                        </li>
+                      );
+                    })}
+                  </ServiceList>
+                </div>
               </div>
-            </div>
-          ) : (
-            <div className="select_wrap date">
-              <h3>날짜 선택하기</h3>
-              <button type="button" className="closeSelectWrap">닫기</button>
-              <div>
-                <Calendar
-                  className="calendar_onModal"
-                  value={date && date}
-                  onChange={setDate}
-                  multiple={true}
-                  format="YYYY/MM/DD"
-                  minDate={new Date()}
-                  maxDate={new Date(today.year + 1, today.month.number, today.day)}
-                  shadow={false}
-                  weekDays={weekDays}
-                  months={months}
-                  onMonthChange={(date) => setMonth(new Date(date).getMonth()+1)}
-                />
+              <div className={`select_detail date ${selectBoxToggle.status && selectBoxToggle.type === "date" ? 'isShow' : ''}`}>
+                <h3>날짜 선택 <button type="button" className="closeSelectWrap" onClick={()=>setSelectBoxToggle({status: false, type: null})}>닫기</button></h3>
+                <div>
+                  <Calendar
+                    className="calendar_onModal"
+                    value={date && date}
+                    onChange={setDate}
+                    multiple={true}
+                    format="YYYY/MM/DD"
+                    minDate={new Date()}
+                    maxDate={new Date(today.year + 1, today.month.number, today.day)}
+                    shadow={false}
+                    weekDays={weekDays}
+                    months={months}
+                    onMonthChange={(date) => setMonth(new Date(date).getMonth()+1)}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
-        <ul className="select_area" ref={selectAreaRef}>
-          <li
-            onClick={() => {
-              setSelectBoxToggle(()=>{
-                if(selectBoxToggle.type === 'date'){
-                  return { type: "service", status: true }
-                }else{
-                  return { type: "service", status: !selectBoxToggle.status }
-                }
-              });
-            }}
-          >
-            <span>서비스</span>
-            <strong>
-              {servicesText.length > 0
-                ? servicesText.join(", ")
-                : "서비스를 선택해주세요."}
-            </strong>
-          </li>
-          <li
-            onClick={() => {
-              setMonth(new Date().getMonth()+1);
-              setSelectBoxToggle(()=>{
-                if(selectBoxToggle.type === 'service'){
-                  return { type: "date", status: true }
-                }else{
-                  return { type: "date", status: !selectBoxToggle.status }
-                }
-              });
-            }}
-          >
-            <span>날짜</span>
-            <strong>
-              {datesTransformed.current?.length > 0
-                ? (
-                  <>
-                    {
-                      datesTransformed.current.map((date,idx)=>{
-                        return (
-                          idx > 0 ? ', ' + date : date
-                        )
-                      })
+            <ul>
+              <li
+                onClick={() => {
+                  setSelectBoxToggle(()=>{
+                    if(selectBoxToggle.type === 'date'){
+                      return { type: "service", status: true }
+                    }else{
+                      return { type: "service", status: !selectBoxToggle.status }
                     }
-                  </>
-                )
-                : "날짜를 선택해주세요."}
-            </strong>
-          </li>
-          <li className="price">
-            <span>결제예정금액</span>
-            <strong><em>{detail.sitter.servicePrice}</em>원/일</strong>
-          </li>
-        </ul>
-        <div className="buttons">
-          <StyledButton
-            _onClick={() => openChatRoom()}
-            _bgColor={'rgba(252, 146, 21, 0.1)'}
-            color={'#fc9215'}
-            _title="문의하기"
-            _margin="0"
-          />
-          <StyledButton
-            _onClick={requestReservation}
-            _title="예약하기"
-            _margin="0"
-          />
-        </div>
-      </ReservationFunctions>
-    </SitterDetailPage>
+                  });
+                }}
+              >
+                <span>서비스</span>
+                <strong>
+                  {servicesText.length > 0
+                    ? servicesText.join(", ")
+                    : "서비스를 선택해주세요."}
+                </strong>
+              </li>
+              <li
+                onClick={() => {
+                  setMonth(new Date().getMonth()+1);
+                  setSelectBoxToggle(()=>{
+                    if(selectBoxToggle.type === 'service'){
+                      return { type: "date", status: true }
+                    }else{
+                      return { type: "date", status: !selectBoxToggle.status }
+                    }
+                  });
+                }}
+              >
+                <span>날짜</span>
+                <strong>
+                  {datesTransformed.current?.length > 0
+                    ? (
+                      <>
+                        {
+                          datesTransformed.current.map((date,idx)=>{
+                            return (
+                              idx > 0 ? ', ' + date : date
+                            )
+                          })
+                        }
+                      </>
+                    )
+                    : "날짜를 선택해주세요."}
+                </strong>
+              </li>
+              <li className="price">
+                <span>결제예정금액</span>
+                <strong><em>{detail.sitter.servicePrice}</em>원/일</strong>
+              </li>
+            </ul>
+          </div>
+          <div className="buttons">
+            <StyledButton
+              _onClick={() => openChatRoom()}
+              _bgColor={'rgba(252, 146, 21, 0.1)'}
+              color={'#fc9215'}
+              _title="문의하기"
+              _margin="0"
+            />
+            <StyledButton
+              _onClick={()=>{
+                if(petsQuery.data.data.pets.length <= 0){
+                  setErrorMessage(errorMessages.noPet);
+                  setModalDisplay(true);
+                }else{
+                  requestReservation();
+                }
+              }}
+              _title="예약하기"
+              _margin="0"
+            />
+          </div>
+        </ReservationFunctions>
+      </SitterDetailPage>
+      {
+        (modalDisplay && errorMessage === errorMessages.noPet) && (
+          <Modal _display={modalDisplay} _alert={false} _confirm={'등록하러 가기'} _cancel={'취소'} cancelOnclick={()=>{setErrorMessage(null); setModalDisplay(false)}} confirmOnClick={()=>{navigate('/mypage/petprofile')}}>
+            <div className="text_area">
+            <p>등록된 펫 정보가 없습니다.</p>
+            <p>펫 정보 등록 후 서비스를 신청해주세요.</p>
+            </div>
+          </Modal>
+        )
+      }
+      {
+        (modalDisplay && errorMessage !== errorMessages.noPet) && (
+          <Modal _display={modalDisplay} _alert={true} confirmOnClick={()=>{setErrorMessage(null); setModalDisplay(false); selectAreaRef.current.classList.add('isActive');}}>
+            <div className="text_area">
+              <p>{errorMessage}</p>
+            </div>
+          </Modal>
+        )
+      }
+    </>
   );
 };
 
@@ -536,7 +572,7 @@ const FloatingTabsSection = styled.section`
 	margin: 0 -20px;
 	padding: 16px 20px;
   box-sizing: border-box;
-  z-index: 10;
+  z-index: 2;
   background: linear-gradient(0deg, rgba(255,255,255,0) 0%, rgba(255,255,255,1) 65%);
 	&{-ms-overflow-style:none; }
 	&::-webkit-scrollbar { display:none; }
@@ -580,68 +616,137 @@ const ReservationFunctions = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 5;
+  z-index: 3;
   background-color: #fff;
-  border-top: 1px solid #C9C9C9;
   @media (min-width: 768px){
     left: auto;
     right: 10%;
     width: 412px;
   }
-  .select_wrap {
+  .select_detail {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    z-index: 1;
+    transform: translateY(100%);
+    transition: ease-out 230ms;
     h3 {
+      position: relative;
+      line-height: 1;
       font-size: 18px;
-      font-weight: bold;
-      padding: 23px 16px;
-      border-bottom: 1px solid #ddd;
+      padding: 23px 16px 0;
+      background-color: #fff;
+      border-radius: 10px 10px 0 0;
     }
     .closeSelectWrap{
       position: absolute;
-      right: 0;
+      right: 12px;
+      top: 18px;
       width: 24px;
       height: 24px;
+      font-size: 0;
+      &::before,
+      &::after{
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        height: 1px;
+        width: 16px;
+        margin: 0 auto;
+        background-color: #1a1a1a;
+        content: '';
+      }
+      &::before{
+        transform: rotate(45deg);
+      }
+      &::after{
+        transform: rotate(-45deg);
+      }
     }
     & > div {
-      padding: 20px;
+      padding: 16px 16px 23px;
+      background-color: #fff;
+    }
+    &::before{
+      opacity: 0;
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: -100vh;
+      height: 0;
+      background-color: rgba(0,0,0,.4);
+      content: '';
+      z-index: -1;
+      transition: ease-out opacity 230ms, step-end height 230ms;
+    }
+    &.isShow{
+      transform: translateY(0);
+      &::before{
+        opacity: 1;
+        height: 200vh;
+        transition: ease-out opacity 230ms, step-start height;
+        pointer-events: none;
+      }
+    }
+    .rmdp-border{
+      border: none;
     }
   }
   .select_area{
-    margin-bottom: -120px;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    transform: translateY(100%);
     transition: ease-out 240ms;
     &.isActive{
-      margin-bottom: 0;
+      transform: translateY(0);
     }
-    li {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 16px;
-      height: 40px;
-      padding: 0 20px;
-      cursor: pointer;
-      border-bottom: 1px solid #C9C9C9;
-      label {
-        display: block;
-        width: 100%;
-      }
-      span {
-        color: #676767;
-      }
-      strong {
-        font-size: 14px;
-        font-weight: 500;
-      }
-      &.price{
-        cursor: default;
-        strong{
-          font-weight: normal;
-          color: #1A1A1A;
-          em{
-            color: #FC9215;
-            font-weight: 500;
+    & > ul {
+      position: relative;
+      z-index: 2;
+      border-top: 1px solid #C9C9C9;
+      background-color: #fff;
+      & > li {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 16px;
+        height: 40px;
+        padding: 0 20px;
+        cursor: pointer;
+        border-bottom: 1px solid #C9C9C9;
+        &:last-of-type{
+          border: none;
+        }
+        label {
+          display: block;
+          width: 100%;
+        }
+        span {
+          color: #676767;
+        }
+        strong {
+          font-size: 14px;
+          font-weight: 500;
+        }
+        &.price{
+          cursor: default;
+          strong{
+            font-weight: normal;
+            color: #1A1A1A;
+            em{
+              color: #FC9215;
+              font-weight: 500;
+            }
           }
         }
       }
+    }
+    & + div{
+      border-top: 1px solid #C9C9C9;
     }
   }
   .buttons {
@@ -789,6 +894,16 @@ const SitterDetailPage = styled.div`
           font-size: 18px;
           flex-basis: 30px;
           flex-shrink: 0;
+          &.ic-pickup{
+            font-size: 22px;
+          }
+          &.ic-activity:before{
+            margin-left: 1px;
+          }
+          &.ic-longterm:before {
+            font-size: 20px;
+            margin-left: 2px;
+          }
         }
         & + li{
           margin-top: 8px;
