@@ -29,7 +29,6 @@ const Detail = () => {
     type: "",
     status: false,
   });
-  const [calendar, setCalendar] = useState('body');
   const errorMessages = {
     'noPet': '등록된 펫 정보가 없습니다. 펫 정보 등록 후 서비스를 신청해주세요.',
     'noDate': '날짜를 선택해주세요',
@@ -232,7 +231,8 @@ const Detail = () => {
           if (prev > e.target.scrollTop) setScrollDirection('up');
           else setScrollDirection('down');
           return e.target.scrollTop;
-      })}}>
+        })
+      }}>
         <section className="page_top">
           <section>
             <TopImage style={{backgroundImage: `url(${detail.sitter.mainImageUrl})`, margin: '0 -20px'}}></TopImage>
@@ -1055,5 +1055,4 @@ const MapWrapper = styled.div`
     margin-top: 8px;
   }
 `
-
 export default Detail;

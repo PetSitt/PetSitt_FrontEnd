@@ -21,7 +21,7 @@ const Reservation = () => {
   const [modalDisplay, setModalDisplay] = useState(false);
   const [modalType, setModalType] = useState();
   const [page, setPage] = useState('reservation');
-  const {data: petsQuery, isLoading, isSuccess, isPreviousData} = useQuery('petsData', apis.reservation, {
+  const {data: petsQuery, isLoading} = useQuery('petsData', apis.reservation, {
     onSuccess: (data) => {
       console.log(data, 'success');
       setPetsData(data?.data.pets);
