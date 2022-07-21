@@ -1,8 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
+import jwt_decode from "jwt-decode"
 import { Link } from 'react-router-dom';
 
-const Menu = ({popup, setPopup}) => {
+const Menu = ({popup, setPopup, socket}) => {
+  useEffect(() => { 
+    if(localStorage.getItem('accessToken')){
+      const {userEmail} = jwt_decode(localStorage.getItem('accessToken'));
+      socket.emit("join_my_room", userEmail);
+    }
+  },[socket])
   return (
     <MenuInner>
       <div className='item'>

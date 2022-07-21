@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const jsonApi = axios.create({
-	baseURL: process.env.REACT_APP_SERVER
+	baseURL: process.env.REACT_APP_SOCKET
 });
 
 jsonApi.interceptors.request.use((config) => {
@@ -17,4 +17,4 @@ export const chatApis = {
 	chatListGet: () => jsonApi.get('/chats/chatList'),
 	chatRoomGet: (roomId) => jsonApi.get(`/chats/${roomId}`),
 	chatMessagePost: (data) => jsonApi.post('/chats/chatting', data)
-}
+};

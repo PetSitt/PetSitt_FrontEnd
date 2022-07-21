@@ -24,7 +24,7 @@ import SitterProfileForm4 from './page/SitterProfileForm4';
 import Chat from './page/Chat';
 import Auth from './Auth';
 import Profile from './Profile';
-
+ 
 const Router = () => {
   return (
     <Routes>

@@ -18,7 +18,7 @@ const KakaoMapContainer = ({ address, onChange }) => {
         onChange("y", result[0].y);
       }
     });
-  }, [address, kakao.maps.LatLng, kakao.maps.Map, kakao.maps.services.Geocoder, kakao.maps.services.Status.OK]);
+  }, [address, kakao.maps.LatLng, kakao.maps.Map, kakao.maps.services.Geocoder, kakao.maps.services.Status.OK, onChange]);
 
   return (
     <div

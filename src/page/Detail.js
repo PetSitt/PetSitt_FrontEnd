@@ -222,7 +222,6 @@ const Detail = () => {
       floatingTabsRef.current.classList.remove('isFixed');
     }
   }
-  
 
   if (detailIsLoading || !detail ) return <p>로딩중입니다</p>;
 	return (
