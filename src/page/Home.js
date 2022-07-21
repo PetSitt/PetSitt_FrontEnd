@@ -194,7 +194,7 @@ function Home() {
 	},[category])
 
 	useEffect(()=>{
-		if(sitters?.length > 0 && !sittersIsRefetching){
+		if(sitters?.length > 0){
 			// 가격에 쉼표 추가
 			for(let i=0; i<sitters.length; i++){
 				const priceString = String(sitters[i].servicePrice);
@@ -221,7 +221,6 @@ function Home() {
 		}
 		return()=>{
 			setSitters(null);
-			console.log('unmount')
 		}
 	}, []);
 
