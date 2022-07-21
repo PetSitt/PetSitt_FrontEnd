@@ -39,9 +39,9 @@ const AppWrapper = styled.div`
     height: 100%;
     -ms-overflow-style: none; /* IE and Edge scrollbar 숨기기*/
     scrollbar-width: none; /* Firefox scrollbar 숨기기*/
+    background-color: #fff;
     & > div:first-of-type,
     & > section:first-of-type {
-      height: 100%;
       padding: 20px;
       box-sizing: border-box;
       background-color: #fff;
