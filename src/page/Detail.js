@@ -210,11 +210,10 @@ const Detail = () => {
       floatingTabsRef.current.classList.remove('isFixed');
     }
   }
-  
 
   if (detailIsLoading || !detail ) return <p>로딩중입니다</p>;
 	return (
-		<SitterDetailPage style={{paddingTop: 0}} onScroll={(e)=>{
+		<SitterDetailPage className="detail" style={{paddingTop: 0}} onScroll={(e)=>{
       scrollEvent(e);
       setScrollY((prev)=>{
         if (prev > e.target.scrollTop) setScrollDirection('up');

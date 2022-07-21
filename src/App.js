@@ -18,7 +18,9 @@ function App() {
         </Suspense>
         <Menu popup={popup} setPopup={setPopup} socket={socket}/>
         {popup && ( 
-          <Chat popup={popup} setPopup={setPopup}/>
+          <Suspense>
+            <Chat popup={popup} setPopup={setPopup}/>
+          </Suspense>
         )}
       </div>
     </AppWrapper>
@@ -27,21 +29,27 @@ function App() {
 
 const AppWrapper = styled.div`
   height: 100vh;
-  overflow: hidden;
   background: rgb(217, 227, 238);
 
+  .AppInner::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera scrollbar 숨기기*/
+  }
   .AppInner{
     width: 100%;
     height: 100%;
+    -ms-overflow-style: none; /* IE and Edge scrollbar 숨기기*/
+    scrollbar-width: none; /* Firefox scrollbar 숨기기*/
     & > div:first-of-type,
     & > section:first-of-type {
       height: 100%;
       padding: 20px;
       box-sizing: border-box;
       background-color: #fff;
-      overflow: hidden;
-      overflow-y: auto;
       padding-bottom: 74px;
+    }
+    & > .home:first-of-type,
+    & > .detail:first-of-type {
+      height: auto;
     }
     @media (min-width:768px) {
       max-width: 412px;
