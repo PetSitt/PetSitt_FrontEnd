@@ -50,7 +50,7 @@ jsonApi.interceptors.response.use((response)=>{ // access 토큰 만료됐을 �
 }, async function (error) {
   const originalRequest = error.config;
   if (error.response.status === 401 && !originalRequest._retry) {
-		window.location.href='/login';
+		// window.location.href='/login';
   }
   return Promise.reject(error);
 });
@@ -117,6 +117,7 @@ export const apis = {
 	passwordFind: (data) => pwfindApi.post('/api/password_check', data),
 	idFind: (data) => pwfindApi.post('/api/id_check', data),
 	login: (data) => jsonApi.post('/api/login', data),
+	kakaoLogin: (data) => axios.post('http://3.35.135.160/api/auth/kakao', data),
 	checkUser: () => authApi.get('/api/auth'),
 
 	// mypage

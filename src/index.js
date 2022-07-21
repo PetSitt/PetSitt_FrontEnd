@@ -7,6 +7,7 @@ import { ThemeProvider } from 'styled-components';
 import App from './App';
 import GlobalStyles from './styles/GlobalStyle';
 import theme from './styles/theme';
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -22,7 +23,7 @@ root.render(
       <BrowserRouter>
         <ReactQueryDevtools initialIsOpen={true} />
         <GlobalStyles />
-        <App />
+         <App />
       </BrowserRouter>
     </ThemeProvider>
   </QueryClientProvider>

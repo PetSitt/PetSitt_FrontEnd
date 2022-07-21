@@ -21,17 +21,6 @@ const Reservation = () => {
   const [modalDisplay, setModalDisplay] = useState(false);
   const [modalType, setModalType] = useState();
   const [page, setPage] = useState('reservation');
-  const {data: petsQuery, isLoading} = useQuery('petsData', apis.reservation, {
-    onSuccess: (data) => {
-      console.log(data, 'success');
-      setPetsData(data?.data.pets);
-    },
-    onError: (data) => {
-      console.log(data, 'error');
-    },
-    refetchOnMount: 'always',
-    staleTime: Infinity,
-  })
   const sendRequestApi = (data, sitterId) => {
     return apis.makeReservation(dataForRequest, info.sitterId)
   }
@@ -52,7 +41,6 @@ const Reservation = () => {
     refetchOnMount: 'always',
     staleTime: Infinity,
   })
-  const dateText = useRef();
   const confirmReservation = async () => {
     const _data = await {
       petIds: petsForService,
@@ -65,12 +53,30 @@ const Reservation = () => {
   }  
   const modalContent = {
     notSelected: {alert: true, title: '반려견 선택', text: '반려견을 선택해주세요.', confirmFn: ()=>setModalDisplay(false)},
-    confirm: {alert: false, title: '예약 확정', text: '예약을 확정하시겠습니까?', _confirm: '예약하기', _cancel: '취소', confirmFn: confirmReservation, cancelFn: ()=>setModalDisplay(false)}
+    confirm: {alert: false, title: '예약 확정', text: '예약을 확정하시겠습니까?', _confirm: '예약하기', _cancel: '취소', confirmFn: confirmReservation, cancelFn: ()=>setModalDisplay(false)},
+    noPets: {alert: false, title: '반려견 등록', text: '등록된 반려동물 프로필이 없습니다. 반려동물 프로필 등록 후 이용해주세요.', _confirm: '반려동물 프로필 등록하기', _cancel: '취소', confirmFn: ()=>navigate('/mypage/petprofile'), cancelFn: ()=>navigate(-1)}
   };
-
+  const {data: petsQuery} = useQuery('petsData', apis.reservation, {
+    onSuccess: (data) => {
+      console.log(data, 'success');
+      if(data.data.pets.length){
+        setPetsData(data?.data.pets);
+      }else{
+        // 여기
+        setModalType(modalContent.noPets);
+        setModalDisplay(true);
+      }
+      
+    },
+    onError: (data) => {
+      console.log(data, 'error');
+    },
+    refetchOnMount: 'always',
+    staleTime: Infinity,
+  })
 
   if(page !== 'reservation') return <Navigate to="/reservation/list"/>
-  if(isLoading || !info || !petsData) return '예약페이지 로딩중';
+  if(petsQuery.isLoading) return '예약페이지 로딩중';
   return (
     <>
       <ReservationPage>
@@ -114,31 +120,35 @@ const Reservation = () => {
             <h3>맡기는 반려동물</h3>
             <ul>
               {
-                petsData.map((v,i)=>{
-                  return (
-                    <PetItem key={`pet_${i}`}>
-                      <label>
-                        <input type="checkbox" onChange={(e)=>{
-                          if(e.target.checked){
-                            setPetsForService((prev)=>{
-                              const _data = prev ? [...prev, v._id] : [];
-                              return _data;
-                            })
-                          }else{
-                            setPetsForService((prev)=>{
-                              const _data = [...prev].filter(item=>item !== v._id);
-                              return _data;
-                            })
-                          }
-                        }}/>
-                        <div>
-                          <span style={{backgroundImage: `url(${v.petImage})`}}></span>
-                          <p>{v.petName} {`(${v.petType})`}</p>
-                        </div>
-                      </label>
-                    </PetItem>
-                  )
-                })
+                petsData?.length ? (
+                  petsData.map((v,i)=>{
+                    return (
+                      <PetItem key={`pet_${i}`}>
+                        <label>
+                          <input type="checkbox" onChange={(e)=>{
+                            if(e.target.checked){
+                              setPetsForService((prev)=>{
+                                const _data = prev ? [...prev, v._id] : [];
+                                return _data;
+                              })
+                            }else{
+                              setPetsForService((prev)=>{
+                                const _data = [...prev].filter(item=>item !== v._id);
+                                return _data;
+                              })
+                            }
+                          }}/>
+                          <div>
+                            <span style={{backgroundImage: `url(${v.petImage})`}}></span>
+                            <p>{v.petName} {`(${v.petType})`}</p>
+                          </div>
+                        </label>
+                      </PetItem>
+                    )
+                  })
+                ) : (
+                  <p>등록된 펫 정보가 없습니다.</p>
+                )
               }
             </ul>
           </section>

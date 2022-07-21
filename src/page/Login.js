@@ -9,7 +9,7 @@ import InputBox from '../elements/InputBox';
 import StyledButton from '../elements/StyledButton';
 import NavBox from '../elements/NavBox';
 import StyledContainer from '../elements/StyledContainer';
-import Auth from "../Auth";
+import Auth from "../shared/Auth";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -53,6 +53,7 @@ const Login = () => {
       sessionStorage.removeItem('foundId');
       localStorage.removeItem('userName');
 			localStorage.removeItem('userEmail');
+      localStorage.removeItem('kakaoToken');
     }
   }, [cookies]);
 
