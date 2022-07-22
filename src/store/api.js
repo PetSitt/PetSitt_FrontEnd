@@ -16,7 +16,7 @@ const pwfindApi = axios.create({
 });
 
 const mainApi = axios.create({
-	baseURL: process.env.REACT_APP_SERVER
+	baseURL: process.env.REACT_APP_MAINAPI
 });
 
 const detailApi = axios.create({
