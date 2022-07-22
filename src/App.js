@@ -14,8 +14,6 @@ const INITIAL_VALUES = {
   username: null
 }
 function App() {
-  const socket = io.connect("http://3.39.230.232");
-  const [popup, setPopup] = useState(false);
   const location = useLocation();
   const [detailPageClass, sestDetailPageClass] = useState();
   const [value, setValues] = useState(INITIAL_VALUES);
@@ -51,6 +49,7 @@ function App() {
           <Router />
         </Suspense>
         <Menu popup={value.popup} setPopup={setValues} socket={value.socket}/>
+        {console.log(value.socket)}
         {value.popup && (
           <Suspense>
             <ChatList popup={value.popup} socket={value.socket} setPopup={setValues} />

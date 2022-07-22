@@ -4,7 +4,6 @@ import jwt_decode from "jwt-decode"
 import { Link, useLocation } from 'react-router-dom';
 
 const Menu = ({popup, setPopup, socket}) => {
-
   const location = useLocation();
   const [activeMenu, setActiveMenu] = useState();
   useEffect(() => {
@@ -33,7 +32,12 @@ const Menu = ({popup, setPopup, socket}) => {
           <i className='ic-home' style={{fontSize: '25px', fontWeight: '500'}}></i>
         </Link>
       </div>
-      <div className='item' onClick={() => setPopup(!popup)}>
+      <div className='item' onClick={() => setPopup((prev) => {
+        return {
+          ...prev,
+          popup: !popup
+        }
+      })}>
         <button className='nav-link' type="button">
           <i className='ic-chat' style={{fontSize: '21px'}}></i>
         </button>

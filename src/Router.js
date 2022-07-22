@@ -21,7 +21,7 @@ import SitterProfileForm1 from './page/SitterProfileForm1';
 import SitterProfileForm2 from './page/SitterProfileForm2';
 import SitterProfileForm3 from './page/SitterProfileForm3';
 import SitterProfileForm4 from './page/SitterProfileForm4';
-import Auth from './Auth';
+import Auth from './shared/Auth';
 import ChatList from './page/ChatList';
 import ChatRoom from './page/ChatRoom';
 
