@@ -1,25 +1,49 @@
-import React, {Suspense, useState} from 'react'
+import React, {Suspense, useEffect, useState} from 'react'
 import io from "socket.io-client";
 import styled from "styled-components";
 import Router from './Router';
 import "./assets/font/index.css"
 import Menu from './components/Menu';
-import Chat from './page/Chat';
+import ChatList from './page/ChatList';
 
+const INITIAL_VALUES = {
+  popup: false,
+  socket: null,
+  id: null,
+  username: null
+}
 function App() {
-  const socket = io.connect("http://3.39.230.232");
-  const [popup, setPopup] = useState(false);
-  
+  const [value, setValues] = useState(INITIAL_VALUES);
+
+  useEffect(() => {
+    setValues((prev) => {
+      return {
+        ...prev,
+        socket: io.connect(process.env.REACT_APP_SERVER, {transports: ['websocket'], upgrade: false})
+      }
+    })
+
+    return () => {
+      value.socket.disconnect();
+      setValues((prev) => {
+        return {
+          ...prev,
+          socket: null
+        }
+      });
+    }
+  },[]);
+
   return (
     <AppWrapper className="App">
       <div className='AppInner'>
         <Suspense fallback={<div>로딩중!!</div>}>
           <Router />
         </Suspense>
-        <Menu popup={popup} setPopup={setPopup} socket={socket}/>
-        {popup && ( 
+        <Menu popup={value.popup} setPopup={setValues} socket={value.socket}/>
+        {value.popup && (
           <Suspense>
-            <Chat popup={popup} setPopup={setPopup}/>
+            <ChatList popup={value.popup} socket={value.socket} setPopup={setValues} />
           </Suspense>
         )}
       </div>

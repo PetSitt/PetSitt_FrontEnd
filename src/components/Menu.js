@@ -4,8 +4,8 @@ import jwt_decode from "jwt-decode"
 import { Link } from 'react-router-dom';
 
 const Menu = ({popup, setPopup, socket}) => {
-  useEffect(() => { 
-    if(localStorage.getItem('accessToken')){
+  useEffect(() => {
+    if(localStorage.getItem('accessToken') && socket){
       const {userEmail} = jwt_decode(localStorage.getItem('accessToken'));
       socket.emit("join_my_room", userEmail);
     }
@@ -17,7 +17,12 @@ const Menu = ({popup, setPopup, socket}) => {
           <i className='ic-home'></i>
         </Link>
       </div>
-      <div className='item' onClick={() => setPopup(!popup)}>
+      <div className='item' onClick={() => setPopup((prev) => {
+        return {
+          ...prev,
+          popup: !popup
+        }
+      })}>
         <i className='ic-contact'></i>
       </div>
       <div className='item'>
