@@ -75,12 +75,15 @@ const Detail = () => {
     })
     setUnavailable(datesArray);
   }
+  const getUserDetailApi = () => {
+    return apis.getUserDetail(sitterId);
+  }
   const {
 		isLoading: detailIsLoading,
 		isSuccess,
 		isFetched,
 		data: detailData,
-	} = useQuery("detail_data", () => apis.getUserDetail(sitterId), {
+	} = useQuery("detail_data", ()=>getUserDetailApi(sitterId), {
 		onSuccess: (data) => {
 			console.log(data.data, "data loaded");
       const _newPrice = data.data.sitter.servicePrice.toString().replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');

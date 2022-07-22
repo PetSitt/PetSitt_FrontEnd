@@ -21,6 +21,14 @@ const Reservation = () => {
   const [modalDisplay, setModalDisplay] = useState(false);
   const [modalType, setModalType] = useState();
   const [page, setPage] = useState('reservation');
+
+  const {data} = useQuery('detail_data', {
+    staleTime: Infinity,
+    enabled: false,
+  });
+  console.log(data)
+
+
   const sendRequestApi = (data, sitterId) => {
     return apis.makeReservation(dataForRequest, info.sitterId)
   }

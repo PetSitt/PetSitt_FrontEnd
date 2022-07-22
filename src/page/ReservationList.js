@@ -44,15 +44,12 @@ const ReservationList = () => {
   const [diarySave, setDiarySave] = useState(false);
 	const {
 		data: reservatioinList,
-		isFetched,
 		isFetching,
 		refetch,
 	} = useQuery("reservationQuery", () => apis.reservationList(selectedTab), {
 		onSuccess: (data) => {
-			console.log(data, "success");
 			setProceedings(data.data.proceedings);
 			setPastReservation(data.data.pasts);
-      console.log(data.data.pasts.length, 'past')
       if(data.data.pasts.length < 3){
         setButtonHide(true);
       }else{
@@ -60,11 +57,53 @@ const ReservationList = () => {
       }
 		},
 		onError: (data) => {
-			console.log(data, "error");
+      console.log(data.response.status, selectedTab)
+      if(selectedTab === 'sitter' && data.response.status === 402){
+        alert('등록된 일지가 없습니다.');
+        return;
+      }
+
+      if(data.response.status === 402 && selectedTab === 'sitter'){
+        setModalType(modalContent.noSitterInfo);
+        setModalDisplay(true);
+      }
 		},
 		refetchOnMount: "always",
 		staleTime: Infinity,
 	});
+
+
+  // const {
+  //   mutate: getRervationList,
+	// 	data: reservatioinList,
+	// 	isFetching,
+	// } = useMutation(() => apis.reservationList(selectedTab), {
+	// 	onSuccess: (data) => {
+	// 		setProceedings(data.data.proceedings);
+	// 		setPastReservation(data.data.pasts);
+  //     if(data.data.pasts.length < 3){
+  //       setButtonHide(true);
+  //     }else{
+  //       setButtonHide(false);
+  //     }
+	// 	},
+	// 	onError: (data) => {
+  //     console.log(data.response.status, selectedTab)
+  //     if(selectedTab === 'sitter' && data.response.status === 402){
+  //       alert('등록된 일지가 없습니다.');
+  //       return;
+  //     }
+
+  //     // if(data.response.status === 402 && selectedTab === 'sitter'){
+  //     //   setModalType(modalContent.noSitterInfo);
+  //     //   setModalDisplay(true);
+  //     // }
+	// 	},
+	// 	refetchOnMount: "always",
+	// 	staleTime: Infinity,
+	// });
+
+
   const registerReviewApi = (reservationId, data) => {
     console.log(reservationId, data)
     return apis.registerReview(reservationId, data);
@@ -261,6 +300,7 @@ const ReservationList = () => {
     diary: {type: 'diary', _alert: false, _confirm: '일지 등록', _cancel: '등록 취소', confirmFn: confirmWritingDiary, cancelFn: cancelWritingDiary},
     diaryView: {type: 'diary', _alert: true, confirmFn: ()=>{setModalDisplay(false); setModalType(null); diaryPageMode.current = null}},
     diaryCancel: {type: 'diaryCancel', _alert: false, _confirm: '일지 작성 취소', _cancel: '일지 작성', confirmFn: closeDiaryPage, cancelFn: ()=>{setDiaryStatus('get'); setModalType(modalContent.diary)}},
+    noSitterInfo: {type: 'noSitterInfo', _alert: false, _confirm: '돌보미 프로필 등록', _cancel: '취소', confirmFn: ()=>navigate('/mypage'), cancelFn: ()=>navigate('/reservation/list')},
   };
 	useEffect(() => {
 		refetch();
@@ -283,23 +323,23 @@ const ReservationList = () => {
 
 
   	// 로그인 여부 확인하는 api
-	const { mutate: checkUser } = useMutation(()=>apis.checkUser(), { 
-		onSuccess: (data) => {
-			console.log(data, 'auth api 성공!!!');
-		},
-		onError: (data) => {
-			console.log(data, 'auth api 실패');
-		},
-		staleTime: Infinity,
-	});
+	// const { mutate: checkUser } = useMutation(()=>apis.checkUser(), { 
+	// 	onSuccess: (data) => {
+	// 		console.log(data, 'auth api 성공!!!');
+	// 	},
+	// 	onError: (data) => {
+	// 		console.log(data, 'auth api 실패');
+	// 	},
+	// 	staleTime: Infinity,
+	// });
   
-  useEffect(() => {
-		if(localStorage.getItem('accessToken')){
-			checkUser();
-		}else{
-			console.log('액세스 토큰 없음')
-		}
-	}, []);
+  // useEffect(() => {
+	// 	if(localStorage.getItem('accessToken')){
+	// 		checkUser();
+	// 	}else{
+	// 		console.log('액세스 토큰 없음')
+	// 	}
+	// }, []);
 
 	return (
     <>
@@ -527,6 +567,10 @@ const ReservationList = () => {
           ) : modalType.type === 'reviewCancel' ? (
             <div className="text_area">
               <p>리뷰 작성을 취소하시겠습니까? 취소할 경우 작성한 내용은 저장되지 않습니다.</p>
+            </div>
+          ) : modalType.type === 'noSitterInfo' ? (
+            <div className="text_area">
+              <p>등록된 돌보미 프로필이 없습니다.</p>
             </div>
           ) : (
             <div className="text_area">
