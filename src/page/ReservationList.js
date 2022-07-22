@@ -112,7 +112,7 @@ const ReservationList = () => {
   const {mutate: loadReview, data: reviewData} = useMutation(()=>apis.loadReview(idForReview.current), {
     onSuccess: (data) => {
       console.log(data, 'review loaded');
-      setModalType(modalContent.review);
+      setModalType(modalContent.reviewView);
       setReviewPageMode('clear');
       setModalDisplay(true);
     },
@@ -526,11 +526,11 @@ const ReservationList = () => {
             <CareDiary mode={diaryPageMode} setDiaryData={setDiaryData} diaryData={diaryData} diaryStatus={diaryStatus} modifyData={modifyData}/>
           ) : modalType.type === 'reviewCancel' ? (
             <div className="text_area">
-              <h3>리뷰 작성을 취소하시겠습니까? 취소할 경우 작성한 내용은 저장되지 않습니다.</h3>
+              <p>리뷰 작성을 취소하시겠습니까? 취소할 경우 작성한 내용은 저장되지 않습니다.</p>
             </div>
           ) : (
             <div className="text_area">
-              <h3>일지 작성을 취소하시겠습니까? 취소할 경우 작성한 내용은 저장되지 않습니다.</h3>
+              <p>일지 작성을 취소하시겠습니까? 취소할 경우 작성한 내용은 저장되지 않습니다.</p>
             </div>
           )}
         </Modal>

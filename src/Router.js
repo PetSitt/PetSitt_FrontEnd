@@ -22,9 +22,9 @@ import SitterProfileForm2 from './page/SitterProfileForm2';
 import SitterProfileForm3 from './page/SitterProfileForm3';
 import SitterProfileForm4 from './page/SitterProfileForm4';
 import Auth from './Auth';
-import Profile from './Profile';
 import ChatList from './page/ChatList';
 import ChatRoom from './page/ChatRoom';
+
  
 const Router = () => {
   return (
@@ -70,7 +70,6 @@ const Router = () => {
         element={<ReservationDetail />}
       ></Route>
       <Route path="/oauth/kakao/callback" element={<Auth />}></Route>
-      <Route path="/profile" element={<Profile />}></Route>
       <Route path="/chats" element={<ChatList />}></Route>
       <Route path="/chats/:id" element={<ChatRoom />}></Route>
       <Route path='*' element={<Home replace to='/' />} />

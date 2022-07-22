@@ -146,6 +146,34 @@ function Home() {
 			refetchOnMount: 'always'
 		},
 	);
+	const kakaoLoginApi = (dataToSend) => {
+    return apis.kakaoLogin(dataToSend);
+  }
+  const {mutate: kakaoLoginQuery} = useMutation((dataToSend)=>kakaoLoginApi(dataToSend), {
+    onSuccess: (data) => {
+      console.log(data, 'success');
+      localStorage.setItem('accessToken', data.data.token);
+    },
+    onError: (data) => {
+      console.log(data, 'failed');
+    },
+  })
+  const getKakaoProfile = async () => {
+    try {
+      // Kakao SDK API를 이용해 사용자 정보 획득
+      let data = await window.Kakao.API.request({
+        url: "/v2/user/me",
+      });
+      // 사용자 정보 변수에 저장
+      const dataToSend = {
+        userEmail: data.kakao_account.email,
+        userName: data.properties.nickname,
+      };
+      kakaoLoginQuery(dataToSend);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 	const getLocation = () => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
@@ -171,6 +199,9 @@ function Home() {
   };
 
 	useEffect(()=>{
+		if(localStorage.getItem('kakaoToken')){
+			getKakaoProfile();
+		}
 		getLocationButtonRef.current.click();
 		const fullHeight = window.innerHeight;
 		const filterHeight = filterAreaRef.current.clientHeight;
@@ -194,7 +225,7 @@ function Home() {
 	},[category])
 
 	useEffect(()=>{
-		if(sitters?.length > 0 && !sittersIsRefetching){
+		if(sitters?.length > 0){
 			// 가격에 쉼표 추가
 			for(let i=0; i<sitters.length; i++){
 				const priceString = String(sitters[i].servicePrice);
@@ -221,7 +252,6 @@ function Home() {
 		}
 		return()=>{
 			setSitters(null);
-			console.log('unmount')
 		}
 	}, []);
 
@@ -248,7 +278,7 @@ function Home() {
 					</div>
 					<div style={{position: 'relative', zIndex: 2}}>
 						<div className="inputBox date">
-							<input type="text" placeholder="날짜를 검색해주세요." value={datesTransformed.current?.length > 0 ? datesTransformed.current : ''} onClick={()=>{setDatepickerDisplay(true); setIframeDisplay(false)}} readOnly/>
+							<input type="text" placeholder="날짜를 선택해주세요." value={datesTransformed.current?.length > 0 ? datesTransformed.current : ''} onClick={()=>{setDatepickerDisplay(true); setIframeDisplay(false)}} readOnly/>
 							<i className="ic-calendar"></i>
 						</div>
 						<DatepickerWrap style={{display: datepickerDisplay === true ? 'block' : 'none', position: 'absolute', left: '-1px', right: '-1px', top: '100%'}}>
@@ -522,8 +552,14 @@ const FilterArea = styled.div`
 		border: 1px solid rgba(120,120,120,.4);
 	}
 	&.date{
-		max-width: 50%;
+		max-width: 51%;
 		margin-top: 16px;
+		input{
+			padding-left: 34px;
+		}
+		i{
+			width: 36px;
+		}
 	}
 }
 .rmdp-container {

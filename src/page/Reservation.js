@@ -1,4 +1,4 @@
-import React,{useState, useEffect} from 'react';
+import React,{useState, useEffect, useRef} from 'react';
 import styled from 'styled-components';
 import {useQuery, useQueryClient} from 'react-query';
 import { useNavigate, Navigate } from 'react-router-dom';
@@ -13,6 +13,7 @@ const Reservation = () => {
   const navigate = useNavigate();
   const infoData = localStorage.getItem('reservationInfo');
   const [info, setInfo] = useState(infoData && JSON.parse(infoData));
+  const weekdays = ['일', '월', '화', '수', '목', '금', '토', '일'];
   const [petsData, setPetsData] = useState();
   const [petsForService, setPetsForService] = useState([]);
   const [requestStatus, setRequestStatus] = useState(false);
@@ -20,17 +21,6 @@ const Reservation = () => {
   const [modalDisplay, setModalDisplay] = useState(false);
   const [modalType, setModalType] = useState();
   const [page, setPage] = useState('reservation');
-  const {data: petsQuery, isLoading, isSuccess, isPreviousData} = useQuery('petsData', apis.reservation, {
-    onSuccess: (data) => {
-      console.log(data, 'success');
-      setPetsData(data?.data.pets);
-    },
-    onError: (data) => {
-      console.log(data, 'error');
-    },
-    refetchOnMount: 'always',
-    staleTime: Infinity,
-  })
   const sendRequestApi = (data, sitterId) => {
     return apis.makeReservation(dataForRequest, info.sitterId)
   }
@@ -39,7 +29,6 @@ const Reservation = () => {
       if(data.data.msg === '예약 완료'){
         setRequestStatus(false);
         localStorage.removeItem('reservationInfo');
-        // navigate('/reservation/list');
         setPage('done');
       }
       console.log('예약 완료')
@@ -61,15 +50,33 @@ const Reservation = () => {
     await setDataForRequest(_data);
     setModalDisplay(false);
     setRequestStatus(true);
-  }
+  }  
   const modalContent = {
-    notSelected: {alert: true, text: '반려견을 선택해주세요.', confirmFn: ()=>setModalDisplay(false)},
-    confirm: {alert: false, text: '예약을 확정하시겠습니까?', confirmFn: confirmReservation, cancelFn: ()=>setModalDisplay(false)}
+    notSelected: {alert: true, title: '반려견 선택', text: '반려견을 선택해주세요.', confirmFn: ()=>setModalDisplay(false)},
+    confirm: {alert: false, title: '예약 확정', text: '예약을 확정하시겠습니까?', _confirm: '예약하기', _cancel: '취소', confirmFn: confirmReservation, cancelFn: ()=>setModalDisplay(false)},
+    noPets: {alert: false, title: '반려견 등록', text: '등록된 반려동물 프로필이 없습니다. 반려동물 프로필 등록 후 이용해주세요.', _confirm: '반려동물 프로필 등록하기', _cancel: '취소', confirmFn: ()=>navigate('/mypage/petprofile'), cancelFn: ()=>navigate(-1)}
   };
-
+  const {data: petsQuery} = useQuery('petsData', apis.reservation, {
+    onSuccess: (data) => {
+      console.log(data, 'success');
+      if(data.data.pets.length){
+        setPetsData(data?.data.pets);
+      }else{
+        // 여기
+        setModalType(modalContent.noPets);
+        setModalDisplay(true);
+      }
+      
+    },
+    onError: (data) => {
+      console.log(data, 'error');
+    },
+    refetchOnMount: 'always',
+    staleTime: Infinity,
+  })
 
   if(page !== 'reservation') return <Navigate to="/reservation/list"/>
-  if(isLoading || !info || !petsData) return '예약페이지 로딩중';
+  if(petsQuery.isLoading) return '예약페이지 로딩중';
   return (
     <>
       <ReservationPage>
@@ -113,31 +120,35 @@ const Reservation = () => {
             <h3>맡기는 반려동물</h3>
             <ul>
               {
-                petsData.map((v,i)=>{
-                  return (
-                    <PetItem key={`pet_${i}`}>
-                      <label>
-                        <input type="checkbox" onChange={(e)=>{
-                          if(e.target.checked){
-                            setPetsForService((prev)=>{
-                              const _data = prev ? [...prev, v._id] : [];
-                              return _data;
-                            })
-                          }else{
-                            setPetsForService((prev)=>{
-                              const _data = [...prev].filter(item=>item !== v._id);
-                              return _data;
-                            })
-                          }
-                        }}/>
-                        <div>
-                          <span style={{backgroundImage: `url(${v.petImage})`}}></span>
-                          <p>{v.petName} {`(${v.petType})`}</p>
-                        </div>
-                      </label>
-                    </PetItem>
-                  )
-                })
+                petsData?.length ? (
+                  petsData.map((v,i)=>{
+                    return (
+                      <PetItem key={`pet_${i}`}>
+                        <label>
+                          <input type="checkbox" onChange={(e)=>{
+                            if(e.target.checked){
+                              setPetsForService((prev)=>{
+                                const _data = prev ? [...prev, v._id] : [];
+                                return _data;
+                              })
+                            }else{
+                              setPetsForService((prev)=>{
+                                const _data = [...prev].filter(item=>item !== v._id);
+                                return _data;
+                              })
+                            }
+                          }}/>
+                          <div>
+                            <span style={{backgroundImage: `url(${v.petImage})`}}></span>
+                            <p>{v.petName} {`(${v.petType})`}</p>
+                          </div>
+                        </label>
+                      </PetItem>
+                    )
+                  })
+                ) : (
+                  <p>등록된 펫 정보가 없습니다.</p>
+                )
               }
             </ul>
           </section>
@@ -152,17 +163,11 @@ const Reservation = () => {
             </div>
             <div>
               <StyledButton
-                _onClick={() => console.log('')}
-                _bgColor={'rgba(252, 146, 21, 0.1)'}
-                color={'#fc9215'}
-                _title="문의하기"
-                _margin="0"
-              />
-              <StyledButton
                 _onClick={()=>{
                     if(petsForService.length <= 0){
                       setModalType(modalContent.notSelected);
                     }else{
+                      modalContent.confirm.text = `${info.date.map((v,i)=> `${v.split('/').join('.')}(${weekdays[new Date(v).getDay()]})`).join(', ')}예약을 확정하시겠습니까?`
                       setModalType(modalContent.confirm);
                     }
                     setModalDisplay(true);
@@ -177,9 +182,10 @@ const Reservation = () => {
       </ReservationPage>
       {
         modalType && (
-          <Modal _alert={modalType?.alert} _display={modalDisplay} confirmOnClick={modalType?.confirmFn} cancelOnclick={modalType?.cancelFn}>
+          <Modal _alert={modalType?.alert} _display={modalDisplay} confirmOnClick={modalType?.confirmFn} cancelOnclick={modalType?.cancelFn} _cancel={modalType?._cancel} _confirm={modalType?._confirm}>
             <div className="text_area">
-              <h3>{modalType?.text}</h3>
+              <h3>{modalType?.title}</h3>
+              <p>{modalType?.text}</p>
             </div>
           </Modal>
         )
