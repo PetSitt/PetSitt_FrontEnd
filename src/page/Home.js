@@ -226,11 +226,11 @@ function Home() {
 	},[sitters, sittersIsRefetching])
 
 	useEffect(() => {
-		if(localStorage.getItem('accessToken')){
-			checkUser();
-		}else{
-			console.log('액세스 토큰 없음')
-		}
+		// if(localStorage.getItem('accessToken')){
+		// 	checkUser();
+		// }else{
+		// 	console.log('액세스 토큰 없음')
+		// }
 		return()=>{
 			setSitters(null);
 		}
