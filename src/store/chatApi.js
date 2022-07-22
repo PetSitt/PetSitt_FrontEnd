@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const jsonApi = axios.create({
-	baseURL: process.env.REACT_APP_SOCKET
+	baseURL: process.env.REACT_APP_SERVER
 });
 
 jsonApi.interceptors.request.use((config) => {

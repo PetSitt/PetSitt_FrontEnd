@@ -1,9 +1,16 @@
 import React, { useEffect, useState } from "react";
+import { useQuery } from "react-query";
 import ScrollToBottom from "react-scroll-to-bottom";
+import { chatApis } from "../store/chatApi";
 
 function ChatRoom({ socket, username, room }) {
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState([]);
+
+  const { isLoading: dataLoading, data: chatsRoom } = useQuery(["chatsRoom", room], chatApis.chatRoomGet(room), {
+    staleTime: Infinity,
+    enabled: false
+  });
 
   const sendMessage = async () => {
     if (currentMessage !== "") {

@@ -4,10 +4,11 @@ import jwt_decode from "jwt-decode"
 import { Link, useLocation } from 'react-router-dom';
 
 const Menu = ({popup, setPopup, socket}) => {
+
   const location = useLocation();
   const [activeMenu, setActiveMenu] = useState();
-  useEffect(() => { 
-    if(localStorage.getItem('accessToken')){
+  useEffect(() => {
+  if(localStorage.getItem('accessToken') && socket){
       const {userEmail} = jwt_decode(localStorage.getItem('accessToken'));
       socket.emit("join_my_room", userEmail);
     }
