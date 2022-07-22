@@ -12,17 +12,19 @@ function formatDate(value) {
 function ChatList({popup, socket, setPopup}) {
   const [showChatRoom, setShowChatRoom] = useState(false);
   const [idRoom, setIdRoom] = useState(null);
+  const [username, setUsername] = useState(null);
 
   const { isLoading: dataLoading, data: chats, refetch } = useQuery("chatsList", chatApis.chatListGet, {
     staleTime: Infinity,
     enabled: true
   });
 
-  const joinRoom = (room) => {
+  const joinRoom = (userName, room) => {
     socket.emit("join_room", room);
-    setIdRoom(room)
+    setUsername(userName);
+    setIdRoom(room);
     setShowChatRoom(true);
-    refetch()
+    refetch();
   };
 
   return (
@@ -44,7 +46,7 @@ function ChatList({popup, socket, setPopup}) {
               {chats.data.rooms.map((el, idx) => {
                 return (
                   <div key={el.roomId} className="items">
-                    <button onClick={() => {joinRoom(el.roomId)}}>
+                    <button onClick={() => {joinRoom(el.userName, el.roomId)}}>
                       <div className="imgurl_inner">
                         <span className="bg_img" style={{backgroundImage: `url(${el.imageUrl})`}}></span>
                       </div>
@@ -58,7 +60,7 @@ function ChatList({popup, socket, setPopup}) {
               })}
             </div>
             ) : (
-              <ChatRoom socket={socket} room={idRoom}/>
+              <ChatRoom socket={socket} username={username} room={idRoom}/>
             )}
           </div>
         </div>
