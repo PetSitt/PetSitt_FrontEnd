@@ -54,7 +54,6 @@ function Home() {
 		() => getSittersList(queriesData, category),
 		{
 			onSuccess: (data) => {
-				console.log('sitter_list', data)
 				setSearched(false);
 				setSitters(data.data.sitters);
 			},
@@ -81,7 +80,6 @@ function Home() {
 		}
 	}
 	useEffect(()=>{
-		console.log(dates, addressInfo)
 		if(dates.length && addressInfo){
 			setQueriesData({searchDate: dates, region_2depth_name: addressInfo.region_2depth_name, x: addressInfo.x, y: addressInfo.y})
 		}
@@ -91,7 +89,7 @@ function Home() {
 	// 로그인 여부 확인하는 api
 	const { mutate: checkUser } = useMutation(()=>apis.checkUser(), { 
 		onSuccess: (data) => {
-			console.log(data, 'auth api 성공!!!');
+			console.log(data, 'auth api 성공');
 			localStorage.setItem('userName', data.data.user.userName);
 			localStorage.setItem('userEmail', data.data.user.userEmail);
 		},
@@ -111,7 +109,6 @@ function Home() {
 		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
 		{
 			onSuccess: (data) => {
-				console.log('sitter_default', data)
 				queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(false);
 				setSitters(data.data.sitter);
@@ -130,11 +127,10 @@ function Home() {
   }
   const {mutate: kakaoLoginQuery} = useMutation((dataToSend)=>kakaoLoginApi(dataToSend), {
     onSuccess: (data) => {
-      console.log(data, 'success');
       localStorage.setItem('accessToken', data.data.token);
     },
     onError: (data) => {
-      console.log(data, 'failed');
+      console.log(data, 'kakao login failed');
     },
   })
   const getKakaoProfile = async () => {
@@ -163,6 +159,7 @@ function Home() {
 					setDefaultSearch(true);
         },
         (error) => {
+					setModalDisplay(true);
 					console.log(error)
           console.error(error);
         },
@@ -173,7 +170,7 @@ function Home() {
         }
       );
     } else {
-      alert('GPS를 허용해주세요');
+			setModalDisplay(true);
     }
   };
 
@@ -420,7 +417,8 @@ function Home() {
 		</div>
 		<Modal _alert={true} _display={modalDisplay} confirmOnClick={()=>setModalDisplay(false)}>
 			<div className="text_area">
-				<p>장소와 날짜를 모두 선택해주세요.</p>
+				<p>GPS를 허용해주세요.</p>
+				<p>GPS를 허용하지 않을 경우, 검색을 통해 돌보미 리스트를 확인해야합니다.</p>
 			</div>
 		</Modal>
 		</>
