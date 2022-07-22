@@ -43,10 +43,9 @@ const ReservationList = () => {
   });
   const [diarySave, setDiarySave] = useState(false);
 	const {
-		data: reservatioinList,
+		mutate: reservatioinList,
 		isFetching,
-		refetch,
-	} = useQuery("reservationQuery", () => apis.reservationList(selectedTab), {
+	} = useMutation(() => apis.reservationList(selectedTab), {
 		onSuccess: (data) => {
 			setProceedings(data.data.proceedings);
 			setPastReservation(data.data.pasts);
@@ -59,19 +58,20 @@ const ReservationList = () => {
 		onError: (data) => {
       console.log(data.response.status, selectedTab)
       if(selectedTab === 'sitter' && data.response.status === 402){
-        alert('등록된 일지가 없습니다.');
-        return;
-      }
+        console.log('? 402')
+        // navigate(0);
 
-      if(data.response.status === 402 && selectedTab === 'sitter'){
         setModalType(modalContent.noSitterInfo);
         setModalDisplay(true);
       }
 		},
+    onSettled: (data) => {
+      console.log('settled', data)
+    },
 		refetchOnMount: "always",
 		staleTime: Infinity,
 	});
-
+  
 
   // const {
   //   mutate: getRervationList,
@@ -123,7 +123,7 @@ const ReservationList = () => {
           reviewInfo: null,
         }
       };
-      refetch();
+      reservatioinList();
     },
     onError: (data) => {
       console.log(data, 'review registration failed');
@@ -182,7 +182,7 @@ const ReservationList = () => {
       setDiaryData(null);
       setDiaryStatus('clear');
       reservationIdForDiary.current = null;
-      refetch();
+      reservatioinList();
     },
     onError: (data) => {
       console.log(data, 'diary saving failed');
@@ -300,10 +300,10 @@ const ReservationList = () => {
     diary: {type: 'diary', _alert: false, _confirm: '일지 등록', _cancel: '등록 취소', confirmFn: confirmWritingDiary, cancelFn: cancelWritingDiary},
     diaryView: {type: 'diary', _alert: true, confirmFn: ()=>{setModalDisplay(false); setModalType(null); diaryPageMode.current = null}},
     diaryCancel: {type: 'diaryCancel', _alert: false, _confirm: '일지 작성 취소', _cancel: '일지 작성', confirmFn: closeDiaryPage, cancelFn: ()=>{setDiaryStatus('get'); setModalType(modalContent.diary)}},
-    noSitterInfo: {type: 'noSitterInfo', _alert: false, _confirm: '돌보미 프로필 등록', _cancel: '취소', confirmFn: ()=>navigate('/mypage'), cancelFn: ()=>navigate('/reservation/list')},
+    noSitterInfo: {type: 'noSitterInfo', _alert: false, _confirm: '돌보미 프로필 등록', _cancel: '취소', confirmFn: ()=>navigate('/mypage/sitterprofile'), cancelFn: ()=>navigate(0)},
   };
 	useEffect(() => {
-		refetch();
+		reservatioinList();
 		queryClient.invalidateQueries("reservationQuery");
 	}, [selectedTab]);
 

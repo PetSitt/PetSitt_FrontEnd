@@ -32,7 +32,8 @@ const Detail = () => {
   const errorMessages = {
     'notLogin': '로그인 후 예약이 가능합니다.',
     'noDate': '날짜를 선택해주세요',
-    'noService': '서비스를 선택해주세요.'
+    'noService': '서비스를 선택해주세요.',
+    'noPets': '등록된 반려견 정보가 없습니다.',
   }
   const [errorMessage, setErrorMessage] = useState(null);
   const reservationRef = useRef();
@@ -46,6 +47,7 @@ const Detail = () => {
   const [scrollY, setScrollY] = useState();
   const [scrollDirection, setScrollDirection] = useState();
   const datesTransformed = useRef([]);
+  const hasPetInfo = useRef(null);
   const [floatingTabs, setFloatingTabs] = useState([
     {text: '서비스 예약하기', isActive: true, visibility: null, function: ()=>reservationRef.current.scrollIntoView({behavior: 'smooth'})},
     {text: '케어 가능한 반려견 사이즈', isActive: false, visibility: detail?.sitter.careSize.length > 0, function: ()=>careSizeRef.current.scrollIntoView({behavior: 'smooth'})},
@@ -75,15 +77,12 @@ const Detail = () => {
     })
     setUnavailable(datesArray);
   }
-  const getUserDetailApi = () => {
-    return apis.getUserDetail(sitterId);
-  }
   const {
 		isLoading: detailIsLoading,
 		isSuccess,
 		isFetched,
 		data: detailData,
-	} = useQuery("detail_data", ()=>getUserDetailApi(sitterId), {
+	} = useQuery("detail_data", () => apis.getUserDetail(sitterId), {
 		onSuccess: (data) => {
 			console.log(data.data, "data loaded");
       const _newPrice = data.data.sitter.servicePrice.toString().replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
@@ -106,7 +105,16 @@ const Detail = () => {
       console.log('문의하기 api failed', data);
     }
   })
-  
+  const {data: checkRegisteredPet, refetch: petInfoRefetch} = useQuery('getPetInfoQuery', ()=>apis.getPetInfo(), {
+    onSuccess: (data) => {
+      if(data.data.check){
+        hasPetInfo.current = true;
+      }else{
+        hasPetInfo.current = false;
+      }
+    },
+    enabled: false,
+  })
 	const checkSelectArea = (e) => {
 		if (!e.target.closest(".select_area") && !e.target.closest('.select_detail')) {
 			setSelectBoxToggle({ type: "", status: false });
@@ -163,7 +171,12 @@ const Detail = () => {
   },[detail, month, selectBoxToggle]);
 
 	useEffect(() => {
+    // 날짜/서비스 선택하기 모달 활성화됐을 때 모달 외 배경 클릭하면 꺼지도록 이벤트 추가 
 		window.addEventListener("click", checkSelectArea);
+    // 로그인한 상태일 경우 등록된 반려견 정보 있는지 확인
+    if(localStorage.getItem('accessToken') && localStorage.getItem('userName')){
+      petInfoRefetch();
+    }
 		return()=>{
       window.removeEventListener("click", checkSelectArea);
       queryClient.invalidateQueries('detail_data');
@@ -527,11 +540,21 @@ const Detail = () => {
             />
             <StyledButton
               _onClick={()=>{
-                if(localStorage.getItem('accessToken')){
-                  requestReservation();
-                }else{
+                if(!localStorage.getItem('accessToken') || !localStorage.getItem('userName')){
+                  // 로그인하지 않았을 경우 로그인 요청하는 Modal 노출
                   setErrorMessage(errorMessages.notLogin);
                   setModalDisplay(true);
+                }else{
+                  console.log('?')
+                  // 등록된 반려견 정보가 있는지 확인
+                  if(hasPetInfo.current){
+                    console.log('1')
+                    requestReservation();
+                  }else{
+                    console.log('2')
+                    setErrorMessage(errorMessages.noPets);
+                    setModalDisplay(true);
+                  }
                 }
               }}
               _title="예약하기"
@@ -547,10 +570,16 @@ const Detail = () => {
               <p>{errorMessage}</p>
             </div>
           </Modal>
-        )
-      }
-      {
-        (modalDisplay && errorMessage !== errorMessages.notLogin) && (
+        )}
+        {(modalDisplay && errorMessage === errorMessages.noPets) && (
+          <Modal _display={modalDisplay} _alert={false} _confirm={'반려견 프로필 등록하기'} _cancel={'취소'} cancelOnclick={()=>{setErrorMessage(null); setModalDisplay(false)}} confirmOnClick={()=>{navigate('/mypage/petprofile')}}>
+            <div className="text_area">
+              <p>등록된 반려견 프로필이 없습니다.</p>
+              <p>반려견 프로필 등록 후 서비스를 신청해주세요.</p>
+            </div>
+          </Modal>
+        )}
+        {(modalDisplay && errorMessage !== errorMessages.notLogin && errorMessage !== errorMessages.noPets ) && (
           <Modal _display={modalDisplay} _alert={true} confirmOnClick={()=>{setErrorMessage(null); setModalDisplay(false); selectAreaRef.current.classList.add('isActive');}}>
             <div className="text_area">
               <p>{errorMessage}</p>

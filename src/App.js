@@ -8,7 +8,7 @@ import Menu from './components/Menu';
 import Chat from './page/Chat';
 
 function App() {
-  const socket = io.connect("http://3.39.230.232");
+  const socket = io.connect("https://kimguen.com");
   const [popup, setPopup] = useState(false);
   const location = useLocation();
   const [detailPageClass, sestDetailPageClass] = useState();

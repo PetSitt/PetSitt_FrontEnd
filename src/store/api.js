@@ -145,6 +145,7 @@ export const apis = {
 	// detail
 	getUserDetail: (sitterId) => detailApi.get(`/details/${sitterId}`),
 	getReviews: (sitterId, reviewId) => detailApi.post(`/details/reviews/${sitterId}`, reviewId),
+	getPetInfo: () => jsonApi.get('/informations/petcheck'),
 
 	// reservation
 	reservation: () => jsonApi.get('/reservations'),
