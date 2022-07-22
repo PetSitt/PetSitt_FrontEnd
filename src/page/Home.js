@@ -21,21 +21,15 @@ function Home() {
 	const queryClient = useQueryClient();
 	const filterAreaRef = useRef();
 	const [date, setDate] = useState(new Date());
-	const [dates, setDates] = useState(new Date());
+	const [dates, setDates] = useState([]);
 	const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
   const months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"];
 	const [addressInfo, setAddressInfo] = useState();
 	const [address, setAddress] = useState();
 	const [iframeDisplay, setIframeDisplay] = useState(false);
-	const categories = [
-		{ walk: "산책" },
-		{ wash: "목욕, 모발 관리" },
-		{ prac: "훈련" },
-		{ dayCare: "데이 케어" },
-		{ boarding: "1박 케어" },
-	];
+	const categories = ['산책', '훈련', '데이케어', '1박케어', '목욕 및 모발관리'];
   const [queriesData, setQueriesData] = useState({});
-	const [category, setCategory] = useState(categories);
+	const [category, setCategory] = useState([]);
 	const [searched, setSearched] = useState(false);
 	const [sitters, setSitters] = useState(null);
 	const [currentPosition, setCurrentPosition] = useState();
@@ -53,14 +47,7 @@ function Home() {
 	const showTooltip = useRef(0);
 
 	const getSittersList = (queriesData, category) => {
-		const _queriesData = {...queriesData};
-		if(category.length >= 1 && category.length < 5){
-			for(let i=0; i<category.length; i++){
-				const cate_key = Object.keys(category[i])[0];
-				const cate_value = Object.values(category[i])[0];
-				_queriesData[cate_key] = cate_value;
-			}
-		}
+		const _queriesData = {...queriesData, category: category.length ? category : []};
 		console.log('검색 api t실행', _queriesData, category)
 		return apis.getSittersList(_queriesData);
 	};
@@ -96,13 +83,11 @@ function Home() {
 			}
 		}
 	}
-
-	console.log(dates?.length, addressInfo,'dates, addressInfo')
 	useEffect(()=>{
-		if(dates?.length && addressInfo){
+		console.log(dates, addressInfo)
+		if(dates.length && addressInfo){
 			setQueriesData({searchDate: dates, region_2depth_name: addressInfo.region_2depth_name, x: addressInfo.x, y: addressInfo.y})
 		}
-		setSearched(true);
 		showTooltip.current++;
 	}, [dates, addressInfo])
 
@@ -123,15 +108,8 @@ function Home() {
 	});
 	
 	const getListApi = (currentPosition, category) =>{
-		const categoryData = {}
-		if(category.length > 0 && category.length < 5){
-			for(let i=0; i<category.length; i++){
-				const cate_key = Object.keys(category[i])[0];
-				const cate_value = Object.values(category[i])[0];
-				categoryData[cate_key] = cate_value;
-			}
-		}
-		return apis.getSittersDefault({...currentPosition, ...categoryData});
+		console.log({...currentPosition, category})
+		return apis.getSittersDefault({...currentPosition, category});
 	}
 	const {data: sittersBeforeSearch, isLoading: sittersIsLoading, isFetched: sittersIsFetched, refetch: refetchSitters, isRefetching: sittersIsRefetching} = useQuery(
 		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
@@ -213,19 +191,20 @@ function Home() {
 		setMapHeight(fullHeight - filterHeight - 74);
 		showTooltip.current++;
 	},[])
-	useEffect(()=>{
-		if(categoryClicked.current){
-			if(addressInfo &&  dates?.length > 0){
-				console.log('검색 후 categorizing');
-				refetchSittersAfter();
-			}else{
-				console.log('검색 전 categorizing');
-				refetchSitters();
-			} 
-		}
-		categoryClicked.current = false;
-		
-	},[category])
+
+	// useEffect(()=>{
+	// 	if(categoryClicked.current){
+	// 		if(addressInfo &&  dates?.length > 0){
+	// 			console.log('검색 후 categorizing');
+	// 			refetchSittersAfter();
+	// 		}else{
+	// 			console.log('검색 전 categorizing');
+	// 			refetchSitters();
+	// 		} 
+	// 	}
+	// 	categoryClicked.current = false;
+	// },[category])
+	console.log(category, 'category')
 
 	useEffect(()=>{
 		if(sitters?.length > 0){
@@ -256,6 +235,8 @@ function Home() {
 			setSitters(null);
 		}
 	}, []);
+
+	console.log(category)
 
 	if (sittersFilteredIsLoading) return null;
 	return (
@@ -302,7 +283,7 @@ function Home() {
 								<StyledButton _title="날짜 적용" _margin="0" _onClick={()=>{setDatepickerDisplay(false); setDatesFormat()}}/>
 							</DatepickerWrap>
 						</div>
-						<Tooltip className={showTooltip.current === 0 ? 'aniClass' : ''}>장소와 날짜 모두 선택해주세요.</Tooltip>
+						{/* <Tooltip className={showTooltip.current === 0 ? 'aniClass' : ''}>장소와 날짜 모두 선택해주세요.</Tooltip> */}
 					</div>
 					<Categories>
 						<ul>
@@ -318,21 +299,21 @@ function Home() {
 													console.log('?? checked')
 													setCategory((prev)=>{
 														const new_category = [...prev];
-														return new_category.filter(item=>{
-															return Object.values(item)[0] !== Object.values(v)[0]
-														})
+														new_category.push(v);
+														return new_category;
 													})
 												}else{
 													console.log('?? not checked')
 													setCategory((prev)=>{
 														const new_category = [...prev];
-														new_category.push(v);
-														return new_category;
+														return new_category.filter(item=>{
+															return item !== v;
+														})
 													})
 												}
 											}
 										}}/>
-										<span>{Object.values(v)}</span>
+										<span>{v}</span>
 									</label>
 								</li>
 							);
