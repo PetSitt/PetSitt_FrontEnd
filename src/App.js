@@ -5,29 +5,56 @@ import styled from "styled-components";
 import Router from './Router';
 import "./assets/font/index.css"
 import Menu from './components/Menu';
-import Chat from './page/Chat';
+import ChatList from './page/ChatList';
 
+const INITIAL_VALUES = {
+  popup: false,
+  socket: null,
+  id: null,
+  username: null
+}
 function App() {
   const socket = io.connect("https://kimguen.com");
   const [popup, setPopup] = useState(false);
   const location = useLocation();
   const [detailPageClass, sestDetailPageClass] = useState();
-  useEffect(()=>{
+  const [value, setValues] = useState(INITIAL_VALUES);
+  
+ useEffect(()=>{
     // 디테일 페이지일 경우 Y축 scroll 대상 변경을 위한 클래스 세팅
     if(location.pathname.split('/')[1] === 'detail') sestDetailPageClass('isDetailPage');
     else sestDetailPageClass('');
   }, [location.pathname]);
-  
+
+  useEffect(() => {
+    setValues((prev) => {
+      return {
+        ...prev,
+        socket: io.connect(process.env.REACT_APP_SERVER, {transports: ['websocket'], upgrade: false})
+      }
+    })
+
+    return () => {
+      value.socket.disconnect();
+      setValues((prev) => {
+        return {
+          ...prev,
+          socket: null
+        }
+      });
+    }
+  },[]);
   return (
     <AppWrapper className="App">
       <div className={`AppInner ${detailPageClass}`}>
         <Suspense fallback={<div>로딩중!!</div>}>
           <Router />
         </Suspense>
-        <Menu popup={popup} setPopup={setPopup} socket={socket}/>
-        {popup && ( 
+        <Menu popup={value.popup} setPopup={setValues} socket={value.socket}/>
+        {console.log(value.socket)}
+        {value.popup && (
           <Suspense>
-            <Chat popup={popup} setPopup={setPopup}/>
+            <ChatList popup={value.popup} socket={value.socket} setPopup={setValues} />
           </Suspense>
         )}
       </div>
