@@ -11,6 +11,7 @@ const ReservationDetail = () => {
   const navigate = useNavigate();
 	const reservationId = useParams().id;
 	const type = useParams().type;
+	console.log(reservationId)
 	const [data, setData] = useState();
   const [modalDisplay, setModalDisplay] = useState(false);
 	const reservatioinDetail = useQuery(

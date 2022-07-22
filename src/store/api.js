@@ -7,6 +7,10 @@ const jsonApi = axios.create({
 	baseURL: process.env.REACT_APP_SERVER
 });
 
+const reserveApi = axios.create({
+	baseURL: process.env.REACT_APP_RESERVE
+});
+
 const formDataApi = axios.create({
 	baseURL: process.env.REACT_APP_SERVER
 });
@@ -35,6 +39,16 @@ pwfindApi.interceptors.request.use((config) => {
 }, (err) => {
 	return Promise.reject(err);
 })
+
+reserveApi.interceptors.request.use((config) => {
+	config.headers['Content-type'] = 'application/json; charset=UTF-8';
+	config.headers['Accept'] = 'application/json;';
+	config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
+	return config;
+}, (err) => {
+	return Promise.reject(err);
+})
+
 
 jsonApi.interceptors.request.use((config)=> {
 	config.headers['Content-type'] = 'application/json; charset=UTF-8';
@@ -131,10 +145,9 @@ export const apis = {
 	petprofilePost: (data) => formDataApi.post('/mypage/petprofile', data),
 	petprofilePatch: ({id, data}) => formDataApi.patch(`/mypage/petprofile/${id}`, data),
   petprofileDelete: (id) => jsonApi.delete(`/mypage/petprofile/${id}`),
-	reservation: () => jsonApi.get('/reservations'),
 	sitterprofileGet: () => jsonApi.get('/mypage/sitterprofile'),
 	sitterprofilePost: (data) => formDataApi.post('/mypage/sitterprofile', data),
-	sitterprofilePatch: (data) => formDataApi.patch('/mypage/sitterprofile', data),
+	sitterprofilePatch: (data) => formDataApi.patch('/mypage/sitterprofile', data, formdataConfig),
 	sitterprofileDelete: () => jsonApi.delete('/mypage/sitterprofile'),
 	inquireToSitter: (sitterId) => jsonApi.post(`/chats/${sitterId}`),
 

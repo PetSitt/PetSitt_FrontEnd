@@ -9,6 +9,7 @@ import NavBox from '../elements/NavBox';
 import StyledButton from '../elements/StyledButton';
 import StyledContainer from '../elements/StyledContainer';
 import { handleChange } from '../shared/common';
+import axios from 'axios';
 
 const INITIAL_VALUES = {
   sitterName: '',
@@ -46,6 +47,19 @@ const SitterProfileForm1 = () => {
       }
       fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
     }
+
+    const searchTxt = data.address;
+    const config = { headers: {Authorization : `KakaoAK ${process.env.REACT_APP_KAKAO_RESTAPI}`}}; //인증키 정보
+    const url = 'https://dapi.kakao.com/v2/local/search/address.json?query='+searchTxt; // url 및 키워드 담아 보냄
+    axios.get(url, config).then(function(result) { // API호출
+      if(result.data !== undefined || result.data !== null){
+				if(result.data.documents[0].x && result.data.documents[0].y) {
+          handleChange('x', result.data.documents[0].x, setValues);
+          handleChange('y', result.data.documents[0].y, setValues);
+				}
+      }
+    })
+
     handleChange('address', fullAddress, setValues);
     handleChange('zoneCode', zonecode, setValues);
     handleChange('region_1depth_name', sido, setValues);

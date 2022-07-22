@@ -56,11 +56,8 @@ const ReservationList = () => {
       }
 		},
 		onError: (data) => {
-      console.log(data.response.status, selectedTab)
+      console.log(data, selectedTab)
       if(selectedTab === 'sitter' && data.response.status === 402){
-        console.log('? 402')
-        // navigate(0);
-
         setModalType(modalContent.noSitterInfo);
         setModalDisplay(true);
       }
@@ -72,38 +69,6 @@ const ReservationList = () => {
 		staleTime: Infinity,
 	});
   
-
-  // const {
-  //   mutate: getRervationList,
-	// 	data: reservatioinList,
-	// 	isFetching,
-	// } = useMutation(() => apis.reservationList(selectedTab), {
-	// 	onSuccess: (data) => {
-	// 		setProceedings(data.data.proceedings);
-	// 		setPastReservation(data.data.pasts);
-  //     if(data.data.pasts.length < 3){
-  //       setButtonHide(true);
-  //     }else{
-  //       setButtonHide(false);
-  //     }
-	// 	},
-	// 	onError: (data) => {
-  //     console.log(data.response.status, selectedTab)
-  //     if(selectedTab === 'sitter' && data.response.status === 402){
-  //       alert('등록된 일지가 없습니다.');
-  //       return;
-  //     }
-
-  //     // if(data.response.status === 402 && selectedTab === 'sitter'){
-  //     //   setModalType(modalContent.noSitterInfo);
-  //     //   setModalDisplay(true);
-  //     // }
-	// 	},
-	// 	refetchOnMount: "always",
-	// 	staleTime: Infinity,
-	// });
-
-
   const registerReviewApi = (reservationId, data) => {
     console.log(reservationId, data)
     return apis.registerReview(reservationId, data);
