@@ -102,6 +102,8 @@ authApi.interceptors.response.use(
 			// // 401로 요청 실패했던 요청 새로운 accessToken으로 재요청
 			return axios(originalRequest);
     }
+		localStorage.removeItem('accessToken');
+		if(localStorage.getItem('kakaoToken')) localStorage.removeItem('kakaoToken');
     return Promise.reject(error);
   }
 );
@@ -143,6 +145,7 @@ export const apis = {
 	// detail
 	getUserDetail: (sitterId) => detailApi.get(`/details/${sitterId}`),
 	getReviews: (sitterId, reviewId) => detailApi.post(`/details/reviews/${sitterId}`, reviewId),
+	getPetInfo: () => jsonApi.get('/informations/petcheck'),
 
 	// reservation
 	reservation: () => jsonApi.get('/reservations'),

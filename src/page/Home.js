@@ -244,9 +244,8 @@ function Home() {
 	},[sitters, sittersIsRefetching])
 
 	useEffect(() => {
-		console.log('loaded', sitters)
 		if(localStorage.getItem('accessToken')){
-			// checkUser();
+			checkUser();
 		}else{
 			console.log('액세스 토큰 없음')
 		}

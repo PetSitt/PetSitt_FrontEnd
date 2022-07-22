@@ -21,6 +21,7 @@ const Reservation = () => {
   const [modalDisplay, setModalDisplay] = useState(false);
   const [modalType, setModalType] = useState();
   const [page, setPage] = useState('reservation');
+
   const sendRequestApi = (data, sitterId) => {
     return apis.makeReservation(dataForRequest, info.sitterId)
   }
@@ -54,19 +55,13 @@ const Reservation = () => {
   const modalContent = {
     notSelected: {alert: true, title: '반려견 선택', text: '반려견을 선택해주세요.', confirmFn: ()=>setModalDisplay(false)},
     confirm: {alert: false, title: '예약 확정', text: '예약을 확정하시겠습니까?', _confirm: '예약하기', _cancel: '취소', confirmFn: confirmReservation, cancelFn: ()=>setModalDisplay(false)},
-    noPets: {alert: false, title: '반려견 등록', text: '등록된 반려동물 프로필이 없습니다. 반려동물 프로필 등록 후 이용해주세요.', _confirm: '반려동물 프로필 등록하기', _cancel: '취소', confirmFn: ()=>navigate('/mypage/petprofile'), cancelFn: ()=>navigate(-1)}
   };
   const {data: petsQuery} = useQuery('petsData', apis.reservation, {
     onSuccess: (data) => {
       console.log(data, 'success');
       if(data.data.pets.length){
-        setPetsData(data?.data.pets);
-      }else{
-        // 여기
-        setModalType(modalContent.noPets);
-        setModalDisplay(true);
+        setPetsData(data.data.pets);
       }
-      
     },
     onError: (data) => {
       console.log(data, 'error');

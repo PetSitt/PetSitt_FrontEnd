@@ -24,12 +24,12 @@ const Login = () => {
     return apis.login(data);
   };
   const { mutate: loginQuery } = useMutation(login, {
-    onSuccess: (data) => {      
-      // console.log(data);
-      localStorage.setItem('accessToken', data.data.accessToken);
-      cookies.set('refreshToken', data.data.refreshToken);
-      sessionStorage.removeItem('foundId');
-      navigate('/');
+    onSuccess: async (data) => {      
+      await localStorage.setItem('accessToken', data.data.accessToken);
+      await cookies.set('refreshToken', data.data.refreshToken);
+      await sessionStorage.removeItem('foundId');
+      console.log(data, localStorage.getItem('accessToken'));
+      // navigate('/');
     },
     onError: (data) => {
       // console.error(data);
@@ -48,12 +48,12 @@ const Login = () => {
       cookies.remove('refreshToken');
     } else {
       // 로그인된 상태에서 로그인 페이지 접근했을 경우 로그아웃처리
-      localStorage.removeItem('accessToken');
-      cookies.remove('refreshToken');
-      sessionStorage.removeItem('foundId');
-      localStorage.removeItem('userName');
-			localStorage.removeItem('userEmail');
-      localStorage.removeItem('kakaoToken');
+      // localStorage.removeItem('accessToken');
+      // cookies.remove('refreshToken');
+      // sessionStorage.removeItem('foundId');
+      // localStorage.removeItem('userName');
+			// localStorage.removeItem('userEmail');
+      // localStorage.removeItem('kakaoToken');
     }
   }, [cookies]);
 
