@@ -14,8 +14,6 @@ const INITIAL_VALUES = {
   username: null
 }
 function App() {
-  const socket = io.connect("https://kimguen.com");
-  const [popup, setPopup] = useState(false);
   const location = useLocation();
   const [detailPageClass, sestDetailPageClass] = useState();
   const [value, setValues] = useState(INITIAL_VALUES);
