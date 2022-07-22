@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Cookies } from "react-cookie";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { DateObject,Calendar } from "react-multi-date-picker";
-import styled from 'styled-components';
+import styled, {keyframes} from 'styled-components';
 import { apis } from "../store/api";
 
 import Modal from "../elements/Modal";
@@ -21,21 +21,15 @@ function Home() {
 	const queryClient = useQueryClient();
 	const filterAreaRef = useRef();
 	const [date, setDate] = useState(new Date());
-	const [dates, setDates] = useState(new Date());
+	const [dates, setDates] = useState([]);
 	const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
   const months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"];
 	const [addressInfo, setAddressInfo] = useState();
 	const [address, setAddress] = useState();
 	const [iframeDisplay, setIframeDisplay] = useState(false);
-	const categories = [
-		{ walk: "산책" },
-		{ wash: "목욕, 모발 관리" },
-		{ prac: "훈련" },
-		{ dayCare: "데이 케어" },
-		{ boarding: "1박 케어" },
-	];
+	const categories = ['산책', '훈련', '데이케어', '1박케어', '목욕 및 모발관리'];
   const [queriesData, setQueriesData] = useState({});
-	const [category, setCategory] = useState(categories);
+	const [category, setCategory] = useState([]);
 	const [searched, setSearched] = useState(false);
 	const [sitters, setSitters] = useState(null);
 	const [currentPosition, setCurrentPosition] = useState();
@@ -50,16 +44,10 @@ function Home() {
 	const datesTransformed= useRef(null);
 	const [sitterCardShow, setSitterCardShow] = useState({display: false, index: null});
 	const categoryClicked = useRef(false);
+	const showTooltip = useRef(0);
 
 	const getSittersList = (queriesData, category) => {
-		const _queriesData = {...queriesData};
-		if(category.length >= 1 && category.length < 5){
-			for(let i=0; i<category.length; i++){
-				const cate_key = Object.keys(category[i])[0];
-				const cate_value = Object.values(category[i])[0];
-				_queriesData[cate_key] = cate_value;
-			}
-		}
+		const _queriesData = {...queriesData, category: category.length ? category : []};
 		console.log('검색 api t실행', _queriesData, category)
 		return apis.getSittersList(_queriesData);
 	};
@@ -95,11 +83,12 @@ function Home() {
 			}
 		}
 	}
-
 	useEffect(()=>{
-		if(dates?.length && addressInfo){
+		console.log(dates, addressInfo)
+		if(dates.length && addressInfo){
 			setQueriesData({searchDate: dates, region_2depth_name: addressInfo.region_2depth_name, x: addressInfo.x, y: addressInfo.y})
 		}
+		showTooltip.current++;
 	}, [dates, addressInfo])
 
 	// 로그인 여부 확인하는 api
@@ -111,6 +100,7 @@ function Home() {
 		},
 		onError: (data) => {
 			console.log(data, 'auth api 실패');
+			localStorage.removeItem('accessToken');
 			localStorage.removeItem('userName');
 			localStorage.removeItem('userEmail');
 		},
@@ -118,15 +108,8 @@ function Home() {
 	});
 	
 	const getListApi = (currentPosition, category) =>{
-		const categoryData = {}
-		if(category.length > 0 && category.length < 5){
-			for(let i=0; i<category.length; i++){
-				const cate_key = Object.keys(category[i])[0];
-				const cate_value = Object.values(category[i])[0];
-				categoryData[cate_key] = cate_value;
-			}
-		}
-		return apis.getSittersDefault({...currentPosition, ...categoryData});
+		console.log({...currentPosition, category})
+		return apis.getSittersDefault({...currentPosition, category});
 	}
 	const {data: sittersBeforeSearch, isLoading: sittersIsLoading, isFetched: sittersIsFetched, refetch: refetchSitters, isRefetching: sittersIsRefetching} = useQuery(
 		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
@@ -206,23 +189,22 @@ function Home() {
 		const fullHeight = window.innerHeight;
 		const filterHeight = filterAreaRef.current.clientHeight;
 		setMapHeight(fullHeight - filterHeight - 74);
-		return()=>{
-			setDefaultSearch(false);
-		}
+		showTooltip.current++;
 	},[])
-	useEffect(()=>{
-		if(categoryClicked.current){
-			if(addressInfo &&  dates?.length > 0){
-				console.log('검색 후 categorizing');
-				refetchSittersAfter();
-			}else{
-				console.log('검색 전 categorizing');
-				refetchSitters();
-			} 
-		}
-		categoryClicked.current = false;
-		
-	},[category])
+
+	// useEffect(()=>{
+	// 	if(categoryClicked.current){
+	// 		if(addressInfo &&  dates?.length > 0){
+	// 			console.log('검색 후 categorizing');
+	// 			refetchSittersAfter();
+	// 		}else{
+	// 			console.log('검색 전 categorizing');
+	// 			refetchSitters();
+	// 		} 
+	// 	}
+	// 	categoryClicked.current = false;
+	// },[category])
+	console.log(category, 'category')
 
 	useEffect(()=>{
 		if(sitters?.length > 0){
@@ -244,9 +226,8 @@ function Home() {
 	},[sitters, sittersIsRefetching])
 
 	useEffect(() => {
-		console.log('loaded', sitters)
 		if(localStorage.getItem('accessToken')){
-			// checkUser();
+			checkUser();
 		}else{
 			console.log('액세스 토큰 없음')
 		}
@@ -255,6 +236,8 @@ function Home() {
 		}
 	}, []);
 
+	console.log(category)
+
 	if (sittersFilteredIsLoading) return null;
 	return (
 		<>
@@ -262,50 +245,46 @@ function Home() {
 			<button type="button" onClick={getLocation} ref={getLocationButtonRef} style={{position: 'absolute', left: 0, top: 0, width: 0, height: 0}}></button>
 			<IndexPage>
 				<FilterArea ref={filterAreaRef}>
-					<div style={{position: 'relative'}}>
-						<div className="inputBox">
-							<input type="text" placeholder="구, 동을 검색해주세요. (예: 강남구 논현동)" value={addressInfo?.address_name && addressInfo?.address_name} onClick={()=>{setIframeDisplay(true); setDatepickerDisplay(false)}} readOnly/>
-							<i className="ic-search"></i>
+					<div className="searchWrap" style={{position: 'relative'}}>
+						<div style={{position: 'relative'}}>
+							<div className="inputBox">
+								<input type="text" placeholder="구, 동을 검색해주세요. (예: 강남구 논현동)" value={addressInfo?.address_name && addressInfo?.address_name} onClick={()=>{setIframeDisplay(true); setDatepickerDisplay(false)}} readOnly/>
+								<i className="ic-search"></i>
+							</div>
+							{
+								iframeDisplay && (
+									<AddressWrap style={{margin: '0 -1px'}}>
+										<SearchAddress setAddressInfo={setAddressInfo} iframeDisplay={iframeDisplay} setIframeDisplay={setIframeDisplay}/>
+										<StyledButton _title="닫기" _margin="0" _onClick={()=>setIframeDisplay(false)}/>
+									</AddressWrap>
+								)
+							}
 						</div>
-						{
-							iframeDisplay && (
-								<AddressWrap style={{margin: '0 -1px'}}>
-									<SearchAddress setAddressInfo={setAddressInfo} iframeDisplay={iframeDisplay} setIframeDisplay={setIframeDisplay}/>
-									<StyledButton _title="닫기" _margin="0" _onClick={()=>setIframeDisplay(false)}/>
-								</AddressWrap>
-							)
-						}
-					</div>
-					<div style={{position: 'relative', zIndex: 2}}>
-						<div className="inputBox date">
-							<input type="text" placeholder="날짜를 선택해주세요." value={datesTransformed.current?.length > 0 ? datesTransformed.current : ''} onClick={()=>{setDatepickerDisplay(true); setIframeDisplay(false)}} readOnly/>
-							<i className="ic-calendar"></i>
+						<div style={{position: 'relative', zIndex: 2}}>
+							<div className="inputBox date">
+								<input type="text" placeholder="날짜를 선택해주세요." value={datesTransformed.current?.length > 0 ? datesTransformed.current : ''} onClick={()=>{setDatepickerDisplay(true); setIframeDisplay(false)}} readOnly/>
+								<i className="ic-calendar"></i>
+							</div>
+							<DatepickerWrap style={{display: datepickerDisplay === true ? 'block' : 'none', position: 'absolute', left: '-1px', right: '-1px', top: '100%'}}>
+								<Calendar
+									ref={datepickerRef}
+									onChange={setDate}
+									multiple={true}
+									format="YYYY/MM/DD"
+									minDate={new Date()}
+									maxDate={new Date(today.year + 1, today.month.number, today.day)}
+									shadow={false}
+									weekDays={weekDays}
+									months={months}
+									style={{
+										borderRadius: 0,
+									}}
+								/>
+								<StyledButton _title="날짜 적용" _margin="0" _onClick={()=>{setDatepickerDisplay(false); setDatesFormat()}}/>
+							</DatepickerWrap>
 						</div>
-						<DatepickerWrap style={{display: datepickerDisplay === true ? 'block' : 'none', position: 'absolute', left: '-1px', right: '-1px', top: '100%'}}>
-							<Calendar
-								ref={datepickerRef}
-								onChange={setDate}
-								multiple={true}
-								format="YYYY/MM/DD"
-								minDate={new Date()}
-								maxDate={new Date(today.year + 1, today.month.number, today.day)}
-								shadow={false}
-								weekDays={weekDays}
-              	months={months}
-								style={{
-									borderRadius: 0,
-								}}
-							/>
-							<StyledButton _title="날짜 적용" _margin="0" _onClick={()=>{setDatepickerDisplay(false); setDatesFormat()}}/>
-						</DatepickerWrap>
+						{/* <Tooltip className={showTooltip.current === 0 ? 'aniClass' : ''}>장소와 날짜 모두 선택해주세요.</Tooltip> */}
 					</div>
-					<StyledButton _onClick={()=>{
-						if(addressInfo &&  dates?.length > 0){
-							setSearched(true);
-						}else{
-							setModalDisplay(true);
-						}
-					}} _title="검색하기" _margin="20px 0 0"/>
 					<Categories>
 						<ul>
 						{categories.map((v, i) => {
@@ -313,27 +292,28 @@ function Home() {
 								<li key={i}>
 									<label>
 										<input type="checkbox" onChange={(e) => {
+											showTooltip.current = 1;
 											categoryClicked.current = true;
 											if(categoryClicked.current){
 												if(e.target.checked){ 
 													console.log('?? checked')
 													setCategory((prev)=>{
 														const new_category = [...prev];
-														return new_category.filter(item=>{
-															return Object.values(item)[0] !== Object.values(v)[0]
-														})
+														new_category.push(v);
+														return new_category;
 													})
 												}else{
 													console.log('?? not checked')
 													setCategory((prev)=>{
 														const new_category = [...prev];
-														new_category.push(v);
-														return new_category;
+														return new_category.filter(item=>{
+															return item !== v;
+														})
 													})
 												}
 											}
 										}}/>
-										<span>{Object.values(v)}</span>
+										<span>{v}</span>
 									</label>
 								</li>
 							);
@@ -441,7 +421,7 @@ function Home() {
 		</div>
 		<Modal _alert={true} _display={modalDisplay} confirmOnClick={()=>setModalDisplay(false)}>
 			<div className="text_area">
-				<h3>장소와 날짜를 모두 선택해주세요.</h3>
+				<p>장소와 날짜를 모두 선택해주세요.</p>
 			</div>
 		</Modal>
 		</>
@@ -510,6 +490,9 @@ const Buttons = styled.div`
 }
 `
 const FilterArea = styled.div`
+.searchWrap{
+	z-index: 2;
+}
 .inputBox{
 	position: relative;
 	input{
@@ -550,6 +533,9 @@ const FilterArea = styled.div`
 		border-radius: 6px;
 		overflow: hidden;
 		border: 1px solid rgba(120,120,120,.4);
+		button{
+			border-radius: 0;
+		}
 	}
 	&.date{
 		max-width: 51%;
@@ -777,5 +763,40 @@ const MapArea = styled.div`
 		}
 	}
 `
-
+const tooltipAnimation = keyframes`
+	0%{
+		opacity: 1;
+	}
+	95%{
+		opacity: 1;
+	}
+	100%{
+		opacity: 0;
+	}
+`
+const Tooltip = styled.p`
+	position: absolute;
+	left: 0;
+	top: calc(100% + 16px);
+	display: inline-block;
+	background-color: rgba(25,25,25,.9);
+	border-radius: 6px;
+	padding: 0 12px;
+	line-height: 36px;
+	font-size: 14px;
+	color: #fff;
+	animation: ${tooltipAnimation} 5s forwards;
+	&:before{
+		position: absolute;
+		left: 50%;
+		top: -9px;
+		width: 0;
+		height: 0;
+		border: 7px solid rgba(25,25,25,.9);
+		border-top: 2px solid transparent;
+		border-left: 5px solid transparent;
+		border-right: 5px solid transparent;
+		content: '';
+	}
+`
 export default Home;

@@ -10,8 +10,6 @@ function formatDate(value) {
 };
 
 function ChatRoom({ socket, username, room }) {
-  console.log(username)
-  console.log(room)
   const [currentMessage, setCurrentMessage] = useState("");
   const [messageList, setMessageList] = useState([]);
   const [roomJoin, setRoomJoin] = useState(false);
