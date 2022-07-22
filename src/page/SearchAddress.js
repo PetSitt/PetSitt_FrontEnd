@@ -6,11 +6,11 @@ import axios from 'axios';
 const SearchAddress = ({ setAddressInfo, iframeDisplay, setIframeDisplay }) => {
   const handleSearch = (data) => {
     const searchTxt = data.q;
-    var config = { headers: {Authorization : 'KakaoAK b80edb4c633e56678385535a84dd1d63'}}; //인증키 정보
+    var config = { headers: {Authorization : `KakaoAK ${process.env.REACT_APP_KAKAO_RESTAPI}`}}; //인증키 정보
     var url = 'https://dapi.kakao.com/v2/local/search/address.json?query='+searchTxt; // url 및 키워드 담아 보냄
     axios.get(url, config).then(function(result) { // API호출
       if(result.data != undefined || result.data != null){
-				console.log(result.data)
+				// console.log(result.data)
 				if(result.data.documents[0].address) {
 					setAddressInfo(result.data.documents[0].address); setIframeDisplay(false);
 				} else {
