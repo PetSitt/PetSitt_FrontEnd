@@ -30,6 +30,8 @@ const GlobalStyles = createGlobalStyle`
     background-color: transparent;
     border: none;
     outline: none;
+    border-radius: 0;
+    -webkit-border-radius: 0;
   }
   textarea {
     resize: none;
