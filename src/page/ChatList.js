@@ -95,26 +95,33 @@ const ChatInner = styled.div`
   position: fixed;
   bottom: 25px;
   width: 370px;
-  height: 100%;
-  min-height: 520px;
+  max-width: 90%;
+  height: 90%;
   max-height: 680px;
   overflow-y: auto;
   border-radius: 30px;
   background-color: #eeeeee;
   padding: 0 14px;
+  margin: 0 auto;
   box-shadow: rgb(0 0 0 / 30%) 0px 12px 60px 5px;
   animation: ${boxFade} 0.20s ease-out 0s 1 normal none running;
   z-index: 99;
   -ms-overflow-style: none; /* IE and Edge - scrollbar 숨기기*/
   scrollbar-width: none; /* Firefox scrollbar 숨기기*/
-  @media (min-width:320px) {
+  left: 0;
+  right: 0;
+  @media (min-width: 768px){
+    right: calc(10% + 21px);
+    left: auto;
+  }
+  /* @media (min-width:320px) {
     &, .chats_header{right: 7%;}
     .chat-footer{right: 9.6%;}
-  }
-  @media (min-width:768px) {
+  } */
+  /* @media (min-width:768px) {
     &, .chats_header{right: 11%;}
     .chat-footer{right: 11.6%;}
-  }
+  } */
 
   .chats_header.list {
     width: 100%;
@@ -123,11 +130,18 @@ const ChatInner = styled.div`
   }
   .chats_header.room {
     width: 370px;
-    max-width: 412px;
+    max-width: 90%;
     min-height: 60px;
     position: fixed;
     padding: 0 18px;
     background-color: rgba( 255,255,255,0.9 );
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    @media (min-width: 768px){
+      right: calc(10% + 21px);
+      left: auto;
+    }
   }
   .chats_header {
     display: flex;
