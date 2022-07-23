@@ -110,6 +110,7 @@ const ChatInner = styled.div`
   scrollbar-width: none; /* Firefox scrollbar 숨기기*/
   left: 0;
   right: 0;
+  padding-bottom: 40px;
   @media (min-width: 768px){
     right: calc(10% + 21px);
     left: auto;
