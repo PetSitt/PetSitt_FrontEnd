@@ -264,7 +264,7 @@ const Message = styled.p`
   font-size: 13px;
   align-self: flex-start;
   padding: 5px 0;
-  color: red;
+  color: #F01D1D;
 `;
 
 export default Login;

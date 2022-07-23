@@ -55,9 +55,9 @@ const Detail = () => {
     {text: '후기', isActive: false, visibility: null, function: ()=>reviewRef.current.scrollIntoView({behavior: 'smooth'})},
   ]) 
   const iconClasses = {
-    '목욕, 모발 관리' : 'ic-wash',
-    '1박 케어': 'ic-boarding',
-    '데이 케어': 'ic-daycare',
+    '목욕 및 모발 관리' : 'ic-wash',
+    '1박케어': 'ic-boarding',
+    '데이케어': 'ic-daycare',
     '훈련': 'ic-prac',
     '산책': 'ic-stroll',
     '집앞 픽업 가능': 'ic-pickup',
