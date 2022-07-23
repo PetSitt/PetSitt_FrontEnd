@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import styled, {keyframes} from "styled-components";
+import { setScreenSize } from "../shared/common";
 import { chatApis } from "../store/chatApi";
 import ChatRoom from './ChatRoom';
 
@@ -27,13 +28,19 @@ function ChatList({popup, socket, setPopup}) {
     refetch();
   };
 
+  useEffect(() => {
+    setScreenSize();
+    window.addEventListener("resize", setScreenSize);
+  },[])
+
   return (
     <ChatInner>
         <div className="joinChatContainer">
           <div>
-            <div className="chats_header">
+            <div className={`chats_header ${!showChatRoom ? "list" : "room"}`}>
               <h2 className="header">PetSitt</h2>
               <div className="close" onClick={() => setPopup((prev) => {
+                socket.emit("leave_room", idRoom);
                 return {
                   ...prev,
                   popup:!popup
@@ -60,7 +67,7 @@ function ChatList({popup, socket, setPopup}) {
               })}
             </div>
             ) : (
-              <ChatRoom socket={socket} username={username} room={idRoom}/>
+              <ChatRoom socket={socket} room={idRoom}/>
             )}
           </div>
         </div>
@@ -82,32 +89,55 @@ const boxFade = keyframes`
 const ChatInner = styled.div`
   position: fixed;
   bottom: 25px;
-  right: 11%;
   width: 370px;
-  height: 80%;
+  height: 100%;
   min-height: 520px;
   max-height: 680px;
   overflow-y: auto;
   border-radius: 30px;
-  padding: 10px 20px;
   background-color: #eeeeee;
+  padding: 0 14px;
   box-shadow: rgb(0 0 0 / 30%) 0px 12px 60px 5px;
   animation: ${boxFade} 0.20s ease-out 0s 1 normal none running;
   z-index: 99;
   -ms-overflow-style: none; /* IE and Edge - scrollbar 숨기기*/
   scrollbar-width: none; /* Firefox scrollbar 숨기기*/
-  &::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera - scrollbar 숨기기*/
+  @media (min-width:320px) {
+    &, .chats_header{right: 7%;}
+    .chat-footer{right: 9.6%;}
+  }
+  @media (min-width:768px) {
+    &, .chats_header{right: 11%;}
+    .chat-footer{right: 11.6%;}
+  }
+
+  .chats_header.list {
+    width: 100%;
+    height: 60px;
+    min-height: 60px;
+  }
+  .chats_header.room {
+    width: 370px;
+    max-width: 412px;
+    min-height: 60px;
+    position: fixed;
+    padding: 0 18px;
+    background-color: rgba( 255,255,255,0.9 );
   }
   .chats_header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    min-height: 60px;
+    z-index: 9;
+    overflow: hidden;
+    border-radius: 30px 30px 0px 0px;
+    transform: translateZ(0px);
+    border-bottom: 1px solid rgba(239, 239, 240, 0.8);
     h2 {font-size: 20px;}
     .close {font-size: 20px; color: #fc9215; cursor: pointer;}
   }
   .chatingList_inner {
+    margin-top: 10px;
     padding: 12px 10px 6px 10px;
     background-color: rgb(255, 255, 255);
     border-radius: 18px;

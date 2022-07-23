@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from 'styled-components';
 import { useQuery } from "react-query";
-import ScrollToBottom from "react-scroll-to-bottom";
+import jwt_decode from "jwt-decode"
 import { chatApis } from "../store/chatApi";
 
 function formatDate(value) {
@@ -9,31 +9,34 @@ function formatDate(value) {
   return date.toLocaleTimeString('ko-KR');
 };
 
-function ChatRoom({ socket, username, room }) {
+function ChatRoom({ socket, room }) {
   const [currentMessage, setCurrentMessage] = useState("");
-  const [messageList, setMessageList] = useState([]);
   const [roomJoin, setRoomJoin] = useState(false);
-
-  const { isLoading: dataLoading, data: chatsRoom } = useQuery(["chatsRoom", room], () => chatApis.chatRoomGet(room), {
+  const { isLoading: dataLoading, data: chatsRoom, refetch} = useQuery(["chatsRoom", room], () => chatApis.chatRoomGet(room), {
     staleTime: Infinity,
     refetchOnMount: 'always',
-    enabled: !!roomJoin //디폴트 자동실행 false(채팅방 들어왔을때 true).
+    enabled: true
   });
+  const [messageList, setMessageList] = useState(chatsRoom.data.chats);
 
   const sendMessage = async () => {
     if (currentMessage !== "") {
-      const messageData = {
-        room: room,
-        author: username,
+      const messageData = { //서버가 필요한 데이터 형식
+        roomId: room,
         message: currentMessage,
-        time:
-          new Date(Date.now()).getHours() +
-          ":" +
-          new Date(Date.now()).getMinutes(),
+        userEmail: jwt_decode(localStorage.getItem('accessToken')).userEmail,
+      };
+      const temp = { //화면을 갱신하기위한 데이터 형식
+        chatText: currentMessage,
+        createdAt: Date.now(),
+        me: true,
+        newMessage: true,
+        roomId: room,
+        userName: chatsRoom.data.myName,
       };
 
       await socket.emit("send_message", messageData);
-      setMessageList((list) => [...list, messageData]);
+      setMessageList((list) => [...list, temp]);
       setCurrentMessage("");
     }
   };
@@ -42,34 +45,34 @@ function ChatRoom({ socket, username, room }) {
     socket.on("receive_message", (data) => {
       setMessageList((list) => [...list, data]);
     });
-    setRoomJoin(true);
   }, [socket]);
+
+  useEffect(() => {
+    refetch();
+  },[])
   
-  if(!chatsRoom) return null
   return (
     <ChatInner>
       <div className="chat-header">
         <p>Live Chat</p>
       </div>
       <div className="chat-body">
-        <ScrollToBottom className="message-container">
-          {chatsRoom.data.chats.map((el, idx) => {
-            return (
-              <div
-								key={idx}
-                className={`message ${el.me ? "me" : "other"}`}
-              >
-                <div className="message-content">
-                  <p>{el.chatText}</p>
-                </div>
-                <div className="message-meta">
-                  <p className="time">{formatDate(el.createdAt)}</p>
-                  <p className="author">{el.author}</p>
-                </div>
+        {messageList.map((el, idx) => {
+          return (
+            <div
+              key={idx}
+              className={`message ${el.me ? "me" : "other"}`}
+            >
+              <div className="message-content">
+                <p>{el.chatText}</p>
               </div>
-            );
-          })}
-        </ScrollToBottom>
+              <div className="message-meta">
+                <p className="time">{formatDate(el.createdAt)}</p>
+                <p className="author">{el.author}</p>
+              </div>
+            </div>
+          );
+        })}
       </div>
       <div className="chat-footer">
         <input
@@ -90,6 +93,8 @@ function ChatRoom({ socket, username, room }) {
 }
 
 const ChatInner = styled.div`
+  padding-top: 80px;
+  padding-bottom: 80px;
   .chat-header {}
   .chat-body {
     .message-content {

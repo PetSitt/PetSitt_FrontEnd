@@ -138,18 +138,18 @@ export const apis = {
 
 	// mypage
 	passwordChange: (data) => pwfindApi.put('/api/password_change', data),
-	myprofile: () => authApi.get('/mypage/myprofile'),
-	myprofileGet: () => authApi.get('/mypage/myprofile'),
-	myprofilePatch: (data) => authApi.patch('/mypage/myprofile', data),
-	petprofileGet: () => authApi.get('/mypage/petprofile'),
-	petprofilePost: (data) => authApi.post('/mypage/petprofile', data),
-	petprofilePatch: ({id, data}) => authApi.patch(`/mypage/petprofile/${id}`, data),
-  petprofileDelete: (id) => authApi.delete(`/mypage/petprofile/${id}`),
-	sitterprofileGet: () => authApi.get('/mypage/sitterprofile'),
-	sitterprofilePost: (data) => authApi.post('/mypage/sitterprofile', data),
-	sitterprofilePatch: (data) => authApi.patch('/mypage/sitterprofile', data, formdataConfig),
-	sitterprofileDelete: () => authApi.delete('/mypage/sitterprofile'),
-	inquireToSitter: (sitterId) => jsonApi.post(`/chats/${sitterId}`),
+	myprofile: () => jsonApi.get('/mypage/myprofile'),
+	myprofileGet: () => jsonApi.get('/mypage/myprofile'),
+	myprofilePatch: (data) => jsonApi.patch('/mypage/myprofile', data),
+	petprofileGet: () => jsonApi.get('/mypage/petprofile'),
+	petprofilePost: (data) => formDataApi.post('/mypage/petprofile', data),
+	petprofilePatch: ({id, data}) => formDataApi.patch(`/mypage/petprofile/${id}`, data),
+  petprofileDelete: (id) => jsonApi.delete(`/mypage/petprofile/${id}`),
+	reservation: () => jsonApi.get('/reservations'),
+	sitterprofileGet: () => jsonApi.get('/mypage/sitterprofile'),
+	sitterprofilePost: (data) => formDataApi.post('/mypage/sitterprofile', data),
+	sitterprofilePatch: (data) => formDataApi.patch('/mypage/sitterprofile', data),
+	sitterprofileDelete: () => jsonApi.delete('/mypage/sitterprofile'),
 
 	// main
 	getSittersList: (queriesData) => mainApi.post('/mains/search', queriesData),
@@ -159,6 +159,7 @@ export const apis = {
 	getUserDetail: (sitterId) => detailApi.get(`/details/${sitterId}`),
 	getReviews: (sitterId, reviewId) => detailApi.post(`/details/reviews/${sitterId}`, reviewId),
 	getPetInfo: () => jsonApi.get('/informations/petcheck'),
+	contactToSitter: (sitterId) => jsonApi.post(`/chats/${sitterId}`),
 
 	// reservation
 	reservation: () => jsonApi.get('/reservations'),
