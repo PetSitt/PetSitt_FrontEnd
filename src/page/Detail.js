@@ -77,15 +77,13 @@ const Detail = () => {
     })
     setUnavailable(datesArray);
   }
-  const detailData = useQuery("detail_data", () => apis.getUserDetail(sitterId), {
+  const {
+		isLoading: detailIsLoading,
+		data: detailData,
+	} = useQuery("detail_data", () => apis.getUserDetail(sitterId), {
 		onSuccess: (data) => {
 			console.log(data.data, "data loaded");
-      const _newPrice = data.data.sitter.servicePrice.toString().replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
-      const _newData = {...data.data};
-      _newData.sitter.servicePrice = _newPrice;
-      setDetail(_newData);
-      setServices(Array.from({length: data?.data?.sitter?.category.length}, () => false));
-		},
+    },
 		onError: (data) => {
 			console.error(data);
 		},
@@ -99,16 +97,16 @@ const Detail = () => {
       console.log('문의하기 api failed', data);
     }
   })
-  // const {data: checkRegisteredPet, refetch: petInfoRefetch} = useQuery('getPetInfoQuery', ()=>apis.getPetInfo(), {
-  //   onSuccess: (data) => {
-  //     if(data.data.check){
-  //       hasPetInfo.current = true;
-  //     }else{
-  //       hasPetInfo.current = false;
-  //     }
-  //   },
-  //   enabled: false,
-  // })
+  const {data: checkRegisteredPet, refetch: petInfoRefetch} = useQuery('getPetInfoQuery', ()=>apis.getPetInfo(), {
+    onSuccess: (data) => {
+      if(data.data.check){
+        hasPetInfo.current = true;
+      }else{
+        hasPetInfo.current = false;
+      }
+    },
+    enabled: false,
+  })
 	const checkSelectArea = (e) => {
 		if (!e.target.closest(".select_area") && !e.target.closest('.select_detail')) {
 			setSelectBoxToggle({ type: "", status: false });
@@ -169,7 +167,7 @@ const Detail = () => {
 		window.addEventListener("click", checkSelectArea);
     // 로그인한 상태일 경우 등록된 반려견 정보 있는지 확인
     if(localStorage.getItem('accessToken') && localStorage.getItem('userName')){
-      // petInfoRefetch();
+      petInfoRefetch();
     }
 		return()=>{
       window.removeEventListener("click", checkSelectArea);
@@ -223,6 +221,13 @@ const Detail = () => {
     setSelectBoxToggle({ type: "", status: false });
   },[scrollDirection])
 
+  useEffect(()=>{
+    if(detailData){
+      setDetail(detailData.data);
+      setServices(Array.from({length: detailData.data.sitter.category.length}, () => false));
+    }
+  },[detailData])
+
   const scrollEvent = (e) => {
     if(e.target.scrollTop >= pageBodyRef.current.offsetTop){
       floatingTabsRef.current.classList.add('isFixed');
@@ -231,9 +236,7 @@ const Detail = () => {
     }
   }
 
-  // console.log(detailData.data.data)
-  if ( detailData ) return <p>로딩중입니다</p>;
-
+  if (!detail) return <p>로딩중입니다</p>;
 	return (
 		<>
       <SitterDetailPage className="detailPageWrap" style={{paddingTop: 0}} onScroll={(e)=>{
