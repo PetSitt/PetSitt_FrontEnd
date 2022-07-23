@@ -79,6 +79,9 @@ const AppWrapper = styled.div`
       box-sizing: border-box;
       padding-bottom: 74px;
     }
+    & > .home:first-of-type {
+      padding-bottom: 134px;
+    }
     & > .detail:first-of-type {
       padding: 0 20px 20px;
     }

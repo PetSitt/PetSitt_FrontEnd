@@ -7,6 +7,10 @@ const jsonApi = axios.create({
 	baseURL: process.env.REACT_APP_SERVER
 });
 
+const reserveApi = axios.create({
+	baseURL: process.env.REACT_APP_RESERVE
+});
+
 const formDataApi = axios.create({
 	baseURL: process.env.REACT_APP_SERVER
 });
@@ -35,6 +39,16 @@ pwfindApi.interceptors.request.use((config) => {
 }, (err) => {
 	return Promise.reject(err);
 })
+
+reserveApi.interceptors.request.use((config) => {
+	config.headers['Content-type'] = 'application/json; charset=UTF-8';
+	config.headers['Accept'] = 'application/json;';
+	config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
+	return config;
+}, (err) => {
+	return Promise.reject(err);
+})
+
 
 jsonApi.interceptors.request.use((config)=> {
 	config.headers['Content-type'] = 'application/json; charset=UTF-8';
@@ -118,7 +132,7 @@ export const apis = {
 	signupAdd: (data) => jsonApi.post('/api/signup', data),
 	passwordFind: (data) => pwfindApi.post('/api/password_check', data),
 	idFind: (data) => pwfindApi.post('/api/id_check', data),
-	login: (data) => jsonApi.post('/api/login', data),
+	login: (data) => mainApi.post('/api/login', data),
 	kakaoLogin: (data) => axios.post('http://3.35.135.160/api/auth/kakao', data),
 	checkUser: () => authApi.get('/api/auth'),
 
@@ -136,7 +150,7 @@ export const apis = {
 	sitterprofilePost: (data) => formDataApi.post('/mypage/sitterprofile', data),
 	sitterprofilePatch: (data) => formDataApi.patch('/mypage/sitterprofile', data),
 	sitterprofileDelete: () => jsonApi.delete('/mypage/sitterprofile'),
-	
+
 	// main
 	getSittersList: (queriesData) => mainApi.post('/mains/search', queriesData),
   getSittersDefault: (data) => mainApi.post('/mains', data),

@@ -10,7 +10,6 @@ import Modal from "../elements/Modal";
 import MapContainer from "./MapContainer";
 import SearchAddress from "./SearchAddress";
 import icon_star from '../assets/img/icon_star.png';
-import icon_map from '../assets/img/icon_map.png';
 import StyledButton from "../elements/StyledButton";
 
 
@@ -48,7 +47,6 @@ function Home() {
 
 	const getSittersList = (queriesData, category) => {
 		const _queriesData = {...queriesData, category: category.length ? category : []};
-		console.log('검색 api t실행', _queriesData, category)
 		return apis.getSittersList(_queriesData);
 	};
 	const {data: sittersFilteredSearch, isLoading: sittersFilteredIsLoading, isFetched: sittersFilteredIsFetched, isRefetching: sittersAfterIsRefetching, refetch: refetchSittersAfter} = useQuery(
@@ -56,10 +54,8 @@ function Home() {
 		() => getSittersList(queriesData, category),
 		{
 			onSuccess: (data) => {
-				console.log('sitter_list', data)
 				setSearched(false);
-				const sittersData = data.data.sitter2 ? data.data.sitter2 : data.data.sitters;
-				setSitters(sittersData);
+				setSitters(data.data.sitters);
 			},
 			onError: (data) => {
 				console.error(data);
@@ -84,7 +80,6 @@ function Home() {
 		}
 	}
 	useEffect(()=>{
-		console.log(dates, addressInfo)
 		if(dates.length && addressInfo){
 			setQueriesData({searchDate: dates, region_2depth_name: addressInfo.region_2depth_name, x: addressInfo.x, y: addressInfo.y})
 		}
@@ -94,7 +89,7 @@ function Home() {
 	// 로그인 여부 확인하는 api
 	const { mutate: checkUser } = useMutation(()=>apis.checkUser(), { 
 		onSuccess: (data) => {
-			console.log(data, 'auth api 성공!!!');
+			console.log(data, 'auth api 성공');
 			localStorage.setItem('userName', data.data.user.userName);
 			localStorage.setItem('userEmail', data.data.user.userEmail);
 		},
@@ -108,17 +103,15 @@ function Home() {
 	});
 	
 	const getListApi = (currentPosition, category) =>{
-		console.log({...currentPosition, category})
 		return apis.getSittersDefault({...currentPosition, category});
 	}
 	const {data: sittersBeforeSearch, isLoading: sittersIsLoading, isFetched: sittersIsFetched, refetch: refetchSitters, isRefetching: sittersIsRefetching} = useQuery(
 		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
 		{
 			onSuccess: (data) => {
-				console.log('sitter_default', data)
 				queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(false);
-				setSitters(data.data.sitters);
+				setSitters(data.data.sitter);
 			},
 			onError: (data) => {
 				console.error(data);
@@ -134,11 +127,10 @@ function Home() {
   }
   const {mutate: kakaoLoginQuery} = useMutation((dataToSend)=>kakaoLoginApi(dataToSend), {
     onSuccess: (data) => {
-      console.log(data, 'success');
       localStorage.setItem('accessToken', data.data.token);
     },
     onError: (data) => {
-      console.log(data, 'failed');
+      console.log(data, 'kakao login failed');
     },
   })
   const getKakaoProfile = async () => {
@@ -167,6 +159,7 @@ function Home() {
 					setDefaultSearch(true);
         },
         (error) => {
+					setModalDisplay(true);
 					console.log(error)
           console.error(error);
         },
@@ -177,7 +170,7 @@ function Home() {
         }
       );
     } else {
-      alert('GPS를 허용해주세요');
+			setModalDisplay(true);
     }
   };
 
@@ -192,19 +185,26 @@ function Home() {
 		showTooltip.current++;
 	},[])
 
-	// useEffect(()=>{
-	// 	if(categoryClicked.current){
-	// 		if(addressInfo &&  dates?.length > 0){
-	// 			console.log('검색 후 categorizing');
-	// 			refetchSittersAfter();
-	// 		}else{
-	// 			console.log('검색 전 categorizing');
-	// 			refetchSitters();
-	// 		} 
-	// 	}
-	// 	categoryClicked.current = false;
-	// },[category])
-	console.log(category, 'category')
+	useEffect(()=>{
+		if(categoryClicked.current){
+			if(addressInfo &&  dates?.length > 0){
+				console.log('검색 후 categorizing');
+				refetchSittersAfter();
+			}else{
+				console.log('검색 전 categorizing');
+				refetchSitters();
+			} 
+		}
+		categoryClicked.current = false;
+	},[category])
+	
+	useEffect(()=>{
+		if(dates.length && addressInfo){
+			setQueriesData({searchDate: dates, region_2depth_name: addressInfo.region_2depth_name, x: addressInfo.x, y: addressInfo.y, category});
+			setSearched(true);
+		}
+		showTooltip.current++;
+	}, [dates, addressInfo])
 
 	useEffect(()=>{
 		if(sitters?.length > 0){
@@ -235,8 +235,6 @@ function Home() {
 			setSitters(null);
 		}
 	}, []);
-
-	console.log(category)
 
 	if (sittersFilteredIsLoading) return null;
 	return (
@@ -296,14 +294,12 @@ function Home() {
 											categoryClicked.current = true;
 											if(categoryClicked.current){
 												if(e.target.checked){ 
-													console.log('?? checked')
 													setCategory((prev)=>{
 														const new_category = [...prev];
 														new_category.push(v);
 														return new_category;
 													})
 												}else{
-													console.log('?? not checked')
 													setCategory((prev)=>{
 														const new_category = [...prev];
 														return new_category.filter(item=>{
@@ -362,10 +358,10 @@ function Home() {
 									<MapArea>
 										<MapContainer items={locationItems} _height={mapHeight} setSitterCardShow={setSitterCardShow}/>
 										{
-											<ul>
+											<ul style={{background: 'transparent'}}>
 												{
 													sitterCardShow.display && (
-														<SitterCard>
+														<SitterCard style={{background: '#fff'}}>
 															<Link to={`/detail/${sitters[sitterCardShow.index].sitterId}`}>
 															<div className="image_area" style={{backgroundImage: `url(${sitters[sitterCardShow.index].mainImageUrl})`}}>
 																<span className="sitter_image" style={{backgroundImage: `url(${sitters[sitterCardShow.index].imageUrl})`}}></span>
@@ -410,9 +406,9 @@ function Home() {
 					{
 						sitters?.length > 0 && (
 							viewType === 'list' ? (
-								<button type="button" className="showMapView" onClick={()=>setViewType('map')}><i style={{backgroundImage: `url(${icon_map})`}}></i>지도</button>
+								<button type="button" className="showMapView" onClick={()=>setViewType('map')}><i className="ic-map"></i>지도</button>
 							) : (
-								<button type="button" className="showListView" onClick={()=>setViewType('list')}><i style={{backgroundImage: `url(${icon_map})`}}></i>리스트</button>
+								<button type="button" className="showListView" onClick={()=>setViewType('list')}><i className="ic-list"></i>리스트</button>
 							)
 						)
 					}
@@ -421,7 +417,8 @@ function Home() {
 		</div>
 		<Modal _alert={true} _display={modalDisplay} confirmOnClick={()=>setModalDisplay(false)}>
 			<div className="text_area">
-				<p>장소와 날짜를 모두 선택해주세요.</p>
+				<p>GPS를 허용해주세요.</p>
+				<p>GPS를 허용하지 않을 경우, 검색을 통해 돌보미 리스트를 확인해야합니다.</p>
 			</div>
 		</Modal>
 		</>
@@ -473,19 +470,28 @@ const Buttons = styled.div`
 		height: 40px;
 		padding: 0 16px;
 		font-size: 16px;
-		color: #FC9215;
+		color: #1a1a1a;
 		background: #FFFFFF;
 		box-shadow: 0px 1px 4px rgba(0, 0, 0, 0.1);
+		border: 1px solid rgba(120,120,120,.2);
 		border-radius: 20px;
 		i{
 			display: inline-block;
-			width: 16px;
-			height: 16px;
-			background-size: contain;
-			background-position: center;
-			background-repeat: no-repeat;
 			vertical-align: middle;
 			margin: -2px 5px 0 0;
+			color: #FC9215;
+		}
+		&.showMapView{
+			i{
+				font-size: 20px;
+				margin-top: -4px;
+			}
+		}
+		&.showListView{
+			i{
+				font-size: 13px;
+				margin-right: 7px;
+			}
 		}
 }
 `

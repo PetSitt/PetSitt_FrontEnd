@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Cookies } from 'react-cookie';
 import { apis } from '../store/api';
 import { useMutation } from 'react-query';
@@ -20,20 +20,43 @@ const Login = () => {
   const cookies = new Cookies();
   const email_ref = useRef();
   const pw_ref = useRef();
-  const login = (data) => {
-    return apis.login(data);
-  };
-  const { mutate: loginQuery } = useMutation(login, {
-    onSuccess: async (data) => {      
-      await localStorage.setItem('accessToken', data.data.accessToken);
-      await cookies.set('refreshToken', data.data.refreshToken);
-      await sessionStorage.removeItem('foundId');
+
+  // 에러메세지 상태 저장
+  const [errorMessage, setErrorMessage] = useState({
+    invalidEmail: {status: false, message: '존재하지 않는 이메일 주소입니다. 이메일 주소를 확인해주세요.'},
+    invalidPw: {status: false, message: '비밀번호를 확인해주세요.'},
+    emptyEmail: {status: false, message: '이메일 주소를 입력해주세요.'},
+    emptyPw: {status: false, message: '비밀번호를 입력해주세요.'},
+  });
+
+  
+  const { mutate: loginQuery } = useMutation(apis.login, {
+    onSuccess: (data) => {      
+      localStorage.setItem('accessToken', data.data.accessToken);
+      cookies.set('refreshToken', data.data.refreshToken);
+      sessionStorage.removeItem('foundId');
       console.log(data, localStorage.getItem('accessToken'));
-      // navigate('/');
+      navigate('/');      
     },
     onError: (data) => {
-      // console.error(data);
-      alert(data.response.data.errorMessage);
+      if(data.response.status === 400){
+        // 이메일 틀렸을 때 - 없는 아이디
+        setErrorMessage((prev)=>{
+          const _error = {...prev};
+          _error.invalidEmail.status = true;
+          _error.invalidPw.status = false;
+          return _error;
+        });
+      }
+      if(data.response.status === 401){
+        // 비밀번호 틀렸을 때
+        setErrorMessage((prev)=>{
+          const _error = {...prev};
+          _error.invalidPw.status = true;
+          _error.invalidEmail.status = false;
+          return _error;
+        });
+      }
     },
   });
   
@@ -46,14 +69,15 @@ const Login = () => {
     if (!localStorage.getItem('accessToken')) {
       // accessToken 없으면 refreshToken도 삭제
       cookies.remove('refreshToken');
-    } else {
+    }
+    if (localStorage.getItem('acceessToken') && localStorage.getItem('userEmail')){
       // 로그인된 상태에서 로그인 페이지 접근했을 경우 로그아웃처리
-      // localStorage.removeItem('accessToken');
-      // cookies.remove('refreshToken');
-      // sessionStorage.removeItem('foundId');
-      // localStorage.removeItem('userName');
-			// localStorage.removeItem('userEmail');
-      // localStorage.removeItem('kakaoToken');
+      localStorage.removeItem('accessToken');
+      cookies.remove('refreshToken');
+      sessionStorage.removeItem('foundId');
+      localStorage.removeItem('userName');
+			localStorage.removeItem('userEmail');
+      localStorage.removeItem('kakaoToken');
     }
   }, [cookies]);
 
@@ -70,12 +94,22 @@ const Login = () => {
             ref={email_ref}
             placeholder="example@petsitt.com"
             required
+            onInput={(e)=>{
+              if(e.target.value.length){
+                setErrorMessage((prev)=>{
+                  const _error = {...prev};
+                  _error.emptyEmail.status = false;
+                  return _error;
+                });
+              }
+            }}
           />
-          {/* {values.userEmail && (
-            <Message className={`${isId ? "success" : "error"}`}>
-              {idMessage}
-            </Message>
-          )} */}
+          {errorMessage?.invalidEmail.status && (
+            <Message>{errorMessage.invalidEmail.message}</Message>
+          )}
+          {errorMessage?.emptyEmail.status && (
+            <Message>{errorMessage.emptyEmail.message}</Message>
+          )}
         </InputBox>
         <InputBox>
           <label className='inner required'>비밀번호</label>
@@ -85,20 +119,48 @@ const Login = () => {
             ref={pw_ref}
             placeholder="4~10자리(특수문자, 숫자, 영어 포함)"
             required
+            onInput={(e)=>{
+              if(e.target.value.length){
+                setErrorMessage((prev)=>{
+                  const _error = {...prev};
+                  _error.emptyPw.status = false;
+                  return _error;
+                });
+              }
+            }}
           />
-          {/* {values.password && (
-            <Message className={`${isId ? "success" : "error"}`}>
-              {idMessage}
-            </Message>
-          )} */}
+          {errorMessage?.invalidPw.status && (
+            <Message>{errorMessage.invalidPw.message}</Message>
+          )}
+          {errorMessage?.emptyPw.status && (
+            <Message>{errorMessage.emptyPw.message}</Message>
+          )}
         </InputBox>
         <StyledButton
           _onClick={() => {
-            const data = {
-              userEmail: email_ref.current.value,
-              password: pw_ref.current.value,
-            };
-            loginQuery(data);
+            if(!email_ref.current?.value.trim().length){
+              setErrorMessage((prev)=>{
+                const _error = {...prev};
+                _error.emptyEmail.status = true;
+                _error.invalidEmail.status = false;
+                return _error;
+              });
+            }
+            if(!pw_ref.current?.value.trim().length){
+              setErrorMessage((prev)=>{
+                const _error = {...prev};
+                _error.emptyPw.status = true;
+                _error.invalidPw.status = false;
+                return _error;
+              });
+            }
+            if(email_ref.current?.value.trim().length && pw_ref.current?.value.trim().length){
+              const data = {
+                userEmail: email_ref.current.value,
+                password: pw_ref.current.value,
+              };
+              loginQuery(data);
+            }
           }}
           _title={'로그인'}
         />
@@ -197,6 +259,12 @@ const DevideBar = styled.div`
 const RegisterBox = styled.div`
   display: flex;
   flex-direction: column;
+`;
+const Message = styled.p`
+  font-size: 13px;
+  align-self: flex-start;
+  padding: 5px 0;
+  color: red;
 `;
 
 export default Login;
