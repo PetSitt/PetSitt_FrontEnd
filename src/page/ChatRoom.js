@@ -44,9 +44,12 @@ function ChatRoom({ socket, room, scroll, scrollElement }) {
   useEffect(() => {
     socket.on("receive_message", (data) => {
       setMessageList((list) => [...list, data]);
-      scrollToBottom();
     });
   }, [socket]);
+
+  useEffect(()=>{
+    scrollToBottom();
+  }, [messageList])
 
   useEffect(() => {
     refetch();
@@ -103,7 +106,7 @@ function ChatRoom({ socket, room, scroll, scrollElement }) {
 
 const ChatInner = styled.div`
   padding-top: 80px;
-  padding-bottom: 80px;
+  padding-bottom: 40px;
   .chat-header {}
   .chat-body {
     .message-content {
