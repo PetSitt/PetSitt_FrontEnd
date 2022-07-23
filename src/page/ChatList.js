@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useQuery } from "react-query";
 import styled, {keyframes} from "styled-components";
-import { setScreenSize } from "../shared/common";
 import { chatApis } from "../store/chatApi";
 import ChatRoom from './ChatRoom';
 
@@ -15,7 +14,7 @@ function ChatList({popup, socket, setPopup}) {
   const [idRoom, setIdRoom] = useState(null);
   const [username, setUsername] = useState(null);
 
-  const { isLoading: dataLoading, data: chats, refetch } = useQuery("chatsList", chatApis.chatListGet, {
+  const { isLoading: dataLoading, data: chats } = useQuery("chatsList", chatApis.chatListGet, {
     staleTime: Infinity,
     enabled: true
   });
@@ -25,16 +24,10 @@ function ChatList({popup, socket, setPopup}) {
     setUsername(userName);
     setIdRoom(room);
     setShowChatRoom(true);
-    refetch();
   };
 
   const [scroll, setScroll] = useState();
   const scrollElement = useRef();
-
-  useEffect(() => {
-    setScreenSize();
-    window.addEventListener("resize", setScreenSize);
-  },[])
 
   return (
     <ChatInner ref={scrollElement} onScroll={(e)=>{

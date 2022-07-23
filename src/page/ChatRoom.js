@@ -6,17 +6,18 @@ import { chatApis } from "../store/chatApi";
 
 function formatDate(value) {
   const date = new Date(value);
-  return date.toLocaleTimeString('ko-KR');
+  const [hour, minute, second] = date.toLocaleTimeString("ko-KR").split(/:| /)
+  return `${hour} ${minute}:${second}`;
 };
 
-function ChatRoom({ socket, room, scroll, scrollElement }) {
+function ChatRoom({ socket, room, scrollElement }) {
   const [currentMessage, setCurrentMessage] = useState("");
-  const [roomJoin, setRoomJoin] = useState(false);
-  const { isLoading: dataLoading, data: chatsRoom, refetch} = useQuery(["chatsRoom", room], () => chatApis.chatRoomGet(room), {
+  const [test, setTest] = useState(false);
+  const { isLoading: dataLoading, data: chatsRoom} = useQuery(["chats", room], () => chatApis.chatRoomGet(room), {
     staleTime: Infinity,
-    refetchOnMount: 'always',
     enabled: true
   });
+
   const [messageList, setMessageList] = useState(chatsRoom.data.chats);
 
   const sendMessage = async () => {
@@ -24,15 +25,15 @@ function ChatRoom({ socket, room, scroll, scrollElement }) {
       const messageData = { //서버가 필요한 데이터 형식
         roomId: room,
         message: currentMessage,
-        userEmail: jwt_decode(localStorage.getItem('accessToken')).userEmail,
+        userEmail: jwt_decode(localStorage.getItem('accessToken')).userEmail
       };
       const temp = { //화면을 갱신하기위한 데이터 형식
+        roomId: room,
         chatText: currentMessage,
         createdAt: Date.now(),
         me: true,
         newMessage: true,
-        roomId: room,
-        userName: chatsRoom.data.myName,
+        userName: chatsRoom.data.myName
       };
 
       await socket.emit("send_message", messageData);
@@ -52,7 +53,6 @@ function ChatRoom({ socket, room, scroll, scrollElement }) {
   }, [messageList])
 
   useEffect(() => {
-    refetch();
     scrollToBottom();
   },[])
 
@@ -98,7 +98,7 @@ function ChatRoom({ socket, room, scroll, scrollElement }) {
             }
           }}
         />
-        <button onClick={()=>{sendMessage(); scrollToBottom()}}>&#9658;</button>
+        <button onClick={()=>{sendMessage(); scrollToBottom()}}>전송</button>
       </div>
     </ChatInner>
   );
