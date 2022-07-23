@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDaumPostcodePopup } from 'react-daum-postcode';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import AddressInfo from '../components/AddressInfo';
 // import KakaoMapContainer from '../components/KakaoMapContainer';
@@ -24,6 +24,7 @@ const INITIAL_VALUES = {
 };
 
 const SitterProfileForm1 = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const data = location.state;
   const [values, setValues] = useState(data ? data.data : INITIAL_VALUES);
@@ -111,24 +112,20 @@ const SitterProfileForm1 = () => {
             handlePost={handlePost}
           />
         </InputBox>
-        <StyledButton
-          _onClick={() => console.log('다음으로')}
+        {data ? (
+          <StyledButton
+          _onClick={() => navigate('/mypage/SitterProfileForm2', {state: { data: values, update: true }})}
           _title={'다음으로'}
         />
-        {data ? (
-          <Link
-            to={`/mypage/SitterProfileForm2`}
-            state={{ data: values, update: true }}
-          >
-            <button>다음 true</button>
-          </Link>
         ) : (
-          <Link
-            to={`/mypage/SitterProfileForm2`}
-            state={{ data: values, update: false }}
-          >
-            <button>다음 false</button>
-          </Link>
+          <StyledButton
+            _onClick={() =>
+              navigate("/mypage/SitterProfileForm2", {
+                state: { data: values, update: false },
+              })
+            }
+            _title={"다음으로"}
+          />
         )}
       </SitterProfileFormInner>
     </StyledContainer>

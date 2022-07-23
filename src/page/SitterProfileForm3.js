@@ -1,25 +1,26 @@
-import { useState } from 'react';
-import styled from 'styled-components';
-import { Link, useLocation } from 'react-router-dom';
-import Checkbox from '../elements/Checkbox';
-import { handleChange, comma, uncomma } from '../shared/common';
-import { useEffect } from 'react';
-import NavBox from '../elements/NavBox';
-import StyledContainer from '../elements/StyledContainer';
-import InputBox from '../elements/InputBox';
-import StyledButton from '../elements/StyledButton';
+import { useState } from "react";
+import styled from "styled-components";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import Checkbox from "../elements/Checkbox";
+import { handleChange, comma, uncomma } from "../shared/common";
+import { useEffect } from "react";
+import NavBox from "../elements/NavBox";
+import StyledContainer from "../elements/StyledContainer";
+import InputBox from "../elements/InputBox";
+import StyledButton from "../elements/StyledButton";
 
 const INITIAL_VALUES = {
   careSize: [false, false, false],
   category: [],
   plusService: [],
-  servicePrice: '',
+  servicePrice: "",
 };
 
 function SitterProfileForm3() {
+  const navigate = useNavigate();
   const { data, update } = useLocation().state;
   const [available, setAvailable] = useState([]);
-  const [num, setNum] = useState('');
+  const [num, setNum] = useState("");
   const [values, setValues] = useState(
     update ? data : { ...data, ...INITIAL_VALUES }
   );
@@ -53,14 +54,14 @@ function SitterProfileForm3() {
   return (
     <StyledContainer>
       <SitterProfileFormInner>
-        <NavBox _title='제공 가능한 서비스' _subTitle='3/4' sitterProfile />
+        <NavBox _title="제공 가능한 서비스" _subTitle="3/4" sitterProfile />
         <CheckWrap>
-          <label className='tit'>케어 가능 범위*</label>
+          <label className="tit">케어 가능 범위*</label>
           <CheckGroup>
             <Checkbox
-              _text={'소형견'}
-              _size={'1.2rem'}
-              _border={'1px solid rgba(120, 120, 120, 0.7)'}
+              _text={"소형견"}
+              _size={"1.2rem"}
+              _border={"1px solid rgba(120, 120, 120, 0.7)"}
               onChange={(e) => {
                 setValues((prevValues) => {
                   const careSize = [...prevValues.careSize];
@@ -71,8 +72,8 @@ function SitterProfileForm3() {
               checked={values.careSize}
             />
             <Checkbox
-              _text={'중형견'}
-              _size={'1.2rem'}
+              _text={"중형견"}
+              _size={"1.2rem"}
               onChange={(e) => {
                 setValues((prevValues) => {
                   const careSize = [...prevValues.careSize];
@@ -83,8 +84,8 @@ function SitterProfileForm3() {
               checked={values.careSize}
             />
             <Checkbox
-              _text={'대형견'}
-              _size={'1.2rem'}
+              _text={"대형견"}
+              _size={"1.2rem"}
               onChange={(e) => {
                 setValues((prevValues) => {
                   const careSize = [...prevValues.careSize];
@@ -97,141 +98,145 @@ function SitterProfileForm3() {
           </CheckGroup>
         </CheckWrap>
         <CheckWrap>
-          <label className='tit'>제공 가능한 서비스*</label>
+          <label className="tit">제공 가능한 서비스*</label>
           <CheckGroup>
             <Checkbox
-              _id={'산책'}
-              _key={'category'}
-              _text={'산책'}
-              _size={'1.2rem'}
+              _id={"산책"}
+              _key={"category"}
+              _text={"산책"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.category}
             />
             <Checkbox
-              _id={'목욕, 모발 관리'}
-              _key={'category'}
-              _text={'목욕, 모발 관리'}
-              _size={'1.2rem'}
+              _id={"목욕, 모발 관리"}
+              _key={"category"}
+              _text={"목욕, 모발 관리"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.category}
             />
             <Checkbox
-              _id={'훈련'}
-              _key={'category'}
-              _text={'훈련'}
-              _size={'1.2rem'}
+              _id={"훈련"}
+              _key={"category"}
+              _text={"훈련"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.category}
             />
             <Checkbox
-              _id={'데이 케어'}
-              _key={'category'}
-              _text={'데이 케어'}
-              _size={'1.2rem'}
+              _id={"데이 케어"}
+              _key={"category"}
+              _text={"데이 케어"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.category}
             />
             <Checkbox
-              _id={'1박 케어'}
-              _key={'category'}
-              _text={'1박 케어'}
-              _size={'1.2rem'}
+              _id={"1박 케어"}
+              _key={"category"}
+              _text={"1박 케어"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.category}
             />
           </CheckGroup>
         </CheckWrap>
         <CheckWrap>
-          <label className='tit'>추가 가능한 서비스*</label>
+          <label className="tit">추가 가능한 서비스*</label>
           <CheckGroup>
             <Checkbox
-              _id={'(자동차 그림) 집앞 픽업 가능 - 비용은 펫시터와 협의'}
-              _key={'plusService'}
-              _text={'(자동차 그림) 집앞 픽업 가능 - 비용은 펫시터와 협의'}
-              _size={'1.2rem'}
+              _id={"(자동차 그림) 집앞 픽업 가능 - 비용은 펫시터와 협의"}
+              _key={"plusService"}
+              _text={"(자동차 그림) 집앞 픽업 가능 - 비용은 펫시터와 협의"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.plusService}
             />
             <Checkbox
-              _id={'응급 처치'}
-              _key={'plusService'}
-              _text={'응급 처치'}
-              _size={'1.2rem'}
+              _id={"응급 처치"}
+              _key={"plusService"}
+              _text={"응급 처치"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.plusService}
             />
             <Checkbox
-              _id={'장기 예약 가능 - 14일 이상 돌봄가능'}
-              _key={'plusService'}
-              _text={'장기 예약 가능 - 14일 이상 돌봄가능'}
-              _size={'1.2rem'}
+              _id={"장기 예약 가능 - 14일 이상 돌봄가능"}
+              _key={"plusService"}
+              _text={"장기 예약 가능 - 14일 이상 돌봄가능"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.plusService}
             />
             <Checkbox
-              _id={'퍼피 케어(1살미만)'}
-              _key={'plusService'}
-              _text={'퍼피 케어(1살미만)'}
-              _size={'1.2rem'}
+              _id={"퍼피 케어(1살미만)"}
+              _key={"plusService"}
+              _text={"퍼피 케어(1살미만)"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.plusService}
             />
             <Checkbox
-              _id={'노견 케어(8살이상)'}
-              _key={'plusService'}
-              _text={'노견 케어(8살이상)'}
-              _size={'1.2rem'}
+              _id={"노견 케어(8살이상)"}
+              _key={"plusService"}
+              _text={"노견 케어(8살이상)"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.plusService}
             />
             <Checkbox
-              _id={'실내놀이'}
-              _key={'plusService'}
-              _text={'실내놀이'}
-              _size={'1.2rem'}
+              _id={"실내놀이"}
+              _key={"plusService"}
+              _text={"실내놀이"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.plusService}
             />
             <Checkbox
-              _id={'마당있음'}
-              _key={'plusService'}
-              _text={'마당있음'}
-              _size={'1.2rem'}
+              _id={"마당있음"}
+              _key={"plusService"}
+              _text={"마당있음"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.plusService}
             />
           </CheckGroup>
         </CheckWrap>
-        <p className='tit'>금연*</p>
+        <p className="tit">금연*</p>
 
         <InputBox>
-          <label className='txt'>서비스 금액</label>
+          <label className="txt">서비스 금액</label>
           <input
-            type='text'
-            name='servicePrice'
-            placeholder='일당 서비스 금액을 입력해주세요.'
+            type="text"
+            name="servicePrice"
+            placeholder="일당 서비스 금액을 입력해주세요."
             defaultValue={num ? num : comma(values.servicePrice)}
             onChange={handleInput}
           />
         </InputBox>
         <StyledButton
-          _onClick={() => console.log('다음으로')}
-          _title={'다음으로'}
+          _onClick={() => console.log("다음으로")}
+          _title={"다음으로"}
         />
-        {update ? (
-          <Link
-            to={`/mypage/SitterProfileForm4`}
-            state={{ data: values, update: true }}
-          >
-            <button>다음 true</button>
-          </Link>
+        {data ? (
+          <StyledButton
+            _onClick={() =>
+              navigate("/mypage/SitterProfileForm4", {
+                state: { data: values, update: true },
+              })
+            }
+            _title={"다음으로"}
+          />
         ) : (
-          <Link
-            to={`/mypage/SitterProfileForm4`}
-            state={{ data: values, update: false }}
-          >
-            <button>다음 false</button>
-          </Link>
+          <StyledButton
+            _onClick={() =>
+              navigate("/mypage/SitterProfileForm4", {
+                state: { data: values, update: false },
+              })
+            }
+            _title={"다음으로"}
+          />
         )}
       </SitterProfileFormInner>
     </StyledContainer>
@@ -244,7 +249,7 @@ const SitterProfileFormInner = styled.div`
     border: 1px solid rgba(120, 120, 120, 0.7);
   }
 
-  input[type='text'] {
+  input[type="text"] {
     width: 100%;
     min-height: 48px;
     background: #ffffff;

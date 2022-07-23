@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { handleChange } from '../shared/common';
 import ImageRegist from '../components/ImageRegist';
@@ -16,6 +16,7 @@ const INITIAL_VALUES = {
 };
 
 const SitterProfileForm2 = () => {
+  const navigate = useNavigate();
   const { data, update } = useLocation().state;
   const [values, setValues] = useState(
     update ? data : { ...data, ...INITIAL_VALUES }
@@ -79,19 +80,19 @@ const SitterProfileForm2 = () => {
           _title={'다음으로'}
         />
         {update ? (
-          <Link
-            to={`/mypage/SitterProfileForm3`}
-            state={{ data: values, update: true }}
-          >
-            <button>다음 true</button>
-          </Link>
+          <StyledButton
+          _onClick={() => navigate('/mypage/SitterProfileForm3', {state: { data: values, update: true }})}
+          _title={'다음으로'}
+        />
         ) : (
-          <Link
-            to={`/mypage/SitterProfileForm3`}
-            state={{ data: values, update: false }}
-          >
-            <button>다음 false</button>
-          </Link>
+          <StyledButton
+            _onClick={() =>
+              navigate("/mypage/SitterProfileForm3", {
+                state: { data: values, update: false },
+              })
+            }
+            _title={"다음으로"}
+          />
         )}
       </SitterProfileFormInner>
     </StyledContainer>
