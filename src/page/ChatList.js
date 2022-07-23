@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useQuery } from "react-query";
 import styled, {keyframes} from "styled-components";
 import { setScreenSize } from "../shared/common";
@@ -28,13 +28,18 @@ function ChatList({popup, socket, setPopup}) {
     refetch();
   };
 
+  const [scroll, setScroll] = useState();
+  const scrollElement = useRef();
+
   useEffect(() => {
     setScreenSize();
     window.addEventListener("resize", setScreenSize);
   },[])
 
   return (
-    <ChatInner>
+    <ChatInner ref={scrollElement} onScroll={(e)=>{
+      setScroll(e.target.scrollTop);
+    }}>
         <div className="joinChatContainer">
           <div>
             <div className={`chats_header ${!showChatRoom ? "list" : "room"}`}>
@@ -67,7 +72,7 @@ function ChatList({popup, socket, setPopup}) {
               })}
             </div>
             ) : (
-              <ChatRoom socket={socket} room={idRoom}/>
+              <ChatRoom socket={socket} room={idRoom} scroll={scroll} scrollElement={scrollElement}/>
             )}
           </div>
         </div>

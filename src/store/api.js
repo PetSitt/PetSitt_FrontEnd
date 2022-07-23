@@ -132,7 +132,7 @@ export const apis = {
 	signupAdd: (data) => jsonApi.post('/api/signup', data),
 	passwordFind: (data) => pwfindApi.post('/api/password_check', data),
 	idFind: (data) => pwfindApi.post('/api/id_check', data),
-	login: (data) => mainApi.post('/api/login', data),
+	login: (data) => jsonApi.post('/api/login', data),
 	kakaoLogin: (data) => axios.post('http://3.35.135.160/api/auth/kakao', data),
 	checkUser: () => authApi.get('/api/auth'),
 
