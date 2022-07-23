@@ -54,6 +54,7 @@ function Home() {
 		() => getSittersList(queriesData, category),
 		{
 			onSuccess: (data) => {
+				console.log(data)
 				setSearched(false);
 				setSitters(data.data.sitters);
 			},
@@ -69,6 +70,7 @@ function Home() {
 		if (date.length > 0) {
 			datesTransformed.current = null;
 			const getDates = date.map((v,i) => {
+				console.log(v)
 				return v.format(v._format);
 			});
 			setDates(getDates);
@@ -109,6 +111,7 @@ function Home() {
 		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
 		{
 			onSuccess: (data) => {
+				console.log(data, 'success')
 				queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(false);
 				setSitters(data.data.sitter);
@@ -119,7 +122,6 @@ function Home() {
 			},
 			enabled: !!defaultSearch,
 			staleTime: Infinity,
-			refetchOnMount: 'always'
 		},
 	);
 	const kakaoLoginApi = (dataToSend) => {
@@ -512,6 +514,16 @@ const FilterArea = styled.div`
 			font-size: 16px;
 		&::placeholder{
 			color: rgba(120, 120, 120, 0.7);
+		}
+	}
+	@media screen and (max-width: 400px){
+		input{
+			min-width: 170px;
+			padding-left: 32px;
+		}
+		.ic-search{
+			width: 34px;
+			font-size: 20px;
 		}
 	}
 	i{

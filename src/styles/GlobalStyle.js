@@ -32,6 +32,12 @@ const GlobalStyles = createGlobalStyle`
     outline: none;
     border-radius: 0;
     -webkit-border-radius: 0;
+    @media screen and (max-width: 400px){
+      font-size: 14px;
+      &::placeholder{
+        font-size: 14px;
+      }
+    }
   }
   textarea {
     resize: none;

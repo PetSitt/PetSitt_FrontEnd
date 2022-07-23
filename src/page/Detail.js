@@ -77,12 +77,7 @@ const Detail = () => {
     })
     setUnavailable(datesArray);
   }
-  const {
-		isLoading: detailIsLoading,
-		isSuccess,
-		isFetched,
-		data: detailData,
-	} = useQuery("detail_data", () => apis.getUserDetail(sitterId), {
+  const detailData = useQuery("detail_data", () => apis.getUserDetail(sitterId), {
 		onSuccess: (data) => {
 			console.log(data.data, "data loaded");
       const _newPrice = data.data.sitter.servicePrice.toString().replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
@@ -95,7 +90,6 @@ const Detail = () => {
 			console.error(data);
 		},
 		staleTime: Infinity,
-		refetchOnMount: "always",
 	});
   const {mutate: openChatRoom} = useMutation(()=>apis.contactToSitter(detail.sitter.sitterId), {
     onSuccess: (data)=>{
@@ -105,16 +99,16 @@ const Detail = () => {
       console.log('문의하기 api failed', data);
     }
   })
-  const {data: checkRegisteredPet, refetch: petInfoRefetch} = useQuery('getPetInfoQuery', ()=>apis.getPetInfo(), {
-    onSuccess: (data) => {
-      if(data.data.check){
-        hasPetInfo.current = true;
-      }else{
-        hasPetInfo.current = false;
-      }
-    },
-    enabled: false,
-  })
+  // const {data: checkRegisteredPet, refetch: petInfoRefetch} = useQuery('getPetInfoQuery', ()=>apis.getPetInfo(), {
+  //   onSuccess: (data) => {
+  //     if(data.data.check){
+  //       hasPetInfo.current = true;
+  //     }else{
+  //       hasPetInfo.current = false;
+  //     }
+  //   },
+  //   enabled: false,
+  // })
 	const checkSelectArea = (e) => {
 		if (!e.target.closest(".select_area") && !e.target.closest('.select_detail')) {
 			setSelectBoxToggle({ type: "", status: false });
@@ -175,7 +169,7 @@ const Detail = () => {
 		window.addEventListener("click", checkSelectArea);
     // 로그인한 상태일 경우 등록된 반려견 정보 있는지 확인
     if(localStorage.getItem('accessToken') && localStorage.getItem('userName')){
-      petInfoRefetch();
+      // petInfoRefetch();
     }
 		return()=>{
       window.removeEventListener("click", checkSelectArea);
@@ -237,7 +231,9 @@ const Detail = () => {
     }
   }
 
-  if (detailIsLoading || !detail ) return <p>로딩중입니다</p>;
+  // console.log(detailData.data.data)
+  if ( detailData ) return <p>로딩중입니다</p>;
+
 	return (
 		<>
       <SitterDetailPage className="detailPageWrap" style={{paddingTop: 0}} onScroll={(e)=>{
