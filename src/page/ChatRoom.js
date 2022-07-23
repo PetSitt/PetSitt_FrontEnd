@@ -119,7 +119,9 @@ const ChatInner = styled.div`
       padding-right: 5px;
       padding-left: 5px;
       overflow-wrap: break-word;
-      word-break: break-word;
+      word-break: break-word;    
+      padding-bottom: 40px;
+
     }
     .message {
       display: flex;
@@ -153,11 +155,13 @@ const ChatInner = styled.div`
   }
   .chat-footer {
     position: fixed;
-    max-width: 412px;
+    width: 350px;
+    max-width: calc(90% - 20px);
     min-height: 45px;
-    width: 346px;
-    right: 11.6%;
-    bottom: 4%;
+    right: 0;
+    left: 0;
+    margin: 0 auto;
+    bottom: 35px;
     z-index: 99;
     border-radius: 18px;
     background-color: rgba( 255, 255, 255, 0.9 );
@@ -165,6 +169,10 @@ const ChatInner = styled.div`
     justify-content: space-between;
     align-items: center;
     padding: 0 16px;
+    @media (min-width: 768px){
+      right: calc(10% + 31px);
+      left: auto;
+    }
     input {
       width: 100%;
       height: 45px;
