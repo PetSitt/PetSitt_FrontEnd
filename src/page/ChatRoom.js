@@ -6,7 +6,8 @@ import { chatApis } from "../store/chatApi";
 
 function formatDate(value) {
   const date = new Date(value);
-  return date.toLocaleTimeString('ko-KR');
+  const [hour, minute, second] = date.toLocaleTimeString("ko-KR").split(/:| /)
+  return `${hour} ${minute}:${second}`;
 };
 
 function ChatRoom({ socket, room, scroll, scrollElement }) {
