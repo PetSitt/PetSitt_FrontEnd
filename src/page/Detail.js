@@ -97,7 +97,7 @@ const Detail = () => {
 		staleTime: Infinity,
 		refetchOnMount: "always",
 	});
-  const {mutate: openChatRoom} = useMutation(()=>apis.inquireToSitter(detail.sitter.sitterId), {
+  const {mutate: openChatRoom} = useMutation(()=>apis.contactToSitter(detail.sitter.sitterId), {
     onSuccess: (data)=>{
       console.log('문의하기 api success', data);
     },

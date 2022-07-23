@@ -49,7 +49,6 @@ function App() {
           <Router />
         </Suspense>
         <Menu popup={value.popup} setPopup={setValues} socket={value.socket}/>
-        {console.log(value.socket)}
         {value.popup && (
           <Suspense>
             <ChatList popup={value.popup} socket={value.socket} setPopup={setValues} />

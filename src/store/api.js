@@ -136,8 +136,7 @@ export const apis = {
 	sitterprofilePost: (data) => formDataApi.post('/mypage/sitterprofile', data),
 	sitterprofilePatch: (data) => formDataApi.patch('/mypage/sitterprofile', data),
 	sitterprofileDelete: () => jsonApi.delete('/mypage/sitterprofile'),
-	inquireToSitter: (sitterId) => jsonApi.post(`/chats/${sitterId}`),
-
+	
 	// main
 	getSittersList: (queriesData) => mainApi.post('/mains/search', queriesData),
   getSittersDefault: (data) => mainApi.post('/mains', data),
@@ -146,6 +145,7 @@ export const apis = {
 	getUserDetail: (sitterId) => detailApi.get(`/details/${sitterId}`),
 	getReviews: (sitterId, reviewId) => detailApi.post(`/details/reviews/${sitterId}`, reviewId),
 	getPetInfo: () => jsonApi.get('/informations/petcheck'),
+	contactToSitter: (sitterId) => jsonApi.post(`/chats/${sitterId}`),
 
 	// reservation
 	reservation: () => jsonApi.get('/reservations'),

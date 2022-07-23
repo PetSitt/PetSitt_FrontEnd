@@ -34,3 +34,9 @@ export const uncomma = (str) => {
 	str = String(str);
 	return str.replace(/[^\d]+/g, '');
 };
+
+/** 윈도우창 리사이즈 함수 */
+export const setScreenSize = () => {
+  const vh = window.innerHeight * 0.01;
+  document.documentElement.style.setProperty("--vh", `${vh}px`);
+}
