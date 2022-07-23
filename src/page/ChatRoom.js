@@ -9,7 +9,7 @@ function formatDate(value) {
   return date.toLocaleTimeString('ko-KR');
 };
 
-function ChatRoom({ socket, room }) {
+function ChatRoom({ socket, room, scroll, scrollElement }) {
   const [currentMessage, setCurrentMessage] = useState("");
   const [roomJoin, setRoomJoin] = useState(false);
   const { isLoading: dataLoading, data: chatsRoom, refetch} = useQuery(["chatsRoom", room], () => chatApis.chatRoomGet(room), {
@@ -44,12 +44,18 @@ function ChatRoom({ socket, room }) {
   useEffect(() => {
     socket.on("receive_message", (data) => {
       setMessageList((list) => [...list, data]);
+      scrollToBottom();
     });
   }, [socket]);
 
   useEffect(() => {
     refetch();
+    scrollToBottom();
   },[])
+
+  const scrollToBottom = () => {
+    scrollElement.current.scrollTop = scrollElement.current.scrollHeight;
+  };
   
   return (
     <ChatInner>
@@ -83,10 +89,13 @@ function ChatRoom({ socket, room }) {
             setCurrentMessage(event.target.value);
           }}
           onKeyPress={(event) => {
-            event.key === "Enter" && sendMessage();
+            if(event.key === "Enter"){
+              sendMessage();
+              scrollToBottom();
+            }
           }}
         />
-        <button onClick={sendMessage}>&#9658;</button>
+        <button onClick={()=>{sendMessage(); scrollToBottom()}}>&#9658;</button>
       </div>
     </ChatInner>
   );
