@@ -1,43 +1,48 @@
 import { useEffect, useRef, useState } from "react";
 import { useMutation } from "react-query";
 import styled from "styled-components";
+import InputBox from "../elements/InputBox";
+import NavBox from "../elements/NavBox";
+import StyledButton from "../elements/StyledButton";
+import StyledContainer from "../elements/StyledContainer";
 import { handleChange } from "../shared/common";
 import { apis } from "../store/api";
 
 const INITIAL_VALUES = {
-	userEmail: '',
-  password: '',
-	newPassword: '',
+  userEmail: "",
+  password: "",
+  newPassword: "",
 };
 
 const PwChange = () => {
-	const pwOrdInput = useRef();
-	const pwNewInput = useRef();
-	const [values, setValues] = useState(INITIAL_VALUES);
-	const [pwMessage, setPwMessage] = useState("");
+  const pwOrdInput = useRef();
+  const pwNewInput = useRef();
+  const [values, setValues] = useState(INITIAL_VALUES);
+  const [pwMessage, setPwMessage] = useState("");
   const [pw2Message, setPw2Message] = useState("");
   const [isPw, setIsPw] = useState(false);
   const [isPw2, setIsPw2] = useState(false);
 
-	// useMutation 세팅 함수
-	const {mutate: passwordChang} = useMutation(apis.passwordChange, {
-    onSuccess: ({data}) => {
-			alert(data.message)
+  // useMutation 세팅 함수
+  const { mutate: passwordChang } = useMutation(apis.passwordChange, {
+    onSuccess: ({ data }) => {
+      alert(data.message);
     },
-		onError: (data) => {
-			alert(data.response.data.errorMessage)
-		}
+    onError: (data) => {
+      alert(data.response.data.errorMessage);
+    },
   });
 
-	const handleInputChange = (e) => {
+  const handleInputChange = (e) => {
     const { name, value } = e.target;
     handleChange(name, value, setValues);
   };
 
-	// 영문 숫자 포함해서 4~10 이내로
-	const pwCheck = (e) => {
+  // 영문 숫자 포함해서 4~10 이내로
+  const pwCheck = (e) => {
     handleInputChange(e);
-    const regPw = /^.*(?=.{4,10})(?=.*[a-zA-Z])(?=.*?[A-Z])(?=.*\d)(?=.+?[\W|_])[a-zA-Z0-9!@#$%^&*()-_+={}\|\\\/]+$/gim;
+    const regPw =
+      /^.*(?=.{4,10})(?=.*[a-zA-Z])(?=.*?[A-Z])(?=.*\d)(?=.+?[\W|_])[a-zA-Z0-9!@#$%^&*()-_+={}\|\\\/]+$/gim;
     const pwCurrent = e.target.value;
 
     if (!regPw.test(pwCurrent)) {
@@ -60,78 +65,78 @@ const PwChange = () => {
     }
   };
 
-	// 전송하는 함수
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		const datas = {	
-			userEmail: localStorage.getItem('userEmail'),
-			password: values.password,
-			newPassword: values.newPassword
-		}
-		passwordChang(datas)
+  // 전송하는 함수
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const datas = {
+      userEmail: localStorage.getItem("userEmail"),
+      password: values.password,
+      newPassword: values.newPassword,
+    };
+    passwordChang(datas);
   };
 
-	return (
-		<Form onSubmit={handleSubmit}>
-			<h1>비밀번호 변경</h1>
-			<div className="inner">
-				<label htmlFor="password" className="tit">기존 비밀번호</label>
-				<input
-					type="text"
-					id="password"
-					ref={pwOrdInput}
-					name="password"
-					onChange={handleInputChange}
-					required
-				/>
-			</div>
-			<div className="inner">
-				<label htmlFor="newPassword1" className="tit">새로운 비밀번호</label>
-				<input
-					type="text"
-					id="newPassword1"
-					ref={pwNewInput}
-					name="newPassword"
-					onChange={pwCheck}
-					required
-				/>
-			</div>
-			{values.newPassword && (
-				<Message className={`${isPw ? "success" : "error"}`}>
-					{pwMessage}
-				</Message>
-			)}
-
-			<div className="inner">
-				<label htmlFor="newPassword2" className="tit">새로운 비밀번호 확인</label>
-				<input
-					type="text"
-					id="newPassword2"
-					ref={pwNewInput}
-					name="newPassword"
-					onChange={isSamePw}
-					required
-				/>
-			</div>
-			{values.newPassword && (
-				<Message className={`${isPw2 ? "success" : "error"}`}>
-					{pw2Message}
-				</Message>
-			)}
-			<button>전송</button>
-		</Form>
-	);
-}
-
+  return (
+    <StyledContainer>
+      <Form onSubmit={handleSubmit}>
+        <NavBox _title={"비밀번호 찾기"} />
+        <InputBox>
+          <label className="inner required" htmlFor="password">
+            기존 비밀번호
+          </label>
+          <input
+            type="password"
+            id="password"
+            ref={pwOrdInput}
+            name="password"
+            onChange={handleInputChange}
+            required
+          />
+        </InputBox>
+        <InputBox>
+          <label className="inner required" htmlFor="newPassword1">
+            새로운 비밀번호
+          </label>
+          <input
+            type="password"
+            id="newPassword1"
+            ref={pwNewInput}
+            name="newPassword"
+            onChange={pwCheck}
+            required
+          />
+        </InputBox>
+        {values.newPassword && (
+          <Message className={`${isPw ? "success" : "error"}`}>
+            {pwMessage}
+          </Message>
+        )}
+        <InputBox>
+          <label className="inner required" htmlFor="newPassword2">
+            새로운 비밀번호 확인
+          </label>
+          <input
+            type="password"
+            id="newPassword2"
+            ref={pwNewInput}
+            name="newPassword"
+            onChange={isSamePw}
+            required
+          />
+        </InputBox>
+        {values.newPassword && (
+          <Message className={`${isPw2 ? "success" : "error"}`}>
+            {pw2Message}
+          </Message>
+        )}
+        <StyledButton _title="비밀번호 변경하기" />
+      </Form>
+    </StyledContainer>
+  );
+};
 
 const Form = styled.form`
-	.inner {
-		padding-bottom: 10px;
-	}
-  input,
-  textarea {
-    border: 1px solid #000;
-  }
+
 `;
 const Message = styled.p`
   font-size: 13px;
