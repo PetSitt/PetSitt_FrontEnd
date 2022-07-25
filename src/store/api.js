@@ -138,18 +138,18 @@ export const apis = {
 
 	// mypage
 	passwordChange: (data) => pwfindApi.put('/api/password_change', data),
-	myprofile: () => jsonApi.get('/mypage/myprofile'),
-	myprofileGet: () => jsonApi.get('/mypage/myprofile'),
-	myprofilePatch: (data) => jsonApi.patch('/mypage/myprofile', data),
-	petprofileGet: () => jsonApi.get('/mypage/petprofile'),
-	petprofilePost: (data) => formDataApi.post('/mypage/petprofile', data),
-	petprofilePatch: ({id, data}) => formDataApi.patch(`/mypage/petprofile/${id}`, data),
-  petprofileDelete: (id) => jsonApi.delete(`/mypage/petprofile/${id}`),
+	myprofile: () => jsonApi.get('/mypages/myprofile'),
+	myprofileGet: () => jsonApi.get('/mypages/myprofile'),
+	myprofilePatch: (data) => jsonApi.patch('/mypages/myprofile', data),
+	petprofileGet: () => jsonApi.get('/mypages/petprofile'),
+	petprofilePost: (data) => formDataApi.post('/mypages/petprofile', data),
+	petprofilePatch: ({id, data}) => formDataApi.patch(`/mypages/petprofile/${id}`, data),
+  petprofileDelete: (id) => jsonApi.delete(`/mypages/petprofile/${id}`),
 	reservation: () => jsonApi.get('/reservations'),
-	sitterprofileGet: () => jsonApi.get('/mypage/sitterprofile'),
-	sitterprofilePost: (data) => formDataApi.post('/mypage/sitterprofile', data),
-	sitterprofilePatch: (data) => formDataApi.patch('/mypage/sitterprofile', data),
-	sitterprofileDelete: () => jsonApi.delete('/mypage/sitterprofile'),
+	sitterprofileGet: () => jsonApi.get('/mypages/sitterprofile'),
+	sitterprofilePost: (data) => formDataApi.post('/mypages/sitterprofile', data),
+	sitterprofilePatch: (data) => formDataApi.patch('/mypages/sitterprofile', data),
+	sitterprofileDelete: () => jsonApi.delete('/mypages/sitterprofile'),
 
 	// main
 	getSittersList: (queriesData) => mainApi.post('/mains/search', queriesData),
@@ -170,7 +170,7 @@ export const apis = {
 	registerReview: (reservationId, data) => jsonApi.post(`/reviews/${reservationId}`, data),
 	loadMorePastReservation: (reservationId, type) => jsonApi.get(`/reservations/lists/${reservationId}?searchCase=${type}`),
 	loadReview: (reservationId) => jsonApi.get(`/reviews/${reservationId}`),
-	registerDiary: (reservationId, formdata, config) => jsonApi.post(`/diarys/${reservationId}`, formdata, formdataConfig),
-	loadDiaryData: (reservationId) => jsonApi.get(`/diarys/${reservationId}`),
-	modifyDiary: (reservationId, formData) => jsonApi.put(`/diarys/${reservationId}`, formData, formdataConfig)
+	registerDiary: (reservationId, formdata, config) => jsonApi.post(`/diaries/${reservationId}`, formdata, formdataConfig),
+	loadDiaryData: (reservationId) => jsonApi.get(`/diaries/${reservationId}`),
+	modifyDiary: (reservationId, formData) => jsonApi.put(`/diaries/${reservationId}`, formData, formdataConfig)
 }
