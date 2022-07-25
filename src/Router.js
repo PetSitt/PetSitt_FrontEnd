@@ -26,11 +26,11 @@ import ChatList from './page/ChatList';
 import ChatRoom from './page/ChatRoom';
 
  
-const Router = () => {
+const Router = ({socket}) => {
   return (
     <Routes>
       <Route path='/' element={<Home />} exact />
-      <Route path='/detail/:id' element={<Detail />} exact />
+      <Route path='/detail/:id' element={<Detail socket={socket}/>} exact />
       <Route path='/signup' element={<Signup />} />
       <Route path='/pwfind' element={<PwFind />} />
       <Route path='/idfind' element={<IdFind />} />

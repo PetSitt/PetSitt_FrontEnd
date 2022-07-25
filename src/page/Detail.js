@@ -5,13 +5,14 @@ import styled from "styled-components";
 import { DateObject, Calendar } from "react-multi-date-picker";
 import MapContainer from "./MapContainer";
 import { apis } from "../store/api";
+import { chatApis } from "../store/chatApi";
 
 import Modal from '../elements/Modal';
 import StyledButton from '../elements/StyledButton';
 import Reviews from './Reviews';
 import ChatRoom from "./ChatRoom";
 
-const Detail = () => {
+const Detail = ({socket}) => {
 	const queryClient = useQueryClient();
 	const param = useParams();
   const navigate = useNavigate();
@@ -91,15 +92,8 @@ const Detail = () => {
 		},
 		staleTime: Infinity,
 	});
-  // const {mutate: openChatRoom} = useMutation(()=>apis.contactToSitter(detail.sitter.sitterId), {
-  //   onSuccess: (data)=>{
-  //     console.log('문의하기 api success', data);
-  //   },
-  //   onError: (data) => {
-  //     console.log('문의하기 api failed', data);
-  //   }
-  // })
-  const {data: checkRegisteredPet, refetch: petInfoRefetch} = useQuery('getPetInfoQuery', ()=>apis.getPetInfo(), {
+
+  const {data: checkRegisteredPet, refetch: petInfoRefetch} = useQuery('getPetInfoQuery', () => apis.getPetInfo(), {
     onSuccess: (data) => {
       if(data.data.check){
         hasPetInfo.current = true;
@@ -108,7 +102,17 @@ const Detail = () => {
       }
     },
     enabled: false,
-  })
+  });
+
+  const {mutate: openChatRoom} = useMutation(()=>chatApis.chatRoomPost(sitterId), {
+    onSuccess: (data)=>{
+      console.log('문의하기 api success', data);
+    },
+    onError: (data) => {
+      console.log('문의하기 api failed', data);
+    }
+  });
+
 	const checkSelectArea = (e) => {
 		if (!e.target.closest(".select_area") && !e.target.closest('.select_detail')) {
 			setSelectBoxToggle({ type: "", status: false });
@@ -145,6 +149,7 @@ const Detail = () => {
 
   const onChatting = () => {
     setValues(!value)
+    openChatRoom();
   }
 
   useEffect(()=>{
@@ -570,9 +575,9 @@ const Detail = () => {
           </div>
         </ReservationFunctions>
       </SitterDetailPage>
-      {/* {
-        <ChatRoom />
-      } */}
+      {
+        value && <ChatRoom />
+      }
       {
         (modalDisplay && errorMessage === errorMessages.notLogin) && (
           <Modal _display={modalDisplay} _alert={false} _confirm={'로그인하기'} _cancel={'취소'} cancelOnclick={()=>{setErrorMessage(null); setModalDisplay(false)}} confirmOnClick={()=>{navigate('/login')}}>
