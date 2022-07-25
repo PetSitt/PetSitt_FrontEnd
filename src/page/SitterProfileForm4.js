@@ -1,4 +1,3 @@
-import Button from "../elements/Button";
 import styled from "styled-components";
 import { Calendar, DateObject } from "react-multi-date-picker";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -82,10 +81,10 @@ function SitterProfileForm4() {
   return (
     <StyledContainer>
     <Form onSubmit={handleSubmit}>
-      <NavBox _title='서비스 불가능한 날짜' _subTitle='4/4' sitterProfile />
+      <NavBox _title='서비스 불가능한 날짜' _subTitle='4/4' sitterEditProfile />
       <Calendar required multiple sort format={format} value={ dates } onChange={ setDates } minDate={new Date()} maxDate={new Date(today.year + 1, today.month.number, today.day)}></Calendar>
       <StyledButton
-          _onClick={() => console.log(update ? "수정하기" : "등록하기")}
+          _onClick={handleSubmit}
           _title={ update ? "수정하기" : "등록하기"}
         />
     </Form>

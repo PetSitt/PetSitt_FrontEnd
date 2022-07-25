@@ -122,7 +122,7 @@ const SitterProfileForm1 = () => {
           address={values.address}
           onChange={handleGeolocation}
         /> */}
-        <NavBox _title='기본 프로필' _subTitle='1/4' sitterProfile />
+        <NavBox _title='기본 프로필' _subTitle='1/4' sitterEditProfile />
         <InputBox>
           <label className='tit'>이름*</label>
           <input

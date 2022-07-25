@@ -13,7 +13,7 @@ const INITIAL_VALUES = {
   careSize: [false, false, false],
   category: [],
   plusService: [],
-  servicePrice: '',
+  servicePrice: "",
 };
 
 
@@ -21,7 +21,7 @@ function SitterProfileForm3() {
   const navigate = useNavigate();
   const { data, update } = useLocation().state;
   const [available, setAvailable] = useState([]);
-  const [num, setNum] = useState('');
+  const [num, setNum] = useState("");
   const [values, setValues] = useState(
     update ? data : { ...data, ...INITIAL_VALUES }
   );
@@ -86,14 +86,14 @@ function SitterProfileForm3() {
   return (
     <StyledContainer>
       <SitterProfileFormInner>
-        <NavBox _title='제공 가능한 서비스' _subTitle='3/4' sitterProfile />
+        <NavBox _title="제공 가능한 서비스" _subTitle="3/4" sitterEditProfile />
         <CheckWrap>
-          <label className='tit'>케어 가능 범위</label>
+          <label className="tit">케어 가능 범위*</label>
           <CheckGroup>
             <Checkbox
-              _text={'소형견'}
-              _size={'1.2rem'}
-              _border={'1px solid rgba(120, 120, 120, 0.7)'}
+              _text={"소형견"}
+              _size={"1.2rem"}
+              _border={"1px solid rgba(120, 120, 120, 0.7)"}
               onChange={(e) => {
                 setValues((prevValues) => {
                   const careSize = [...prevValues.careSize];
@@ -104,8 +104,8 @@ function SitterProfileForm3() {
               checked={values.careSize}
             />
             <Checkbox
-              _text={'중형견'}
-              _size={'1.2rem'}
+              _text={"중형견"}
+              _size={"1.2rem"}
               onChange={(e) => {
                 setValues((prevValues) => {
                   const careSize = [...prevValues.careSize];
@@ -116,8 +116,8 @@ function SitterProfileForm3() {
               checked={values.careSize}
             />
             <Checkbox
-              _text={'대형견'}
-              _size={'1.2rem'}
+              _text={"대형견"}
+              _size={"1.2rem"}
               onChange={(e) => {
                 setValues((prevValues) => {
                   const careSize = [...prevValues.careSize];
@@ -130,45 +130,45 @@ function SitterProfileForm3() {
           </CheckGroup>
         </CheckWrap>
         <CheckWrap>
-          <label className='tit'>제공 가능한 서비스*</label>
+          <label className="tit">제공 가능한 서비스*</label>
           <CheckGroup>
             <Checkbox
-              _id={'산책'}
-              _key={'category'}
-              _text={'산책'}
-              _size={'1.2rem'}
+              _id={"산책"}
+              _key={"category"}
+              _text={"산책"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.category}
             />
             <Checkbox
-              _id={'목욕 및 모발 관리'}
-              _key={'category'}
-              _text={'목욕 및 모발 관리'}
-              _size={'1.2rem'}
+              _id={"목욕, 모발 관리"}
+              _key={"category"}
+              _text={"목욕, 모발 관리"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.category}
             />
             <Checkbox
-              _id={'훈련'}
-              _key={'category'}
-              _text={'훈련'}
-              _size={'1.2rem'}
+              _id={"훈련"}
+              _key={"category"}
+              _text={"훈련"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.category}
             />
             <Checkbox
-              _id={'데이케어'}
-              _key={'category'}
-              _text={'데이케어'}
-              _size={'1.2rem'}
+              _id={"데이 케어"}
+              _key={"category"}
+              _text={"데이 케어"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.category}
             />
             <Checkbox
-              _id={'1박케어'}
-              _key={'category'}
-              _text={'1박케어'}
-              _size={'1.2rem'}
+              _id={"1박 케어"}
+              _key={"category"}
+              _text={"1박 케어"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.category}
             />
@@ -189,50 +189,50 @@ function SitterProfileForm3() {
               checked={values.plusService}
             />
             <Checkbox
-              _id={'응급 처치'}
-              _key={'plusService'}
-              _text={'응급 처치'}
-              _size={'1.2rem'}
+              _id={"응급 처치"}
+              _key={"plusService"}
+              _text={"응급 처치"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.plusService}
             />
             <Checkbox
-              _id={'장기 예약 가능 - 14일 이상 돌봄가능'}
-              _key={'plusService'}
-              _text={'장기 예약 가능 - 14일 이상 돌봄가능'}
-              _size={'1.2rem'}
+              _id={"장기 예약 가능 - 14일 이상 돌봄가능"}
+              _key={"plusService"}
+              _text={"장기 예약 가능 - 14일 이상 돌봄가능"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.plusService}
             />
             <Checkbox
-              _id={'퍼피 케어(1살 미만)'}
-              _key={'plusService'}
-              _text={'퍼피 케어(1살 미만)'}
-              _size={'1.2rem'}
+              _id={"퍼피 케어(1살미만)"}
+              _key={"plusService"}
+              _text={"퍼피 케어(1살미만)"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.plusService}
             />
             <Checkbox
-              _id={'노견 케어(8살 이상)'}
-              _key={'plusService'}
-              _text={'노견 케어(8살 이상)'}
-              _size={'1.2rem'}
+              _id={"노견 케어(8살이상)"}
+              _key={"plusService"}
+              _text={"노견 케어(8살이상)"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.plusService}
             />
             <Checkbox
-              _id={'실내놀이'}
-              _key={'plusService'}
-              _text={'실내놀이'}
-              _size={'1.2rem'}
+              _id={"실내놀이"}
+              _key={"plusService"}
+              _text={"실내놀이"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.plusService}
             />
             <Checkbox
-              _id={'마당있음'}
-              _key={'plusService'}
-              _text={'마당있음'}
-              _size={'1.2rem'}
+              _id={"마당있음"}
+              _key={"plusService"}
+              _text={"마당있음"}
+              _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.plusService}
             />
@@ -241,9 +241,9 @@ function SitterProfileForm3() {
         <InputBox>
         <label className='txt'>서비스 금액 *</label>
           <input
-            type='text'
-            name='servicePrice'
-            placeholder='일당 서비스 금액을 입력해주세요.'
+            type="text"
+            name="servicePrice"
+            placeholder="일당 서비스 금액을 입력해주세요."
             defaultValue={num ? num : comma(values.servicePrice)}
             onChange={handleInput}
           />
@@ -279,7 +279,7 @@ const SitterProfileFormInner = styled.div`
   input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
-}
+  }
 `;
 
 const CheckWrap = styled.div`
