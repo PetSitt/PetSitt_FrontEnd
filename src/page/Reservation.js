@@ -25,6 +25,7 @@ const Reservation = () => {
   const sendRequestApi = (data, sitterId) => {
     return apis.makeReservation(dataForRequest, info.sitterId)
   }
+  console.log(info)
   const sendRequest = useQuery(['requestStatus', dataForRequest, info.sitterId], ()=>sendRequestApi(dataForRequest, info.sitterId), {
     onSuccess: (data) => {
       if(data.data.msg === '예약 완료'){
@@ -48,7 +49,7 @@ const Reservation = () => {
       category: info.service,
       reservationDate: info.date
     }
-    await setDataForRequest(_data);
+    setDataForRequest(_data);
     setModalDisplay(false);
     setRequestStatus(true);
   }  

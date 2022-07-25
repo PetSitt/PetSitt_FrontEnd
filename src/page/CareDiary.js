@@ -14,6 +14,7 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
   const [datas, setDatas] = useState({checkList, inputValues, checked, images, imageUrls, files, text});
   const [dataForModify, setDataForModify] = useState({addImage: [], deleteImage: []});
   useEffect(()=>{
+    console.log(1)
     setDatas(()=>{
       return {checkList, inputValues, checked, images, imageUrls, files, text};
     })
@@ -21,11 +22,13 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
 
 
   useEffect(()=>{
+    console.log(2)
     setDiaryData(datas);
   },[datas]); // state 하나 바뀔때마다 refresh 되니까 비효율적인 것 같은데...
 
   useEffect(()=>{
     if(diaryStatus === 'get') {
+      console.log(3)
       setCheckList(diaryData.checkList);
       setInputValues(diaryData.inputValues);
       setChecked(diaryData.checked);
@@ -38,6 +41,7 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
       }
     }
     if(diaryStatus === 'clear'){
+      console.log(4)
       setCheckList(0);
       setInputValues([]);
       setChecked([]);
@@ -46,10 +50,12 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
       setFiles([]);
       setText(null);
       if(mode.current === 'view'){ // 수정모드일 경우
+        console.log(5)
         setDataForModify({addImage: [], deleteImage: []});
       }
     }
     if(diaryStatus === 'save'){ // 수정모드일 때 데이터 저장
+      console.log(6)
       modifyData.current = dataForModify;
     }
   },[diaryStatus]);
