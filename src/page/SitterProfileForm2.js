@@ -66,7 +66,7 @@ const SitterProfileForm2 = () => {
 
   useEffect(() => {
     console.log(values);
-  }, []);
+  }, [values]);
 
   return (
     <StyledContainer>
@@ -87,6 +87,7 @@ const SitterProfileForm2 = () => {
                 })
               }
             }}
+            setValues={setValues}
           />
           {
             errorMessage.imageUrl && <Message>프로필 사진을 등록해주세요.</Message>
@@ -98,7 +99,7 @@ const SitterProfileForm2 = () => {
             name={'mainImageUrl'}
             value={data && values.mainImageUrl}
             onChange={(e)=>{
-              handleFileChange();
+              handleFileChange(e);
               if(e.target.files[0]){
                 setErrorMessage((prev)=>{
                   const data = {...prev};
@@ -107,6 +108,7 @@ const SitterProfileForm2 = () => {
                 })
               }
             }}
+            setValues={setValues}
           />
           {
             errorMessage.mainImageUrl && <Message>대표 활동 사진을 등록해주세요.</Message>
