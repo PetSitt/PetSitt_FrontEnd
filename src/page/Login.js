@@ -70,14 +70,14 @@ const Login = () => {
       // accessToken 없으면 refreshToken도 삭제
       cookies.remove('refreshToken');
     }
-    if (localStorage.getItem('acceessToken') && localStorage.getItem('userEmail')){
+    if (localStorage.getItem('acceessToken') || localStorage.getItem('userEmail')){
       // 로그인된 상태에서 로그인 페이지 접근했을 경우 로그아웃처리
       localStorage.removeItem('accessToken');
       cookies.remove('refreshToken');
       sessionStorage.removeItem('foundId');
       localStorage.removeItem('userName');
 			localStorage.removeItem('userEmail');
-      localStorage.removeItem('kakaoToken');
+      localStorage.removeItem('accessToken');
     }
   }, [cookies]);
 
@@ -264,7 +264,7 @@ const Message = styled.p`
   font-size: 13px;
   align-self: flex-start;
   padding: 5px 0;
-  color: red;
+  color: #F01D1D;
 `;
 
 export default Login;

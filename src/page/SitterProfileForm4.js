@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import { Calendar, DateObject } from "react-multi-date-picker";
 import { useNavigate, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { apis } from "../store/api";
 import NavBox from "../elements/NavBox";
@@ -14,6 +14,7 @@ function SitterProfileForm4() {
   const today = new DateObject();
   const {data, update} = useLocation().state;
   const [dates, setDates] = useState(data.noDate);
+  const [newDates, setNewDates] = useState(null);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -61,17 +62,26 @@ function SitterProfileForm4() {
     formData.append("careSize", JSON.stringify(data.careSize));
     formData.append("category", JSON.stringify(data.category));
     formData.append("plusService", JSON.stringify(data.plusService));
-    formData.append("noDate", JSON.stringify(dates));
+    formData.append("noDate", JSON.stringify(newDates ? newDates : dates));
     formData.append("servicePrice", data.servicePrice);
     
     update ? sitterUpdate(formData) : create(formData)
   }
-
+  useEffect(()=>{
+    if(typeof dates[0] === 'object'){
+      setNewDates(()=>{
+        return dates.map(v=>{
+          const newDateForm = `${v.year}/${v.month?.number < 10 ? '0' + v.month?.number : v.month?.number}/${v.day < 10 ? '0' + v.day : v.day}`
+          return newDateForm;
+        });
+      })
+    }
+  },[dates])
 
   return (
     <StyledContainer>
     <Form onSubmit={handleSubmit}>
-      <NavBox _title='서비스 불가능한 날짜' _subTitle='4/4' sitterProfile />
+      <NavBox _title='서비스 불가능한 날짜' _subTitle='4/4' sitterEditProfile />
       <Calendar required multiple sort format={format} value={ dates } onChange={ setDates } minDate={new Date()} maxDate={new Date(today.year + 1, today.month.number, today.day)}></Calendar>
       <StyledButton
           _onClick={handleSubmit}

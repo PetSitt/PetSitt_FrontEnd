@@ -55,9 +55,9 @@ const Detail = () => {
     {text: '후기', isActive: false, visibility: null, function: ()=>reviewRef.current.scrollIntoView({behavior: 'smooth'})},
   ]) 
   const iconClasses = {
-    '목욕, 모발 관리' : 'ic-wash',
-    '1박 케어': 'ic-boarding',
-    '데이 케어': 'ic-daycare',
+    '목욕 및 모발 관리' : 'ic-wash',
+    '1박케어': 'ic-boarding',
+    '데이케어': 'ic-daycare',
     '훈련': 'ic-prac',
     '산책': 'ic-stroll',
     '집앞 픽업 가능': 'ic-pickup',
@@ -79,25 +79,17 @@ const Detail = () => {
   }
   const {
 		isLoading: detailIsLoading,
-		isSuccess,
-		isFetched,
 		data: detailData,
 	} = useQuery("detail_data", () => apis.getUserDetail(sitterId), {
 		onSuccess: (data) => {
 			console.log(data.data, "data loaded");
-      const _newPrice = data.data.sitter.servicePrice.toString().replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
-      const _newData = {...data.data};
-      _newData.sitter.servicePrice = _newPrice;
-      setDetail(_newData);
-      setServices(Array.from({length: data?.data?.sitter?.category.length}, () => false));
-		},
+    },
 		onError: (data) => {
 			console.error(data);
 		},
 		staleTime: Infinity,
-		refetchOnMount: "always",
 	});
-  const {mutate: openChatRoom} = useMutation(()=>apis.inquireToSitter(detail.sitter.sitterId), {
+  const {mutate: openChatRoom} = useMutation(()=>apis.contactToSitter(detail.sitter.sitterId), {
     onSuccess: (data)=>{
       console.log('문의하기 api success', data);
     },
@@ -229,6 +221,13 @@ const Detail = () => {
     setSelectBoxToggle({ type: "", status: false });
   },[scrollDirection])
 
+  useEffect(()=>{
+    if(detailData){
+      setDetail(detailData.data);
+      setServices(Array.from({length: detailData.data.sitter.category.length}, () => false));
+    }
+  },[detailData])
+
   const scrollEvent = (e) => {
     if(e.target.scrollTop >= pageBodyRef.current.offsetTop){
       floatingTabsRef.current.classList.add('isFixed');
@@ -237,7 +236,7 @@ const Detail = () => {
     }
   }
 
-  if (detailIsLoading || !detail ) return <p>로딩중입니다</p>;
+  if (!detail) return <p>로딩중입니다</p>;
 	return (
 		<>
       <SitterDetailPage className="detailPageWrap" style={{paddingTop: 0}} onScroll={(e)=>{

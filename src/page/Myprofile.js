@@ -37,7 +37,6 @@ const Myprofile = () => {
     console.log(inputEl1);
     inputEl1.current.disabled = false;
     inputEl2.current.disabled = false;
-    inputEl3.current.disabled = false;
 
     const currentDatas = {
       userName: inputEl1.current.value,

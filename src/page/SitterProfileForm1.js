@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useDaumPostcodePopup } from 'react-daum-postcode';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import AddressInfo from '../components/AddressInfo';
 // import KakaoMapContainer from '../components/KakaoMapContainer';
@@ -80,6 +80,37 @@ const SitterProfileForm1 = () => {
     handleChange(name, value, setValues);
   };
 
+  const [errorMessage, setErrorMessage] = useState({
+    sitterName: false,
+    address: false,
+    detailAddress: false,
+  })
+
+  const doValidation = () => {
+    let emptyLength = Object.keys(errorMessage).length;
+    for(let i=0; i<Object.keys(errorMessage).length; i++){
+      if(!values[Object.keys(errorMessage)[i]] || values[Object.keys(errorMessage)[i]].trim().length <= 0) {
+        setErrorMessage((prev)=>{
+          const error = {...prev};
+          error[Object.keys(errorMessage)[i]] = true;
+          return error;
+        })
+      }else{
+        setErrorMessage((prev)=>{
+          const error = {...prev};
+          error[Object.keys(errorMessage)[i]] = false;
+          return error;
+        })
+        emptyLength--;
+      }
+    }
+    if(emptyLength === 0){
+      navigate('/mypage/SitterProfileForm2', {state: { data: values, update: true }});
+    }
+    
+  }
+
+
   useEffect(() => {
     console.log(values);
   }, []);
@@ -91,7 +122,7 @@ const SitterProfileForm1 = () => {
           address={values.address}
           onChange={handleGeolocation}
         /> */}
-        <NavBox _title='기본 프로필' _subTitle='1/4' sitterProfile />
+        <NavBox _title='기본 프로필' _subTitle='1/4' sitterEditProfile />
         <InputBox>
           <label className='tit'>이름*</label>
           <input
@@ -100,7 +131,11 @@ const SitterProfileForm1 = () => {
             placeholder='이름을 적어주세요.'
             onChange={handleInputChange}
             defaultValue={values.sitterName}
+            required
           />
+          {
+            errorMessage.sitterName && <Message>이름을 입력해주세요.</Message>
+          }
         </InputBox>
         <InputBox>
           <label className='tit'>돌보미 지역*</label>
@@ -110,22 +145,19 @@ const SitterProfileForm1 = () => {
             detailAddress={values.detailAddress}
             onChange={handleInputChange}
             handlePost={handlePost}
+            required
           />
+          {
+            (errorMessage.address && errorMessage.detailAddress) && <Message>돌보미 지역 주소를 검색해주세요.</Message>
+          }
+          {
+            (!errorMessage.address && errorMessage.detailAddress) && <Message>상세주소를 입력해주세요.</Message>
+          }
         </InputBox>
         {data ? (
-          <StyledButton
-          _onClick={() => navigate('/mypage/SitterProfileForm2', {state: { data: values, update: true }})}
-          _title={'다음으로'}
-        />
+          <StyledButton _onClick={doValidation} _title={'다음으로'}/>
         ) : (
-          <StyledButton
-            _onClick={() =>
-              navigate("/mypage/SitterProfileForm2", {
-                state: { data: values, update: false },
-              })
-            }
-            _title={"다음으로"}
-          />
+          <StyledButton _onClick={doValidation} _title={'다음으로 false'}/>
         )}
       </SitterProfileFormInner>
     </StyledContainer>
@@ -141,6 +173,12 @@ const SitterProfileFormInner = styled.div`
     border-radius: 6px;
     padding: 12px;
   }
+`;
+const Message = styled.p`
+  font-size: 13px;
+  align-self: flex-start;
+  padding: 5px 0;
+  color: #F01D1D;
 `;
 
 export default SitterProfileForm1;

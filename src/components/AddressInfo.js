@@ -57,14 +57,21 @@ const ContensInner = styled.div`
       flex-shrink: 1;
     }
     .postLink {
-      width: 95px;
-      height: 44px;
-      line-height: 44px;
-      flex-grow: 0;
-      color: #fff;
-      background-color: #000;
-      text-align: center;
-      border-radius: 0.4rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      width: 100px;
+      height: 48px;
+      background: #ffffff;
+      border: 1px solid rgba(120, 120, 120, 0.4);
+      border-radius: 6px;
+      margin-left: 4px;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 19px;
+      color: #676767;
+      margin-top: 3px;
     }
   }
 `;

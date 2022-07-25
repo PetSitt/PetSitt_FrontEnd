@@ -54,7 +54,7 @@ function SitterProfileForm3() {
   return (
     <StyledContainer>
       <SitterProfileFormInner>
-        <NavBox _title="제공 가능한 서비스" _subTitle="3/4" sitterProfile />
+        <NavBox _title="제공 가능한 서비스" _subTitle="3/4" sitterEditProfile />
         <CheckWrap>
           <label className="tit">케어 가능 범위*</label>
           <CheckGroup>
