@@ -4,9 +4,14 @@ import {apis} from '../store/api';
 
 
 const Reviews = ({reviewCount, sitterId}) => {
-  const [reviews, setReviews] = useState();
+  const [reviews, setReviews] = useState(null);
   const reviewIdValue = useRef(0);
-  const {data: reviewsData, refetch: refetchReviews} = useQuery(['reviewsData', sitterId, reviewIdValue.current], () => apis.getReviews(sitterId, {reviewId: reviewIdValue.current}), {
+
+  const getReviewApi = (sitterId, reviewId) => {
+    console.log(sitterId, reviewId)
+    return apis.getReviews(sitterId, reviewId);
+  }
+  const {data: reviewsData, refetch: refetchReviews} = useQuery(['reviewsData', sitterId, reviewIdValue.current], ()=>getReviewApi(sitterId, {reviewId: reviewIdValue.current}), {
     onSuccess: (data) => {
       console.log(data,'review loading success')
     },
@@ -15,17 +20,16 @@ const Reviews = ({reviewCount, sitterId}) => {
     },
     staleTime: Infinity,
   })
-  const lastReviewRef = useRef();
+  const lastReviewRef = useRef(0);
+  console.log(reviews)
 
   useEffect(()=>{
     if(reviewsData?.data.reviews.length > 0){
       setReviews((prev)=>{
         const _new_added = reviewsData.data.reviews.map(v=>{
-          const _date = new Date(v.reviewDate)
-          .toISOString().split("T")[0]
+          const _date = v.reviewDate.toString().split("T")[0]
           .split('-').join('/');
-          const _time = new Date(v.reviewDate)
-          .toISOString().split("T")[1].split('.')[0];
+          const _time = v.reviewDate.toString().split("T")[1].split('.')[0];
           return {...v, date: _date, time: _time};
         })
         if(prev?.length > 0){
@@ -37,22 +41,6 @@ const Reviews = ({reviewCount, sitterId}) => {
       });
     }
   },[reviewsData])
-
-  // useEffect(()=>{
-  //   if(lastReviewRef.current){
-  //     document.querySelector(".AppInner").scrollTo(0,lastReviewRef?.current.offsetTop);
-  //   }    
-  // },[reviews])
-
-  useEffect(()=>{
-    setReviews(null);
-    reviewIdValue.current = 0;
-    return () => {
-      setReviews(null);
-      reviewIdValue.current = 0;
-    }
-  },[])
-
 
   if(!reviews) return null;
   return (
@@ -75,7 +63,7 @@ const Reviews = ({reviewCount, sitterId}) => {
       {
         (reviews.length < reviewCount) && (
           <div style={{textAlign: 'center', paddingTop: '40px'}}>
-            <button type="button" className="more_review" onClick={()=>{reviewIdValue.current = reviews[reviews.length-1].id; refetchReviews()}}>리뷰 더보기</button>
+            <button type="button" className="more_review" onClick={()=>{reviewIdValue.current = reviews[reviews.length-1].reviewId; refetchReviews()}}>리뷰 더보기</button>
           </div>
         )
       }

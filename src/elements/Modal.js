@@ -45,6 +45,7 @@ const Modal = ({
 const ModalContainer = styled.div`
   position: fixed;
   display: flex;
+  width: 100%;
   align-items: center;
   justify-content: center;
   left: 0;
@@ -84,9 +85,9 @@ const ModalContainer = styled.div`
     }
   }
   @media (min-width: 768px) {
-    position: absolute;
-    top: 0%;
-    overflow: auto;
+    left: auto;
+    right: 10%;
+    max-width: 412px;
   }
 `;
 export default Modal;

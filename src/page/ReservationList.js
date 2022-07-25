@@ -45,6 +45,7 @@ const ReservationList = () => {
 	const {
 		mutate: reservatioinList,
 		isFetching,
+    data: reservationListData,
 	} = useMutation(() => apis.reservationList(selectedTab), {
 		onSuccess: (data) => {
 			setProceedings(data.data.proceedings);
@@ -65,7 +66,6 @@ const ReservationList = () => {
     onSettled: (data) => {
       console.log('settled', data)
     },
-		refetchOnMount: "always",
 		staleTime: Infinity,
 	});
   
@@ -124,19 +124,21 @@ const ReservationList = () => {
       console.log(data, 'loading review failed');
     }
   })
+  const request = useRef(0);
   const registerDiaryApi = (diaryData) => {
     if(diaryData?.inputValues.length < diaryData?.checked.length){
       diaryData?.checked.pop();
     }   
     const formData = new FormData();
     formData.append('checkList', JSON.stringify(diaryData.inputValues));
-    formData.append('checkState', JSON.stringify(diaryData.checked));
+    formData.append('checkStatus', JSON.stringify(diaryData.checked));
     formData.append('diaryInfo', diaryData.text ? diaryData.text : " ");
     formData.append('diaryImage', JSON.stringify(diaryData.files));
     for(let i=0; diaryData.files.length > i; i++){
       formData.append('diaryImage', diaryData.files[i]);
     };
-    return apis.registerDiary(reservationIdForDiary.current, formData);
+    if(request.current === 0)return apis.registerDiary(reservationIdForDiary.current, formData);
+    request.current+=1;
   }
   const saveDiary = useQuery(['saveDiaryQuery', diaryData], ()=>registerDiaryApi(diaryData), {
     onSuccess: (data) => {
@@ -160,7 +162,7 @@ const ReservationList = () => {
       const _data = {
         checkList: data.data.checkList.length,
         inputValues: data.data.checkList,
-        checked: data.data.checkState,
+        checked: data.data.checkStatus,
         images: data.data.diaryImage.length,
         imageUrls: data.data.diaryImage,
         files: [],
@@ -189,13 +191,14 @@ const ReservationList = () => {
       setModalDisplay(true);
     }
   });
+  
   const modifyDiaryApi = () => {
     if(diaryData?.inputValues.length < diaryData?.checked.length){
       diaryData?.checked.pop();
     } 
     const formData = new FormData();
     formData.append('checkList', JSON.stringify(diaryData.inputValues));
-    formData.append('checkState', JSON.stringify(diaryData.checked));
+    formData.append('checkStatus', JSON.stringify(diaryData.checked));
     formData.append('diaryInfo', diaryData.text ? diaryData.text : " ");
     formData.append('deleteImage', JSON.stringify(modifyData.current.deleteImage));
     for(let i=0; modifyData.current.addImage.length > i; i++){
@@ -257,7 +260,6 @@ const ReservationList = () => {
       setDiaryStatus(null); console.log('view close');
     }
   }
-  // console.log(diaryStatus, diaryData)
   const modalContent = {
     review: {type: 'review', _alert: false, _confirm: '리뷰 등록', _cancel: '등록 취소', confirmFn: confirmWritingReview, cancelFn: ()=>{setReviewText(reviewTextRef.current?.value); setModalType(modalContent.reviewCancel)}},
     reviewView: {type: 'review', _alert: true, confirmFn: ()=>{setModalDisplay(false); setModalType(null)}},
@@ -284,27 +286,7 @@ const ReservationList = () => {
 				});
 			});
 		}
-	}, [reservatioinList]);
-
-
-  	// 로그인 여부 확인하는 api
-	// const { mutate: checkUser } = useMutation(()=>apis.checkUser(), { 
-	// 	onSuccess: (data) => {
-	// 		console.log(data, 'auth api 성공!!!');
-	// 	},
-	// 	onError: (data) => {
-	// 		console.log(data, 'auth api 실패');
-	// 	},
-	// 	staleTime: Infinity,
-	// });
-  
-  // useEffect(() => {
-	// 	if(localStorage.getItem('accessToken')){
-	// 		checkUser();
-	// 	}else{
-	// 		console.log('액세스 토큰 없음')
-	// 	}
-	// }, []);
+	}, [reservationListData]);
 
 	return (
     <>
