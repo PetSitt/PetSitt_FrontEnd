@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import styled from "styled-components";
 import { handleChange } from "../shared/common";
 
-const ImageRegist = ({name, value, onChange}) => {
+const ImageRegist = ({name, value, onChange, setValues}) => {
 	const [showImages, setShowImages] = useState(value ? [value] : []);
 	const [num, setNum] = useState(0);
 
@@ -23,10 +23,16 @@ const ImageRegist = ({name, value, onChange}) => {
 	};
 
 	// X버튼 클릭 시 이미지 삭제
-  const handleDeleteImage = (id) => {
-    const nextItems = showImages.filter((_, index) => index !== id);
+  const handleDeleteImage = (id) =>{
+		const nextItems = showImages.filter((_, index) => index !== id);
 		setShowImages(nextItems);
-		setNum(num - 1)
+		setNum(num - 1);
+		setValues((prev) => {
+			return {
+				...prev,
+				[name]: ""
+			}
+		});
 	};
 
 	return(

@@ -5,12 +5,14 @@ import styled from "styled-components";
 import { DateObject, Calendar } from "react-multi-date-picker";
 import MapContainer from "./MapContainer";
 import { apis } from "../store/api";
+import { chatApis } from "../store/chatApi";
 
 import Modal from '../elements/Modal';
 import StyledButton from '../elements/StyledButton';
 import Reviews from './Reviews';
+import ChatRoom from "./ChatRoom";
 
-const Detail = () => {
+const Detail = ({socket}) => {
 	const queryClient = useQueryClient();
 	const param = useParams();
   const navigate = useNavigate();
@@ -60,14 +62,15 @@ const Detail = () => {
     '데이케어': 'ic-daycare',
     '훈련': 'ic-prac',
     '산책': 'ic-stroll',
-    '집앞 픽업 가능': 'ic-pickup',
+    '집앞 픽업 가능 - 비용은 펫시터와 협의': 'ic-pickup',
     '응급 처치': 'ic-first-aid',
-    '장기 예약 가능': 'ic-longterm',
-    '퍼피 케어': 'ic-puppy',
-    '노견 케어': 'ic-puppy',
+    '장기 예약 가능 - 14일 이상 돌봄가능': 'ic-longterm',
+    '퍼피 케어(1살 미만)': 'ic-puppy',
+    '노견 케어(8살 이상)': 'ic-puppy',
     '실내놀이': 'ic-activity',
     '마당있음': 'ic-yard',
   };
+  const [value, setValues] = useState(false);
   const disableDate = () => {
     const datesArray = [];
     detail.sitter.noDate.map(v=>{
@@ -89,15 +92,8 @@ const Detail = () => {
 		},
 		staleTime: Infinity,
 	});
-  const {mutate: openChatRoom} = useMutation(()=>apis.contactToSitter(detail.sitter.sitterId), {
-    onSuccess: (data)=>{
-      console.log('문의하기 api success', data);
-    },
-    onError: (data) => {
-      console.log('문의하기 api failed', data);
-    }
-  })
-  const {data: checkRegisteredPet, refetch: petInfoRefetch} = useQuery('getPetInfoQuery', ()=>apis.getPetInfo(), {
+
+  const {data: checkRegisteredPet, refetch: petInfoRefetch} = useQuery('getPetInfoQuery', () => apis.getPetInfo(), {
     onSuccess: (data) => {
       if(data.data.check){
         hasPetInfo.current = true;
@@ -106,7 +102,17 @@ const Detail = () => {
       }
     },
     enabled: false,
-  })
+  });
+
+  const {mutate: openChatRoom} = useMutation(()=>chatApis.chatRoomPost(sitterId), {
+    onSuccess: (data)=>{
+      console.log('문의하기 api success', data);
+    },
+    onError: (data) => {
+      console.log('문의하기 api failed', data);
+    }
+  });
+
 	const checkSelectArea = (e) => {
 		if (!e.target.closest(".select_area") && !e.target.closest('.select_detail')) {
 			setSelectBoxToggle({ type: "", status: false });
@@ -140,6 +146,12 @@ const Detail = () => {
     localStorage.setItem('reservationInfo', JSON.stringify(reservationInfo));
     navigate('/reservation');
   }
+
+  const onChatting = () => {
+    setValues(!value)
+    openChatRoom();
+  }
+
   useEffect(()=>{
     let elements = null; 
     if(selectBoxToggle.status && selectBoxToggle.type === 'date'){
@@ -168,13 +180,14 @@ const Detail = () => {
     // 로그인한 상태일 경우 등록된 반려견 정보 있는지 확인
     if(localStorage.getItem('accessToken') && localStorage.getItem('userName')){
       petInfoRefetch();
-    }
+    };
 		return()=>{
       window.removeEventListener("click", checkSelectArea);
       queryClient.invalidateQueries('detail_data');
 			setDetail(null);
 		}
 	}, []);
+
   useEffect(()=>{
     if(services?.length > 0){
       setServicesText(()=>{
@@ -531,7 +544,7 @@ const Detail = () => {
           </div>
           <div className="buttons">
             <StyledButton
-              _onClick={() => openChatRoom()}
+              _onClick={() => onChatting()}
               _bgColor={'rgba(252, 146, 21, 0.1)'}
               color={'#fc9215'}
               _title="문의하기"
@@ -562,6 +575,9 @@ const Detail = () => {
           </div>
         </ReservationFunctions>
       </SitterDetailPage>
+      {
+        value && <ChatRoom />
+      }
       {
         (modalDisplay && errorMessage === errorMessages.notLogin) && (
           <Modal _display={modalDisplay} _alert={false} _confirm={'로그인하기'} _cancel={'취소'} cancelOnclick={()=>{setErrorMessage(null); setModalDisplay(false)}} confirmOnClick={()=>{navigate('/login')}}>

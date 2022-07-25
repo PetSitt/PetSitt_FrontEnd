@@ -1,12 +1,15 @@
-import React, {useContext} from 'react';
+import React, {useState} from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
+import Modal from '../elements/Modal';
 
 const Mypage = () => {
   const navigate = useNavigate();
   const isLogin = localStorage.getItem('accessToken');
+  const [modalDisplay, setModalDisplay] = useState();
   // const isLogin = true;
   return (
+    <>
     <MypageInner>
       <h1>마이페이지</h1>
       {isLogin ? (
@@ -26,12 +29,17 @@ const Mypage = () => {
               </Link>
             </div>
           </div>
-          <div>
+          <div className='profileInner'>
             <div className='item'>
               <Link to={{ pathname: `/pwchange` }}>비밀번호 변경</Link>
             </div>
             <div className='item'>
               <Link to={{ pathname: `#0` }}>고객센터</Link>
+            </div>
+          </div>
+          <div>
+            <div className='item'>
+              <button type="button" onClick={()=>setModalDisplay(true)}>로그아웃</button>
             </div>
           </div>
         </div>
@@ -49,6 +57,17 @@ const Mypage = () => {
         </LoginBox>
       )}
     </MypageInner>
+    {
+      modalDisplay && (
+        <Modal _display={modalDisplay} _confirm={'로그아웃'} _cancel={'취소'} cancelOnclick={()=>setModalDisplay(false)} confirmOnClick={()=>navigate('/login')}>
+          <div className="text_area">
+            <h3>로그아웃</h3>
+            <p>로그아웃 하시겠습니까?</p>
+          </div>
+        </Modal>
+      )
+    }
+    </>
   );
 };
 
@@ -66,6 +85,10 @@ const MypageInner = styled.div`
       font-size: 18px;
       line-height: 22px;
       padding: 15px 0px;
+      & > button{
+        font-weight: 400;
+        font-size: 18px;
+      }
     }
     .profileInner {
       border-bottom: 1px solid rgba(120, 120, 120, 0.2);

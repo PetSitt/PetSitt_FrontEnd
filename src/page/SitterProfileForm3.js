@@ -1,13 +1,13 @@
-import { useState } from "react";
-import styled from "styled-components";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import Checkbox from "../elements/Checkbox";
-import { handleChange, comma, uncomma } from "../shared/common";
-import { useEffect } from "react";
-import NavBox from "../elements/NavBox";
-import StyledContainer from "../elements/StyledContainer";
-import InputBox from "../elements/InputBox";
-import StyledButton from "../elements/StyledButton";
+import { useState } from 'react';
+import styled from 'styled-components';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import Checkbox from '../elements/Checkbox';
+import { handleChange, comma, uncomma } from '../shared/common';
+import { useEffect } from 'react';
+import NavBox from '../elements/NavBox';
+import StyledContainer from '../elements/StyledContainer';
+import InputBox from '../elements/InputBox';
+import StyledButton from '../elements/StyledButton';
 
 const INITIAL_VALUES = {
   careSize: [false, false, false],
@@ -15,6 +15,7 @@ const INITIAL_VALUES = {
   plusService: [],
   servicePrice: "",
 };
+
 
 function SitterProfileForm3() {
   const navigate = useNavigate();
@@ -24,6 +25,8 @@ function SitterProfileForm3() {
   const [values, setValues] = useState(
     update ? data : { ...data, ...INITIAL_VALUES }
   );
+  console.log(values)
+
   /** 채크박스에 항목 id의 값을 배열로 만들어서 values에 저장 */
   const availableHandler = (checked, key, id) => {
     if (checked) {
@@ -46,10 +49,39 @@ function SitterProfileForm3() {
     handleChange(name, uncomma(value), setValues);
     return setNum(comma(uncomma(value)));
   };
+  
 
   useEffect(() => {
     console.log(values);
   }, []);
+
+  const [errorMessages, setErrorMessage] = useState({
+    category: false,
+    servicePrice: false,
+  })
+
+  const toggleErrorMessage = (target, status) => {
+    setErrorMessage((prev)=>{
+      const newData = {...prev};
+      newData[target] = status;
+      return newData;
+    })
+  }
+
+  const doValidation = () => {
+    let emptyLength = 0;
+    for(let i=0; i<Object.keys(errorMessages).length; i++){
+      if(!values[Object.keys(errorMessages)[i]] || values[Object.keys(errorMessages)[i]] === '' || values[Object.keys(errorMessages)[i]]?.length <= 0){
+        toggleErrorMessage(Object.keys(errorMessages)[i], true);
+        emptyLength++;
+      }else{
+        toggleErrorMessage(Object.keys(errorMessages)[i], false);
+      }
+    }
+    if(emptyLength === 0){
+      navigate('/mypage/SitterProfileForm4', {state: { data: values, update: update ? true : false }});
+    }
+  }
 
   return (
     <StyledContainer>
@@ -141,15 +173,18 @@ function SitterProfileForm3() {
               checked={values.category}
             />
           </CheckGroup>
+          {
+            errorMessages.category && <Message>제공 가능한 서비스를 한 개 이상 선택해주세요.</Message>
+          }
         </CheckWrap>
         <CheckWrap>
-          <label className="tit">추가 가능한 서비스*</label>
+          <label className='tit'>추가 가능한 서비스</label>
           <CheckGroup>
             <Checkbox
-              _id={"(자동차 그림) 집앞 픽업 가능 - 비용은 펫시터와 협의"}
-              _key={"plusService"}
-              _text={"(자동차 그림) 집앞 픽업 가능 - 비용은 펫시터와 협의"}
-              _size={"1.2rem"}
+              _id={'집앞 픽업 가능 - 비용은 펫시터와 협의'}
+              _key={'plusService'}
+              _text={'집앞 픽업 가능 - 비용은 펫시터와 협의'}
+              _size={'1.2rem'}
               onChange={availableHandler}
               checked={values.plusService}
             />
@@ -203,10 +238,8 @@ function SitterProfileForm3() {
             />
           </CheckGroup>
         </CheckWrap>
-        <p className="tit">금연*</p>
-
         <InputBox>
-          <label className="txt">서비스 금액</label>
+        <label className='txt'>서비스 금액 *</label>
           <input
             type="text"
             name="servicePrice"
@@ -214,30 +247,14 @@ function SitterProfileForm3() {
             defaultValue={num ? num : comma(values.servicePrice)}
             onChange={handleInput}
           />
+          {
+            errorMessages.servicePrice && <Message>일당 서비스 금액을 입력해주세요.</Message>
+          }
         </InputBox>
         <StyledButton
-          _onClick={() => console.log("다음으로")}
-          _title={"다음으로"}
+          _onClick={doValidation}
+          _title={'다음으로'}
         />
-        {data ? (
-          <StyledButton
-            _onClick={() =>
-              navigate("/mypage/SitterProfileForm4", {
-                state: { data: values, update: true },
-              })
-            }
-            _title={"다음으로"}
-          />
-        ) : (
-          <StyledButton
-            _onClick={() =>
-              navigate("/mypage/SitterProfileForm4", {
-                state: { data: values, update: false },
-              })
-            }
-            _title={"다음으로"}
-          />
-        )}
       </SitterProfileFormInner>
     </StyledContainer>
   );
@@ -249,13 +266,19 @@ const SitterProfileFormInner = styled.div`
     border: 1px solid rgba(120, 120, 120, 0.7);
   }
 
-  input[type="text"] {
+  input[type='text'],
+  input[type='number'] {
     width: 100%;
     min-height: 48px;
     background: #ffffff;
     border: 1px solid rgba(120, 120, 120, 0.4);
     border-radius: 6px;
     padding: 12px;
+  }
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
   }
 `;
 
@@ -277,4 +300,10 @@ const CheckGroup = styled.div`
   }
 `;
 
+const Message = styled.p`
+  font-size: 13px;
+  align-self: flex-start;
+  padding: 5px 0;
+  color: #F01D1D;
+`;
 export default SitterProfileForm3;

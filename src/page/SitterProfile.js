@@ -51,11 +51,48 @@ const SitterProfile = () => {
         sitterProfile
       />
       {values && <button onClick={delect}>삭제</button>}
-      {values ? (
-        <div className='profileinner'>
-          <div>
-            <div className='profileMainImg inner'>
+      {console.log(values)}
+      {
+        values ? (
+          <div className="profileinner">
+            <div className="profileMainImg inner">
               <img src={values.mainImageUrl} />
+            </div>
+            <div className="inner">
+              <h3 className="tit">이름</h3>
+              <p>{comma(values.sitterName)}</p>
+            </div>
+            <div className="profileFee inner">
+              <h3 className="tit">요금</h3>
+              <p>{comma(values.servicePrice)}</p>
+            </div>
+            <div className="inner">
+              <h3 className="tit">제공가능한 서비스</h3>
+              {values.category.map((el, idx) => {
+                return(el && <div key={idx}>{el}</div>)
+              })}
+            </div>
+            <div className="inner">
+              <h3 className="tit">케어 가능한 범위</h3>
+              {values.careSize.map((el, idx) => {
+                return(el && <div key={idx}>{caresizeData[idx]}</div>)
+              })}
+            </div>
+            <div className="inner">
+              <h3 className="tit">제공 가능한 서비스</h3>
+              {values.category.map((el, idx) => {
+                return(<div key={idx}>{el}</div>)
+              })}
+            </div>
+            <div className="inner">
+              <h3 className="tit">추가 가능한 서비스</h3>
+              {values.plusService.map((el, idx) => {
+                return(<div key={idx}>{el}</div>)
+              })}
+            </div>
+            <div className="inner">
+              <h3 className="tit">서비스 가능한 날짜</h3>
+              <Calendar value={values.noDate} readOnly={true} minDate={new Date()} maxDate={new Date(today.year + 1, today.month.number, today.day)}></Calendar>
             </div>
           </div>
           <label className='inner required'>
