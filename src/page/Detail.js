@@ -175,13 +175,14 @@ const Detail = () => {
     // 로그인한 상태일 경우 등록된 반려견 정보 있는지 확인
     if(localStorage.getItem('accessToken') && localStorage.getItem('userName')){
       petInfoRefetch();
-    }
+    };
 		return()=>{
       window.removeEventListener("click", checkSelectArea);
       queryClient.invalidateQueries('detail_data');
 			setDetail(null);
 		}
 	}, []);
+
   useEffect(()=>{
     if(services?.length > 0){
       setServicesText(()=>{

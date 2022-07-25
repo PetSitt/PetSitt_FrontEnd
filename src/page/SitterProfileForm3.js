@@ -279,7 +279,7 @@ const SitterProfileFormInner = styled.div`
   input[type="number"]::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
-}
+  }
 `;
 
 const CheckWrap = styled.div`

@@ -111,7 +111,7 @@ function Home() {
 		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
 		{
 			onSuccess: (data) => {
-				console.log(data, 'success')
+				// console.log(data, 'success')
 				queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(false);
 				setSitters(data.data.sitter);
@@ -124,11 +124,12 @@ function Home() {
 			staleTime: Infinity,
 		},
 	);
-	const kakaoLoginApi = (dataToSend) => {
-    return apis.kakaoLogin(dataToSend);
-  }
-  const {mutate: kakaoLoginQuery} = useMutation((dataToSend)=>kakaoLoginApi(dataToSend), {
+	// const kakaoLoginApi = (dataToSend) => {
+  //   return apis.kakaoLogin(dataToSend);
+  // }
+  const {mutate: kakaoLoginQuery} = useMutation((dataToSend)=>apis.kakaoLogin(dataToSend), {
     onSuccess: (data) => {
+			console.log('kakao success', data)
       localStorage.setItem('accessToken', data.data.token);
     },
     onError: (data) => {
@@ -146,6 +147,7 @@ function Home() {
         userEmail: data.kakao_account.email,
         userName: data.properties.nickname,
       };
+			console.log(dataToSend)
       kakaoLoginQuery(dataToSend);
     } catch (err) {
       console.log(err);
@@ -160,10 +162,9 @@ function Home() {
 					setCurrentPosition({x: longitude, y: latitude});
 					setDefaultSearch(true);
         },
-        (error) => {
+        (err) => {
 					setModalDisplay(true);
-					console.log(error)
-          console.error(error);
+					console.log(err)
         },
         {
           enableHighAccuracy: false,
@@ -177,8 +178,9 @@ function Home() {
   };
 
 	useEffect(()=>{
-		if(localStorage.getItem('accessToken')){
+		if(localStorage.getItem('kakaoToken')){
 			getKakaoProfile();
+			console.log('haskakao')
 		}
 		getLocationButtonRef.current.click();
 		const fullHeight = window.innerHeight;
