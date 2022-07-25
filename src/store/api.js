@@ -44,8 +44,6 @@ api.interceptors.response.use(
 			// 401로 요청 실패했던 요청을 새로운 accessToken으로 재요청
 			return axios(originalRequest);
     }
-		localStorage.removeItem('accessToken');
-		cookies.remove('refreshToken');
     return Promise.reject(error);
   }
 );
@@ -73,7 +71,6 @@ export const apis = {
 	petprofilePost: (data) => api.post('/mypages/petprofile', data),
 	petprofilePatch: ({id, data}) => api.patch(`/mypages/petprofile/${id}`, data),
   petprofileDelete: (id) => api.delete(`/mypages/petprofile/${id}`),
-	reservation: () => api.get('/reservations'),
 	sitterprofileGet: () => api.get('/mypages/sitterprofile'),
 	sitterprofilePost: (data) => api.post('/mypages/sitterprofile', data),
 	sitterprofilePatch: (data) => api.patch('/mypages/sitterprofile', data),
