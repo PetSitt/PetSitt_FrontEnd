@@ -14,7 +14,6 @@ const Reviews = ({reviewCount, sitterId}) => {
       //console.error(data);
     },
     staleTime: Infinity,
-    refetchOnMount: 'always',
   })
   const lastReviewRef = useRef();
 
