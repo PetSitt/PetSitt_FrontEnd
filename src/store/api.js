@@ -44,8 +44,6 @@ api.interceptors.response.use(
 			// 401로 요청 실패했던 요청을 새로운 accessToken으로 재요청
 			return axios(originalRequest);
     }
-		localStorage.removeItem('accessToken');
-		cookies.remove('refreshToken');
     return Promise.reject(error);
   }
 );
@@ -65,20 +63,18 @@ export const apis = {
 	checkUser: () => api.get('/api/auth'),
 
 	// mypage
-	passwordChange: (data) => api.put('/api/password_change', data),
-	myprofile: () => api.get('/mypage/myprofile'),
-	myprofileGet: () => api.get('/mypage/myprofile'),
-	myprofilePatch: (data) => api.patch('/mypage/myprofile', data),
-	petprofileGet: () => api.get('/mypage/petprofile'),
-	petprofilePost: (data) => api.post('/mypage/petprofile', data),
-	petprofilePatch: ({id, data}) => api.patch(`/mypage/petprofile/${id}`, data),
-  petprofileDelete: (id) => api.delete(`/mypage/petprofile/${id}`),
-	reservation: () => api.get('/reservations'),
-	sitterprofileGet: () => api.get('/mypage/sitterprofile'),
-	sitterprofilePost: (data) => api.post('/mypage/sitterprofile', data),
-	sitterprofilePatch: (data) => api.patch('/mypage/sitterprofile', data),
-	sitterprofileDelete: () => api.delete('/mypage/sitterprofile'),
-
+  passwordChange: (data) => api.put('/api/password_change', data),
+	myprofile: () => api.get('/mypages/myprofile'),
+	myprofileGet: () => api.get('/mypages/myprofile'),
+	myprofilePatch: (data) => api.patch('/mypages/myprofile', data),
+	petprofileGet: () => api.get('/mypages/petprofile'),
+	petprofilePost: (data) => api.post('/mypages/petprofile', data),
+	petprofilePatch: ({id, data}) => api.patch(`/mypages/petprofile/${id}`, data),
+  petprofileDelete: (id) => api.delete(`/mypages/petprofile/${id}`),
+	sitterprofileGet: () => api.get('/mypages/sitterprofile'),
+	sitterprofilePost: (data) => api.post('/mypages/sitterprofile', data),
+	sitterprofilePatch: (data) => api.patch('/mypages/sitterprofile', data),
+	sitterprofileDelete: () => api.delete('/mypages/sitterprofile'),
 	// main
 	getSittersList: (queriesData) => api.post('/mains/search', queriesData),
   getSittersDefault: (data) => api.post('/mains', data),
@@ -90,7 +86,7 @@ export const apis = {
 	contactToSitter: (sitterId) => api.post(`/chats/${sitterId}`),
 
 	// reservation
-	reservation: () => api.get('/reservations'),
+  reservation: () => api.get('/reservations'),
 	makeReservation: (data, sitterId) => api.post(`/reservations/regist/${sitterId}`, data),
 	reservationList: (type) => api.get(`/reservations/lists?searchCase=${type}`),
 	reservationDetail: (reservationId, type) => api.get(`/reservations/details/${reservationId}?searchCase=${type}`),
@@ -98,7 +94,7 @@ export const apis = {
 	registerReview: (reservationId, data) => api.post(`/reviews/${reservationId}`, data),
 	loadMorePastReservation: (reservationId, type) => api.get(`/reservations/lists/${reservationId}?searchCase=${type}`),
 	loadReview: (reservationId) => api.get(`/reviews/${reservationId}`),
-	registerDiary: (reservationId, formdata, config) => api.post(`/diarys/${reservationId}`, formdata, formdataConfig),
-	loadDiaryData: (reservationId) => api.get(`/diarys/${reservationId}`),
-	modifyDiary: (reservationId, formData) => api.put(`/diarys/${reservationId}`, formData, formdataConfig)
+	registerDiary: (reservationId, formdata, config) => api.post(`/diaries/${reservationId}`, formdata, formdataConfig),
+	loadDiaryData: (reservationId) => api.get(`/diaries/${reservationId}`),
+	modifyDiary: (reservationId, formData) => api.put(`/diaries/${reservationId}`, formData, formdataConfig)
 }
