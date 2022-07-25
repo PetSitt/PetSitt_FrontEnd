@@ -141,7 +141,7 @@ const ReservationList = () => {
         console.log(data, 'loading review failed');
       },
     }
-  })
+  );
   const request = useRef(0);
 
   const registerDiaryApi = (diaryData) => {
@@ -158,7 +158,7 @@ const ReservationList = () => {
     };
     if(request.current === 0)return apis.registerDiary(reservationIdForDiary.current, formData);
     request.current+=1;
-  });
+  };
   const saveDiary = useQuery(['saveDiaryQuery', diaryData], ()=>registerDiaryApi(diaryData), {
     onSuccess: (data) => {
       console.log(data, 'diary saving success');
