@@ -3,7 +3,7 @@ import { Cookies } from "react-cookie";
 
 const cookies = new Cookies();
 
-const api = axios.create({
+export const api = axios.create({
 	baseURL: process.env.REACT_APP_SERVER
 });
 
@@ -96,8 +96,8 @@ export const apis = {
   getSittersDefault: (data) => publicApi.post('/mains', data),
 
 	// detail
-	getUserDetail: (sitterId) => api.get(`/details/${sitterId}`),
-	getReviews: (sitterId, reviewId) => api.post(`/details/reviews/${sitterId}`, reviewId),
+	getUserDetail: (sitterId) => publicApi.get(`/details/${sitterId}`),
+	getReviews: (sitterId, reviewId) => publicApi.post(`/details/reviews/${sitterId}`, reviewId),
 	getPetInfo: () => api.get('/informations/petcheck'),
 	contactToSitter: (sitterId) => api.post(`/chats/${sitterId}`),
 
