@@ -69,7 +69,6 @@ const SitterProfile = () => {
             </div>
             <div className="inner">
               <h3 className="tit">서비스 가능한 날짜</h3>
-              {console.log(values.noDate)}
               <Calendar value={values.noDate} readOnly={true} minDate={new Date()} maxDate={new Date(today.year + 1, today.month.number, today.day)}></Calendar>
             </div>
           </div>

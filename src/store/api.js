@@ -7,11 +7,21 @@ const api = axios.create({
 	baseURL: process.env.REACT_APP_SERVER
 });
 
+const publicApi = axios.create({
+	baseURL: process.env.REACT_APP_SERVER
+});
+
+
 // 토큰 실어보내는 request interceptor
 api.interceptors.request.use((config) => {
 	config.headers['Content-type'] = 'application/json; charset=UTF-8';
 	config.headers['Accept'] = 'application/json;';
-	config.headers['Authorization'] = localStorage.getItem('accessToken') ? `Bearer ${localStorage.getItem('accessToken')}` : null;
+	if(localStorage.getItem('accessToken') && cookies.get('refreshToken')){
+		config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`;
+	}else{
+		window.location.href= "/login";
+	}
+	
 	return config;
 }, (err) => {
 	return Promise.reject(err);
@@ -45,11 +55,9 @@ api.interceptors.response.use(
 				// 401로 요청 실패했던 요청을 새로운 accessToken으로 재요청
 				return axios(originalRequest);
 			}else{
-				if(cookies.get('refreshToken')){
-					cookies.remove('refreshToken');
-				}
+				cookies.remove('refreshToken');
+				localStorage.removeItem('accessToken');
 				window.location.href = '/login';
-				
 			}
     }
     return Promise.reject(error);
@@ -63,11 +71,11 @@ const formdataConfig = {
 };
 export const apis = {
 	// user
-	signupAdd: (data) => api.post('/api/signup', data),
-	passwordFind: (data) => api.post('/api/password_check', data),
-	idFind: (data) => api.post('/api/id_check', data),
-	login: (data) => api.post('/api/login', data),
-	kakaoLogin: (data) => api.post('/api/auth/kakao', data),
+	signupAdd: (data) => publicApi.post('/api/signup', data),
+	passwordFind: (data) => publicApi.post('/api/password_check', data),
+	idFind: (data) => publicApi.post('/api/id_check', data),
+	login: (data) => publicApi.post('/api/login', data),
+	kakaoLogin: (data) => publicApi.post('/api/auth/kakao', data),
 	checkUser: () => api.get('/api/auth'),
 
 	// mypage
@@ -84,8 +92,8 @@ export const apis = {
 	sitterprofilePatch: (data) => api.patch('/mypages/sitterprofile', data),
 	sitterprofileDelete: () => api.delete('/mypages/sitterprofile'),
 	// main
-	getSittersList: (queriesData) => api.post('/mains/search', queriesData),
-  getSittersDefault: (data) => api.post('/mains', data),
+	getSittersList: (queriesData) => publicApi.post('/mains/search', queriesData),
+  getSittersDefault: (data) => publicApi.post('/mains', data),
 
 	// detail
 	getUserDetail: (sitterId) => api.get(`/details/${sitterId}`),

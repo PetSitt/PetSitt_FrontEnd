@@ -17,7 +17,7 @@ const CheckBox = ({
   onChange,
 }) => {
   const styles = { _size, _border, _bgColor };
-  console.log(checked.includes(_text));
+  // console.log(checked.includes(_text));
   let _checkBox = false;
   switch (_text) {
     case '소형견':

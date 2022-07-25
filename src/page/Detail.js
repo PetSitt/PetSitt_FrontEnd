@@ -236,6 +236,8 @@ const Detail = () => {
     }
   }
 
+  console.log(detail)
+
   if (!detail) return <p>로딩중입니다</p>;
 	return (
 		<>
