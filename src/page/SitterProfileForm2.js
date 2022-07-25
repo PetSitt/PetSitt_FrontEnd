@@ -31,43 +31,39 @@ const SitterProfileForm2 = () => {
     handleChange(name, value, setValues);
   };
 
-  
-  const [errorMessage, setErrorMessage] = useState({
+  useEffect(() => {
+    console.log(values);
+  }, []);
+
+  const [errorMessages, setErrorMessage] = useState({
     imageUrl: false,
     mainImageUrl: false,
     introTitle: false,
     myIntro: false,
   })
 
+  const toggleErrorMessage = (target, status) => {
+    setErrorMessage((prev)=>{
+      const newData = {...prev};
+      newData[target] = status;
+      return newData;
+    })
+  }
+
   const doValidation = () => {
-    let emptyLength = Object.keys(errorMessage).length;
-    for(let i=0; i<Object.keys(errorMessage).length; i++){
-      console.log(values)
-      if(!values[Object.keys(errorMessage)[i]] || values[Object.keys(errorMessage)[i]].trim().length <= 0) {
-        setErrorMessage((prev)=>{
-          const error = {...prev};
-          error[Object.keys(errorMessage)[i]] = true;
-          return error;
-        })
+    let emptyLength = 0;
+    for(let i=0; i<Object.keys(errorMessages).length; i++){
+      if(!values[Object.keys(errorMessages)[i]] || values[Object.keys(errorMessages)[i]] === ''){
+        toggleErrorMessage(Object.keys(errorMessages)[i], true);
+        emptyLength++;
       }else{
-        setErrorMessage((prev)=>{
-          const error = {...prev};
-          error[Object.keys(errorMessage)[i]] = false;
-          return error;
-        })
-        emptyLength--;
+        toggleErrorMessage(Object.keys(errorMessages)[i], false);
       }
     }
     if(emptyLength === 0){
-      navigate('/mypage/SitterProfileForm3', {state: { data: values, update: true }});
+      navigate('/mypage/SitterProfileForm3', {state: { data: values, update: update ? true : false }});
     }
   }
-
-
-  useEffect(() => {
-    console.log(values);
-  }, [values]);
-
   return (
     <StyledContainer>
       <SitterProfileFormInner>
@@ -79,18 +75,12 @@ const SitterProfileForm2 = () => {
             value={data && values.imageUrl}
             onChange={(e)=>{
               handleFileChange(e);
-              if(e.target.files[0]){
-                setErrorMessage((prev)=>{
-                  const data = {...prev};
-                  data.imageUrl = true;
-                  return data;
-                })
-              }
+              if(e.target.files[0]) toggleErrorMessage('imageUrl', false);
             }}
             setValues={setValues}
           />
           {
-            errorMessage.imageUrl && <Message>프로필 사진을 등록해주세요.</Message>
+            errorMessages.imageUrl && <Message>프로필 사진을 등록해주세요.</Message>
           }
         </InputBox>
         <InputBox>
@@ -100,83 +90,50 @@ const SitterProfileForm2 = () => {
             value={data && values.mainImageUrl}
             onChange={(e)=>{
               handleFileChange(e);
-              if(e.target.files[0]){
-                setErrorMessage((prev)=>{
-                  const data = {...prev};
-                  data.mainImageUrl = true;
-                  return data;
-                })
-              }
+              if(e.target.files[0]) toggleErrorMessage('mainImageUrl', false);
             }}
             setValues={setValues}
           />
           {
-            errorMessage.mainImageUrl && <Message>대표 활동 사진을 등록해주세요.</Message>
+            errorMessages.mainImageUrl && <Message>대표 활동 사진을 등록해주세요.</Message>
           }
         </InputBox>
         <InputBox>
-          <label className='tit'>소개 타이틀 (30자 제한)</label>
+          <label className='tit'>소개 타이틀* (30자 제한)</label>
           <input
             type='text'
             name='introTitle'
             onChange={(e)=>{
               handleInputChange(e);
-              if(e.target.value.trim().length > 0){
-                setErrorMessage((prev)=>{
-                  const data = {...prev};
-                  data.myIntro = true;
-                  return data;
-                })
-              }
+              if(e.target.value.trim().length > 0) toggleErrorMessage('introTitle', false);
             }}
             defaultValue={data && values.introTitle}
             placeholder='소개 타이틀을 작성해 주세요.'
           />
           {
-            errorMessage.introTitle && <Message>소개 타이틀을 입력해주세요.</Message>
+            errorMessages.introTitle && <Message>소개 타이틀을 입력해주세요.</Message>
           }
         </InputBox>
         <InputBox>
-          <label className='tit'>자기 소개글 (1,000자 제한)</label>
+          <label className='tit'>자기 소개글* (1,000자 제한)</label>
           <textarea
             type='text'
             name='myIntro'
             onChange={(e)=>{
               handleInputChange(e);
-              if(e.target.value.trim().length > 0){
-                setErrorMessage((prev)=>{
-                  const data = {...prev};
-                  data.myIntro = true;
-                  return data;
-                })
-              }
+              if(e.target.value.trim().length > 0) toggleErrorMessage('myIntro', false);
             }}
             defaultValue={data && values.myIntro}
             placeholder='자신을 소개해 주세요'
           />
           {
-            errorMessage.introTitle && <Message>자기 소개글을 입력해주세요.</Message>
+            errorMessages.myIntro && <Message>자기 소개글을 입력해주세요.</Message>
           }
         </InputBox>
         <StyledButton
           _onClick={doValidation}
           _title={'다음으로'}
         />
-        {update ? (
-          <Link
-            to={`/mypage/SitterProfileForm3`}
-            state={{ data: values, update: true }}
-          >
-            <button>다음 true</button>
-          </Link>
-        ) : (
-          <Link
-            to={`/mypage/SitterProfileForm3`}
-            state={{ data: values, update: false }}
-          >
-            <button>다음 false</button>
-          </Link>
-        )}
       </SitterProfileFormInner>
     </StyledContainer>
   );
@@ -201,7 +158,6 @@ const SitterProfileFormInner = styled.div`
     padding: 12px;
   }
 `;
-
 const Message = styled.p`
   font-size: 13px;
   align-self: flex-start;

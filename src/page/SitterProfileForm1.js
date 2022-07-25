@@ -105,7 +105,7 @@ const SitterProfileForm1 = () => {
       }
     }
     if(emptyLength === 0){
-      navigate('/mypage/SitterProfileForm2', {state: { data: values, update: true }});
+      navigate('/mypage/SitterProfileForm2', {state: { data: values, update: data ? true : false }});
     }
     
   }
@@ -154,11 +154,7 @@ const SitterProfileForm1 = () => {
             (!errorMessage.address && errorMessage.detailAddress) && <Message>상세주소를 입력해주세요.</Message>
           }
         </InputBox>
-        {data ? (
-          <StyledButton _onClick={doValidation} _title={'다음으로'}/>
-        ) : (
-          <StyledButton _onClick={doValidation} _title={'다음으로 false'}/>
-        )}
+        <StyledButton _onClick={doValidation} _title={'다음으로'}/>
       </SitterProfileFormInner>
     </StyledContainer>
   );

@@ -69,7 +69,7 @@ function SitterProfileForm4() {
     update ? sitterUpdate(formData) : create(formData)
   }
   useEffect(()=>{
-    if(typeof dates[0] === 'object'){
+    if(dates && typeof dates[0] === 'object'){
       setNewDates(()=>{
         return dates.map(v=>{
           const newDateForm = `${v.year}/${v.month?.number < 10 ? '0' + v.month?.number : v.month?.number}/${v.day < 10 ? '0' + v.day : v.day}`
