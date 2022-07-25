@@ -25,9 +25,8 @@ const Tabs = ({_tab, _value, setSelectedTab}) => {
 const TabGroup = styled.ul`
   display: flex;
   align-items: center;
-  border-radius: 6px;
-  border: 1px solid #FC9215;
-  color: #FC9215;
+  color: rgba(120, 120, 120, 0.7);
+  margin-bottom: 42px;
   li{
     flex: 1;
     label{
@@ -41,8 +40,9 @@ const TabGroup = styled.ul`
         width: 0;
         &:checked{
           &+span{
-            background-color: #FC9215;
-            color: #fff;
+            font-weight: 500;
+            color: #FC9215;
+            border-bottom: 2px solid #FC9215;
           }
         }
       }
