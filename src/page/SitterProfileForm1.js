@@ -99,6 +99,7 @@ const SitterProfileForm1 = () => {
             placeholder='이름을 적어주세요.'
             onChange={handleInputChange}
             defaultValue={values.sitterName}
+            required
           />
         </InputBox>
         <InputBox>
@@ -109,6 +110,7 @@ const SitterProfileForm1 = () => {
             detailAddress={values.detailAddress}
             onChange={handleInputChange}
             handlePost={handlePost}
+            required
           />
         </InputBox>
         <StyledButton

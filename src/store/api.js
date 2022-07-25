@@ -3,94 +3,22 @@ import { Cookies } from "react-cookie";
 
 const cookies = new Cookies();
 
-const jsonApi = axios.create({
+const api = axios.create({
 	baseURL: process.env.REACT_APP_SERVER
 });
 
-const reserveApi = axios.create({
-	baseURL: process.env.REACT_APP_RESERVE
-});
-
-const formDataApi = axios.create({
-	baseURL: process.env.REACT_APP_SERVER
-});
-
-const pwfindApi = axios.create({
-	baseURL: process.env.REACT_APP_PWFINDAPI
-});
-
-const mainApi = axios.create({
-	baseURL: process.env.REACT_APP_MAINAPI
-});
-
-const detailApi = axios.create({
-	baseURL: process.env.REACT_APP_SERVER
-})
-
-const authApi = axios.create({
-	baseURL: process.env.REACT_APP_PWFINDAPI,
-})
-
-pwfindApi.interceptors.request.use((config) => {
+// 토큰 실어보내는 request interceptor
+api.interceptors.request.use((config) => {
 	config.headers['Content-type'] = 'application/json; charset=UTF-8';
 	config.headers['Accept'] = 'application/json;';
-	config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
+	config.headers['Authorization'] = localStorage.getItem('accessToken') ? `Bearer ${localStorage.getItem('accessToken')}` : null;
 	return config;
 }, (err) => {
 	return Promise.reject(err);
 })
 
-reserveApi.interceptors.request.use((config) => {
-	config.headers['Content-type'] = 'application/json; charset=UTF-8';
-	config.headers['Accept'] = 'application/json;';
-	config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
-	return config;
-}, (err) => {
-	return Promise.reject(err);
-})
-
-
-jsonApi.interceptors.request.use((config)=> {
-	config.headers['Content-type'] = 'application/json; charset=UTF-8';
-	config.headers['Accept'] = 'application/json;';
-	config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
-	return config;
-}, (err) => {
-	return Promise.reject(err);
-});
-
-jsonApi.interceptors.response.use((response)=>{ // access 토큰 만료됐을 경우 login화면으으로 (임시)
-  return response
-}, async function (error) {
-  const originalRequest = error.config;
-  if (error.response.status === 401 && !originalRequest._retry) {
-		// window.location.href='/login';
-  }
-  return Promise.reject(error);
-});
-
-formDataApi.interceptors.request.use((config) => {
-	config.headers['Content-type'] = 'multipart/form-data';
-	config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
-	return config;
-}, (err) => {
-	return Promise.reject(err);
-});
-
-authApi.interceptors.request.use((config)=> {
-	config.headers['Content-type'] = 'application/json; charset=UTF-8';
-	config.headers['Accept'] = 'application/json;'
-	config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`
-	console.log('request success', config)
-	return config;
-}, (err) => {
-	console.log('request err')
-
-	return Promise.reject(err);
-});
-
-/* refresh 토큰을 활용하여 access 토큰을 재발급받기 위한 코드 - 수정중 */
-authApi.interceptors.response.use(
+// Access 토큰 만료됐을 경우 Refresh 토큰으로 재요청 보내는 interceptor 추가된 응답 api
+api.interceptors.response.use(
   (response) => {
     return response;
   },
@@ -99,25 +27,25 @@ authApi.interceptors.response.use(
       config,
       response: { status },
     } = error;
-    if (status === 401) {
+    if (status === 401) { // 권한없음 === Access 토큰 만료됐을 경우
       const originalRequest = config;
 			const refreshToken = await cookies.get('refreshToken');
 			// token refresh 요청
-			const { data } = await authApi.post('/api/refresh', {refreshToken});
+			const { data } = await api.post('/api/refresh', {refreshToken});
 
 			// 새로운 토큰 저장
 			const {
 				accessToken: newAccessToken,
 			} = data;
 			
-			await localStorage.setItem('accessToken', newAccessToken)
-			authApi.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
+			localStorage.setItem('accessToken', newAccessToken)
+			api.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
 			originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-			// // 401로 요청 실패했던 요청 새로운 accessToken으로 재요청
+			// 401로 요청 실패했던 요청을 새로운 accessToken으로 재요청
 			return axios(originalRequest);
     }
 		localStorage.removeItem('accessToken');
-		if(localStorage.getItem('kakaoToken')) localStorage.removeItem('kakaoToken');
+		cookies.remove('refreshToken');
     return Promise.reject(error);
   }
 );
@@ -129,48 +57,48 @@ const formdataConfig = {
 };
 export const apis = {
 	// user
-	signupAdd: (data) => jsonApi.post('/api/signup', data),
-	passwordFind: (data) => pwfindApi.post('/api/password_check', data),
-	idFind: (data) => pwfindApi.post('/api/id_check', data),
-	login: (data) => jsonApi.post('/api/login', data),
-	kakaoLogin: (data) => axios.post('http://3.35.135.160/api/auth/kakao', data),
-	checkUser: () => authApi.get('/api/auth'),
+	signupAdd: (data) => api.post('/api/signup', data),
+	passwordFind: (data) => api.post('/api/password_check', data),
+	idFind: (data) => api.post('/api/id_check', data),
+	login: (data) => api.post('/api/login', data),
+	kakaoLogin: (data) => api.post('/api/auth/kakao', data),
+	checkUser: () => api.get('/api/auth'),
 
 	// mypage
-	passwordChange: (data) => pwfindApi.put('/api/password_change', data),
-	myprofile: () => jsonApi.get('/mypage/myprofile'),
-	myprofileGet: () => jsonApi.get('/mypage/myprofile'),
-	myprofilePatch: (data) => jsonApi.patch('/mypage/myprofile', data),
-	petprofileGet: () => jsonApi.get('/mypage/petprofile'),
-	petprofilePost: (data) => formDataApi.post('/mypage/petprofile', data),
-	petprofilePatch: ({id, data}) => formDataApi.patch(`/mypage/petprofile/${id}`, data),
-  petprofileDelete: (id) => jsonApi.delete(`/mypage/petprofile/${id}`),
-	reservation: () => jsonApi.get('/reservations'),
-	sitterprofileGet: () => jsonApi.get('/mypage/sitterprofile'),
-	sitterprofilePost: (data) => formDataApi.post('/mypage/sitterprofile', data),
-	sitterprofilePatch: (data) => formDataApi.patch('/mypage/sitterprofile', data),
-	sitterprofileDelete: () => jsonApi.delete('/mypage/sitterprofile'),
+	passwordChange: (data) => api.put('/api/password_change', data),
+	myprofile: () => api.get('/mypage/myprofile'),
+	myprofileGet: () => api.get('/mypage/myprofile'),
+	myprofilePatch: (data) => api.patch('/mypage/myprofile', data),
+	petprofileGet: () => api.get('/mypage/petprofile'),
+	petprofilePost: (data) => api.post('/mypage/petprofile', data),
+	petprofilePatch: ({id, data}) => api.patch(`/mypage/petprofile/${id}`, data),
+  petprofileDelete: (id) => api.delete(`/mypage/petprofile/${id}`),
+	reservation: () => api.get('/reservations'),
+	sitterprofileGet: () => api.get('/mypage/sitterprofile'),
+	sitterprofilePost: (data) => api.post('/mypage/sitterprofile', data),
+	sitterprofilePatch: (data) => api.patch('/mypage/sitterprofile', data),
+	sitterprofileDelete: () => api.delete('/mypage/sitterprofile'),
 
 	// main
-	getSittersList: (queriesData) => mainApi.post('/mains/search', queriesData),
-  getSittersDefault: (data) => mainApi.post('/mains', data),
+	getSittersList: (queriesData) => api.post('/mains/search', queriesData),
+  getSittersDefault: (data) => api.post('/mains', data),
 
 	// detail
-	getUserDetail: (sitterId) => detailApi.get(`/details/${sitterId}`),
-	getReviews: (sitterId, reviewId) => detailApi.post(`/details/reviews/${sitterId}`, reviewId),
-	getPetInfo: () => jsonApi.get('/informations/petcheck'),
-	contactToSitter: (sitterId) => jsonApi.post(`/chats/${sitterId}`),
+	getUserDetail: (sitterId) => api.get(`/details/${sitterId}`),
+	getReviews: (sitterId, reviewId) => api.post(`/details/reviews/${sitterId}`, reviewId),
+	getPetInfo: () => api.get('/informations/petcheck'),
+	contactToSitter: (sitterId) => api.post(`/chats/${sitterId}`),
 
 	// reservation
-	reservation: () => jsonApi.get('/reservations'),
-	makeReservation: (data, sitterId) => jsonApi.post(`/reservations/regist/${sitterId}`, data),
-	reservationList: (type) => jsonApi.get(`/reservations/lists?searchCase=${type}`),
-	reservationDetail: (reservationId, type) => jsonApi.get(`/reservations/details/${reservationId}?searchCase=${type}`),
-	cancelReservation: (reservationId) => jsonApi.put(`/reservations/cancel/${reservationId}`),
-	registerReview: (reservationId, data) => jsonApi.post(`/reviews/${reservationId}`, data),
-	loadMorePastReservation: (reservationId, type) => jsonApi.get(`/reservations/lists/${reservationId}?searchCase=${type}`),
-	loadReview: (reservationId) => jsonApi.get(`/reviews/${reservationId}`),
-	registerDiary: (reservationId, formdata, config) => jsonApi.post(`/diarys/${reservationId}`, formdata, formdataConfig),
-	loadDiaryData: (reservationId) => jsonApi.get(`/diarys/${reservationId}`),
-	modifyDiary: (reservationId, formData) => jsonApi.put(`/diarys/${reservationId}`, formData, formdataConfig)
+	reservation: () => api.get('/reservations'),
+	makeReservation: (data, sitterId) => api.post(`/reservations/regist/${sitterId}`, data),
+	reservationList: (type) => api.get(`/reservations/lists?searchCase=${type}`),
+	reservationDetail: (reservationId, type) => api.get(`/reservations/details/${reservationId}?searchCase=${type}`),
+	cancelReservation: (reservationId) => api.put(`/reservations/cancel/${reservationId}`),
+	registerReview: (reservationId, data) => api.post(`/reviews/${reservationId}`, data),
+	loadMorePastReservation: (reservationId, type) => api.get(`/reservations/lists/${reservationId}?searchCase=${type}`),
+	loadReview: (reservationId) => api.get(`/reviews/${reservationId}`),
+	registerDiary: (reservationId, formdata, config) => api.post(`/diarys/${reservationId}`, formdata, formdataConfig),
+	loadDiaryData: (reservationId) => api.get(`/diarys/${reservationId}`),
+	modifyDiary: (reservationId, formData) => api.put(`/diarys/${reservationId}`, formData, formdataConfig)
 }
