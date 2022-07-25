@@ -46,7 +46,7 @@ function App() {
     <AppWrapper className="App">
       <div className={`AppInner ${detailPageClass}`}>
         <Suspense fallback={<div>로딩중!!</div>}>
-          <Router />
+          <Router socket={value.socket} />
         </Suspense>
         <Menu popup={value.popup} setPopup={setValues} socket={value.socket}/>
         {value.popup && (

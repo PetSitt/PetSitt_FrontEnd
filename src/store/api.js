@@ -99,7 +99,6 @@ export const apis = {
 	getUserDetail: (sitterId) => publicApi.get(`/details/${sitterId}`),
 	getReviews: (sitterId, reviewId) => publicApi.post(`/details/reviews/${sitterId}`, reviewId),
 	getPetInfo: () => api.get('/informations/petcheck'),
-	contactToSitter: (sitterId) => api.post(`/chats/${sitterId}`),
 
 	// reservation
   reservation: () => api.get('/reservations'),
