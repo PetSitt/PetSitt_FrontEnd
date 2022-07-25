@@ -18,33 +18,34 @@ const IdFind = () => {
   const [numberState, setNumberState] = useState();
   const [foundId, setFoundId] = useState();
   const [showModal, setShowModal] = useState(false);
+  const [error, setError] = useState(false);
 
 // 아이디 찾기 후 아이디 저장
 const [userEmail, setUserEmail] = useState("example@petsitt.com")
 
   const {
-    data: find_id_query,
+    mutate: find_id_query,
+    data: emailInfoData,
     isLoading: findIdLoading,
     isSuccess: idFoundSucceess,
-  } = useQuery(
-    ["find_id", numberState],
-    () => apis.idFind({ phoneNumber: numberState }),
+  } = useMutation(() => apis.idFind({ phoneNumber: numberState }),
     {
       onSuccess: (data) => {
-        console.log("success", data);
+        // console.log("success", data);
       },
-      onError: (data) => {
-        console.log(data, "error");
-        window.alert(data.response.data.errorMessage);
+      onError: (err) => {
+        if(err.response.status === 406){
+          setError(true);
+          return;
+        }
       },
-      enabled: !!findId,
       staleTime: Infinity,
+      retry: 0,
     }
   );
   useEffect(() => {
-	// setShowModal(true);
     if (!foundId && idFoundSucceess) {
-      setFoundId(find_id_query?.data.user.userEmail);
+      setUserEmail(emailInfoData.data.userEmail);
       setShowModal(true);
     }
   }, [idFoundSucceess]);
@@ -62,21 +63,30 @@ const [userEmail, setUserEmail] = useState("example@petsitt.com")
       <InputBox>
         <label>핸드폰번호</label>
         <input
-          type="text"
+          type="number"
           name="mobileNumber"
           placeholder="'-' 없이 입력해주세요"
           ref={mobileRef}
-          onChange={(e) => setNumberState(e.target.value)}
+          onChange={(e) => {
+            setNumberState(e.target.value)
+            if(error){
+              setError(false);
+            }
+          }}
+          defaultValue={error ? numberState : ''}
           required
         />
+        {
+          error && <Message>{numberState} 번호로 등록된 이메일이 없습니다.</Message>
+        }
       </InputBox>
       <StyledButton
         _title={"아이디(이메일) 찾기"}
         _border={"1px solid #fc9215"}
         _bgColor={"#ffffff"}
         color={"#fc9215"}
-		_margin={"36px 0px"}
-		_onClick={() => setFindId(true)}
+        _margin={"36px 0px"}
+        _onClick={find_id_query}
       />
       <Modal
         _display={showModal}
@@ -84,8 +94,7 @@ const [userEmail, setUserEmail] = useState("example@petsitt.com")
         _confirm="로그인 하러가기"
         _alert={true}
         confirmOnClick={async () => {
-          await sessionStorage.setItem("foundId", foundId);
-          navigate("/login");
+          navigate("/login", {state: {userEmail: userEmail}});
         }}
       >
 		    <div className="text_area">
@@ -102,39 +111,11 @@ const InfoBox = styled.div`
   font-size: 21px;
   line-height: 34px;
 `;
-
-// const DivBox = styled.div`
-//   h1 {
-//     font-size: 34px;
-//     font-weight: 600;
-//   }
-//   .inner {
-//     &.required {
-//       .tit {
-//         font-size: 22px;
-//         display: inline-block;
-//         position: relative;
-//         ::after {
-//           content: "";
-//           display: inline-block;
-//           width: 6px;
-//           height: 6px;
-//           border-radius: 50%;
-//           background-color: rgb(255, 107, 107);
-//           position: absolute;
-//           top: 0px;
-//           right: -12px;
-//         }
-//       }
-//     }
-//   }
-// `;
-
-// const Message = styled.p`
-//   font-size: 13px;
-//   align-self: flex-start;
-//   padding: 5px 0;
-//   color: ${(props) => (props.className === "success" ? "green" : "red")};
-// `;
+const Message = styled.p`
+  font-size: 13px;
+  align-self: flex-start;
+  padding: 5px 0;
+  color: #F01D1D;
+`;
 
 export default IdFind;

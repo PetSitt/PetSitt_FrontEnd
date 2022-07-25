@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Cookies } from 'react-cookie';
 import { apis } from '../store/api';
 import { useMutation } from 'react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import InputBox from '../elements/InputBox';
 import StyledButton from '../elements/StyledButton';
@@ -13,9 +13,11 @@ import Auth from "../shared/Auth";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const REST_API_KEY = process.env.REACT_APP_KAKAO_RESTAPI;
   const REDIRECT_URL = process.env.REACT_APP_REDIRECT_URL;
   const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URL}&response_type=code`;
+  const foundEmail = useRef();
 
   const cookies = new Cookies();
   const email_ref = useRef();
@@ -34,8 +36,7 @@ const Login = () => {
     onSuccess: (data) => {      
       localStorage.setItem('accessToken', data.data.accessToken);
       cookies.set('refreshToken', data.data.refreshToken);
-      sessionStorage.removeItem('foundId');
-      console.log(data, localStorage.getItem('accessToken'));
+      // console.log(data, localStorage.getItem('accessToken'));
       navigate('/');      
     },
     onError: (data) => {
@@ -61,20 +62,15 @@ const Login = () => {
   });
   
   useEffect(() => {
-    const foundId = sessionStorage.getItem('foundId');
-    // 아이디 찾기 페이지에서 접속했을 경우 input value에 찾은 id 입력
-    if (foundId) {
-      email_ref.current.value = foundId;
-    }
     if (!localStorage.getItem('accessToken')) {
       // accessToken 없으면 refreshToken도 삭제
       cookies.remove('refreshToken');
     }
-    if (localStorage.getItem('acceessToken') || localStorage.getItem('userEmail')){
+    if (localStorage.getItem('acceessToken') || localStorage.getItem('kakaoToken')){
       // 로그인된 상태에서 로그인 페이지 접근했을 경우 로그아웃처리
       localStorage.removeItem('accessToken');
+      localStorage.removeItem('kakaoToken');
       cookies.remove('refreshToken');
-      sessionStorage.removeItem('foundId');
       localStorage.removeItem('userName');
 			localStorage.removeItem('userEmail');
       localStorage.removeItem('accessToken');
@@ -94,6 +90,7 @@ const Login = () => {
             ref={email_ref}
             placeholder="example@petsitt.com"
             required
+            defaultValue={location?.state?.userEmail ? location?.state?.userEmail : ''}
             onInput={(e)=>{
               if(e.target.value.length){
                 setErrorMessage((prev)=>{
