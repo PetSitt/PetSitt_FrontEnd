@@ -98,7 +98,7 @@ function ChatRoom({ socket, room, scrollElement }) {
             }
           }}
         />
-        <button onClick={()=>{sendMessage(); scrollToBottom()}}>전송</button>
+        <button disabled={currentMessage ? false : true} onClick={()=>{sendMessage(); scrollToBottom()}}>전송</button>
       </div>
     </ChatInner>
   );
@@ -180,6 +180,18 @@ const ChatInner = styled.div`
       width: 100%;
       height: 45px;
       line-height: 45px;
+    }
+    button {
+      width: 45px;
+      height: 30px;
+      background-color: #fc9215;
+      color: #fff;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+    button:disabled {
+      background-color: gray;
+      cursor: default;
     }
   }
 `

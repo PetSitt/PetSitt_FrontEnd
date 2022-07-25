@@ -46,24 +46,34 @@ function ChatList({popup, socket, setPopup}) {
               })}><i className="ic-close"></i></div>
             </div>
             {!showChatRoom ? (
-            <div className="chatingList_inner">
-              <p className="txt_chating">채팅목록</p>
-              {chats.data.rooms.map((el, idx) => {
-                return (
-                  <div key={el.roomId} className="items">
-                    <button onClick={() => {joinRoom(el.userName, el.roomId)}}>
-                      <div className="imgurl_inner">
-                        <span className="bg_img" style={{backgroundImage: `url(${el.imageUrl})`}}></span>
-                      </div>
-                      <div>
-                        <p>{el.userName}</p>
-                        <p>{formatDate(el.lastChatAt)}</p>
-                      </div>
-                    </button>
-                  </div>
-                )
-              })}
-            </div>
+            <>
+              {chats.data?.rooms ? 
+                (<div className="chatingList_inner">
+                <p className="txt_chating">채팅목록</p>
+                {chats.data?.rooms.map((el, idx) => {
+                  return (
+                    <div key={el.roomId} className="items">
+                      <button onClick={() => {joinRoom(el.userName, el.roomId)}}>
+                        <div className="imgurl_inner">
+                          <span className="bg_img" style={{backgroundImage: `url(${el.imageUrl})`}}></span>
+                        </div>
+                        <div>
+                          <p>{el.userName}</p>
+                          <p>{formatDate(el.lastChatAt)}</p>
+                        </div>
+                      </button>
+                    </div>
+                  )
+                })}
+                : 
+              </div>)
+              :
+              (<div className="chats_notice">
+                <p>대화 했던 내역이 없습니다.</p>
+                <p>원하는 돌보미를 찾아 문의 해보세요.</p>
+              </div>)
+              }
+            </>  
             ) : (
               <ChatRoom socket={socket} room={idRoom} scroll={scroll} scrollElement={scrollElement}/>
             )}
@@ -157,6 +167,16 @@ const ChatInner = styled.div`
     box-shadow: rgb(0 0 0 / 10%) 0px 2px 16px 1px;
     .txt_chating {
       font-size: 14px;
+    }
+  }
+  .chats_notice {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    p {
+      margin-bottom: 6px;
     }
   }
   .items {
