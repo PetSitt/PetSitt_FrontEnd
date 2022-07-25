@@ -64,7 +64,6 @@ const SitterProfileForm2 = () => {
       navigate('/mypage/SitterProfileForm3', {state: { data: values, update: update ? true : false }});
     }
   }
-
   return (
     <StyledContainer>
       <SitterProfileFormInner>
@@ -78,6 +77,7 @@ const SitterProfileForm2 = () => {
               handleFileChange(e);
               if(e.target.files[0]) toggleErrorMessage('imageUrl', false);
             }}
+            setValues={setValues}
           />
           {
             errorMessages.imageUrl && <Message>프로필 사진을 등록해주세요.</Message>
@@ -92,6 +92,7 @@ const SitterProfileForm2 = () => {
               handleFileChange(e);
               if(e.target.files[0]) toggleErrorMessage('mainImageUrl', false);
             }}
+            setValues={setValues}
           />
           {
             errorMessages.mainImageUrl && <Message>대표 활동 사진을 등록해주세요.</Message>

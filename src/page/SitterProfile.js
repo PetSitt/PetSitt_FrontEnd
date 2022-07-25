@@ -33,11 +33,16 @@ const SitterProfile = () => {
       
       {values && <Link to={`/mypage/SitterProfileForm1`} state={{data: values}}>수정</Link>}
       {values && <button onClick={delect}>삭제</button>}
+      {console.log(values)}
       {
         values ? (
           <div className="profileinner">
             <div className="profileMainImg inner">
               <img src={values.mainImageUrl} />
+            </div>
+            <div className="inner">
+              <h3 className="tit">이름</h3>
+              <p>{comma(values.sitterName)}</p>
             </div>
             <div className="profileFee inner">
               <h3 className="tit">요금</h3>

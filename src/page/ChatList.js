@@ -170,12 +170,14 @@ const ChatInner = styled.div`
     }
   }
   .chats_notice {
+    width: 100%;
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
     p {
+      font-size: 14px;
       margin-bottom: 6px;
     }
   }

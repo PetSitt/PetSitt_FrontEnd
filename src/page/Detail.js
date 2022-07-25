@@ -9,6 +9,7 @@ import { apis } from "../store/api";
 import Modal from '../elements/Modal';
 import StyledButton from '../elements/StyledButton';
 import Reviews from './Reviews';
+import ChatRoom from "./ChatRoom";
 
 const Detail = () => {
 	const queryClient = useQueryClient();
@@ -68,6 +69,7 @@ const Detail = () => {
     '실내놀이': 'ic-activity',
     '마당있음': 'ic-yard',
   };
+  const [value, setValues] = useState(false);
   const disableDate = () => {
     const datesArray = [];
     detail.sitter.noDate.map(v=>{
@@ -89,14 +91,14 @@ const Detail = () => {
 		},
 		staleTime: Infinity,
 	});
-  const {mutate: openChatRoom} = useMutation(()=>apis.contactToSitter(detail.sitter.sitterId), {
-    onSuccess: (data)=>{
-      console.log('문의하기 api success', data);
-    },
-    onError: (data) => {
-      console.log('문의하기 api failed', data);
-    }
-  })
+  // const {mutate: openChatRoom} = useMutation(()=>apis.contactToSitter(detail.sitter.sitterId), {
+  //   onSuccess: (data)=>{
+  //     console.log('문의하기 api success', data);
+  //   },
+  //   onError: (data) => {
+  //     console.log('문의하기 api failed', data);
+  //   }
+  // });
   const {data: checkRegisteredPet, refetch: petInfoRefetch} = useQuery('getPetInfoQuery', ()=>apis.getPetInfo(), {
     onSuccess: (data) => {
       if(data.data.check){
@@ -140,6 +142,11 @@ const Detail = () => {
     localStorage.setItem('reservationInfo', JSON.stringify(reservationInfo));
     navigate('/reservation');
   }
+
+  const onChatting = () => {
+    setValues(!value)
+  }
+
   useEffect(()=>{
     let elements = null; 
     if(selectBoxToggle.status && selectBoxToggle.type === 'date'){
@@ -533,7 +540,7 @@ const Detail = () => {
           </div>
           <div className="buttons">
             <StyledButton
-              _onClick={() => openChatRoom()}
+              _onClick={() => onChatting()}
               _bgColor={'rgba(252, 146, 21, 0.1)'}
               color={'#fc9215'}
               _title="문의하기"
@@ -564,6 +571,9 @@ const Detail = () => {
           </div>
         </ReservationFunctions>
       </SitterDetailPage>
+      {
+        <ChatRoom />
+      }
       {
         (modalDisplay && errorMessage === errorMessages.notLogin) && (
           <Modal _display={modalDisplay} _alert={false} _confirm={'로그인하기'} _cancel={'취소'} cancelOnclick={()=>{setErrorMessage(null); setModalDisplay(false)}} confirmOnClick={()=>{navigate('/login')}}>
