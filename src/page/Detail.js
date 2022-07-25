@@ -61,11 +61,11 @@ const Detail = () => {
     '데이케어': 'ic-daycare',
     '훈련': 'ic-prac',
     '산책': 'ic-stroll',
-    '집앞 픽업 가능': 'ic-pickup',
+    '집앞 픽업 가능 - 비용은 펫시터와 협의': 'ic-pickup',
     '응급 처치': 'ic-first-aid',
-    '장기 예약 가능': 'ic-longterm',
-    '퍼피 케어': 'ic-puppy',
-    '노견 케어': 'ic-puppy',
+    '장기 예약 가능 - 14일 이상 돌봄가능': 'ic-longterm',
+    '퍼피 케어(1살 미만)': 'ic-puppy',
+    '노견 케어(8살 이상)': 'ic-puppy',
     '실내놀이': 'ic-activity',
     '마당있음': 'ic-yard',
   };
@@ -98,7 +98,7 @@ const Detail = () => {
   //   onError: (data) => {
   //     console.log('문의하기 api failed', data);
   //   }
-  // });
+  // })
   const {data: checkRegisteredPet, refetch: petInfoRefetch} = useQuery('getPetInfoQuery', ()=>apis.getPetInfo(), {
     onSuccess: (data) => {
       if(data.data.check){
@@ -242,8 +242,6 @@ const Detail = () => {
       floatingTabsRef.current.classList.remove('isFixed');
     }
   }
-
-  console.log(detail)
 
   if (!detail) return <p>로딩중입니다</p>;
 	return (
@@ -571,9 +569,9 @@ const Detail = () => {
           </div>
         </ReservationFunctions>
       </SitterDetailPage>
-      {
+      {/* {
         <ChatRoom />
-      }
+      } */}
       {
         (modalDisplay && errorMessage === errorMessages.notLogin) && (
           <Modal _display={modalDisplay} _alert={false} _confirm={'로그인하기'} _cancel={'취소'} cancelOnclick={()=>{setErrorMessage(null); setModalDisplay(false)}} confirmOnClick={()=>{navigate('/login')}}>
