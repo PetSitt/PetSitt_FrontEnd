@@ -67,7 +67,7 @@ const SitterProfileForm2 = () => {
   return (
     <StyledContainer>
       <SitterProfileFormInner>
-        <NavBox _title='상세 정보' _subTitle='2/4' sitterProfile />
+        <NavBox _title='상세 정보' _subTitle='2/4' sitterEditProfile />
         <InputBox>
           <label className='tit'>프로필 사진*</label>
           <ImageRegist
@@ -134,6 +134,21 @@ const SitterProfileForm2 = () => {
           _onClick={doValidation}
           _title={'다음으로'}
         />
+        {update ? (
+          <StyledButton
+          _onClick={() => navigate('/mypage/SitterProfileForm3', {state: { data: values, update: true }})}
+          _title={'다음으로'}
+        />
+        ) : (
+          <StyledButton
+            _onClick={() =>
+              navigate("/mypage/SitterProfileForm3", {
+                state: { data: values, update: false },
+              })
+            }
+            _title={"다음으로"}
+          />
+        )}
       </SitterProfileFormInner>
     </StyledContainer>
   );
