@@ -7,6 +7,7 @@ const NavBox = ({
   _buttonTitle,
   _onClick,
   sitterProfile,
+  sitterEditProfile,
   myProfile,
 }) => {
   const navigate = useNavigate();
@@ -30,6 +31,25 @@ const NavBox = ({
   }
 
   if (sitterProfile) {
+    return (
+      <NavWrap>
+        <button
+          onClick={() => {
+            navigate(-1);
+          }}
+        >
+          <img src='/images/left_arrow.svg' alt='left_arrow' />
+        </button>
+        <TitleBox>
+          <h1>{_title}</h1>
+          <span>{_subTitle}</span>
+        </TitleBox>
+        <CancelButton onClick={_onClick}>{_buttonTitle}</CancelButton>
+      </NavWrap>
+    );
+  }
+
+  if (sitterEditProfile) {
     return (
       <NavWrap>
         <TitleBox>
