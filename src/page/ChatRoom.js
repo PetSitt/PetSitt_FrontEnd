@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import styled from 'styled-components';
-import { useQuery } from "react-query";
+import { useQueryClient, useQuery } from "react-query";
 import jwt_decode from "jwt-decode"
 import { chatApis } from "../store/chatApi";
 import '../styles/chat.css';
@@ -15,13 +15,13 @@ function formatDate(value) {
 
 function ChatRoom({ socket, room, idRoom, popup, showChatRoom, setPopup }) {
   const param = useParams();
+  const queryClient = useQueryClient();
   const [currentMessage, setCurrentMessage] = useState("");
-  const { isLoading: dataLoading, data: chatsRoom, refetch} = useQuery(["chats", room], () => chatApis.chatRoomGet(room), {
+  const { isLoading: dataLoading, data: chatsRoom, refetch} = useQuery(["chats", room, socket.id], () => chatApis.chatRoomGet(room, socket.id), {
     staleTime: Infinity,
     enabled: true
   });
   const sitterId = param.id;
-
   const [messageList, setMessageList] = useState(chatsRoom?.data.chats);
 
   const sendMessage = async () => {
@@ -31,19 +31,19 @@ function ChatRoom({ socket, room, idRoom, popup, showChatRoom, setPopup }) {
         message: currentMessage,
         userEmail: jwt_decode(localStorage.getItem('accessToken')).userEmail
       };
-      const temp = { //화면을 갱신하기위한 데이터 형식
-        roomId: room,
-        chatText: currentMessage,
-        createdAt: Date.now(),
-        me: true,
-        newMessage: true,
-        userName: chatsRoom.data.myName
-      };
-
       await socket.emit("send_message", messageData);
-      setMessageList((list) => [...list, temp]);
-      setCurrentMessage("");
     }
+    const temp = { //화면을 갱신하기위한 데이터 형식
+      roomId: room,
+      chatText: currentMessage,
+      createdAt: Date.now(),
+      me: true,
+      newMessage: true,
+      userName: chatsRoom.data.myName
+    }; 
+    setMessageList((list) => [...list, temp]);
+    setCurrentMessage("");
+    queryClient.invalidateQueries('chats')
   };
   
   const scrollElement = useRef();
@@ -55,7 +55,6 @@ function ChatRoom({ socket, room, idRoom, popup, showChatRoom, setPopup }) {
 
   const scrollToBottom = useCallback(() => {
     if(scrollElement.current){
-      console.log(scrollElement.current.scrollTop, scrollElement.current.scrollHeight)
       scrollElement.current.scrollTop = scrollElement.current.scrollHeight;
     }
   },[currentMessage])
@@ -69,7 +68,6 @@ function ChatRoom({ socket, room, idRoom, popup, showChatRoom, setPopup }) {
     refetch();
   },[refetch])
   
-  console.log(sitterId)
   return (
     <ChatInner ref={scrollElement} className={`${sitterId ? 'chatRoomDetil' : 'chatRoom'}`} >
       {sitterId && <ChatHeader socket={socket} idRoom={idRoom} popup={popup} showChatRoom={showChatRoom} setPopup={setPopup}/>}

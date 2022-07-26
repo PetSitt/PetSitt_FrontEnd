@@ -24,7 +24,7 @@ const Modal = ({
             _title={_confirm ? _confirm : '확인'}
             _margin='0'
             _onClick={confirmOnClick ? confirmOnClick : setDisplay(false)}
-            _bgColor={_confirm === '삭제' ? "#F01D1D" : "#FC9215"}
+            _bgColor={_confirm === '삭제' ? "#EC4444" : "#FC9215"}
           />
           {_cancel && (
             <StyledButton
