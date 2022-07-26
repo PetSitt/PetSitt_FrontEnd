@@ -19,6 +19,7 @@ const Input = ({
   disabled,
   onChange,
 }) => {
+  console.log(defaultValue, 'defaultValue input')
   const styles = {
     _width,
     _height,

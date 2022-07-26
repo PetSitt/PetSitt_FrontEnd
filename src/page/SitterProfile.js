@@ -41,152 +41,150 @@ const SitterProfile = () => {
   }, [sitterSuccessGet, sitterSuccessDelete, sitterData]);
 
   return (
-    <SitterProfileInner>
-      <NavBox
-        _title="돌보미 프로필"
-        _onClick={() => {
-          navigate("/mypage/SitterProfileForm1", { state: values });
-        }}
-        _buttonTitle="수정"
-        sitterProfile
-      />
-
-      {values && <button onClick={delect}>삭제</button>}
-      {console.log(values)}
-      {values ? (
+    <><SitterProfileInner>
+    <NavBox
+      _title="돌보미 프로필"
+      _onClick={() => {
+        navigate("/mypage/SitterProfileForm1", { state: values });
+      }}
+      _buttonTitle="수정"
+      sitterProfile
+    />
+    {values ? (
+      <div className="profileinner">
         <div>
-          <div className="profileinner">
-            <div className="profileMainImg inner">
-              <img src={values.mainImageUrl} alt="돌보미" />
-            </div>
-          </div>
-          <label className="inner required">
-            <p className="tit">이름</p>
-            <Input
-              _width="100%"
-              _height="44px"
-              _type="text"
-              defaultValue={comma(values.sitterName)}
-              disabled
-            />
-          </label>
-          <label className="inner required">
-            <p className="tit">요금</p>
-            <Input
-              _width="100%"
-              _height="44px"
-              _type="text"
-              defaultValue={comma(values.servicePrice)}
-              disabled
-            />
-          </label>
-          <CheckWrap>
-            <label className="tit">제공 가능한 서비스</label>
-            <CheckGroup>
-              <Checkbox
-                _id={"산책"}
-                _key={"category"}
-                _text={"산책"}
-                _size={"1.2rem"}
-                checked={values.category}
-              />
-              <Checkbox
-                _id={"목욕, 모발 관리"}
-                _key={"category"}
-                _text={"목욕, 모발 관리"}
-                _size={"1.2rem"}
-                checked={values.category}
-              />
-              <Checkbox
-                _id={"훈련"}
-                _key={"category"}
-                _text={"훈련"}
-                _size={"1.2rem"}
-                checked={values.category}
-              />
-              <Checkbox
-                _id={"데이 케어"}
-                _key={"category"}
-                _text={"데이 케어"}
-                _size={"1.2rem"}
-                checked={values.category}
-              />
-              <Checkbox
-                _id={"1박 케어"}
-                _key={"category"}
-                _text={"1박 케어"}
-                _size={"1.2rem"}
-                checked={values.category}
-              />
-            </CheckGroup>
-          </CheckWrap>
-          <CheckWrap>
-            <label className="tit">케어 가능 범위</label>
-            <CheckGroup>
-              <Checkbox
-                _text={"소형견"}
-                _size={"1.2rem"}
-                _border={"1px solid rgba(120, 120, 120, 0.7)"}
-                onChange={(e) => {
-                  setValues((prevValues) => {
-                    const careSize = [...prevValues.careSize];
-                    careSize[0] = e.target.checked;
-                    return { ...prevValues, careSize };
-                  });
-                }}
-                checked={values.careSize}
-              />
-              <Checkbox
-                _text={"중형견"}
-                _size={"1.2rem"}
-                onChange={(e) => {
-                  setValues((prevValues) => {
-                    const careSize = [...prevValues.careSize];
-                    careSize[1] = e.target.checked;
-                    return { ...prevValues, careSize };
-                  });
-                }}
-                checked={values.careSize}
-              />
-              <Checkbox
-                _text={"대형견"}
-                _size={"1.2rem"}
-                onChange={(e) => {
-                  setValues((prevValues) => {
-                    const careSize = [...prevValues.careSize];
-                    careSize[2] = e.target.checked;
-                    return { ...prevValues, careSize };
-                  });
-                }}
-                checked={values.careSize}
-              />
-            </CheckGroup>
-          </CheckWrap>
-          <div className="inner">
-            <h3 className="tit">서비스 불가능한 날짜</h3>
-            {console.log(values.noDate)}
-            <Calendar
-              value={values.noDate}
-              readOnly={true}
-              minDate={new Date()}
-              maxDate={new Date(today.year + 1, today.month.number, today.day)}
-            ></Calendar>
+          <div className="profileMainImg inner">
+            <img src={values.mainImageUrl} alt="돌보미" />
           </div>
         </div>
-      ) : (
-        <SitterProfileInsertBox>
-          <h3>돌보미로 등록하세요</h3>
-          <p>돌보미 프로필을 등록해보세요</p>
-          <SitterProfileInsertButton
-            onClick={() => {
-              navigate("/mypage/SitterProfileForm1");
-            }}
-          >
-            돌보미로 등록하기
-          </SitterProfileInsertButton>
-        </SitterProfileInsertBox>
-      )}
-    </SitterProfileInner>
+        <label className="inner required">
+          <p className="tit">이름</p>
+          <Input
+            _width="100%"
+            _height="44px"
+            _type="text"
+            defaultValue={comma(values.sitterName)}
+            disabled
+          />
+        </label>
+        <label className="inner required">
+          <p className="tit">요금</p>
+          <Input
+            _width="100%"
+            _height="44px"
+            _type="text"
+            defaultValue={comma(values.servicePrice)}
+            disabled
+          />
+        </label>
+        <CheckWrap>
+          <label className="tit">제공 가능한 서비스</label>
+          <CheckGroup>
+            <Checkbox
+              _id={"산책"}
+              _key={"category"}
+              _text={"산책"}
+              _size={"1.2rem"}
+              checked={values.category}
+            />
+            <Checkbox
+              _id={"목욕, 모발 관리"}
+              _key={"category"}
+              _text={"목욕, 모발 관리"}
+              _size={"1.2rem"}
+              checked={values.category}
+            />
+            <Checkbox
+              _id={"훈련"}
+              _key={"category"}
+              _text={"훈련"}
+              _size={"1.2rem"}
+              checked={values.category}
+            />
+            <Checkbox
+              _id={"데이 케어"}
+              _key={"category"}
+              _text={"데이 케어"}
+              _size={"1.2rem"}
+              checked={values.category}
+            />
+            <Checkbox
+              _id={"1박 케어"}
+              _key={"category"}
+              _text={"1박 케어"}
+              _size={"1.2rem"}
+              checked={values.category}
+            />
+          </CheckGroup>
+        </CheckWrap>
+        <CheckWrap>
+          <label className="tit">케어 가능 범위</label>
+          <CheckGroup>
+            <Checkbox
+              _text={"소형견"}
+              _size={"1.2rem"}
+              _border={"1px solid rgba(120, 120, 120, 0.7)"}
+              onChange={(e) => {
+                setValues((prevValues) => {
+                  const careSize = [...prevValues.careSize];
+                  careSize[0] = e.target.checked;
+                  return { ...prevValues, careSize };
+                });
+              }}
+              checked={values.careSize}
+            />
+            <Checkbox
+              _text={"중형견"}
+              _size={"1.2rem"}
+              onChange={(e) => {
+                setValues((prevValues) => {
+                  const careSize = [...prevValues.careSize];
+                  careSize[1] = e.target.checked;
+                  return { ...prevValues, careSize };
+                });
+              }}
+              checked={values.careSize}
+            />
+            <Checkbox
+              _text={"대형견"}
+              _size={"1.2rem"}
+              onChange={(e) => {
+                setValues((prevValues) => {
+                  const careSize = [...prevValues.careSize];
+                  careSize[2] = e.target.checked;
+                  return { ...prevValues, careSize };
+                });
+              }}
+              checked={values.careSize}
+            />
+          </CheckGroup>
+        </CheckWrap>
+        <div className="inner">
+          <h3 className="tit">서비스 불가능한 날짜</h3>
+          {console.log(values.noDate)}
+          <Calendar
+            value={values.noDate}
+            readOnly={true}
+            minDate={new Date()}
+            maxDate={new Date(today.year + 1, today.month.number, today.day)}
+          ></Calendar>
+        </div>
+      </div>
+    ) : (
+      <SitterProfileInsertBox>
+        <h3>돌보미로 등록하세요</h3>
+        <p>돌보미 프로필을 등록해보세요</p>
+        <SitterProfileInsertButton
+          onClick={() => {
+            navigate("/mypage/SitterProfileForm1");
+          }}
+        >
+          돌보미로 등록하기
+        </SitterProfileInsertButton>
+      </SitterProfileInsertBox>
+    )}
+  </SitterProfileInner>
+   {values && <button onClick={delect}>삭제</button>}</>
   );
 };
 

@@ -112,6 +112,7 @@ const PetprofileForm = () => {
     data ? update(fields) : create(formData);
   };
 
+  
   return (
     <StyledContainer>
       <NavBox _title="반려동물 프로필" />
@@ -119,7 +120,7 @@ const PetprofileForm = () => {
         <Form onSubmit={handleSubmit}>
           <ImageBox onClick={handleClickUpload}>
             <PreviewImage
-              src={imageSrc || "/images/placeholder_150.png"}
+              src={imageSrc ? imageSrc : values.petImage.length > 0 ? values.petImage : "/images/placeholder_150.png"}
               width="90"
               alt="petPhoto"
             />

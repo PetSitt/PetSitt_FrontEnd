@@ -27,13 +27,14 @@ const SitterProfileForm1 = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const data = location.state;
-  const [values, setValues] = useState(data ? data.data : INITIAL_VALUES);
+  const [values, setValues] = useState(data ? data : INITIAL_VALUES);
   const open = useDaumPostcodePopup(
     'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js'
   );
 
   //주소 입력 우편번호 함수
   const handlePostcode = (data) => {
+    console.log('postcode')
     const { zonecode, sido, sigungu, query } = data;
     let fullAddress = data.address;
     let extraAddress = '';
@@ -109,11 +110,7 @@ const SitterProfileForm1 = () => {
     }
     
   }
-
-
-  useEffect(() => {
-    console.log(values);
-  }, []);
+ 
 
   return (
     <StyledContainer>
@@ -130,7 +127,7 @@ const SitterProfileForm1 = () => {
             name='sitterName'
             placeholder='이름을 적어주세요.'
             onChange={handleInputChange}
-            defaultValue={values.sitterName}
+            defaultValue={values?.sitterName}
             required
           />
           {
