@@ -44,6 +44,10 @@ function Home() {
 	const [sitterCardShow, setSitterCardShow] = useState({display: false, index: null});
 	const categoryClicked = useRef(false);
 	const showTooltip = useRef(0);
+	const dataToSend = useRef({
+		userEmail: null,
+		userName: null,
+	})
 
 	const getSittersList = (queriesData, category) => {
 		const _queriesData = {...queriesData, category: category.length ? category : []};
@@ -124,13 +128,12 @@ function Home() {
 			staleTime: Infinity,
 		},
 	);
-	// const kakaoLoginApi = (dataToSend) => {
-  //   return apis.kakaoLogin(dataToSend);
-  // }
-  const {mutate: kakaoLoginQuery} = useMutation((dataToSend)=>apis.kakaoLogin(dataToSend), {
+  const {mutate: kakaoLoginQuery} = useMutation((data)=>apis.kakaoLogin(data), {
     onSuccess: (data) => {
-			console.log('kakao success', data)
+			// console.log('kakao success', data)
       localStorage.setItem('accessToken', data.data.token);
+			localStorage.setItem('userName', dataToSend.current.userName);
+			localStorage.setItem('userEmail', dataToSend.current.userEmail);
     },
     onError: (data) => {
       console.log(data, 'kakao login failed');
@@ -143,12 +146,14 @@ function Home() {
         url: "/v2/user/me",
       });
       // 사용자 정보 변수에 저장
-      const dataToSend = {
+      dataToSend.current = {
         userEmail: data.kakao_account.email,
         userName: data.properties.nickname,
       };
-			console.log(dataToSend)
-      kakaoLoginQuery(dataToSend);
+      kakaoLoginQuery({
+        userEmail: data.kakao_account.email,
+        userName: data.properties.nickname,
+      });
     } catch (err) {
       console.log(err);
     }
@@ -180,7 +185,6 @@ function Home() {
 	useEffect(()=>{
 		if(localStorage.getItem('kakaoToken')){
 			getKakaoProfile();
-			console.log('haskakao')
 		}
 		getLocationButtonRef.current.click();
 		const fullHeight = window.innerHeight;
@@ -192,10 +196,10 @@ function Home() {
 	useEffect(()=>{
 		if(categoryClicked.current){
 			if(addressInfo &&  dates?.length > 0){
-				console.log('검색 후 categorizing');
+				// console.log('검색 후 categorizing');
 				refetchSittersAfter();
 			}else{
-				console.log('검색 전 categorizing');
+				// console.log('검색 전 categorizing');
 				refetchSitters();
 			} 
 		}
@@ -228,15 +232,6 @@ function Home() {
 			})
 		}
 	},[sitters, sittersIsRefetching])
-
-	useEffect(() => {
-		if(localStorage.getItem('accessToken')){
-			checkUser();
-		}
-		return()=>{
-			setSitters(null);
-		}
-	}, []);
 
 	if (sittersFilteredIsLoading) return null;
 	return (

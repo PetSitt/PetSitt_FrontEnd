@@ -71,6 +71,7 @@ const Detail = ({socket}) => {
     '마당있음': 'ic-yard',
   };
   const [value, setValues] = useState(false);
+  const [roomId, setRoomId] = useState("");
   const disableDate = () => {
     const datesArray = [];
     detail.sitter.noDate.map(v=>{
@@ -104,12 +105,12 @@ const Detail = ({socket}) => {
     enabled: false,
   });
 
-  const {mutate: openChatRoom} = useMutation(()=>chatApis.chatRoomPost(sitterId), {
-    onSuccess: (data)=>{
-      console.log('문의하기 api success', data);
+  const {mutate: openChatRoom} = useMutation(() => chatApis.chatRoomPost(sitterId), {
+    onSuccess: (data) => {
+      setRoomId(data.data.roomId)
     },
     onError: (data) => {
-      console.log('문의하기 api failed', data);
+      console.log(data);
     }
   });
 
@@ -140,7 +141,7 @@ const Detail = ({socket}) => {
       service: servicesText,
       sitterName: detail.sitter.sitterName,
       price: detail.sitter.servicePrice,
-      sitterId: detail.sitter.sitterId,
+      sitterId: sitterId,
     }
 
     localStorage.setItem('reservationInfo', JSON.stringify(reservationInfo));
@@ -419,7 +420,7 @@ const Detail = ({socket}) => {
                     <strong style={{fontSize: '32px', fontWeight: '500'}}>{detail.sitter.averageStar}</strong>
                     <span>{detail.sitter.reviewCount}개의 후기</span>
                   </div>
-                  <Reviews reviewCount={detail.sitter.reviewCount} sitterId={detail.sitter.sitterId}/>
+                  <Reviews reviewCount={detail.sitter.reviewCount} sitterId={sitterId}/>
                 </>
               )
             }
@@ -557,13 +558,10 @@ const Detail = ({socket}) => {
                   setErrorMessage(errorMessages.notLogin);
                   setModalDisplay(true);
                 }else{
-                  console.log('?')
                   // 등록된 반려견 정보가 있는지 확인
                   if(hasPetInfo.current){
-                    console.log('1')
                     requestReservation();
                   }else{
-                    console.log('2')
                     setErrorMessage(errorMessages.noPets);
                     setModalDisplay(true);
                   }
@@ -576,7 +574,7 @@ const Detail = ({socket}) => {
         </ReservationFunctions>
       </SitterDetailPage>
       {
-        value && <ChatRoom />
+        roomId && value && <ChatRoom socket={socket} room={roomId}/>
       }
       {
         (modalDisplay && errorMessage === errorMessages.notLogin) && (

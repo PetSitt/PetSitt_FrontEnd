@@ -1,5 +1,5 @@
-import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 
 const NavBox = ({
   _title,
@@ -19,7 +19,7 @@ const NavBox = ({
             navigate(-1);
           }}
         >
-          <img src='/images/left_arrow.svg' alt='left_arrow' />
+          <img src="/images/left_arrow.svg" alt="left_arrow" />
         </button>
         <TitleBox>
           <h1>{_title}</h1>
@@ -38,10 +38,10 @@ const NavBox = ({
             navigate(-1);
           }}
         >
-          <img src='/images/left_arrow.svg' alt='left_arrow' />
+          <img src="/images/left_arrow.svg" alt="left_arrow" />
         </button>
         <TitleBox>
-          <h1>{_title}</h1>
+          <h1 style={{ marginLeft: "45px" }}>{_title}</h1>
           <span>{_subTitle}</span>
         </TitleBox>
         <CancelButton onClick={_onClick}>{_buttonTitle}</CancelButton>
@@ -58,7 +58,7 @@ const NavBox = ({
         </TitleBox>
         <CancelButton
           onClick={() => {
-            navigate('/mypage');
+            navigate("/mypage");
           }}
         >
           취소
@@ -73,7 +73,7 @@ const NavBox = ({
           navigate(-1);
         }}
       >
-        <img src='/images/left_arrow.svg' alt='left_arrow' />
+        <img src="/images/left_arrow.svg" alt="left_arrow" />
       </button>
       <h1>{_title}</h1>
       <div />
@@ -82,8 +82,8 @@ const NavBox = ({
 };
 
 NavBox.defaultProps = {
-  _title: '텍스트',
-  _subTitle: '',
+  _title: "텍스트",
+  _subTitle: "",
   sitterProfile: false,
 };
 
