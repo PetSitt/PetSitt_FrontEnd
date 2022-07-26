@@ -5,37 +5,36 @@ import axios from 'axios';
 
 const SearchAddress = ({ setAddressInfo, setIframeDisplay }) => {
   	const handleSearch = (data) => {
+		const kakaoMapApi = axios.create();
+		kakaoMapApi.defaults.withCredentials = false;
+		kakaoMapApi.defaults.headers.common['Authorization'] = `KakaoAK ${process.env.REACT_APP_KAKAO_RESTAPI}`;
+		kakaoMapApi.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
+
 		const searchTxt = data.q;
-    const URL = 'https://dapi.kakao.com/v2/local/search/address.json?query='+searchTxt; // url 및 키워드 담아 보냄
-		const config = { 
-			withCredentials: false,
-			headers: {
-				"Authorization" : `KakaoAK ${process.env.REACT_APP_KAKAO_RESTAPI}`,
-				"Content-Type": 'application/x-www-form-urlencoded',
-			}
-		}; //인증키 정보 및 헤더 정보
-		axios.get(URL, config).then(function(result) { // API호출
-			console.log(1,config)
+    const url = 'https://dapi.kakao.com/v2/local/search/address.json?query='+searchTxt; // url 및 키워드 담아 보냄
+
+		kakaoMapApi.get(url).then(function(result) { // API호출
+			console.log(1)
       if(result.data != undefined || result.data != null){
-				// console.log(result.data)
+				console.log(result.data)
 				if(result.data.documents[0].address) {
-					console.log(2,config)
+					console.log(2)
 					setAddressInfo(result.data.documents[0].address); setIframeDisplay(false);
 				} else {
-					console.log(3,config)
+					console.log(3)
 					const x = result.data.documents[0].x;
 					const y = result.data.documents[0].y;
 					const url_2nd ='https://dapi.kakao.com/v2/local/geo/coord2address.json?x='+x+'&y='+y;
-					axios.get(url_2nd, config).then(function(result2) { // API호출
-						console.log(4,config)
+					kakaoMapApi.get(url_2nd).then(function(result2) { // API호출
+						console.log(4)
 						if(result2.data != undefined || result2.data != null){
-							console.log(5,config)
+							console.log(5)
 							const searchTxt_3nd = result2.data.documents[0].address.address_name;
 							const url_3rd = 'https://dapi.kakao.com/v2/local/search/address.json?query='+searchTxt_3nd; // url 및 키워드 담아 보냄
-							axios.get(url_3rd, config).then(function(result3) { // API호출
-								console.log(6,config)
+							kakaoMapApi.get(url_3rd).then(function(result3) { // API호출
+								console.log(6)
 								if(result3.data != undefined || result3.data != null){
-									console.log(7,config)
+									console.log(7)
 									setAddressInfo(result3.data.documents[0].address);
 									setIframeDisplay(false);
 								}
