@@ -16,12 +16,11 @@ const publicApi = axios.create({
 api.interceptors.request.use((config) => {
 	config.headers['Content-type'] = 'application/json; charset=UTF-8';
 	config.headers['Accept'] = 'application/json;';
-	if(localStorage.getItem('accessToken') && cookies.get('refreshToken')){
+	if(localStorage.getItem('accessToken')){
 		config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`;
 	}else{
 		window.location.href= "/login";
 	}
-	
 	return config;
 }, (err) => {
 	return Promise.reject(err);
@@ -38,7 +37,9 @@ api.interceptors.response.use(
       response: { status },
     } = error;
     if (status === 401) { // 권한없음 === Access 토큰 만료됐을 경우
-      if(localStorage.getItem('accessToken')){
+      if(localStorage.getItem('kakaoToken')){
+				window.location.href = '/login';
+			}else if(localStorage.getItem('accessToken')){
 				const originalRequest = config;
 				const refreshToken = await cookies.get('refreshToken');
 				// token refresh 요청
@@ -55,8 +56,6 @@ api.interceptors.response.use(
 				// 401로 요청 실패했던 요청을 새로운 accessToken으로 재요청
 				return axios(originalRequest);
 			}else{
-				cookies.remove('refreshToken');
-				localStorage.removeItem('accessToken');
 				window.location.href = '/login';
 			}
     }
@@ -109,7 +108,7 @@ export const apis = {
 	registerReview: (reservationId, data) => api.post(`/reviews/${reservationId}`, data),
 	loadMorePastReservation: (reservationId, type) => api.get(`/reservations/lists/${reservationId}?searchCase=${type}`),
 	loadReview: (reservationId) => api.get(`/reviews/${reservationId}`),
-	registerDiary: (reservationId, formdata, config) => api.post(`/diaries/${reservationId}`, formdata, formdataConfig),
+	registerDiary: (reservationId, formdata) => api.post(`/diaries/${reservationId}`, formdata, formdataConfig),
 	loadDiaryData: (reservationId) => api.get(`/diaries/${reservationId}`),
 	modifyDiary: (reservationId, formData) => api.put(`/diaries/${reservationId}`, formData, formdataConfig)
 }

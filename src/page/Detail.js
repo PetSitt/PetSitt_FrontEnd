@@ -141,7 +141,7 @@ const Detail = ({socket}) => {
       service: servicesText,
       sitterName: detail.sitter.sitterName,
       price: detail.sitter.servicePrice,
-      sitterId: detail.sitter.sitterId,
+      sitterId: sitterId,
     }
 
     localStorage.setItem('reservationInfo', JSON.stringify(reservationInfo));
@@ -420,7 +420,7 @@ const Detail = ({socket}) => {
                     <strong style={{fontSize: '32px', fontWeight: '500'}}>{detail.sitter.averageStar}</strong>
                     <span>{detail.sitter.reviewCount}개의 후기</span>
                   </div>
-                  <Reviews reviewCount={detail.sitter.reviewCount} sitterId={detail.sitter.sitterId}/>
+                  <Reviews reviewCount={detail.sitter.reviewCount} sitterId={sitterId}/>
                 </>
               )
             }
@@ -558,13 +558,10 @@ const Detail = ({socket}) => {
                   setErrorMessage(errorMessages.notLogin);
                   setModalDisplay(true);
                 }else{
-                  console.log('?')
                   // 등록된 반려견 정보가 있는지 확인
                   if(hasPetInfo.current){
-                    console.log('1')
                     requestReservation();
                   }else{
-                    console.log('2')
                     setErrorMessage(errorMessages.noPets);
                     setModalDisplay(true);
                   }
