@@ -4,11 +4,17 @@ import DaumPostcodeEmbed from "react-daum-postcode";
 import axios from 'axios';
 
 const SearchAddress = ({ setAddressInfo, setIframeDisplay }) => {
-  const handleSearch = (data) => {
-    const searchTxt = data.q;
-    const config = { headers: {Authorization : `KakaoAK ${process.env.REACT_APP_KAKAO_RESTAPI}`}}; //인증키 정보
-    const url = 'https://dapi.kakao.com/v2/local/search/address.json?query='+searchTxt; // url 및 키워드 담아 보냄
-    axios.get(url, config).then(function(result) { // API호출
+  	const handleSearch = (data) => {
+		const searchTxt = data.q;
+    const URL = 'https://dapi.kakao.com/v2/local/search/address.json?query='+searchTxt; // url 및 키워드 담아 보냄
+		const config = { 
+			withCredentials: false,
+			headers: {
+				"Authorization" : `KakaoAK ${process.env.REACT_APP_KAKAO_ADMIN}`,
+				"Content-Type": 'application/x-www-form-urlencoded',
+			}
+		}; //인증키 정보 및 헤더 정보
+		axios.get(URL, config).then(function(result) { // API호출
       if(result.data != undefined || result.data != null){
 				// console.log(result.data)
 				if(result.data.documents[0].address) {
@@ -32,6 +38,12 @@ const SearchAddress = ({ setAddressInfo, setIframeDisplay }) => {
 				}
       }
     })
+		.catch(function (error) {
+			console.log(error.response.headers);
+		})
+		.finally(function () {
+			console.log("finally ");
+		});
   }
 
 	return (
