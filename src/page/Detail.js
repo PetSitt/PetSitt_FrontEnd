@@ -71,6 +71,7 @@ const Detail = ({socket}) => {
     '마당있음': 'ic-yard',
   };
   const [value, setValues] = useState(false);
+  const [roomId, setRoomId] = useState("");
   const disableDate = () => {
     const datesArray = [];
     detail.sitter.noDate.map(v=>{
@@ -104,12 +105,12 @@ const Detail = ({socket}) => {
     enabled: false,
   });
 
-  const {mutate: openChatRoom} = useMutation(()=>chatApis.chatRoomPost(sitterId), {
-    onSuccess: (data)=>{
-      console.log('문의하기 api success', data);
+  const {mutate: openChatRoom} = useMutation(() => chatApis.chatRoomPost(sitterId), {
+    onSuccess: (data) => {
+      setRoomId(data.data.roomId)
     },
     onError: (data) => {
-      console.log('문의하기 api failed', data);
+      console.log(data);
     }
   });
 
@@ -573,7 +574,7 @@ const Detail = ({socket}) => {
         </ReservationFunctions>
       </SitterDetailPage>
       {
-        value && <ChatRoom />
+        roomId && value && <ChatRoom socket={socket} room={roomId}/>
       }
       {
         (modalDisplay && errorMessage === errorMessages.notLogin) && (
