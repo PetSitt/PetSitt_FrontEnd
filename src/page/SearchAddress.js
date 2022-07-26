@@ -9,10 +9,8 @@ const SearchAddress = ({ setAddressInfo, setIframeDisplay }) => {
 		kakaoMapApi.defaults.withCredentials = false;
 		kakaoMapApi.defaults.headers.common['Authorization'] = `KakaoAK ${process.env.REACT_APP_KAKAO_RESTAPI}`;
 		kakaoMapApi.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-
 		const searchTxt = data.q;
     const url = 'https://dapi.kakao.com/v2/local/search/address.json?query='+searchTxt; // url 및 키워드 담아 보냄
-		console.log(process.env.REACT_APP_KAKAO_RESTAPI, process.env.REACT_APP_KAKAO_ADMIN)
 		kakaoMapApi.get(url).then(function(result) { // API호출
 			console.log(1)
       if(result.data != undefined || result.data != null){
