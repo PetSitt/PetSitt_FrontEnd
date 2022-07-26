@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
@@ -23,14 +23,12 @@ const PetprofileForm = () => {
   const location = useLocation();
   const data = location.state;
   const [values, setValues] = useState(data ? data.data : INITIAL_VALUES);
-  const [txt, setTxt] = useState(data ? data.data : false);
   const [imageSrc, setImageSrc] = useState("");
   const navigate = useNavigate();
   const photoInput = useRef();
 
   const handleClickRadioButton = (e) => {
     const { name } = e.target;
-    setTxt(Boolean(Number(e.target.value)));
     handleChange(name, Boolean(Number(e.target.id)), setValues);
   };
 
@@ -38,11 +36,6 @@ const PetprofileForm = () => {
     const { name, value } = e.target;
     handleChange(name, value, setValues);
   };
-
-  // const handleFileChange = (e) => {
-  //   const { name, files } = e.target;
-  //   handleChange(name, files[0], setValues);
-  // };
 
   const handleClickUpload = () => {
     photoInput.current.click();
@@ -66,11 +59,7 @@ const PetprofileForm = () => {
   const queryClient = useQueryClient();
 
   // useMutation 생성하는 세팅 함수
-  const {
-    mutate: create,
-    error,
-    isSuccess,
-  } = useMutation(apis.petprofilePost, {
+  const { mutate: create, isSuccess } = useMutation(apis.petprofilePost, {
     onSuccess: () => {
       //무효화 시킴
       queryClient.invalidateQueries("petprofile");
@@ -112,7 +101,6 @@ const PetprofileForm = () => {
     data ? update(fields) : create(formData);
   };
 
-  
   return (
     <StyledContainer>
       <NavBox _title="반려동물 프로필" />
@@ -120,8 +108,15 @@ const PetprofileForm = () => {
         <Form onSubmit={handleSubmit}>
           <ImageBox onClick={handleClickUpload}>
             <PreviewImage
-              src={imageSrc ? imageSrc : values.petImage.length > 0 ? values.petImage : "/images/placeholder_150.png"}
-              width="90"
+              style={{
+                backgroundImage: `url(${
+                  imageSrc
+                    ? imageSrc
+                    : values.petImage.length > 0
+                    ? values.petImage
+                    : "/images/placeholder_150.png"
+                })`,
+              }}
               alt="petPhoto"
             />
             <input
@@ -135,18 +130,12 @@ const PetprofileForm = () => {
                 encodeFileToBase64(e.target.files[0]);
               }}
             />
-            <div>
+            <IBox>
               <i className="ic-camera"></i>
-            </div>
+            </IBox>
           </ImageBox>
-          {/* <input
-            type='file'
-            accept='image/png, image/jpeg'
-            name='petImage'
-            onChange={handleFileChange}
-          /> */}
           <InputBox>
-            <label className="tit">이름</label>
+            <label className="tit">반려동물 이름</label>
             <input
               type="text"
               name="petName"
@@ -206,7 +195,6 @@ const PetprofileForm = () => {
               </label>
             </RadioGroup>
           </RadioBox>
-
           <InputBox>
             <label htmlFor="kind" className="tit">
               품종
@@ -283,9 +271,32 @@ const ImageBox = styled.div`
   align-items: center;
   justify-content: center;
 `;
-const PreviewImage = styled.img`
+
+const PreviewImage = styled.div`
+  width: 90px;
+  height: 90px;
   border-radius: 50%;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 135px;
   cursor: pointer;
+`;
+
+const IBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(120, 120, 120, 0.2);
+  .ic-camera {
+    color: rgba(120, 120, 120, 0.7);
+  }
 `;
 
 const RadioBox = styled.div`
