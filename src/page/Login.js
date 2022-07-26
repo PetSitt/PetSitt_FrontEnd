@@ -10,7 +10,7 @@ import InputBox from '../elements/InputBox';
 import StyledButton from '../elements/StyledButton';
 import NavBox from '../elements/NavBox';
 import StyledContainer from '../elements/StyledContainer';
-import Auth from "../shared/Auth";
+import Alert from "../elements/Alert";
 
 const Login = ({socket}) => {
   const navigate = useNavigate();
@@ -18,7 +18,6 @@ const Login = ({socket}) => {
   const REST_API_KEY = process.env.REACT_APP_KAKAO_RESTAPI;
   const REDIRECT_URL = process.env.REACT_APP_REDIRECT_URL;
   const KAKAO_AUTH_URL = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URL}&response_type=code`;
-  const foundEmail = useRef();
 
   const cookies = new Cookies();
   const email_ref = useRef();
@@ -83,7 +82,6 @@ const Login = ({socket}) => {
     }
   }, [cookies]);
 
-
   return (
     <StyledContainer>
       <NavBox _title={'로그인'} />
@@ -96,7 +94,7 @@ const Login = ({socket}) => {
             ref={email_ref}
             placeholder="example@petsitt.com"
             required
-            defaultValue={location?.state?.userEmail ? location?.state?.userEmail : ''}
+            defaultValue={location.state?.userEmail ? location.state?.userEmail : ''}
             onInput={(e)=>{
               if(e.target.value.length){
                 setErrorMessage((prev)=>{
@@ -199,6 +197,9 @@ const Login = ({socket}) => {
           _title={'카카오로 시작하기'}
         />
       </RegisterBox>
+      {
+        location.state?.signup && <Alert _text={'회원가입이 완료되었습니다.'}/>
+      }
     </StyledContainer>
   );
 };

@@ -301,7 +301,7 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
           
         </div>
         <div className="inputArea">
-          <textarea placeholder='돌봄 일지를 작성해주세요.' onInput={(e)=>setText(e.target.value)} defaultValue={text&&text} disabled={mode.current === 'readonly'}></textarea>
+          <textarea placeholder={mode === 'readonly' ? '등록된 돌봄일지 내용이 없습니다.' : '돌봄 일지를 작성해주세요.'} onInput={(e)=>setText(e.target.value)} defaultValue={text&&text} disabled={mode.current === 'readonly'}></textarea>
         </div>
       </section>
     </CareDiaryPage>
