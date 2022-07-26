@@ -9,13 +9,14 @@ const AddressInfo = ({
   handlePost,
   onChange,
 }) => {
+  console.log(_address,_zonecode,detailAddress)
   return (
     <ContensInner className={'contents'}>
       <div className='postNumber box'>
         <Input
           _type='text'
           _placeholder={'우편번호'}
-          defaultValue={_zonecode}
+          value={_zonecode}
           onChange={onChange}
         />
         <div className='postLink' onClick={handlePost}>

@@ -34,7 +34,6 @@ const Myprofile = () => {
 
   const isLogin = cookies.get('refreshToken');
   const handleUpdate = (e) => {
-    console.log(inputEl1);
     inputEl1.current.disabled = false;
     inputEl2.current.disabled = false;
 
