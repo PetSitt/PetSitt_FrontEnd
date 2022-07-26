@@ -456,7 +456,9 @@ const ReservationList = () => {
                                 ))}
                               </div>
                             </ReservationTagContainer>
-                            <ReservationInfoContainer>
+                            <ReservationInfoContainer
+                              style={{ justifyContent: 'space-between' }}
+                            >
                               <div className='sitterInfo'>
                                 <SitterImage
                                   style={{
@@ -469,10 +471,13 @@ const ReservationList = () => {
                                 <SitterInfo>
                                   <p className='sitterName'>{v.sitterName}</p>
                                   <p className='sitterAddress'>
-                                    <i className='ic-map' />
+                                    <i className='ic-location' />
                                     {v.address}
                                   </p>
-                                  <p className='sitterPhone'>{v.phoneNumber}</p>
+                                  <p className='sitterPhone'>
+                                    <i className='ic-location' />
+                                    {v.phoneNumber}
+                                  </p>
                                 </SitterInfo>
                               </div>
                               <div
@@ -541,32 +546,86 @@ const ReservationList = () => {
                                 bottom: 0,
                               }}
                             ></Link>
-                            <p className='reservationInfo'>
-                              <strong>
-                                {v.category.map((category, index) => (
-                                  <span key={`category_${index}`}>
-                                    {index > 0 ? ', ' + category : category}
-                                  </span>
-                                ))}
-                              </strong>
-                              <br />
-                              <strong>
-                                {v.reservationDate.map((date, index) => (
-                                  <span key={`date_${index}`}>
-                                    {index > 0 ? ', ' + date : date}
-                                  </span>
-                                ))}
-                              </strong>
-                            </p>
-                            <div className='sitterInfo'>
-                              <h4>신청자 정보</h4>
+                            <ReservationTagContainer>
                               <div>
-                                <p>
-                                  <strong>{v.userName}</strong>
-                                  <span>{v.phoneNumber}</span>
-                                </p>
+                                {v.category.map((category, index) => (
+                                  <Tag key={`category_${index}`}>
+                                    {category}
+                                  </Tag>
+                                ))}
                               </div>
-                            </div>
+                              <div>
+                                {v.reservationDate.map((date, index) => (
+                                  <ReserveDate key={`date_${index}`}>
+                                    {index > 0 ? ', ' + date : date}
+                                  </ReserveDate>
+                                ))}
+                              </div>
+                            </ReservationTagContainer>
+                            <ReservationInfoContainer>
+                              <div className='sitterInfo'>
+                                <SitterImage
+                                  style={{
+                                    backgroundImage: `url(${v.imageUrl})`,
+                                    backgroundPosition: 'center',
+                                    backgroundRepeat: 'no-repeat',
+                                    backgroundSize: '75px',
+                                  }}
+                                ></SitterImage>
+                                <SitterInfo>
+                                  <p className='sitterName'>{v.userName}</p>
+                                  <p className='sitterAddress'>
+                                    <i className='ic-location' />
+                                    {v.address}
+                                  </p>
+                                  <p className='sitterPhone'>
+                                    <i className='ic-location' />
+                                    {v.phoneNumber}
+                                  </p>
+                                </SitterInfo>
+                              </div>
+                              <div
+                                className='buttons'
+                                style={{ position: 'relative', zIndex: 2 }}
+                              >
+                                <StyledButton
+                                  _margin='0'
+                                  _padding='7px 0px'
+                                  _title='일지 보기'
+                                  _onClick={() => {
+                                    reservationIdForDiary.current =
+                                      v.reservationId;
+                                    loadDiaryData();
+                                  }}
+                                />
+                                {!v.isPending && (
+                                  <StyledButton
+                                    _bgColor='#ffffff'
+                                    color='#fc9215'
+                                    _margin='0'
+                                    _padding='7px 0px'
+                                    _title='문의하기'
+                                    _border='1px solid #FC9215'
+                                  />
+                                )}
+                                {v.isPending && (
+                                  <StyledButton
+                                    _margin='0'
+                                    _title='리뷰 작성하기'
+                                    _onClick={() => {
+                                      setModalType(modalContent.review);
+                                      setReviewPageMode('write');
+                                      setModalDisplay(true);
+                                      dataToSend.current.data.sitterId =
+                                        v.sitterId;
+                                      dataToSend.current.reservationId =
+                                        v.reservationId;
+                                    }}
+                                  />
+                                )}
+                              </div>
+                            </ReservationInfoContainer>
+                            <div className='sitterInfo'></div>
                             <div
                               className='buttons'
                               style={{ position: 'relative', zIndex: 2 }}
@@ -611,7 +670,7 @@ const ReservationList = () => {
                       return (
                         <ReservationItem
                           key={`reservation_${i}`}
-                          className='past_reservations'
+                          className='proceeding_reservations'
                         >
                           <Link
                             to={`/reservation/detail/${selectedTab}/${v.reservationId}`}
@@ -623,77 +682,102 @@ const ReservationList = () => {
                               bottom: 0,
                             }}
                           ></Link>
-                          <p className='reservationInfo'>
-                            <strong>
+                          <ReservationTagContainer>
+                            <div>
                               {v.category.map((category, index) => (
-                                <span key={`category_${index}`}>
-                                  {index > 0 ? ', ' + category : category}
-                                </span>
+                                <Tag key={`category_${index}`}>{category}</Tag>
                               ))}
-                            </strong>
-                            <strong
-                              className={`status ${
-                                v.reservationState === '취소완료'
-                                  ? 'canceled'
-                                  : 'completed'
-                              }`}
-                            >
-                              {v.reservationState}
-                            </strong>
-                            <strong>
-                              {v.reservationDate.map((date, index) => (
-                                <span key={`date_${index}`}>
-                                  {index > 0 ? ', ' + date : date}
-                                </span>
-                              ))}
-                            </strong>
-                          </p>
-                          {selectedTab === 'user' ? (
-                            <p className='sitterInfo'>
-                              <strong>{v.sitterName}</strong>
-                              <button
-                                type='button'
-                                onClick={() =>
-                                  navigate(`/detail/${v.sitterId}`)
-                                }
-                              >
-                                {v.sitterName}님 상세페이지
-                              </button>
-                            </p>
-                          ) : (
-                            <p className='sitterInfo'>
-                              <strong>{v.userName}</strong>
-                            </p>
-                          )}
-                          {v.reservationState !== '취소완료' && (
-                            <div
-                              className='buttons'
-                              style={{ position: 'relative', zIndex: 2 }}
-                            >
-                              <StyledButton
-                                _margin='0'
-                                _title='리뷰 보기'
-                                color={'#fc9215'}
-                                _bgColor={'#fff'}
-                                _border={'1px solid #fc9215'}
-                                _onClick={() => {
-                                  idForReview.current = v.reservationId;
-                                  loadReview();
-                                }}
-                              />
-                              <StyledButton
-                                _margin='0'
-                                _title='돌봄일지 보기'
-                                color={'#fc9215'}
-                                _bgColor={'#fff'}
-                                _border={'1px solid #fc9215'}
-                                _onClick={() => {
-                                  reservationIdForDiary.current =
-                                    v.reservationId;
-                                  loadDiaryData();
-                                }}
-                              />
+                              {v.reservationState === '취소완료' ? (
+                                <TagCancel>{v.reservationState}</TagCancel>
+                              ) : null}
                             </div>
+                            <div>
+                              {v.reservationDate.map((date, index) => (
+                                <ReserveDate key={`date_${index}`}>
+                                  {index > 0 ? ', ' + date : date}
+                                </ReserveDate>
+                              ))}
+                            </div>
+                          </ReservationTagContainer>
+                          <ReservationInfoContainer>
+                            <SitterImage
+                              style={{
+                                backgroundImage: `url(${v.imageUrl})`,
+                                backgroundPosition: 'center',
+                                backgroundRepeat: 'no-repeat',
+                                backgroundSize: '75px',
+                              }}
+                            ></SitterImage>
+                            {selectedTab === 'user' ? (
+                              <SitterInfo>
+                                <p className='sitterName'>{v.sitterName}</p>
+                                <p className='sitterAddress'>
+                                  <i className='ic-location' />
+                                  {v.address}
+                                </p>
+                                <p className='sitterPhone'>
+                                  <i className='ic-location' />
+                                  {v.phoneNumber}
+                                </p>
+                                <button
+                                  type='button'
+                                  onClick={() =>
+                                    navigate(`/detail/${v.sitterId}`)
+                                  }
+                                >
+                                  {v.sitterName}님 상세페이지
+                                </button>
+                              </SitterInfo>
+                            ) : (
+                              <p className='sitterName'>{v.sitterName}</p>
+                            )}
+                            {v.reservationState !== '취소완료' && (
+                              <div
+                                className='buttons'
+                                style={{ position: 'relative', zIndex: 2 }}
+                              >
+                                <StyledButton
+                                  _margin='0'
+                                  _title='리뷰 보기'
+                                  color={'#fc9215'}
+                                  _bgColor={'#fff'}
+                                  _border={'1px solid #fc9215'}
+                                  _onClick={() => {
+                                    idForReview.current = v.reservationId;
+                                    loadReview();
+                                  }}
+                                />
+                                {!v.isPending && (
+                                  <StyledButton
+                                    _bgColor='#ffffff'
+                                    color='#fc9215'
+                                    _margin='0'
+                                    _padding='7px 0px'
+                                    _title='문의하기'
+                                    _border='1px solid #FC9215'
+                                  />
+                                )}
+                                {v.isPending && (
+                                  <StyledButton
+                                    _margin='0'
+                                    _title='돌봄일지 보기'
+                                    color={'#fc9215'}
+                                    _bgColor={'#fff'}
+                                    _border={'1px solid #fc9215'}
+                                    _onClick={() => {
+                                      reservationIdForDiary.current =
+                                        v.reservationId;
+                                      loadDiaryData();
+                                    }}
+                                  />
+                                )}
+                              </div>
+                            )}
+                          </ReservationInfoContainer>
+                          {v.isPending && (
+                            <InformText>
+                              * 리뷰를 작성해야 서비스가 완료됩니다.
+                            </InformText>
                           )}
                         </ReservationItem>
                       );
@@ -827,6 +911,7 @@ const ReservationTagContainer = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 10px;
 `;
 
 const Tag = styled.span`
@@ -834,6 +919,17 @@ const Tag = styled.span`
   border-radius: 3px;
   padding: 3px 6px;
   color: #676767;
+  margin-right: 4px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+`;
+
+const TagCancel = styled.span`
+  background: rgba(240, 29, 29, 0.1);
+  border-radius: 3px;
+  padding: 3px 6px;
+  color: #f01d1d;
   margin-right: 4px;
   font-weight: 500;
   font-size: 14px;
@@ -851,7 +947,6 @@ const ReservationInfoContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
   .sitterInfo {
     display: flex;
     flex-direction: row;
