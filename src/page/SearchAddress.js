@@ -10,7 +10,7 @@ const SearchAddress = ({ setAddressInfo, setIframeDisplay }) => {
 		const config = { 
 			withCredentials: false,
 			headers: {
-				"Authorization" : `KakaoAK ${process.env.REACT_APP_KAKAO_ADMIN}`,
+				"Authorization" : `KakaoAK ${process.env.REACT_APP_KAKAO_RESTAPI}`,
 				"Content-Type": 'application/x-www-form-urlencoded',
 			}
 		}; //인증키 정보 및 헤더 정보
