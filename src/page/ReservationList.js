@@ -25,7 +25,7 @@ const ReservationList = () => {
   const starRef = useRef();
   const today = moment().format('YYYY/MM/DD');
   const [errorMessage, setErrorMessage] = useState(null);
-  const [buttonHide, setButtonHide] = useState(false);
+  const [buttonHide, setButtonHide] = useState(true);
   const [reviewPageMode, setReviewPageMode] = useState('write');
   const diaryPageMode = useRef();
   const idForReview = useRef();
@@ -177,7 +177,7 @@ const ReservationList = () => {
   });
   const {mutate: loadDiaryData} = useMutation(()=>apis.loadDiaryData(reservationIdForDiary.current), {
     onSuccess: (data) => {
-      console.log(data.data, 'diary data loaded');
+      // console.log(data.data, 'diary data loaded');
       const _data = {
         checkList: data.data.checkList.length,
         inputValues: data.data.checkList,
@@ -190,28 +190,48 @@ const ReservationList = () => {
       setDiaryData(_data);
       setDiaryStatus('get');
       if(selectedTab === 'user'){
+        // 유저탭일 경우 돌봄일지 읽기만 가능
         diaryPageMode.current = 'readonly';
         setModalType(modalContent.diaryView);
       }else{
-        diaryPageMode.current = 'view';
+        // 돌보미 탭일 경우 
+        const reservationId = reservationIdForDiary.current;
+        const status = pastReservation.filter((v)=>v.reservationId === reservationId);
+        if(status.length){
+          // 지난 예약일 경우 읽기만 가능
+          diaryPageMode.current = 'readonly';
+          setModalType(modalContent.diaryView);
+        }else{
+          // 진행중인 예약일 경우 돌봄일지 작성 및 수정 가능
+          diaryPageMode.current = 'view';
           setModalType(modalContent.diary);
         }
         setModalDisplay(true);
-      },
-      onError: (data) => {
-        console.log(data, 'diary loading failed');
-        if (selectedTab === 'user' && data.response.status === 400) {
-          setModalType(modalContent.noDiary);
-          setModalDisplay(true);
-          return;
-        }
-        setDiaryStatus('clear');
-        diaryPageMode.current = 'write';
-        setModalType(modalContent.diary);
+      } 
+    },
+    onError: (data) => {
+      // console.log(data, 'diary loading failed');
+      if (selectedTab === 'user' && data.response.status === 400) {
+        setModalType(modalContent.noDiary);
         setModalDisplay(true);
-      },
-    }
-  );
+        return;
+      }
+      const reservationId = reservationIdForDiary.current;
+      const status = pastReservation.filter((v)=>v.reservationId === reservationId);
+      console.log(status, '?????')
+      if(status.length){
+        // 지난 예약일 경우 읽기만 가능
+        diaryPageMode.current = 'readonly';
+        setModalType(modalContent.diaryView);
+      }else{
+        // 진행중인 예약일 경우 돌봄일지 작성 및 수정 가능
+        setDiaryStatus('clear');
+        diaryPageMode.current = 'view';
+        setModalType(modalContent.diary);
+      }
+      setModalDisplay(true);
+    },
+  });
 
   const modifyDiaryApi = () => {
     if (diaryData?.inputValues.length < diaryData?.checked.length) {
@@ -229,14 +249,14 @@ const ReservationList = () => {
   };
   const { mutate: diaryModify } = useMutation(() => modifyDiaryApi(), {
     onSuccess: (data) => {
-      console.log(data, 'diary modify success');
+      // console.log(data, 'diary modify success');
       setReviewPageMode('clear');
       modifyData.current = { addImage: [], deleteImage: [] };
       setModalDisplay(false);
       setModalType(null);
     },
     onError: (data) => {
-      console.log(data, 'diary modify failed');
+      // console.log(data, 'diary modify failed');
     },
   });
   const confirmWritingReview = () => {
@@ -339,6 +359,7 @@ const ReservationList = () => {
         setModalDisplay(false);
         setModalType(null);
         diaryPageMode.current = null;
+        setDiaryStatus('clear');
       },
     },
     diaryCancel: {

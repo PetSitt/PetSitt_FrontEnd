@@ -237,7 +237,10 @@ const Detail = ({socket}) => {
 
   useEffect(()=>{
     if(detailData){
-      setDetail(detailData.data);
+      const _newPrice = detailData.data.sitter.servicePrice.toString().replace(/(\d)(?=(?:\d{3})+(?!\d))/g, '$1,');
+      const _newData = {...detailData.data};
+      _newData.sitter.servicePrice = _newPrice;
+      setDetail(_newData);
       setServices(Array.from({length: detailData.data.sitter.category.length}, () => false));
     }
   },[detailData])
@@ -367,7 +370,7 @@ const Detail = ({socket}) => {
                   return (
                     v && (
                     <li key={`careSize_${i}`}>
-                      <i className="ic-check"></i><span>{i === 0 ? "소" : i === 1 ? "중" : "대"}</span>
+                      <i className="ic-check"></i><span>{i === 0 ? "소형견" : i === 1 ? "중형견" : "대형견"}</span>
                     </li>)
                   );
                 })}
@@ -553,7 +556,7 @@ const Detail = ({socket}) => {
             />
             <StyledButton
               _onClick={()=>{
-                if(!localStorage.getItem('accessToken') || !localStorage.getItem('userName')){
+                if(!localStorage.getItem('accessToken')){
                   // 로그인하지 않았을 경우 로그인 요청하는 Modal 노출
                   setErrorMessage(errorMessages.notLogin);
                   setModalDisplay(true);
