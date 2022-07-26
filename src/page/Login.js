@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useRef, useState } from 'react';
 import { Cookies } from 'react-cookie';
+import jwt_decode from "jwt-decode"
 import { apis } from '../store/api';
 import { useMutation } from 'react-query';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -11,7 +12,7 @@ import NavBox from '../elements/NavBox';
 import StyledContainer from '../elements/StyledContainer';
 import Auth from "../shared/Auth";
 
-const Login = () => {
+const Login = ({socket}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const REST_API_KEY = process.env.REACT_APP_KAKAO_RESTAPI;
@@ -33,8 +34,14 @@ const Login = () => {
 
   
   const { mutate: loginQuery } = useMutation(apis.login, {
-    onSuccess: (data) => {      
+    onSuccess: (data) => {
       localStorage.setItem('accessToken', data.data.accessToken);
+      const messageData = { //서버가 필요한 데이터 형식
+        userEmail: jwt_decode(localStorage.getItem('accessToken')).userEmail
+      };
+      if(data.data.accessToken){
+        socket.emit('join_my_room', messageData)
+      }
       cookies.set('refreshToken', data.data.refreshToken);
       // console.log(data, localStorage.getItem('accessToken'));
       navigate('/');      

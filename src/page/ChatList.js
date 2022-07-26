@@ -1,8 +1,10 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
-import styled, {keyframes} from "styled-components";
+import styled from "styled-components";
 import { chatApis } from "../store/chatApi";
 import ChatRoom from './ChatRoom';
+import '../styles/chat.css';
+import ChatHeader from "../components/ChatHeader";
 
 function formatDate(value) {
   const date = new Date(value);
@@ -11,10 +13,10 @@ function formatDate(value) {
 
 function ChatList({popup, socket, setPopup}) {
   const [showChatRoom, setShowChatRoom] = useState(false);
-  const [idRoom, setIdRoom] = useState(null);
-  const [username, setUsername] = useState(null);
+  const [idRoom, setIdRoom] = useState('');
+  const [username, setUsername] = useState('');
 
-  const { isLoading: dataLoading, data: chats, refetch } = useQuery("chatsList", chatApis.chatListGet, {
+  const { isLoading: dataLoading, data: chats, refetch } = useQuery("chatsList", () => chatApis.chatListGet(socket.id), {
     staleTime: Infinity,
     enabled: true
   });
@@ -31,19 +33,10 @@ function ChatList({popup, socket, setPopup}) {
   },[refetch])
 
   return (
-    <ChatInner className={`${!showChatRoom ? "chatInner": ''}`}>
+    <ChatInner className={`chatsInner ${!showChatRoom ? "chatListInner": 'chatRoomInner'}`}>
         <div className="joinChatContainer">
           <div>
-            <div className={`chats_header ${!showChatRoom ? "list" : "room"}`}>
-              <h2 className="header">PetSitt</h2>
-              <div className="close" onClick={() => setPopup((prev) => {
-                socket.emit("leave_room", idRoom);
-                return {
-                  ...prev,
-                  popup:!popup
-                }
-              })}><i className="ic-close"></i></div>
-            </div>
+            <ChatHeader socket={socket} idRoom={idRoom} popup={popup} showChatRoom={showChatRoom} setPopup={setPopup}/>
             {!showChatRoom ? (
             <>
               {chats.data?.rooms ? 
@@ -69,95 +62,21 @@ function ChatList({popup, socket, setPopup}) {
               (<div className="chats_notice">
                 <p>대화 했던 내역이 없습니다.</p>
                 <p>원하는 돌보미를 찾아 문의 해보세요.</p>
-              </div>)
-              }
-            </>  
+              </div>)}
+            </>
             ) : (
-              <ChatRoom socket={socket} room={idRoom}/>
+              <ChatRoom socket={socket} room={idRoom} idRoom={idRoom} popup={popup} showChatRoom={showChatRoom} setPopup={setPopup}/>
             )}
           </div>
         </div>
     </ChatInner>
   );
 };
-const boxFade = keyframes`
-  0% {
-    opacity: 0;
-    transform: scale(0);
-    -webkit-transform: scale(0);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1.0);
-    -webkit-transform: scale(1.0);
-  }
-`
+
 const ChatInner = styled.div`
-    position: fixed;
-    bottom: 25px;
-    width: 370px;
-    max-width: 90%;
-    height: 90%;
-    max-height: 680px;
-    border-radius: 30px;
-    background-color: #eeeeee;
-    padding: 0 14px;
-    margin: 0 auto;
-    box-shadow: rgb(0 0 0 / 30%) 0px 12px 60px 5px;
-    animation: ${boxFade} 0.20s ease-out 0s 1 normal none running;
-    z-index: 99;
-    -ms-overflow-style: none; /* IE and Edge - scrollbar 숨기기*/
-    scrollbar-width: none; /* Firefox scrollbar 숨기기*/
-    left: 0;
-    right: 0;
-    padding-bottom: 40px;
-  &.chatInner {
-    overflow-y: auto;
-  }
   @media (min-width: 768px){
     right: calc(10% + 21px);
     left: auto;
-  }
-  /* @media (min-width:320px) {
-    &, .chats_header{right: 7%;}
-    .chat-footer{right: 9.6%;}
-  } */
-  /* @media (min-width:768px) {
-    &, .chats_header{right: 11%;}
-    .chat-footer{right: 11.6%;}
-  } */
-
-  .chats_header.list {
-    width: 100%;
-    height: 60px;
-    min-height: 60px;
-  }
-  .chats_header.room {
-    width: 370px;
-    max-width: 90%;
-    min-height: 60px;
-    position: fixed;
-    padding: 0 18px;
-    background-color: rgba( 255,255,255,0.9 );
-    left: 0;
-    right: 0;
-    margin: 0 auto;
-    @media (min-width: 768px){
-      right: calc(10% + 21px);
-      left: auto;
-    }
-  }
-  .chats_header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 9;
-    overflow: hidden;
-    border-radius: 30px 30px 0px 0px;
-    transform: translateZ(0px);
-    border-bottom: 1px solid rgba(239, 239, 240, 0.8);
-    h2 {font-size: 20px;}
-    .close {font-size: 20px; color: #fc9215; cursor: pointer;}
   }
   .chatingList_inner {
     margin-top: 10px;

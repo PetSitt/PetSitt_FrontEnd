@@ -50,6 +50,7 @@ const SitterProfile = () => {
       _buttonTitle="수정"
       sitterProfile
     />
+    {values && <button onClick={delect}>삭제</button>}
     {values ? (
       <div className="profileinner">
         <div>

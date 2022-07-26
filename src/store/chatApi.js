@@ -1,8 +1,8 @@
 import {api} from './api';
 
 export const chatApis = {
-	chatListGet: () => api.get('/chats/chatList'),
-	chatRoomGet: (roomId) => api.get(`/chats/${roomId}`),
+	chatListGet: (id) => api.get(`/chats/chatList/${id}`),
+	chatRoomGet: (roomId, socket) => api.get(`/chats/${roomId}/${socket}`),
 	chatRoomPost: (sitterId) => api.post(`/chats/${sitterId}`),
-	chatMessagePost: (data) => api.post('/chats/chatting', data)
+	chatMessagePost: (data) => api.post('/chats/chatting', data),
 };
