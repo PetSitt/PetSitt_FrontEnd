@@ -12,7 +12,7 @@ import SearchAddress from "./SearchAddress";
 import icon_star from '../assets/img/icon_star.png';
 import StyledButton from "../elements/StyledButton";
 import ExceptionArea from '../components/ExceptionArea';
-
+import Loading from '../elements/Loading';
 
 function Home() {
 	const datepickerRef = useRef();
@@ -60,9 +60,10 @@ function Home() {
 		() => getSittersList(queriesData, category),
 		{
 			onSuccess: (data) => {
-				// console.log(data)
+				console.log(data)
 				setSearched(false);
 				setSitters(data.data.sitters);
+				setSearchingStatus('done');
 			},
 			onError: (data) => {
 				console.error(data);
@@ -117,7 +118,7 @@ function Home() {
 		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
 		{
 			onSuccess: (data) => {
-				// console.log(data, 'success')
+				console.log(data, 'success')
 				queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(false);
 				setSitters(data.data.sitter);
@@ -262,7 +263,7 @@ function Home() {
 								<input type="text" placeholder="날짜를 선택해주세요." value={datesTransformed.current?.length > 0 ? datesTransformed.current : ''} onClick={()=>{setDatepickerDisplay(true); setIframeDisplay(false)}} readOnly/>
 								<i className="ic-calendar"></i>
 							</div>
-							<DatepickerWrap style={{display: datepickerDisplay === true ? 'block' : 'none', position: 'absolute', left: '-1px', right: '-1px', top: '100%'}}>
+							<DatepickerWrap style={{display: datepickerDisplay === true ? 'block' : 'none', position: 'absolute', left: '0', right: '0', top: '100%', marginTop: '-1px'}}>
 								<Calendar
 									ref={datepickerRef}
 									onChange={setDate}
@@ -316,10 +317,10 @@ function Home() {
 						</ul>
 					</Categories>
 				</FilterArea>
-				<SittersListArea>
+				<SittersListArea style={{position: 'relative'}}>
 					{
 						searchingStatus === 'searching' ? (
-							<ExceptionArea _text={'주변의 돌보미 리스트를 검색중입니다.'}/>
+							<Loading _text={'주변의 돌보미 리스트를 검색중입니다.'} _position={'relative'} _margin={'10vh 0'}/>
 						) : searchingStatus === 'blocked' ? (
 							<ExceptionArea _title={'GPS를 허용해주세요.'} _text={'GPS를 허용하지 않을 경우, 장소 및 날짜 검색을 통해 돌보미 리스트를 검색해주세요.'}/>
 						) : (

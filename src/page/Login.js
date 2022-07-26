@@ -31,7 +31,6 @@ const Login = ({socket}) => {
     emptyPw: {status: false, message: '비밀번호를 입력해주세요.'},
   });
 
-  
   const { mutate: loginQuery } = useMutation(apis.login, {
     onSuccess: (data) => {
       localStorage.setItem('accessToken', data.data.accessToken);
