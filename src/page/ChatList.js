@@ -14,7 +14,7 @@ function ChatList({popup, socket, setPopup}) {
   const [idRoom, setIdRoom] = useState(null);
   const [username, setUsername] = useState(null);
 
-  const { isLoading: dataLoading, data: chats } = useQuery("chatsList", chatApis.chatListGet, {
+  const { isLoading: dataLoading, data: chats, refetch } = useQuery("chatsList", chatApis.chatListGet, {
     staleTime: Infinity,
     enabled: true
   });
@@ -26,13 +26,12 @@ function ChatList({popup, socket, setPopup}) {
     setShowChatRoom(true);
   };
 
-  const [scroll, setScroll] = useState();
-  const scrollElement = useRef();
+  useEffect(() => {
+    refetch();
+  },[refetch])
 
   return (
-    <ChatInner ref={scrollElement} onScroll={(e)=>{
-      setScroll(e.target.scrollTop);
-    }}>
+    <ChatInner className={`${!showChatRoom ? "chatInner": ''}`}>
         <div className="joinChatContainer">
           <div>
             <div className={`chats_header ${!showChatRoom ? "list" : "room"}`}>
@@ -65,7 +64,6 @@ function ChatList({popup, socket, setPopup}) {
                     </div>
                   )
                 })}
-                : 
               </div>)
               :
               (<div className="chats_notice">
@@ -75,7 +73,7 @@ function ChatList({popup, socket, setPopup}) {
               }
             </>  
             ) : (
-              <ChatRoom socket={socket} room={idRoom} scroll={scroll} scrollElement={scrollElement}/>
+              <ChatRoom socket={socket} room={idRoom}/>
             )}
           </div>
         </div>
@@ -95,25 +93,27 @@ const boxFade = keyframes`
   }
 `
 const ChatInner = styled.div`
-  position: fixed;
-  bottom: 25px;
-  width: 370px;
-  max-width: 90%;
-  height: 90%;
-  max-height: 680px;
-  overflow-y: auto;
-  border-radius: 30px;
-  background-color: #eeeeee;
-  padding: 0 14px;
-  margin: 0 auto;
-  box-shadow: rgb(0 0 0 / 30%) 0px 12px 60px 5px;
-  animation: ${boxFade} 0.20s ease-out 0s 1 normal none running;
-  z-index: 99;
-  -ms-overflow-style: none; /* IE and Edge - scrollbar 숨기기*/
-  scrollbar-width: none; /* Firefox scrollbar 숨기기*/
-  left: 0;
-  right: 0;
-  padding-bottom: 40px;
+    position: fixed;
+    bottom: 25px;
+    width: 370px;
+    max-width: 90%;
+    height: 90%;
+    max-height: 680px;
+    border-radius: 30px;
+    background-color: #eeeeee;
+    padding: 0 14px;
+    margin: 0 auto;
+    box-shadow: rgb(0 0 0 / 30%) 0px 12px 60px 5px;
+    animation: ${boxFade} 0.20s ease-out 0s 1 normal none running;
+    z-index: 99;
+    -ms-overflow-style: none; /* IE and Edge - scrollbar 숨기기*/
+    scrollbar-width: none; /* Firefox scrollbar 숨기기*/
+    left: 0;
+    right: 0;
+    padding-bottom: 40px;
+  &.chatInner {
+    overflow-y: auto;
+  }
   @media (min-width: 768px){
     right: calc(10% + 21px);
     left: auto;

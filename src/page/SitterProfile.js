@@ -54,6 +54,7 @@ const SitterProfile = () => {
       {console.log(values)}
       {
         values ? (
+        <div>
           <div className="profileinner">
             <div className="profileMainImg inner">
               <img src={values.mainImageUrl} />

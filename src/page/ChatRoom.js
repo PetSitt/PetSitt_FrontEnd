@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import styled from 'styled-components';
 import { useQuery } from "react-query";
 import jwt_decode from "jwt-decode"
@@ -10,15 +10,14 @@ function formatDate(value) {
   return `${hour} ${minute}:${second}`;
 };
 
-function ChatRoom({ socket, room, scrollElement }) {
+function ChatRoom({ socket, room }) {
   const [currentMessage, setCurrentMessage] = useState("");
-  const [test, setTest] = useState(false);
-  const { isLoading: dataLoading, data: chatsRoom} = useQuery(["chats", room], () => chatApis.chatRoomGet(room), {
+  const { isLoading: dataLoading, data: chatsRoom, refetch} = useQuery(["chats", room], () => chatApis.chatRoomGet(room), {
     staleTime: Infinity,
     enabled: true
   });
 
-  const [messageList, setMessageList] = useState(chatsRoom.data.chats);
+  const [messageList, setMessageList] = useState(chatsRoom?.data.chats);
 
   const sendMessage = async () => {
     if (currentMessage !== "") {
@@ -41,12 +40,19 @@ function ChatRoom({ socket, room, scrollElement }) {
       setCurrentMessage("");
     }
   };
-
+  
+  const scrollElement = useRef();
   useEffect(() => {
     socket.on("receive_message", (data) => {
       setMessageList((list) => [...list, data]);
     });
   }, [socket]);
+
+  const scrollToBottom = useCallback(() => {
+    if(scrollElement.current){
+      scrollElement.current.scrollTop = scrollElement.current.scrollHeight;
+    }
+  },[currentMessage])
 
   useEffect(()=>{
     scrollToBottom();
@@ -54,14 +60,11 @@ function ChatRoom({ socket, room, scrollElement }) {
 
   useEffect(() => {
     scrollToBottom();
-  },[])
-
-  const scrollToBottom = () => {
-    scrollElement.current.scrollTop = scrollElement.current.scrollHeight;
-  };
+    refetch();
+  },[refetch])
   
   return (
-    <ChatInner>
+    <ChatInner ref={scrollElement}>
       <div className="chat-header">
         <p>Live Chat</p>
       </div>
@@ -105,10 +108,17 @@ function ChatRoom({ socket, room, scrollElement }) {
 }
 
 const ChatInner = styled.div`
+  height: 90%;
+  max-height: 680px;
   padding-top: 80px;
-  padding-bottom: 40px;
+  padding-bottom: 60px;
+  overflow-y: auto;
+  &::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera scrollbar 숨기기*/
+  }
   .chat-header {}
   .chat-body {
+    margin-top: 20px;
     .message-content {
       width: auto;
       height: auto;
