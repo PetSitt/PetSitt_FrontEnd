@@ -46,8 +46,8 @@ const LoadingBox = styled.div`
   margin: ${(props) => props._margin};
   @media (min-width: 768px){
 		max-width: 412px;
-		right: 10%;
-		left: auto;
+		right: ${(props) => props._position === 'relative' ? 0 : '10%'};
+		left: ${(props) => props._position === 'relative' ? 0 : 'auto'};
 	}
   i{
     width: 40px;
