@@ -12,7 +12,7 @@ const SearchAddress = ({ setAddressInfo, setIframeDisplay }) => {
 
 		const searchTxt = data.q;
     const url = 'https://dapi.kakao.com/v2/local/search/address.json?query='+searchTxt; // url 및 키워드 담아 보냄
-
+		console.log(process.env.REACT_APP_KAKAO_RESTAPI, process.env.REACT_APP_KAKAO_ADMIN)
 		kakaoMapApi.get(url).then(function(result) { // API호출
 			console.log(1)
       if(result.data != undefined || result.data != null){
