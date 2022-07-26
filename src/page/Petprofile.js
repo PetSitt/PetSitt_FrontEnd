@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
-import { Link, useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
-import Modal from '../elements/Modal';
-import NavBox from '../elements/NavBox';
-import StyledContainer from '../elements/StyledContainer';
-import { apis } from '../store/api';
+import { useEffect, useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { Link, useNavigate } from "react-router-dom";
+import styled from "styled-components";
+import Modal from "../elements/Modal";
+import NavBox from "../elements/NavBox";
+import StyledContainer from "../elements/StyledContainer";
+import { apis } from "../store/api";
 
 const Petprofile = () => {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ const Petprofile = () => {
     isLoading,
     data: petprofileData,
     isSuccess: petSuccessGet,
-  } = useQuery('petprofile', apis.petprofileGet);
+  } = useQuery("petprofile", apis.petprofileGet);
   const [values, setValues] = useState(petprofileData.data.petprofile);
 
   const {
@@ -24,7 +24,7 @@ const Petprofile = () => {
     isSuccess: petSuccessDelete,
   } = useMutation(apis.petprofileDelete, {
     onSuccess: (data) => {
-      queryClient.invalidateQueries('petprofile');
+      queryClient.invalidateQueries("petprofile");
     },
   });
 
@@ -35,62 +35,74 @@ const Petprofile = () => {
 
   return (
     <StyledContainer>
-      <NavBox _title='반려동물 프로필' />
+      <NavBox _title="반려동물 프로필" />
       {values.length > 0 ? (
         values.map((el, idx) => {
           const { petId, petName, petType, petImage } = el;
           return (
-            <PetList key={petId}>
-              <PetInfo>
-                <div
-                  className='bgImg'
-                  style={{ backgroundImage: `url(${petImage})` }}
-                ></div>
-                <div>
-                  <p className='petName'>{petName}</p>
-                  <p className='petType'>{petType}</p>
-                </div>
-              </PetInfo>
-              <EditButton>
-                <button
-                  onClick={() => {
-                    navigate(`/mypage/${petId}/petprofileform`, {
-                      state: { data: el },
-                    });
+            <>
+              <PetList key={petId}>
+                <PetInfo>
+                  <div
+                    className="bgImg"
+                    style={{ backgroundImage: `url(${petImage})` }}
+                  ></div>
+                  <div>
+                    <p className="petName">{petName}</p>
+                    <p className="petType">{petType}</p>
+                  </div>
+                </PetInfo>
+                <EditButton>
+                  <button
+                    onClick={() => {
+                      navigate(`/mypage/${petId}/petprofileform`, {
+                        state: { data: el },
+                      });
+                    }}
+                  >
+                    수정
+                  </button>
+                  <button
+                    onClick={() => {
+                      setShowModal(true);
+                    }}
+                  >
+                    삭제
+                  </button>
+                </EditButton>
+                <Modal
+                  _display={showModal}
+                  _confirm="삭제"
+                  _cancel="취소"
+                  _alert
+                  confirmOnClick={() => {
+                    delect(petId);
+                  }}
+                  cancelOnclick={() => {
+                    setShowModal(false);
                   }}
                 >
-                  수정
-                </button>
-
-                <button
-                  onClick={() => {
-                    setShowModal(true);
-                  }}
-                >
-                  삭제
-                </button>
-              </EditButton>
-              <Modal
-                _display={showModal}
-                _confirm='삭제'
-                _cancel='취소'
-                _alert
-                confirmOnClick={() => {
-                  delect(petId);
-                }}
-                cancelOnclick={() => {
-                  setShowModal(false);
-                }}
-              >
-                <div className='text_area'>
-                  <h2>반려동물 프로필 삭제</h2>
-                  <h3>
-                    해당 반려동물의
-                    <br /> 프로필을 삭제하시겠습니까?
-                  </h3>
-                </div>
-              </Modal>
-            </PetList>
+                  <ModalText>
+                    <h2>반려동물 프로필 삭제</h2>
+                    <p>
+                      해당 반려동물의
+                      <br /> 프로필을 삭제하시겠습니까?
+                    </p>
+                  </ModalText>
+                </Modal>
+              </PetList>
+              {values.length < 4 ? (
+                <PetAddBox>
+                  <PetProfileInsertButton
+                    onClick={() => {
+                      navigate("/mypage/petprofileform");
+                    }}
+                  >
+                    반려동물 추가하기
+                  </PetProfileInsertButton>
+                </PetAddBox>
+              ) : null}
+            </>
           );
         })
       ) : (
@@ -99,7 +111,7 @@ const Petprofile = () => {
           <p>반려동물 프로필을 등록해보세요</p>
           <PetProfileInsertButton
             onClick={() => {
-              navigate('/mypage/petprofileform');
+              navigate("/mypage/petprofileform");
             }}
           >
             반려동물 등록하기
@@ -116,11 +128,24 @@ const PetList = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 20px;
-  .text_area h2 {
+`;
+
+const ModalText = styled.div`
+  h2 {
     font-weight: 700;
     font-size: 18px;
     line-height: 22px;
+    margin-bottom: 24px;
   }
+  p {
+    font-weight: 400;
+    font-size: 18px;
+    line-height: 22px;
+  }
+`;
+
+const PetAddBox = styled.div`
+  margin: 48px auto;
 `;
 
 const PetInfo = styled.div`

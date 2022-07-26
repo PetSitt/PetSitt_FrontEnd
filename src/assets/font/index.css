@@ -1,10 +1,10 @@
 @font-face {
-  font-family: 'iconFont';
-  src: url('./iconFont.eot?iivj37');
-  src: url('./iconFont.eot?iivj37#iefix') format('embedded-opentype'),
-    url('./iconFont.ttf?iivj37') format('truetype'),
-    url('./iconFont.woff?iivj37') format('woff'),
-    url('./iconFont.svg?iivj37#iconFont') format('svg');
+  font-family: "iconFont";
+  src: url("./iconFont.eot?9nx92y");
+  src: url("./iconFont.eot?9nx92y#iefix") format("embedded-opentype"),
+    url("./iconFont.ttf?9nx92y") format("truetype"),
+    url("./iconFont.woff?9nx92y") format("woff"),
+    url("./iconFont.svg?9nx92y#iconFont") format("svg");
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -12,7 +12,7 @@
 
 i {
   /* use !important to prevent issues with browser extensions that change fonts */
-  font-family: 'iconFont' !important;
+  font-family: "iconFont" !important;
   speak: never;
   font-style: normal;
   font-weight: normal;
@@ -25,110 +25,107 @@ i {
   -moz-osx-font-smoothing: grayscale;
 }
 
-
-.ic-list:before {
-  content: "\e920";
+.ic-camera:before {
+  content: "\e922";
+  color: #787878;
 }
-.ic-first-aid:before {
-  content: "\e911";
-}
-.ic-schedule:before {
-  content: "\e905";
-}
-.ic-daycare:before {
-  content: "\e91f";
-}
-.ic-activity:before {
-  content: "\e91d";
-}
-.ic-location:before {
-  content: "\e91e";
-}
-.ic-chat:before {
-  content: "\e91b";
-}
-.ic-upcoming:before {
-  content: "\e916";
-  color: #fc9215;
-}
-.ic-canceled:before {
-  content: "\e914";
-  color: #217aff;
-}
-.ic-yard:before {
-  content: "\e90d";
-}
-.ic-stroll:before {
-  content: "\e90e";
-}
-.ic-longterm:before {
-  content: "\e910";
-}
-.ic-wash:before {
-  content: "\e912";
-}
-.ic-check:before {
-  content: "\e913";
-}
-.ic-home:before {
-  content: "\e915";
-}
-.ic-pickup:before {
-  content: "\e917";
-}
-.ic-profile:before {
-  content: "\e918";
-}
-.ic-puppy:before {
-  content: "\e919";
-}
-.ic-send:before {
-  content: "\e91a";
-}
-.ic-prac:before {
-  content: "\e91c";
-}
-.ic-calendar:before {
-  content: "\e90c";
-}
-.ic-search:before {
-  content: "\e90b";
+.ic-phone:before {
+  content: "\e900";
+  color: #787878;
 }
 .ic-book:before {
-  content: '\e900';
-  color: #787878;
+  content: "\e901";
 }
 .ic-contact:before {
-  content: '\e901';
-  color: #787878;
+  content: "\e902";
 }
 .ic-user:before {
-  content: '\e902';
-  color: #787878;
-}
-.ic-map:before {
   content: "\e903";
 }
-.ic-arw-right:before {
+.ic-map:before {
   content: "\e904";
 }
-.ic-arw-left:before {
+.ic-arw-right:before {
+  content: "\e905";
+}
+.ic-schedule:before {
   content: "\e906";
 }
-.ic-boarding:before {
+.ic-arw-left:before {
   content: "\e907";
 }
-.ic-plus:before {
+.ic-boarding:before {
   content: "\e908";
 }
-.ic-close:before {
+.ic-plus:before {
   content: "\e909";
 }
-.ic-star:before {
-  content: '\e90a';
-  color: #ffc700;
+.ic-close:before {
+  content: "\e90a";
 }
-.ic-camera:before {
-  content: '\e90f';
-  color: #787878;
+.ic-star:before {
+  content: "\e90b";
+}
+.ic-search:before {
+  content: "\e90c";
+}
+.ic-calendar:before {
+  content: "\e90d";
+}
+.ic-yard:before {
+  content: "\e90e";
+}
+.ic-stroll:before {
+  content: "\e90f";
+}
+.ic-longterm:before {
+  content: "\e911";
+}
+.ic-first-aid:before {
+  content: "\e912";
+}
+.ic-wash:before {
+  content: "\e913";
+}
+.ic-check:before {
+  content: "\e914";
+}
+.ic-canceled:before {
+  content: "\e915";
+}
+.ic-home:before {
+  content: "\e916";
+}
+.ic-upcoming:before {
+  content: "\e917";
+}
+.ic-pickup:before {
+  content: "\e918";
+}
+.ic-profile:before {
+  content: "\e919";
+}
+.ic-puppy:before {
+  content: "\e91a";
+}
+.ic-send:before {
+  content: "\e91b";
+}
+.ic-chat:before {
+  content: "\e91c";
+}
+.ic-prac:before {
+  content: "\e91d";
+}
+.ic-activity:before {
+  content: "\e91e";
+}
+.ic-location:before {
+  content: "\e91f";
+}
+.ic-daycare:before {
+  content: "\e920";
+}
+.ic-Union:before {
+  content: "\e921";
 }
