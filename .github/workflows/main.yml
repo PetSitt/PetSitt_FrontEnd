@@ -35,6 +35,10 @@ jobs:
           CI: ""
           REACT_APP_SERVER: ${{ secrets.REACT_APP_SERVER }}
           REACT_APP_KAKAOMAPAPI: ${{ secrets.REACT_APP_KAKAOMAPAPI }}
+          REACT_APP_KAKAO_RESTAPI: ${{ secrets.REACT_APP_KAKAO_RESTAPI }}
+          REACT_APP_KAKAO_ADMIN: ${{ secrets.REACT_APP_KAKAO_ADMIN }}
+          REACT_APP_REDIRECT_URL: ${{ secrets.REACT_APP_REDIRECT_URL }}
+          REACT_APP_KAKAO_CLIENT_SECRET: ${{ secrets.REACT_APP_KAKAO_CLIENT_SECRET }}
 
       - name: Deploy                  
         env:
