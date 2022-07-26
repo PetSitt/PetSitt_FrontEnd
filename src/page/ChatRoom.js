@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
+import { useParams } from "react-router-dom";
 import styled from 'styled-components';
 import { useQuery } from "react-query";
 import jwt_decode from "jwt-decode"
 import { chatApis } from "../store/chatApi";
 import '../styles/chat.css';
+import ChatHeader from "../components/ChatHeader";
 
 function formatDate(value) {
   const date = new Date(value);
@@ -11,12 +13,14 @@ function formatDate(value) {
   return `${hour} ${minute}:${second}`;
 };
 
-function ChatRoom({ socket, room }) {
+function ChatRoom({ socket, room, idRoom, popup, showChatRoom, setPopup }) {
+  const param = useParams();
   const [currentMessage, setCurrentMessage] = useState("");
   const { isLoading: dataLoading, data: chatsRoom, refetch} = useQuery(["chats", room], () => chatApis.chatRoomGet(room), {
     staleTime: Infinity,
     enabled: true
   });
+  const sitterId = param.id;
 
   const [messageList, setMessageList] = useState(chatsRoom?.data.chats);
 
@@ -51,6 +55,7 @@ function ChatRoom({ socket, room }) {
 
   const scrollToBottom = useCallback(() => {
     if(scrollElement.current){
+      console.log(scrollElement.current.scrollTop, scrollElement.current.scrollHeight)
       scrollElement.current.scrollTop = scrollElement.current.scrollHeight;
     }
   },[currentMessage])
@@ -64,8 +69,10 @@ function ChatRoom({ socket, room }) {
     refetch();
   },[refetch])
   
+  console.log(sitterId)
   return (
-    <ChatInner ref={scrollElement} className="">
+    <ChatInner ref={scrollElement} className={`${sitterId ? 'chatRoomDetil' : 'chatRoom'}`} >
+      {sitterId && <ChatHeader socket={socket} idRoom={idRoom} popup={popup} showChatRoom={showChatRoom} setPopup={setPopup}/>}
       <div className="chat-header">
         <p>Live Chat</p>
       </div>
@@ -109,6 +116,18 @@ function ChatRoom({ socket, room }) {
 }
 
 const ChatInner = styled.div`
+  &.chatRoom {
+    position: fixed;
+    bottom: 25px;
+    width: 370px;
+    max-width: 90%;
+    height: 90%;
+    max-height: 680px;
+    border-radius: 30px;
+    background-color: #eeeeee;
+    overflow-y: auto;
+   
+  }
   .chat-header {}
   .chat-body {
     margin-top: 20px;

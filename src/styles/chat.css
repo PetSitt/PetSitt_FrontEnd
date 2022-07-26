@@ -42,13 +42,27 @@
   background-color: #eeeeee;
   padding-top: 80px;
   padding-bottom: 60px;
-  overflow-y: auto;
   padding: 0 14px;
   margin: 0 auto;
   box-shadow: rgb(0 0 0 / 30%) 0px 12px 60px 5px;
   animation: boxFade 0.20s ease-out 0s 1 normal none running;
   z-index: 99;
 }
-.chatsInner.chatRoomInner::-webkit-scrollbar {
-	display: none; /* Chrome, Safari, Opera scrollbar 숨기기*/
+
+.chatsInner.chatRoomInner .chatRoom {
+  padding-top: 80px;
+  padding-bottom: 60px;
+}
+.chatRoomDetil {
+  position: fixed;
+  bottom: 25px;
+  width: 370px;
+  max-width: 90%;
+  height: 90%;
+  max-height: 680px;
+  border-radius: 30px;
+  background-color: #eeeeee;
+  padding-top: 80px;
+  overflow-y: auto;
+  z-index: 99;
 }

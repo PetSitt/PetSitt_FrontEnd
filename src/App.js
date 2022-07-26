@@ -48,7 +48,7 @@ function App() {
         <Suspense fallback={<div>로딩중!!</div>}>
           <Router socket={value.socket} />
         </Suspense>
-        <Menu popup={value.popup} setPopup={setValues} socket={value.socket}/>
+        <Menu popup={value.popup} socket={value.socket} setPopup={setValues} />
         {value.popup && (
           <Suspense>
             <ChatList popup={value.popup} socket={value.socket} setPopup={setValues} />

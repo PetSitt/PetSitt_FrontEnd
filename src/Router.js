@@ -60,7 +60,7 @@ const Router = ({socket}) => {
         element={<SitterProfileForm4 />}
       />
       <Route path='/pwchange' element={<PwChange />} />
-      <Route path='/login' element={<Login />}></Route>
+      <Route path='/login' element={<Login socket={socket}/>}></Route>
       <Route path='/search' element={<SearchAddress />}></Route>
       <Route path='/reservation' element={<Reservation />}></Route>
       ReservationDetail
