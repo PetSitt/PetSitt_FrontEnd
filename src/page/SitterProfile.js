@@ -52,7 +52,6 @@ const SitterProfile = () => {
       />
 
       {values && <button onClick={delect}>삭제</button>}
-      {console.log(values)}
       {values ? (
         <div>
           <div className="profileinner">

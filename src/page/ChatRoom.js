@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useQuery } from "react-query";
 import jwt_decode from "jwt-decode"
 import { chatApis } from "../store/chatApi";
+import '../styles/chat.css';
 
 function formatDate(value) {
   const date = new Date(value);
@@ -64,7 +65,7 @@ function ChatRoom({ socket, room }) {
   },[refetch])
   
   return (
-    <ChatInner ref={scrollElement}>
+    <ChatInner ref={scrollElement} className="">
       <div className="chat-header">
         <p>Live Chat</p>
       </div>
@@ -108,14 +109,6 @@ function ChatRoom({ socket, room }) {
 }
 
 const ChatInner = styled.div`
-  height: 90%;
-  max-height: 680px;
-  padding-top: 80px;
-  padding-bottom: 60px;
-  overflow-y: auto;
-  &::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera scrollbar 숨기기*/
-  }
   .chat-header {}
   .chat-body {
     margin-top: 20px;
