@@ -50,9 +50,12 @@ const SitterProfile = () => {
         _buttonTitle="수정"
         sitterProfile
       />
+
+      {values && <button onClick={delect}>삭제</button>}
+      {console.log(values)}
       {values ? (
-        <div className="profileinner">
-          <div>
+        <div>
+          <div className="profileinner">
             <div className="profileMainImg inner">
               <img src={values.mainImageUrl} alt="돌보미" />
             </div>
