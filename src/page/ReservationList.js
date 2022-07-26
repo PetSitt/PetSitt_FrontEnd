@@ -201,7 +201,8 @@ const ReservationList = () => {
       onError: (data) => {
         console.log(data, 'diary loading failed');
         if (selectedTab === 'user' && data.response.status === 400) {
-          alert('등록된 일지가 없습니다.');
+          setModalType(modalContent.noDiary);
+          setModalDisplay(true);
           return;
         }
         setDiaryStatus('clear');
@@ -350,6 +351,12 @@ const ReservationList = () => {
         setDiaryStatus('get');
         setModalType(modalContent.diary);
       },
+    },
+    noDiary: {
+      type: 'noDiary',
+      _alert: true,
+      _confirm: '확인',
+      confirmFn: () => setModalDisplay(false),
     },
     noSitterInfo: {
       type: 'noSitterInfo',
@@ -734,6 +741,12 @@ const ReservationList = () => {
           ) : modalType.type === 'noSitterInfo' ? (
             <div className='text_area'>
               <p>등록된 돌보미 프로필이 없습니다.</p>
+            </div>
+          ) : modalType.type === 'noDiary' ? (
+            <div className='text_area'>
+              <p>
+                등록된 돌봄일지가 없습니다.
+              </p>
             </div>
           ) : (
             <div className='text_area'>

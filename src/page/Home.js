@@ -11,6 +11,7 @@ import MapContainer from "./MapContainer";
 import SearchAddress from "./SearchAddress";
 import icon_star from '../assets/img/icon_star.png';
 import StyledButton from "../elements/StyledButton";
+import ExceptionArea from '../components/ExceptionArea';
 
 
 function Home() {
@@ -35,7 +36,7 @@ function Home() {
 	const [defaultSearch, setDefaultSearch] = useState(false);
 	const [viewType, setViewType] = useState('list');
 	const [locationItems, setLocationItems] = useState();
-	const [mapHeight, setMapHeight] = useState();
+	const [contentHeight, setContentHeight] = useState();
 	const getLocationButtonRef = useRef();
 	const [datepickerDisplay, setDatepickerDisplay] = useState(false);
 	const [modalDisplay, setModalDisplay] = useState(false);
@@ -48,6 +49,7 @@ function Home() {
 		userEmail: null,
 		userName: null,
 	})
+	const [searchingStatus, setSearchingStatus] = useState('searching');
 
 	const getSittersList = (queriesData, category) => {
 		const _queriesData = {...queriesData, category: category.length ? category : []};
@@ -58,7 +60,7 @@ function Home() {
 		() => getSittersList(queriesData, category),
 		{
 			onSuccess: (data) => {
-				console.log(data)
+				// console.log(data)
 				setSearched(false);
 				setSitters(data.data.sitters);
 			},
@@ -74,7 +76,7 @@ function Home() {
 		if (date.length > 0) {
 			datesTransformed.current = null;
 			const getDates = date.map((v,i) => {
-				console.log(v)
+				// console.log(v)
 				return v.format(v._format);
 			});
 			setDates(getDates);
@@ -95,12 +97,12 @@ function Home() {
 	// 로그인 여부 확인하는 api
 	const { mutate: checkUser } = useMutation(()=>apis.checkUser(), { 
 		onSuccess: (data) => {
-			console.log(data, 'auth api 성공');
+			// console.log(data, 'auth api 성공');
 			localStorage.setItem('userName', data.data.user.userName);
 			localStorage.setItem('userEmail', data.data.user.userEmail);
 		},
 		onError: (data) => {
-			console.log(data, 'auth api 실패');
+			// console.log(data, 'auth api 실패');
 			localStorage.removeItem('accessToken');
 			localStorage.removeItem('userName');
 			localStorage.removeItem('userEmail');
@@ -119,6 +121,7 @@ function Home() {
 				queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(false);
 				setSitters(data.data.sitter);
+				setSearchingStatus('done');
 			},
 			onError: (data) => {
 				console.error(data);
@@ -168,7 +171,7 @@ function Home() {
 					setDefaultSearch(true);
         },
         (err) => {
-					setModalDisplay(true);
+					setSearchingStatus('blocked');
 					console.log(err)
         },
         {
@@ -189,7 +192,7 @@ function Home() {
 		getLocationButtonRef.current.click();
 		const fullHeight = window.innerHeight;
 		const filterHeight = filterAreaRef.current.clientHeight;
-		setMapHeight(fullHeight - filterHeight - 74);
+		setContentHeight(fullHeight - filterHeight - 74);
 		showTooltip.current++;
 	},[])
 
@@ -233,7 +236,6 @@ function Home() {
 		}
 	},[sitters, sittersIsRefetching])
 
-	if (sittersFilteredIsLoading) return null;
 	return (
 		<>
 		<div className="home" style={{position: 'relative'}}>
@@ -316,88 +318,93 @@ function Home() {
 				</FilterArea>
 				<SittersListArea>
 					{
-						sitters?.length > 0 ? (
-							<>
-							{
-								(viewType === 'list')
-								? (
-								<ul>
-									{
-										sitters?.map((v,i)=>{
-											return (
-												<SitterCard key={`sitter_${i}`}>
-													<Link to={`/detail/${v.sitterId}`}>
-													<div className="image_area" style={{backgroundImage: `url(${v.mainImageUrl})`}}>
-														<span className="sitter_image" style={{backgroundImage: `url(${v.imageUrl})`}}></span>
-													</div>
-													<div className="info_area">
-														<p className="sitter">
-															<em>{v.sitterName}</em>
-															<span>재고용률 {v.rehireRate}%</span>
-														</p>
-														<p className="address">{v.address}</p>
-														<div className="bottom_info">
-															<div className="star">
-																<img src={icon_star} alt="star"/>
-																<span>{v.averageStar} </span>
-																<span>{`(${v.reviewCount})`}</span>
-															</div>
-															<p className="price"><strong>{v.servicePrice}</strong><span>원~</span></p>
-														</div>
-													</div>
-													</Link>
-												</SitterCard>
-											)
-										})
-									}
-								</ul>
-								) : (
-									<MapArea>
-										<MapContainer items={locationItems} _height={mapHeight} setSitterCardShow={setSitterCardShow}/>
-										{
-											<ul style={{background: 'transparent'}}>
-												{
-													sitterCardShow.display && (
-														<SitterCard style={{background: '#fff'}}>
-															<Link to={`/detail/${sitters[sitterCardShow.index].sitterId}`}>
-															<div className="image_area" style={{backgroundImage: `url(${sitters[sitterCardShow.index].mainImageUrl})`}}>
-																<span className="sitter_image" style={{backgroundImage: `url(${sitters[sitterCardShow.index].imageUrl})`}}></span>
-															</div>
-															<div className="info_area">
-																<p className="sitter">
-																	<em>{sitters[sitterCardShow.index].sitterName}</em>
-																	<span>재고용률 {sitters[sitterCardShow.index].rehireRate}%</span>
-																</p>
-																<p className="address">{sitters[sitterCardShow.index].address}</p>
-																<div className="bottom_info">
-																	<div className="star">
-																		<img src={icon_star} alt="star"/>
-																		<span>{sitters[sitterCardShow.index].averageStar} </span>
-																		<span>{`(${sitters[sitterCardShow.index].reviewCount})`}</span>
-																	</div>
-																	<p className="price"><strong>{sitters[sitterCardShow.index].servicePrice}</strong><span>원~</span></p>
-																</div>
-															</div>
-															</Link>
-															<button type="button" className="closeSitterCard" onClick={()=>setSitterCardShow({display: false, index: null})}>닫기</button>
-														</SitterCard>
-													)
-												}
-											</ul>
-										}
-									</MapArea>
-								)
-							}
-							</>
+						searchingStatus === 'searching' ? (
+							<ExceptionArea _text={'주변의 돌보미 리스트를 검색중입니다.'}/>
+						) : searchingStatus === 'blocked' ? (
+							<ExceptionArea _title={'GPS를 허용해주세요.'} _text={'GPS를 허용하지 않을 경우, 장소 및 날짜 검색을 통해 돌보미 리스트를 검색해주세요.'}/>
 						) : (
-							<>
+							sitters?.length > 0 ? (
+								<>
 								{
-									(sitters?.length <= 0 ) && <p>검색된 돌보미가 없습니다.</p>
+									(viewType === 'list')
+									? (
+									<ul>
+										{
+											sitters?.map((v,i)=>{
+												return (
+													<SitterCard key={`sitter_${i}`}>
+														<Link to={`/detail/${v.sitterId}`}>
+														<div className="image_area" style={{backgroundImage: `url(${v.mainImageUrl})`}}>
+															<span className="sitter_image" style={{backgroundImage: `url(${v.imageUrl})`}}></span>
+														</div>
+														<div className="info_area">
+															<p className="sitter">
+																<em>{v.sitterName}</em>
+																<span>재고용률 {v.rehireRate}%</span>
+															</p>
+															<p className="address">{v.address}</p>
+															<div className="bottom_info">
+																<div className="star">
+																	<img src={icon_star} alt="star"/>
+																	<span>{v.averageStar} </span>
+																	<span>{`(${v.reviewCount})`}</span>
+																</div>
+																<p className="price"><strong>{v.servicePrice}</strong><span>원~</span></p>
+															</div>
+														</div>
+														</Link>
+													</SitterCard>
+												)
+											})
+										}
+									</ul>
+									) : (
+										<MapArea>
+											<MapContainer items={locationItems} _height={contentHeight} setSitterCardShow={setSitterCardShow}/>
+											{
+												<ul style={{background: 'transparent'}}>
+													{
+														sitterCardShow.display && (
+															<SitterCard style={{background: '#fff'}}>
+																<Link to={`/detail/${sitters[sitterCardShow.index].sitterId}`}>
+																<div className="image_area" style={{backgroundImage: `url(${sitters[sitterCardShow.index].mainImageUrl})`}}>
+																	<span className="sitter_image" style={{backgroundImage: `url(${sitters[sitterCardShow.index].imageUrl})`}}></span>
+																</div>
+																<div className="info_area">
+																	<p className="sitter">
+																		<em>{sitters[sitterCardShow.index].sitterName}</em>
+																		<span>재고용률 {sitters[sitterCardShow.index].rehireRate}%</span>
+																	</p>
+																	<p className="address">{sitters[sitterCardShow.index].address}</p>
+																	<div className="bottom_info">
+																		<div className="star">
+																			<img src={icon_star} alt="star"/>
+																			<span>{sitters[sitterCardShow.index].averageStar} </span>
+																			<span>{`(${sitters[sitterCardShow.index].reviewCount})`}</span>
+																		</div>
+																		<p className="price"><strong>{sitters[sitterCardShow.index].servicePrice}</strong><span>원~</span></p>
+																	</div>
+																</div>
+																</Link>
+																<button type="button" className="closeSitterCard" onClick={()=>setSitterCardShow({display: false, index: null})}>닫기</button>
+															</SitterCard>
+														)
+													}
+												</ul>
+											}
+										</MapArea>
+									)
 								}
-							</>
+								</>
+							) : (
+								<>
+									{
+										(sitters?.length <= 0 ) && <ExceptionArea _title={'검색된 돌보미가 없습니다.'} _text={'검색조건을 바꿔서 검색해보세요.'}/>
+									}
+								</>
+							)
 						)
 					}
-					
 				</SittersListArea>
 				<Buttons>
 					{
