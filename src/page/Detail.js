@@ -70,8 +70,17 @@ const Detail = ({socket}) => {
     '실내놀이': 'ic-activity',
     '마당있음': 'ic-yard',
   };
-  const [value, setValues] = useState(false);
-  const [roomId, setRoomId] = useState("");
+  
+  const chatInfo = useRef({
+    sitterId: null,
+    chatRoomId: null,
+  });
+  const [popup, setPopup] = useState({
+    popup: false,
+    socket: socket,
+    id: null,
+    username: null
+  });
   const disableDate = () => {
     const datesArray = [];
     detail.sitter.noDate.map(v=>{
@@ -107,7 +116,13 @@ const Detail = ({socket}) => {
 
   const {mutate: openChatRoom} = useMutation(() => chatApis.chatRoomPost(sitterId), {
     onSuccess: (data) => {
-      setRoomId(data.data.roomId)
+      chatInfo.current = {...chatInfo.current, chatRoomId: data.data.roomId}
+      setPopup((prev) => {
+        return {
+          ...prev,
+          popup:!popup.popup
+        }
+      })
     },
     onError: (data) => {
       console.log(data);
@@ -147,10 +162,6 @@ const Detail = ({socket}) => {
 
     sessionStorage.setItem('reservationInfo', JSON.stringify(reservationInfo));
     navigate('/reservation');
-  }
-  const onChatting = () => {
-    setValues(!value)
-    openChatRoom();
   }
 
   useEffect(()=>{
@@ -548,7 +559,10 @@ const Detail = ({socket}) => {
           </div>
           <div className="buttons">
             <StyledButton
-              _onClick={() => onChatting()}
+              _onClick={() => {
+                chatInfo.current = {...chatInfo.current, sitterId}
+                openChatRoom();
+              }}
               _bgColor={'rgba(252, 146, 21, 0.1)'}
               color={'#fc9215'}
               _title="문의하기"
@@ -577,7 +591,7 @@ const Detail = ({socket}) => {
         </ReservationFunctions>
       </SitterDetailPage>
       {
-        roomId && value && <ChatList socket={socket} room={roomId} detailOnly={true}/>
+        chatInfo.current?.chatRoomId && popup.popup && <ChatList socket={socket} room={chatInfo.current.chatRoomId} detailOnly={true} popup={popup.popup} setPopup={setPopup}/>
       }
       {
         (modalDisplay && errorMessage === errorMessages.notLogin) && (

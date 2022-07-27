@@ -44,12 +44,16 @@ const ReservationList = ({socket}) => {
     },
   });
   const [diarySave, setDiarySave] = useState(false);
-  const [value, setValues] = useState(false);
   const chatInfo = useRef({
     sitterId: null,
     chatRoomId: null,
   });
-
+  const [popup, setPopup] = useState({
+    popup: false,
+    socket: socket,
+    id: null,
+    username: null
+  });
   const {
 		mutate: reservatioinList,
 		isFetching,
@@ -268,14 +272,19 @@ const ReservationList = ({socket}) => {
   });
   const {mutate: openChatRoom} = useMutation(() => chatApis.chatRoomPost(chatInfo.current.sitterId), {
     onSuccess: (data) => {
-      console.log(data)
       chatInfo.current = {...chatInfo.current, chatRoomId: data.data.roomId}
-      console.log(chatInfo.current)
+      setPopup((prev) => {
+        return {
+          ...prev,
+          popup:!popup.popup
+        }
+      })
     },
     onError: (data) => {
       console.log(data);
     }
   });
+
   const confirmWritingReview = () => {
     if (starRef.current > 0 && reviewTextRef.current?.value.length > 0) {
       dataToSend.current.data.reviewStar = starRef.current;
@@ -530,7 +539,6 @@ const ReservationList = ({socket}) => {
                                     _title='문의하기'
                                     _border='1px solid #FC9215'
                                     _onClick={()=>{
-                                      setValues(true)
                                       chatInfo.current = {...chatInfo.current, sitterId: v.sitterId}
                                       openChatRoom();
                                     }}
@@ -810,7 +818,7 @@ const ReservationList = ({socket}) => {
         </Modal>
       )}
       {
-        chatInfo.current?.chatRoomId && value && <ChatList socket={socket} room={chatInfo.current.chatRoomId} detailOnly={true}/>
+        chatInfo.current?.chatRoomId && popup.popup && <ChatList socket={socket} room={chatInfo.current.chatRoomId} detailOnly={true} popup={popup.popup} setPopup={setPopup}/>
       }
     </>
   );

@@ -9,7 +9,7 @@ const ChatHeader = ({socket, idRoom, popup, showChatRoom, setPopup}) => {
 					socket.emit("leave_room", idRoom);
 					return {
 						...prev,
-						popup:!popup
+						popup:false
 					}
 				})}><i className="ic-close"></i></div>
 			</ChatHeaderInner>
