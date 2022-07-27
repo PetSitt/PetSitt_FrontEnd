@@ -223,7 +223,6 @@ function Home() {
 			setQueriesData({searchDate: dates, region_2depth_name: addressInfo.region_2depth_name, x: addressInfo.x, y: addressInfo.y, category});
 			setSearched(true);
 		}
-
 	}, [dates, addressInfo])
 
 	useEffect(()=>{
