@@ -20,7 +20,7 @@ const Detail = ({socket}) => {
 	const [detail, setDetail] = useState();
 	const today = new DateObject();
 	const [date, setDate] = useState();
-	const [dates, setDates] = useState(new Date());
+	const [dates, setDates] = useState();
   const [month, setMonth] = useState(new Date().getMonth()+1);
   const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
   const months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
@@ -131,11 +131,12 @@ const Detail = ({socket}) => {
       setModalDisplay(true);
       return;
     }
-    if (dates.length === 0) {
+    if (dates?.length === 0 || !dates) {
       setErrorMessage(errorMessages.noDate);
       setModalDisplay(true);
       return;
     }
+    
     const reservationInfo = {
       date: dates,
       service: servicesText,
@@ -144,10 +145,9 @@ const Detail = ({socket}) => {
       sitterId: sitterId,
     }
 
-    localStorage.setItem('reservationInfo', JSON.stringify(reservationInfo));
+    sessionStorage.setItem('reservationInfo', JSON.stringify(reservationInfo));
     navigate('/reservation');
   }
-
   const onChatting = () => {
     setValues(!value)
     openChatRoom();

@@ -424,6 +424,12 @@ const ReservationList = ({socket}) => {
 		}
 	}, [reservationListData]);
 
+  useEffect(()=>{
+    if(sessionStorage.getItem('reservationInfo')){
+      sessionStorage.removeItem('reservationInfo')
+    }
+  },[])
+
   return (
     <>
       <ReservationListPage style={{ paddingBottom: '100px' }}>
@@ -496,7 +502,7 @@ const ReservationList = ({socket}) => {
                                     {v.address}
                                   </p>
                                   <p className='sitterPhone'>
-                                    <i className='ic-location' />
+                                    <i className='ic-phone' />
                                     {v.phoneNumber}
                                   </p>
                                 </SitterInfo>
@@ -507,7 +513,7 @@ const ReservationList = ({socket}) => {
                               >
                                 <StyledButton
                                   _margin='0'
-                                  _padding='7px 0px'
+                                  _padding='6px 0px'
                                   _title='일지 보기'
                                   _onClick={() => {
                                     reservationIdForDiary.current =
@@ -588,82 +594,23 @@ const ReservationList = ({socket}) => {
                                 ))}
                               </div>
                             </ReservationTagContainer>
-                            <ReservationInfoContainer>
+                            <ReservationInfoContainer style={{justifyContent: 'space-between'}}>
                               <div className='sitterInfo'>
-                                <SitterImage
-                                  style={{
-                                    backgroundImage: `url(${v.imageUrl})`,
-                                    backgroundPosition: 'center',
-                                    backgroundRepeat: 'no-repeat',
-                                    backgroundSize: '75px',
-                                  }}
-                                ></SitterImage>
                                 <SitterInfo>
                                   <p className='sitterName'>{v.userName}</p>
-                                  <p className='sitterAddress'>
-                                    <i className='ic-location' />
-                                    {v.address}
-                                  </p>
                                   <p className='sitterPhone'>
-                                    <i className='ic-location' />
+                                    <i className='ic-phone' />
                                     {v.phoneNumber}
                                   </p>
                                 </SitterInfo>
                               </div>
                               <div
-                                className='buttons'
+                                className='buttons sitter'
                                 style={{ position: 'relative', zIndex: 2 }}
                               >
                                 <StyledButton
                                   _margin='0'
-                                  _padding='7px 0px'
-                                  _title='일지 보기'
-                                  _onClick={() => {
-                                    reservationIdForDiary.current =
-                                      v.reservationId;
-                                    loadDiaryData();
-                                  }}
-                                />
-                                {!v.isPending && (
-                                  <StyledButton
-                                    _bgColor='#ffffff'
-                                    color='#fc9215'
-                                    _margin='0'
-                                    _padding='7px 0px'
-                                    _title='문의하기'
-                                    _border='1px solid #FC9215'
-                                    _onClick={()=>{
-                                      setValues(true)
-                                      chatInfo.current = {...chatInfo.current, sitterId: v.sitterId}
-                                      openChatRoom();
-                                    }}
-                                  />
-                                )}
-                                {v.isPending && (
-                                  <StyledButton
-                                    _margin='0'
-                                    _title='리뷰 작성하기'
-                                    _onClick={() => {
-                                      setModalType(modalContent.review);
-                                      setReviewPageMode('write');
-                                      setModalDisplay(true);
-                                      dataToSend.current.data.sitterId =
-                                        v.sitterId;
-                                      dataToSend.current.reservationId =
-                                        v.reservationId;
-                                    }}
-                                  />
-                                )}
-                              </div>
-                            </ReservationInfoContainer>
-                            <div className='sitterInfo'></div>
-                            <div
-                              className='buttons'
-                              style={{ position: 'relative', zIndex: 2 }}
-                            >
-                              {!v.isPending && (
-                                <StyledButton
-                                  _margin='0'
+                                  _padding='6px 0px'
                                   _title='일지 작성하기'
                                   _onClick={() => {
                                     reservationIdForDiary.current =
@@ -671,19 +618,14 @@ const ReservationList = ({socket}) => {
                                     loadDiaryData();
                                   }}
                                 />
-                              )}
-                            </div>
-                            {v.isPending &&
-                              (selectedTab === 'user' ? (
-                                <InformText>
-                                  * 리뷰를 작성해야 서비스가 완료됩니다.
-                                </InformText>
-                              ) : (
-                                <InformText>
-                                  * 신청자가 리뷰를 작성해야 서비스가
-                                  완료됩니다.
-                                </InformText>
-                              ))}
+                              </div>
+                            </ReservationInfoContainer>
+                            {v.isPending && (
+                              <InformText>
+                                * 신청자가 리뷰를 작성해야 서비스가
+                                완료됩니다.
+                              </InformText>
+                            )}
                           </ReservationItem>
                         );
                       })
@@ -701,7 +643,6 @@ const ReservationList = ({socket}) => {
                       return (
                         <ReservationItem
                           key={`reservation_${i}`}
-                          className='proceeding_reservations'
                         >
                           <Link
                             to={`/reservation/detail/${selectedTab}/${v.reservationId}`}
@@ -731,25 +672,9 @@ const ReservationList = ({socket}) => {
                             </div>
                           </ReservationTagContainer>
                           <ReservationInfoContainer>
-                            <SitterImage
-                              style={{
-                                backgroundImage: `url(${v.imageUrl})`,
-                                backgroundPosition: 'center',
-                                backgroundRepeat: 'no-repeat',
-                                backgroundSize: '75px',
-                              }}
-                            ></SitterImage>
                             {selectedTab === 'user' ? (
-                              <SitterInfo>
+                              <SitterInfo className='sitterInfo user' style={{zIndex: 2}}>
                                 <p className='sitterName'>{v.sitterName}</p>
-                                <p className='sitterAddress'>
-                                  <i className='ic-location' />
-                                  {v.address}
-                                </p>
-                                <p className='sitterPhone'>
-                                  <i className='ic-location' />
-                                  {v.phoneNumber}
-                                </p>
                                 <button
                                   type='button'
                                   onClick={() =>
@@ -760,7 +685,12 @@ const ReservationList = ({socket}) => {
                                 </button>
                               </SitterInfo>
                             ) : (
-                              <p className='sitterName'>{v.sitterName}</p>
+                              <UserInfo>
+                                <dl className='userName'>
+                                  <dt style={{color: '#676767'}}>신청자</dt>
+                                  <dd>{v.userName}</dd>
+                                </dl>
+                              </UserInfo>
                             )}
                             {v.reservationState !== '취소완료' && (
                               <div
@@ -808,10 +738,9 @@ const ReservationList = ({socket}) => {
                   )}
                 </ul>
                 {!buttonHide && (
-                  <StyledButton
-                    _onClick={() => morePastReviews()}
-                    _title='지난 예약 더보기'
-                  />
+                  <div style={{textAlign: 'center'}}>
+                    <LoadMoreButton type="button" onClick={() => morePastReviews()}>지난 예약 더보기</LoadMoreButton>
+                  </div>
                 )}
               </section>
             </>
@@ -887,13 +816,27 @@ const ReservationList = ({socket}) => {
   );
 };
 
-// 전부다 임시 css 입니다.
+const LoadMoreButton = styled.button`
+  padding: 0 16px;
+  height: 38px;
+  line-height: 36px;
+  background: #FFFFFF;
+  border: 1px solid rgba(120, 120, 120, 0.2);
+  border-radius: 19px;
+`
 const ReservationItem = styled.li`
   position: relative;
   padding: 16px;
   border-radius: 10px;
   border: 1px solid #ddd;
   margin-bottom: 36px;
+  &.proceeding_reservations{
+    .sitterInfo{
+      p{
+        margin-top: 5px;
+      }
+    }
+  }
   & + li {
     margin-top: 10px;
   }
@@ -929,9 +872,15 @@ const ReservationItem = styled.li`
     }
   }
   .buttons {
-    margin: 20px 0;
+    width: 80px;
+    button{
+      font-size: 14px;
+    }
     button + button {
       margin: 6px 0 0;
+    }
+    &.sitter{
+      width: 100px;
     }
   }
 `;
@@ -976,7 +925,10 @@ const ReserveDate = styled.p`
 const ReservationInfoContainer = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 10px;
+  word-break: keep-all;
   .sitterInfo {
     display: flex;
     flex-direction: row;
@@ -984,6 +936,9 @@ const ReservationInfoContainer = styled.div`
     justify-content: space-evenly;
     button {
       border-bottom: 1px solid #000;
+      margin-left: 10px;
+      margin-top: 1px;
+      padding: 4px 0;
       &:after {
         content: '';
         display: inline-block;
@@ -999,7 +954,7 @@ const ReservationInfoContainer = styled.div`
   }
 `;
 
-const SitterInfo = styled.div`
+const SitterInfo = styled.div` 
   .sitterName {
     font-weight: 400;
     font-size: 16px;
@@ -1013,10 +968,41 @@ const SitterInfo = styled.div`
     color: #676767;
     i {
       margin-right: 2px;
+      vertical-align: bottom;
     }
   }
+  .ic-phone{
+    font-size: 12px;
+    margin-left: -2px;
+  }
+  
 `;
 
+const UserInfo = styled.div`
+  .userName {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 19px;
+    dt{
+      position: relative;
+      padding-right: 6px;
+      margin-right: 6px;
+      &:before{
+        position: absolute;
+        right: 0;
+        width: 1px;
+        height: 14px;
+        top: 50%;
+        margin-top: -6px;
+        content: '';
+        background-color: #ccc;
+      }
+    }
+  }
+`
 const SitterImage = styled.div`
   width: 72px;
   height: 72px;
