@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import { useQuery, useMutation } from 'react-query';
 import { apis } from '../store/api';
+import { comma } from '../shared/common';
 
 import StyledButton from '../elements/StyledButton';
 import Modal from '../elements/Modal';
@@ -114,7 +115,7 @@ const ReservationDetail = () => {
               <hr />
               <ReservPriceBox>
                 <p className='reservTitle'>결제 금액</p>
-                <p className='reservDesc price'>{data.servicePrice}원</p>
+                <p className='reservDesc price'>{comma(data.servicePrice)}원</p>
               </ReservPriceBox>
               <hr />
             </ReservBoby>
