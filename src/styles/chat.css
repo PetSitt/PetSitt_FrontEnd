@@ -13,6 +13,8 @@
 
 .chatsInner.chatListInner {
 	position: fixed;
+  left: 0;
+  right: 0;
 	bottom: 25px;
 	width: 370px;
 	max-width: 90%;
@@ -29,6 +31,7 @@
 	scrollbar-width: none; /* Firefox scrollbar 숨기기*/	
 	padding-bottom: 40px;
 	overflow-Y: auto;
+  z-index: 200;
 }
 
 .chatsInner.chatRoomInner {
@@ -55,6 +58,8 @@
 }
 .chatRoomDetil {
   position: fixed;
+  left: 0;
+  right: 0;
   bottom: 25px;
   width: 370px;
   max-width: 90%;

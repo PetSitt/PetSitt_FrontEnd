@@ -3,7 +3,6 @@ import { useQuery } from "react-query";
 import styled from "styled-components";
 import { chatApis } from "../store/chatApi";
 import ChatRoom from './ChatRoom';
-import '../styles/chat.css';
 import ChatHeader from "../components/ChatHeader";
 
 function formatDate(value) {
@@ -74,6 +73,26 @@ function ChatList({popup, socket, setPopup}) {
 };
 
 const ChatInner = styled.div`
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 25px;
+	width: 370px;
+	max-width: 90%;
+	height: 90%;
+	max-height: 680px;
+	border-radius: 30px;
+	background-color: #eeeeee;
+	padding: 0 14px;
+	margin: 0 auto;
+	box-shadow: rgb(0 0 0 / 30%) 0px 12px 60px 5px;
+	animation: boxFade 0.20s ease-out 0s 1 normal none running;
+	z-index: 99;
+	-ms-overflow-style: none; /* IE and Edge - scrollbar 숨기기*/
+	scrollbar-width: none; /* Firefox scrollbar 숨기기*/	
+	padding-bottom: 40px;
+	overflow-Y: auto;
+  z-index: 200;
   @media (min-width: 768px){
     right: calc(10% + 21px);
     left: auto;

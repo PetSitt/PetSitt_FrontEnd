@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { useQueryClient, useQuery } from "react-query";
 import jwt_decode from "jwt-decode"
 import { chatApis } from "../store/chatApi";
-import '../styles/chat.css';
 import ChatHeader from "../components/ChatHeader";
 
 function formatDate(value) {
@@ -69,7 +68,7 @@ function ChatRoom({ socket, room, idRoom, popup, showChatRoom, setPopup }) {
   },[refetch])
   
   return (
-    <ChatInner ref={scrollElement} className={`${sitterId ? 'chatRoomDetil' : 'chatRoom'}`} >
+    <ChatInner ref={scrollElement} className={`${sitterId ? 'chatRoomDetail' : 'chatRoom'}`} >
       {sitterId && <ChatHeader socket={socket} idRoom={idRoom} popup={popup} showChatRoom={showChatRoom} setPopup={setPopup}/>}
       <div className="chat-header">
         <p>Live Chat</p>
@@ -114,17 +113,31 @@ function ChatRoom({ socket, room, idRoom, popup, showChatRoom, setPopup }) {
 }
 
 const ChatInner = styled.div`
-  &.chatRoom {
-    position: fixed;
-    bottom: 25px;
-    width: 370px;
-    max-width: 90%;
-    height: 90%;
-    max-height: 680px;
-    border-radius: 30px;
-    background-color: #eeeeee;
-    overflow-y: auto;
-   
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 25px;
+  width: 370px;
+  max-width: 90%;
+  height: 90%;
+  max-height: 680px;
+  border-radius: 30px;
+  background-color: #eeeeee;
+  overflow-y: auto;
+  margin: 0 auto;
+  @media (min-width: 768px){
+    right: calc(10% + 21px);
+    left: auto;
+  }
+  &.chatRoomDetail{
+    box-shadow: rgb(0 0 0 / 30%) 0px 12px 60px 5px;
+    animation: boxFade 0.20s ease-out 0s 1 normal none running;
+    z-index: 99;
+    -ms-overflow-style: none; /* IE and Edge - scrollbar 숨기기*/
+    scrollbar-width: none; /* Firefox scrollbar 숨기기*/	
+    padding-bottom: 40px;
+    overflow-Y: auto;
+    z-index: 200;
   }
   .chat-header {}
   .chat-body {
