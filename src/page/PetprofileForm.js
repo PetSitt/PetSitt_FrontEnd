@@ -74,8 +74,6 @@ const PetprofileForm = () => {
   // useMutation 수정하는 세팅 함수
   const { mutate: update } = useMutation(apis.petprofilePatch, {
     onSuccess: (data) => {
-      console.log("onSuccess:",data);
-      console.log(values.petId)
       queryClient.setQueryData(["petprofile", values.petId], data);
       queryClient.invalidateQueries("petprofile");
       navigate("/mypage/petprofile");

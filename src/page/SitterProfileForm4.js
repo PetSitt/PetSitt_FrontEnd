@@ -15,6 +15,7 @@ function SitterProfileForm4() {
   const {data, update} = useLocation().state;
   const [dates, setDates] = useState(data.noDate);
   const [newDates, setNewDates] = useState(null);
+  const [dateMsg, setDateMsg] = useState('');
   const queryClient = useQueryClient();
   const navigate = useNavigate();
 
@@ -26,7 +27,9 @@ function SitterProfileForm4() {
       navigate("/mypage/sitterprofile");
     },
     onError: (data) => {
-      console.log(data);
+      if(data.response.status === 400){
+        setDateMsg('달려을 필수로 선택 해주셔야 합니다.!!')
+      }
     },
   });
 
@@ -62,7 +65,7 @@ function SitterProfileForm4() {
     formData.append("plusService", JSON.stringify(data.plusService));
     formData.append("noDate", JSON.stringify(newDates ? newDates : dates));
     formData.append("servicePrice", data.servicePrice);
-    
+
     update ? sitterUpdate(formData) : create(formData)
   }
   useEffect(()=>{
@@ -81,6 +84,7 @@ function SitterProfileForm4() {
     <Form onSubmit={handleSubmit}>
       <NavBox _title='서비스 불가능한 날짜' _subTitle='4/4' sitterEditProfile />
       <Calendar required multiple sort format={format} value={ dates } onChange={ setDates } minDate={new Date()} maxDate={new Date(today.year + 1, today.month.number, today.day)}></Calendar>
+      { dates === undefined ? <p style={{color:'red'}}>{dateMsg}</p> : null }
       <StyledButton
           _onClick={handleSubmit}
           _title={ update ? "수정하기" : "등록하기"}

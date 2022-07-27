@@ -46,7 +46,7 @@ const SitterProfile = () => {
           <div className="profileinner">
             <div>
               <div className="profileMainImg inner">
-                <img src={values.mainImageUrl} alt="돌보미" />
+                <img src={values.mainImageUrl ? values.mainImageUrl : "/images/placeholder_150.png"} alt="돌보미" />
               </div>
             </div>
             <label className="inner required">
