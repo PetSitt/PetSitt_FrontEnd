@@ -23,7 +23,7 @@ const MarketingArea = () => {
           <div className="inner">
           <dl>
             <dt>참여 기간</dt>
-            <dd>2022. 07. 27 ~ 08. 02</dd>
+            <dd>2022. 07. 27 ~ 08. 01</dd>
           </dl>
           <dl>
             <dt>참여 방법</dt>
@@ -31,18 +31,16 @@ const MarketingArea = () => {
               <ol>
                 <li>
                   <span>STEP 1</span>
-                  <p>Petsitt 웹사이트 <strong>회원가입</strong> 후, 마이페이지에서 <strong>돌보미 프로필</strong>과 <strong>반려견 프로필</strong> 등록!</p>
-                  <p>(반려견이 없는 경우 가상의 반려견 정보를 등록해주세요!)</p>
+                  <p>회원가입, 나의 정보 페이지에서 나의 반려견을 등록해주세요 (없는 경우도 가상으로 진행가능)</p>
                 </li>
                 <li>
                   <span>STEP 2</span>
-                  <p>메인페이지에서 원하는 돌보미 선택해서 <strong>서비스 예약하기!</strong></p>
-                  <p>예약 신청이 완료되었을 경우에는 예약 확인 페이지에서 <strong>문의하기</strong>로 돌보미에게 문의사항을 전달해주세요!</p>
+                  <p>메인화면에서 돌보미를 선택하여 예약을 진행합니다. 문의하기도 사용해보세요!</p>
                 </li>
                 <li>
                   <span>STEP 3</span>
-                  <p>Petsitt 체험 완료 후 <br/><strong>구글 폼 작성</strong>까지 완료하면 상품 응모 완료!</p>
-                  <a href='https://forms.gle/8P1mzCKyuY9Aj7HGA' target="_blank">구글폼으로 이동</a>
+                  <p>체험 완료 후 구글폼 작성까지 완료하면 끝!</p>
+                  <a href='https://forms.gle/8P1mzCKyuY9Aj7HGA' target="_blank" rel="noreferrer">구글폼으로 이동</a>
                 </li>
               </ol>
             </dd>
