@@ -14,12 +14,10 @@ function ChatList({popup, socket, setPopup, room, detailOnly}) {
   const [showChatRoom, setShowChatRoom] = useState(false);
   const [idRoom, setIdRoom] = useState(detailOnly ? room : '');
   const [username, setUsername] = useState('');
-
   const { isLoading: dataLoading, data: chats, refetch } = useQuery("chatsList", () => chatApis.chatListGet(socket.id), {
     staleTime: Infinity,
     enabled: true
   });
-
   const joinRoom = (userName, room) => {
     socket.emit("join_room", room);
     setUsername(userName);
@@ -34,7 +32,7 @@ function ChatList({popup, socket, setPopup, room, detailOnly}) {
   return (
     <ChatInner className={`chatsInner ${!showChatRoom ? "chatListInner": 'chatRoomInner'}`}>
         <div className="joinChatContainer">
-          <ChatHeader socket={socket} idRoom={idRoom} popup={popup} showChatRoom={showChatRoom} setPopup={setPopup}/>
+          <ChatHeader socket={socket} idRoom={detailOnly ? room : idRoom} popup={popup} showChatRoom={showChatRoom} setPopup={setPopup}/>
           <ChatBody className={`${detailOnly ? 'detail_only' : ''} chats_body`}>
             {
               !detailOnly ? (
@@ -67,11 +65,11 @@ function ChatList({popup, socket, setPopup, room, detailOnly}) {
                     </div>)}
                   </>
                   ) : (
-                    <ChatRoom socket={socket} room={idRoom} popup={popup} showChatRoom={showChatRoom} setPopup={setPopup}/>
+                    <ChatRoom socket={socket} room={idRoom} popup={popup} showChatRoom={showChatRoom}/>
                   )}
                 </>
               ) : (
-                <ChatRoom className={'detailOnly'} socket={socket} room={idRoom} popup={popup} showChatRoom={showChatRoom} setPopup={setPopup}/>
+                <ChatRoom className={'detailOnly'} socket={socket} room={idRoom} popup={popup} showChatRoom={showChatRoom}/>
               )
             }
             
