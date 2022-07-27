@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Modal from "../elements/Modal";
 import NavBox from "../elements/NavBox";
@@ -8,24 +8,32 @@ import StyledContainer from "../elements/StyledContainer";
 import { apis } from "../store/api";
 
 const Petprofile = () => {
+  const id = useRef();
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
+  const [petId ,setPetId] = useState(false);
   const queryClient = useQueryClient();
   const {
     isLoading,
     data: petprofileData,
     isSuccess: petSuccessGet,
-  } = useQuery("petprofile", apis.petprofileGet);
+  } = useQuery("petprofile", apis.petprofileGet, {
+    staleTime: Infinity,
+  });
   const [values, setValues] = useState(petprofileData.data.petprofile);
 
   const {
     mutate: delect,
     error,
     isSuccess: petSuccessDelete,
-  } = useMutation(apis.petprofileDelete, {
+  } = useMutation((petId) => apis.petprofileDelete(petId), {
     onSuccess: (data) => {
+      console.log("onSuccess:",data)
       queryClient.invalidateQueries("petprofile");
     },
+    onError: (data) => {
+      console.log("onError:",data)
+    }
   });
 
   useEffect(() => {
@@ -34,13 +42,14 @@ const Petprofile = () => {
   }, [petSuccessGet, petSuccessDelete, petprofileData.data.petprofile]);
 
   return (
-    <StyledContainer>
-      <NavBox _title="반려동물 프로필" />
-      {values.length > 0 ? (
-        values.map((el, idx) => {
-          const { petId, petName, petType, petImage } = el;
-          return (
-            <>
+    <>
+      <StyledContainer>
+        <NavBox _title="반려동물 프로필" />
+        {values.length > 0 ? (
+          values.map((el, idx) => {
+            const { petId, petName, petType, petImage } = el;
+            console.log(petId, petName, idx)
+            return (
               <PetList key={petId}>
                 <PetInfo>
                   <div
@@ -48,7 +57,7 @@ const Petprofile = () => {
                     style={{ backgroundImage: `url(${petImage})` }}
                   ></div>
                   <div>
-                    <p className="petName">{petName}</p>
+                    <p className="petName">{petName} {petId}</p>
                     <p className="petType">{petType}</p>
                   </div>
                 </PetInfo>
@@ -65,60 +74,65 @@ const Petprofile = () => {
                   <button
                     onClick={() => {
                       setShowModal(true);
+                      id.current = petId
                     }}
                   >
                     삭제
                   </button>
                 </EditButton>
-                <Modal
-                  _display={showModal}
-                  _confirm="삭제"
-                  _cancel="취소"
-                  _alert
-                  confirmOnClick={() => {
-                    delect(petId);
-                  }}
-                  cancelOnclick={() => {
-                    setShowModal(false);
-                  }}
-                >
-                  <ModalText>
-                    <h2>반려동물 프로필 삭제</h2>
-                    <p>
-                      해당 반려동물의
-                      <br /> 프로필을 삭제하시겠습니까?
-                    </p>
-                  </ModalText>
-                </Modal>
               </PetList>
-              {values.length < 4 ? (
-                <PetAddBox>
-                  <PetProfileInsertButton
-                    onClick={() => {
-                      navigate("/mypage/petprofileform");
-                    }}
-                  >
-                    반려동물 추가하기
-                  </PetProfileInsertButton>
-                </PetAddBox>
-              ) : null}
-            </>
-          );
-        })
-      ) : (
-        <PetProfileInsertBox>
-          <h3>등록한 반려동물이 없어요</h3>
-          <p>반려동물 프로필을 등록해보세요</p>
-          <PetProfileInsertButton
-            onClick={() => {
-              navigate("/mypage/petprofileform");
-            }}
-          >
-            반려동물 등록하기
-          </PetProfileInsertButton>
-        </PetProfileInsertBox>
-      )}
-    </StyledContainer>
+            );
+          })
+        ) : (
+          <PetProfileInsertBox>
+            <h3>등록한 반려동물이 없어요</h3>
+            <p>반려동물 프로필을 등록해보세요</p>
+            <PetProfileInsertButton
+              onClick={() => {
+                navigate("/mypage/petprofileform");
+              }}
+            >
+              반려동물 등록하기
+            </PetProfileInsertButton>
+          </PetProfileInsertBox>
+        )}
+        {values.length >= 1 && values.length < 3 ? (
+          <PetAddBox>
+            <PetProfileInsertButton
+              onClick={() => {
+                navigate("/mypage/petprofileform");
+              }}
+            >
+              반려동물 추가하기
+            </PetProfileInsertButton>
+          </PetAddBox>
+        ) : null}
+      </StyledContainer>
+    {
+      <Modal
+      _display={showModal}
+      _confirm="삭제"
+      _cancel="취소"
+      _alert
+      confirmOnClick={() => {
+        delect(id.current);
+        setShowModal(false);
+      }}
+      cancelOnclick={() => {
+        setShowModal(false);
+        id.current = "";
+      }}
+    >
+      <ModalText>
+          <h2>반려동물 프로필 삭제</h2>
+          <p>
+            해당 반려동물의
+            <br /> 프로필을 삭제하시겠습니까?
+          </p>
+        </ModalText>
+      </Modal>
+    }
+    </>
   );
 };
 

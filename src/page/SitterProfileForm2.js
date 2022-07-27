@@ -130,10 +130,6 @@ const SitterProfileForm2 = () => {
             errorMessages.myIntro && <Message>자기 소개글을 입력해주세요.</Message>
           }
         </InputBox>
-        <StyledButton
-          _onClick={doValidation}
-          _title={'다음으로'}
-        />
         {update ? (
           <StyledButton
           _onClick={() => navigate('/mypage/SitterProfileForm3', {state: { data: values, update: true }})}

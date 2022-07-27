@@ -15,21 +15,24 @@ const SitterProfile = () => {
   const queryClient = useQueryClient();
   const { data: sitterData, isSuccess: sitterSuccessGet } = useQuery(
     "sitterprofile",
-    apis.sitterprofileGet
+    apis.sitterprofileGet,{
+      staleTime: Infinity,
+    }
   );
+
   const [values, setValues] = useState(sitterData.data.sitterprofile);
   const { mutate: delect, isSuccess: sitterSuccessDelete } = useMutation(
     apis.sitterprofileDelete,
     {
-      onSuccess: () => {
+      onSuccess: (data) => {
+        console.log("onSuccess",data);
         queryClient.invalidateQueries("sitterprofile");
       },
       onError: (data) => {
-        console.log(data, "error");
+        console.log("onError",data);
       },
     }
   );
-
   useEffect(() => {
     (sitterSuccessGet || sitterSuccessDelete) &&
       setValues(sitterData.data.sitterprofile);

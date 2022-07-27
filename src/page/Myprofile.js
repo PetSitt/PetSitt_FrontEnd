@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Cookies } from 'react-cookie';
 import styled from 'styled-components';
-import { useQuery, useMutation } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 import Button from '../elements/Button';
 import Input from '../elements/Input';
 import { apis } from '../store/api';
@@ -10,7 +10,10 @@ import NavBox from '../elements/NavBox';
 import StyledContainer from '../elements/StyledContainer';
 
 const Myprofile = () => {
-  const { isLoading, data: userData } = useQuery('user', apis.myprofileGet);
+  const queryClient = useQueryClient();
+  const { isLoading, data: userData } = useQuery('user', apis.myprofileGet, {
+    staleTime: Infinity,
+  });
   const inputEl1 = useRef();
   const inputEl2 = useRef();
   const inputEl3 = useRef();
@@ -20,16 +23,18 @@ const Myprofile = () => {
 
   const { mutate } = useMutation(apis.myprofilePatch, {
     onSuccess: ({ data }) => {
-      if (data.myprofile.acknowledged) {
+      console.log("onSuccess",data);
+      if (data.myprofile) {
         alert('프로필 정보를 수정했습니다.');
         window.location.reload();
       }
+      queryClient.invalidateQueries('user')
     },
     onError: (data) => {
-      console.log(data);
+      console.log("onError",data);
       alert(data.response.data.errorMessage);
       navigate('/login');
-    },
+    }
   });
 
   const isLogin = cookies.get('refreshToken');
@@ -39,8 +44,7 @@ const Myprofile = () => {
 
     const currentDatas = {
       userName: inputEl1.current.value,
-      phoneNumber: inputEl2.current.value,
-      userEmail: inputEl3.current.value,
+      phoneNumber: inputEl2.current.value
     };
 
     if (text === '저장') {
