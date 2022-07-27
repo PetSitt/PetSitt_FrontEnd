@@ -1,13 +1,23 @@
-import React, {useState} from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, {useEffect, useState, useRef} from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import Modal from '../elements/Modal';
+import Alert from '../elements/Alert';
 
-const Mypage = () => {
+const Mypage = (props) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const isLogin = localStorage.getItem('accessToken');
   const [modalDisplay, setModalDisplay] = useState();
-  // const isLogin = true;
+  const [alertDisplay, setAlertDisplay] = useState(false);
+
+  useEffect(()=>{
+    if(sessionStorage.getItem('pwChanged')){
+      setAlertDisplay(true);
+    }
+    sessionStorage.removeItem('pwChanged');
+  },[])
+
   return (
     <>
     <MypageInner>
@@ -66,6 +76,9 @@ const Mypage = () => {
           </div>
         </Modal>
       )
+    }
+    {
+      alertDisplay && <Alert _text={'비밀번호 변경이 완료되었습니다.'}/>
     }
     </>
   );

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useMutation } from "react-query";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import InputBox from "../elements/InputBox";
 import NavBox from "../elements/NavBox";
@@ -15,21 +16,29 @@ const INITIAL_VALUES = {
 };
 
 const PwChange = () => {
+  const navigate = useNavigate();
   const pwOrdInput = useRef();
   const pwNewInput = useRef();
   const [values, setValues] = useState(INITIAL_VALUES);
   const [pwMessage, setPwMessage] = useState("");
   const [pw2Message, setPw2Message] = useState("");
+  const [isInvalidPw, setIsInvalidPw] = useState(false);
   const [isPw, setIsPw] = useState(false);
   const [isPw2, setIsPw2] = useState(false);
 
   // useMutation 세팅 함수
   const { mutate: passwordChang } = useMutation(apis.passwordChange, {
     onSuccess: ({ data }) => {
-      alert(data.message);
+      sessionStorage.setItem('pwChanged', true);
+      navigate('/mypage');
     },
     onError: (data) => {
-      alert(data.response.data.errorMessage);
+      if(data.response.status === 401){
+        setIsInvalidPw(true);
+      }else{
+        setIsInvalidPw(false);
+      }
+      // alert(data.response.data.errorMessage);
     },
   });
 
@@ -79,7 +88,7 @@ const PwChange = () => {
   return (
     <StyledContainer>
       <Form onSubmit={handleSubmit}>
-        <NavBox _title={"비밀번호 찾기"} />
+        <NavBox _title={"비밀번호 변경"} />
         <InputBox>
           <label className="inner required" htmlFor="password">
             기존 비밀번호
@@ -92,6 +101,7 @@ const PwChange = () => {
             onChange={handleInputChange}
             required
           />
+          {isInvalidPw && <Message>기존 비밀번호와 일치하지 않습니다.</Message>}
         </InputBox>
         <InputBox>
           <label className="inner required" htmlFor="newPassword1">
@@ -142,6 +152,7 @@ const Message = styled.p`
   font-size: 13px;
   align-self: flex-start;
   color: ${(props) => (props.className === "success" ? "green" : "red")};
+  padding: 5px 0;
 `;
 
 export default PwChange;
