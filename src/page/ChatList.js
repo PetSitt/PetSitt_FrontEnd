@@ -129,10 +129,9 @@ const ChatInner = styled.div`
     }
   }
   .chats_body.detail_only{
-    padding: 0;
+    padding: 0 0 56px;
     overflow-y: hidden;
-    padding-bottom: 56px;
-    .chatRoomDetail{
+    & > div{
       padding: 0 14px 20px;
       height: 100%;
       overflow: hidden;
