@@ -80,41 +80,19 @@ const SitterProfile = () => {
             <CheckWrap>
               <label className="tit">제공 가능한 서비스</label>
               <CheckGroup>
-                <Checkbox
-                  _id={"산책"}
-                  _key={"category"}
-                  _text={"산책"}
-                  _size={"1.2rem"}
-                  checked={values.category}
-                />
-                <Checkbox
-                  _id={"목욕, 모발 관리"}
-                  _key={"category"}
-                  _text={"목욕, 모발 관리"}
-                  _size={"1.2rem"}
-                  checked={values.category}
-                />
-                <Checkbox
-                  _id={"훈련"}
-                  _key={"category"}
-                  _text={"훈련"}
-                  _size={"1.2rem"}
-                  checked={values.category}
-                />
-                <Checkbox
-                  _id={"데이 케어"}
-                  _key={"category"}
-                  _text={"데이 케어"}
-                  _size={"1.2rem"}
-                  checked={values.category}
-                />
-                <Checkbox
-                  _id={"1박 케어"}
-                  _key={"category"}
-                  _text={"1박 케어"}
-                  _size={"1.2rem"}
-                  checked={values.category}
-                />
+                {values.category.map((el, idx) => {
+                  return(
+                    <Checkbox
+                      key={idx}
+                      _id={el}
+                      _key={"category"}
+                      _text={el}
+                      _size={"1.2rem"}
+                      checked={values.category}
+                      disabled
+                    />
+                  )
+                })}
               </CheckGroup>
             </CheckWrap>
             <CheckWrap>
@@ -132,6 +110,7 @@ const SitterProfile = () => {
                     });
                   }}
                   checked={values.careSize}
+                  disabled
                 />
                 <Checkbox
                   _text={"중형견"}
@@ -144,6 +123,7 @@ const SitterProfile = () => {
                     });
                   }}
                   checked={values.careSize}
+                  disabled
                 />
                 <Checkbox
                   _text={"대형견"}
@@ -156,6 +136,7 @@ const SitterProfile = () => {
                     });
                   }}
                   checked={values.careSize}
+                  disabled
                 />
               </CheckGroup>
             </CheckWrap>
