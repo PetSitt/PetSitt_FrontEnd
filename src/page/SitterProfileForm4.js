@@ -32,14 +32,12 @@ function SitterProfileForm4() {
 
   // useMutation 수정하는 세팅 함수
   const { mutate: sitterUpdate } = useMutation(apis.sitterprofilePatch, {
-    onSuccess: (data) => {
-      console.log(data);
-      queryClient.setQueryData(["sitterprofile", data.petId], data);
+    onSuccess: () => {
       queryClient.invalidateQueries("sitterprofile");
-      navigate("/mypage/sitterprofile");
+      window.location.href = "/mypage/sitterprofile";
     },
     onError: (data) => {
-      console.log(data);
+      console.log("onError:",data);
     },
   });
 
