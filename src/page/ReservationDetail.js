@@ -5,6 +5,7 @@ import { useQuery, useMutation } from 'react-query';
 import { apis } from '../store/api';
 import { comma } from '../shared/common';
 
+import pet_noimg from '../assets/img/img_pet_default.png';
 import StyledButton from '../elements/StyledButton';
 import Modal from '../elements/Modal';
 import NavBox from '../elements/NavBox';
@@ -205,7 +206,7 @@ const ReservationDetail = ({setTab}) => {
                 <h4>
                   {data.pets.map((v, i) => (
                     <span key={`pet_${i}`}>
-                      {i > 0 ? ', ' + v.petName + ' ' : v.petName + ' '}
+                      {i > 0 ? ', ' + v.petName + ' ' : i === 0 ? v.petName + ' ' : v.petName}
                     </span>
                   ))}
                   만날 준비 되셨나요?
@@ -243,38 +244,26 @@ const ReservationDetail = ({setTab}) => {
               </ReservInfoBox>
             </ReservBoby>
             {data.detailData.reservationState === '진행중' && (
-              <section>
+              <section style={{borderTop: '1px solid #C9C9C9'}}>
                 <h3>반려견 정보</h3>
-                <ul>
+                <ul style={{marginTop: '24px'}}>
                   {data.pets.map((v, i) => {
                     return (
-                      <li key={`pet_${i}`}>
-                        <div
-                          style={{ backgroundImage: `url(${v.petImage})` }}
-                        ></div>
-                        <dl>
-                          <div>
-                            <dt>이름</dt>
-                            <dd>{v.petName}</dd>
-                          </div>
-                          <div>
-                            <dt>나이</dt>
-                            <dd>{v.petAge}살</dd>
-                          </div>
-                          <div>
-                            <dt>몸무게</dt>
-                            <dd>{v.petWeight}kg</dd>
-                          </div>
-                          <div>
-                            <dt>중성화</dt>
-                            <dd>{v.petSpay ? '했어요' : '안했어요'}</dd>
-                          </div>
-                          <div>
-                            <dt>품종</dt>
-                            <dd>{v.petType}</dd>
-                          </div>
-                        </dl>
-                      </li>
+                      <PetItem key={`pet_${i}`}>
+                        <span
+                          style={{ backgroundImage: `url(${v.petImage ? v.petImage : pet_noimg})` }}
+                        ></span>
+                        <div>
+                          <p style={{marginBottom: '5px'}}><strong>{v.petName}</strong> <span>({v.petAge}살 {v.petType})</span></p>
+                          <p>중성화 {v.petSpay ? '했어요' : '안했어요'}</p>
+                          {
+                            !!v.petWeight && <p>몸무게 {v.petWeight}kg</p>
+                          }
+                          {
+                            v.petIntro && <p>{v.petIntro}</p>
+                          }
+                        </div>
+                      </PetItem>
                     );
                   })}
                 </ul>
@@ -473,4 +462,32 @@ const ReservNoticeBox = styled.section`
     }
   }
 `;
+const PetItem = styled.li`
+  & + li{
+    margin-top: 24px;
+  }
+  display: flex;
+  gap: 15px;
+  & > span{
+    flex-shrink: 0;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+  p{
+    color: #676767;
+    font-size: 14px;
+    strong{
+      display: inline-block;
+      color: #1a1a1a;
+      font-weight: 500;
+      font-size: 16px;
+      vertical-align: middle;
+      margin-bottom: 1px;
+    }
+  }
+`
 export default ReservationDetail;
