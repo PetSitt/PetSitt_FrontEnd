@@ -14,6 +14,7 @@ const CheckBox = ({
   _border,
   _bgColor,
   checked,
+  disabled,
   onChange,
 }) => {
   const styles = { _size, _border, _bgColor };
@@ -43,6 +44,7 @@ const CheckBox = ({
           id={_id}
           name={_name}
           required={_required}
+          disabled={disabled}
           onChange={(e) => {
             _id ? onChange(e.currentTarget.checked, _key, _id) : onChange(e);
           }}
@@ -60,6 +62,7 @@ const CheckBox = ({
         id={_id}
         name={_name}
         required={_required}
+        disabled={disabled}
         onChange={(e) => {
           _id ? onChange(e.currentTarget.checked, _key, _id) : onChange(e);
         }}
