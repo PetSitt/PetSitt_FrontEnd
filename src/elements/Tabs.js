@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
 
-const Tabs = ({_tab, _value, setSelectedTab}) => {
+const Tabs = ({_tab, _value, _checked, setSelectedTab}) => {
   const [item, setItem] = useState(_tab);
   return (
     <TabGroup>
@@ -10,7 +10,7 @@ const Tabs = ({_tab, _value, setSelectedTab}) => {
           return (
             <li key={`tab_${i}`}>
               <label>
-              <input type="radio" name="tab" defaultChecked={i===0} onChange={()=>setSelectedTab(_value[i])}/>
+              <input type="radio" name="tab" defaultChecked={_checked===_value[i]} onChange={()=>setSelectedTab(_value[i])}/>
                 <span>{v}</span>
               </label>
             </li>

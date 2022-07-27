@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import styled from 'styled-components';
 import { useQuery, useMutation } from 'react-query';
 import { apis } from '../store/api';
@@ -9,11 +9,10 @@ import StyledButton from '../elements/StyledButton';
 import Modal from '../elements/Modal';
 import NavBox from '../elements/NavBox';
 
-const ReservationDetail = () => {
+const ReservationDetail = ({setTab}) => {
   const navigate = useNavigate();
   const reservationId = useParams().id;
   const type = useParams().type;
-  console.log(reservationId);
   const [data, setData] = useState();
   const [modalDisplay, setModalDisplay] = useState(false);
   const reservatioinDetail = useQuery(
@@ -44,6 +43,9 @@ const ReservationDetail = () => {
       },
     }
   );
+  useEffect(()=>{
+    setTab(type);
+  },[])
 
   if (reservatioinDetail.isLoading || !data) return null;
   if (type === 'user') {
@@ -123,11 +125,11 @@ const ReservationDetail = () => {
               <ReservNoticeBox>
                 <ul>
                   <li>
-                    * 위 금액은 확정된 금액이 아닌 돌보미가 제공하는 평균적인
+                    위 금액은 확정된 금액이 아닌 돌보미가 제공하는 평균적인
                     금액입니다.
                   </li>
                   <li>
-                    * 예약 완료 전 해당 서비스에 대한 확정 금액을 협의하시길
+                    예약 완료 전 해당 서비스에 대한 확정 금액을 협의하시길
                     권고드립니다.
                   </li>
                 </ul>
@@ -197,7 +199,9 @@ const ReservationDetail = () => {
                   <i className='ic-upcoming' />
                 </div>
               )}
-              {data.reservationState === '취소완료' ? (
+              {data.detailData.reservationState === '취소완료' ? (
+                <h4>취소된 예약입니다.</h4>
+              ) : (
                 <h4>
                   {data.pets.map((v, i) => (
                     <span key={`pet_${i}`}>
@@ -206,8 +210,6 @@ const ReservationDetail = () => {
                   ))}
                   만날 준비 되셨나요?
                 </h4>
-              ) : (
-                <h4>취소된 예약입니다.</h4>
               )}
             </ReservTop>
             <hr />
@@ -278,24 +280,19 @@ const ReservationDetail = () => {
                 </ul>
               </section>
             )}
-
-            {data.reservationState === '진행중' && (
-              <section>
-                <p>
-                  {data.detailData.sitterName}님이 제공하는 서비스의 일당 금액은
-                  {data.detailData.servicePrice}원 입니다.
-                </p>
-                <ul>
-                  <li>
-                    * 위 금액은 확정된 금액이 아닌 돌보미가 제공하는 평균적인
-                    금액입니다.
-                  </li>
-                  <li>
-                    * 예약 완료 전 해당 서비스에 대한 확정 금액을 협의하시길
-                    권고드립니다.
-                  </li>
-                </ul>
-              </section>
+            {data.detailData.reservationState === '진행중' && (
+              <>
+                <ReservPriceBox className='paragraph'>
+                  <p className='reservTitle'>돌보미님이 제공하는 서비스의 일당 금액은 <br/><span style={{color: '#fc9215', fontWeight: 700}}>{comma(data.detailData.servicePrice)}</span>원 입니다.</p>
+                </ReservPriceBox>
+                <ReservNoticeBox>
+                  <ul>
+                    <li>
+                    서비스 진행 전 해당 서비스에 대한 확정 금액을 협의하시길 권고드립니다.
+                    </li>
+                  </ul>
+                </ReservNoticeBox>
+              </>
             )}
             <section>
               <div>
@@ -432,6 +429,15 @@ const ReservPriceBox = styled.div`
   align-items: top;
   justify-content: space-between;
   padding: 16px 0;
+  &.paragraph{
+    margin-top: 30px;
+    border-top: 1px solid #C9C9C9;
+    border-bottom: 1px solid #C9C9C9;
+    margin-bottom: 15px;
+    .reservTitle{
+      line-height: 1.4;
+    }
+  }
   .reservTitle {
     color: #676767;
   }
@@ -451,9 +457,20 @@ const ReservNoticeBox = styled.section`
   font-size: 14px;
   line-height: 17px;
   color: #676767;
-
   ul li {
+    position: relative;
+    padding-left: 20px;
     padding-bottom: 10px;
+    &:before{
+      position: absolute;
+      left: 7px;
+      top: 5px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background-color: #676767;
+      content: '';
+    }
   }
 `;
 export default ReservationDetail;
