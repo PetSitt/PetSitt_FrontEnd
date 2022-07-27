@@ -64,7 +64,7 @@ const Router = ({socket}) => {
       <Route path='/search' element={<SearchAddress />}></Route>
       <Route path='/reservation' element={<Reservation />}></Route>
       ReservationDetail
-      <Route path='/reservation/list' element={<ReservationList />}></Route>
+      <Route path='/reservation/list' element={<ReservationList socket={socket}/>}></Route>
       <Route
         path='/reservation/detail/:type/:id'
         element={<ReservationDetail />}

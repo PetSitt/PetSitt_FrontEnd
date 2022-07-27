@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import { Link } from 'react-router-dom';
 import { apis } from '../store/api';
+import { chatApis } from "../store/chatApi";
 import moment from 'moment';
 
 import Tabs from '../elements/Tabs';
@@ -11,8 +12,9 @@ import StyledButton from '../elements/StyledButton';
 import Review from './Review';
 import CareDiary from './CareDiary';
 import Modal from '../elements/Modal';
+import ChatList from "./ChatList";
 
-const ReservationList = () => {
+const ReservationList = ({socket}) => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [pastReservation, setPastReservation] = useState();
@@ -42,6 +44,11 @@ const ReservationList = () => {
     },
   });
   const [diarySave, setDiarySave] = useState(false);
+  const [value, setValues] = useState(false);
+  const chatInfo = useRef({
+    sitterId: null,
+    chatRoomId: null,
+  });
 
   const {
 		mutate: reservatioinList,
@@ -258,6 +265,16 @@ const ReservationList = () => {
     onError: (data) => {
       // console.log(data, 'diary modify failed');
     },
+  });
+  const {mutate: openChatRoom} = useMutation(() => chatApis.chatRoomPost(chatInfo.current.sitterId), {
+    onSuccess: (data) => {
+      console.log(data)
+      chatInfo.current = {...chatInfo.current, chatRoomId: data.data.roomId}
+      console.log(chatInfo.current)
+    },
+    onError: (data) => {
+      console.log(data);
+    }
   });
   const confirmWritingReview = () => {
     if (starRef.current > 0 && reviewTextRef.current?.value.length > 0) {
@@ -504,8 +521,13 @@ const ReservationList = () => {
                                     color='#fc9215'
                                     _margin='0'
                                     _padding='7px 0px'
-                                    _title='문의하기'
+                                    _title='문의s하기'
                                     _border='1px solid #FC9215'
+                                    _onClick={()=>{
+                                      setValues(true)
+                                      chatInfo.current = {...chatInfo.current, sitterId: v.sitterId}
+                                      openChatRoom();
+                                    }}
                                   />
                                 )}
                                 {v.isPending && (
@@ -751,16 +773,6 @@ const ReservationList = () => {
                                     loadReview();
                                   }}
                                 />
-                                {!v.isPending && (
-                                  <StyledButton
-                                    _bgColor='#ffffff'
-                                    color='#fc9215'
-                                    _margin='0'
-                                    _padding='7px 0px'
-                                    _title='문의하기'
-                                    _border='1px solid #FC9215'
-                                  />
-                                )}
                                 {v.isPending && (
                                   <StyledButton
                                     _margin='0'
@@ -863,6 +875,9 @@ const ReservationList = () => {
           )}
         </Modal>
       )}
+      {
+        chatInfo.current?.chatRoomId && value && <ChatList socket={socket} room={chatInfo.current.chatRoomId} detailOnly={true}/>
+      }
     </>
   );
 };
