@@ -339,7 +339,7 @@ const PreviewImage = styled.div`
   border-radius: 50%;
   background-repeat: no-repeat;
   background-position: center;
-  background-size: contain;
+  background-size: cover;
   cursor: pointer;
 `;
 
