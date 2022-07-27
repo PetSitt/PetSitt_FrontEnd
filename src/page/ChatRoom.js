@@ -69,7 +69,6 @@ function ChatRoom({ socket, room, idRoom, popup, showChatRoom, setPopup }) {
   
   return (
     <ChatInner ref={scrollElement} className={`${sitterId ? 'chatRoomDetail' : 'chatRoom'}`} >
-      {sitterId && <ChatHeader socket={socket} idRoom={idRoom} popup={popup} showChatRoom={showChatRoom} setPopup={setPopup}/>}
       <div className="chat-header">
         <p>Live Chat</p>
       </div>
@@ -113,7 +112,7 @@ function ChatRoom({ socket, room, idRoom, popup, showChatRoom, setPopup }) {
 }
 
 const ChatInner = styled.div`
-  position: fixed;
+  /* position: fixed;
   left: 0;
   right: 0;
   bottom: 25px;
@@ -128,17 +127,17 @@ const ChatInner = styled.div`
   @media (min-width: 768px){
     right: calc(10% + 21px);
     left: auto;
-  }
-  &.chatRoomDetail{
+  } */
+  /* &.chatRoomDetail{
     box-shadow: rgb(0 0 0 / 30%) 0px 12px 60px 5px;
     animation: boxFade 0.20s ease-out 0s 1 normal none running;
     z-index: 99;
-    -ms-overflow-style: none; /* IE and Edge - scrollbar 숨기기*/
-    scrollbar-width: none; /* Firefox scrollbar 숨기기*/	
-    padding-bottom: 40px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    padding-bottom: 60px;
     overflow-Y: auto;
     z-index: 200;
-  }
+  } */
   .chat-header {}
   .chat-body {
     margin-top: 20px;
