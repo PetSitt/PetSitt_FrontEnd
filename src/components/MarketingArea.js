@@ -31,15 +31,15 @@ const MarketingArea = () => {
               <ol>
                 <li>
                   <span>STEP 1</span>
-                  <p>회원가입, 나의 정보 페이지에서 나의 반려견을 등록해주세요 (없는 경우도 가상으로 진행가능)</p>
+                  <p><strong>회원가입</strong>, 나의 정보 페이지에서 <strong>나의 반려견을 등록</strong>해주세요 (없는 경우도 가상으로 진행가능)</p>
                 </li>
                 <li>
                   <span>STEP 2</span>
-                  <p>메인화면에서 돌보미를 선택하여 예약을 진행합니다. 문의하기도 사용해보세요!</p>
+                  <p><strong>메인화면</strong>에서 <strong>돌보미를 선택</strong>하여 <strong>예약</strong>을 진행합니다. <strong>문의하기</strong>도 사용해보세요!</p>
                 </li>
                 <li>
                   <span>STEP 3</span>
-                  <p>체험 완료 후 구글폼 작성까지 완료하면 끝!</p>
+                  <p>체험 완료 후 <strong>구글폼 작성</strong>까지 완료하면 끝!</p>
                   <a href='https://forms.gle/8P1mzCKyuY9Aj7HGA' target="_blank" rel="noreferrer">구글폼으로 이동</a>
                 </li>
               </ol>
