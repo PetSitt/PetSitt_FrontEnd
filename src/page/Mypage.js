@@ -44,7 +44,7 @@ const Mypage = (props) => {
               <Link to={{ pathname: `/pwchange` }}>비밀번호 변경</Link>
             </div>
             <div className='item'>
-              <Link to={{ pathname: `#0` }}>고객센터</Link>
+              <a href="https://forms.gle/8P1mzCKyuY9Aj7HGA" target="_blank" rel="noreferrer">고객센터</a>
             </div>
           </div>
           <div>
