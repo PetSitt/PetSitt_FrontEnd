@@ -24,8 +24,7 @@ const SitterProfile = () => {
   const { mutate: delect, isSuccess: sitterSuccessDelete } = useMutation(
     apis.sitterprofileDelete,
     {
-      onSuccess: (data) => {
-        console.log("onSuccess",data);
+      onSuccess: () => {
         queryClient.invalidateQueries("sitterprofile");
       },
       onError: (data) => {
@@ -51,23 +50,11 @@ const SitterProfile = () => {
             </div>
             <label className="inner required">
               <p className="tit">이름</p>
-              <Input
-                _width="100%"
-                _height="44px"
-                _type="text"
-                defaultValue={values.sitterName}
-                disabled
-              />
+              <BoxInner className="sitterName">{values.sitterName}</BoxInner>
             </label>
             <label className="inner required">
               <p className="tit">요금</p>
-              <Input
-                _width="100%"
-                _height="44px"
-                _type="text"
-                defaultValue={comma(values.servicePrice)}
-                disabled
-              />
+              <BoxInner className="servicePrice">{comma(values.servicePrice)}</BoxInner>
             </label>
             <CheckWrap>
               <label className="tit">제공 가능한 서비스</label>
@@ -235,7 +222,15 @@ const SitterBut = styled.div`
     color: #fff;
   }
 `
-
+const BoxInner = styled.div`
+  width: 100%;
+  min-height: 48px;
+  line-height: 48px;
+  border: 1px solid rgba(120,120,120,0.4);
+  border-radius: 6px;
+  padding: 0 12px;
+  background: #eee;
+`
 const SitterProfileInsertButton = styled.button`
   font-weight: 700;
   font-size: 16px;

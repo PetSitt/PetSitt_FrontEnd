@@ -31,10 +31,6 @@ const SitterProfileForm2 = () => {
     handleChange(name, value, setValues);
   };
 
-  useEffect(() => {
-    console.log(values);
-  }, []);
-
   const [errorMessages, setErrorMessage] = useState({
     imageUrl: false,
     mainImageUrl: false,
@@ -70,6 +66,7 @@ const SitterProfileForm2 = () => {
         <NavBox _title='상세 정보' _subTitle='2/4' sitterEditProfile />
         <InputBox>
           <label className='tit'>프로필 사진*</label>
+          {console.log("imageUrl:", values.imageUrl)}
           <ImageRegist
             name={'imageUrl'}
             value={data && values.imageUrl}
@@ -85,6 +82,7 @@ const SitterProfileForm2 = () => {
         </InputBox>
         <InputBox>
           <label className='tit'>대표 활동 사진*</label>
+          {console.log("mainImageUrl:", values.mainImageUrl)}
           <ImageRegist
             name={'mainImageUrl'}
             value={data && values.mainImageUrl}

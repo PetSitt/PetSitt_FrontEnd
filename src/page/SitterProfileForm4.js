@@ -37,7 +37,7 @@ function SitterProfileForm4() {
   const { mutate: sitterUpdate } = useMutation(apis.sitterprofilePatch, {
     onSuccess: () => {
       queryClient.invalidateQueries("sitterprofile");
-      window.location.href = "/mypage/sitterprofile";
+      navigate("/mypage/sitterprofile");
     },
     onError: (data) => {
       console.log("onError:",data);

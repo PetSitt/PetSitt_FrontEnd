@@ -37,7 +37,7 @@ const ImageRegist = ({name, value, onChange, setValues}) => {
 
 	return(
 		<ImageRegistBx>
-			<input type="file" multiple id={name} accept="image/png, image/jpeg" name={name} onChange={handleAddImages}/>
+			<input type="file" id={name} accept="image/png, image/jpeg" name={name} onChange={handleAddImages}/>
 			<label htmlFor={name}>
 				<div className="file-add-inner">
 					<i className="ic-plus"></i>
