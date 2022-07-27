@@ -7,6 +7,7 @@ import MapContainer from "./MapContainer";
 import { apis } from "../store/api";
 import { chatApis } from "../store/chatApi";
 
+import pet_noimg from '../assets/img/img_pet_default.png';
 import Modal from '../elements/Modal';
 import StyledButton from '../elements/StyledButton';
 import Reviews from './Reviews';
@@ -411,7 +412,7 @@ const Detail = ({socket}) => {
                       <li key={`pet_${i}`}>
                         <span
                           className="pet_image"
-                          style={{ backgroundImage: `url(${v.petImage})` }}
+                          style={{ backgroundImage: `url(${v.petImage ? v.petImage : pet_noimg})` }}
                         ></span>
                         <p className="pet_name">{v.petName}</p>
                         <p className="pet_type">{v.petAge}살 {v.petType}</p>

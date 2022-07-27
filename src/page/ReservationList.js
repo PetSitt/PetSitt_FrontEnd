@@ -56,7 +56,6 @@ const ReservationList = ({socket}) => {
   });
   const {
 		mutate: reservatioinList,
-		isFetching,
     data: reservationListData,
 	} = useMutation(() => apis.reservationList(selectedTab), {
 		onSuccess: (data) => {
@@ -416,7 +415,8 @@ const ReservationList = ({socket}) => {
   };
   useEffect(() => {
     reservatioinList();
-    queryClient.invalidateQueries('reservationQuery');
+    setProceedings([]);
+    setPastReservation([]);
   }, [selectedTab]);
 
 	useEffect(() => {
@@ -439,6 +439,8 @@ const ReservationList = ({socket}) => {
     }
   },[])
 
+
+  console.log(reservationListData)
   return (
     <>
       <ReservationListPage style={{ paddingBottom: '100px' }}>
@@ -451,308 +453,306 @@ const ReservationList = ({socket}) => {
           />
         </section>
         <section className='page_body'>
-          {isFetching ? (
-            <p>예약 내역을 불러오는 중입니다.</p>
-          ) : (
-            <>
-              <section>
-                <h3>진행중인 예약</h3>
-                <ul>
-                  {proceedings?.length > 0 ? (
-                    selectedTab === 'user' ? (
-                      proceedings.map((v, i) => {
-                        return (
-                          <ReservationItem
-                            key={`reservation_${i}`}
-                            className='proceeding_reservations'
-                          >
-                            <Link
-                              to={`/reservation/detail/${selectedTab}/${v.reservationId}`}
-                              style={{
-                                position: 'absolute',
-                                left: 0,
-                                top: 0,
-                                right: 0,
-                                bottom: 0,
-                              }}
-                            ></Link>
-                            <ReservationTagContainer>
-                              <div>
-                                {v.category.map((category, index) => (
-                                  <Tag key={`category_${index}`}>
-                                    {category}
-                                  </Tag>
-                                ))}
-                              </div>
-                              <div>
-                                {v.reservationDate.map((date, index) => (
-                                  <ReserveDate key={`date_${index}`}>
-                                    {index > 0 ? ', ' + date : date}
-                                  </ReserveDate>
-                                ))}
-                              </div>
-                            </ReservationTagContainer>
-                            <ReservationInfoContainer
-                              style={{ justifyContent: 'space-between' }}
-                            >
-                              <div className='sitterInfo'>
-                                <SitterImage
-                                  style={{
-                                    backgroundImage: `url(${v.imageUrl})`,
-                                    backgroundPosition: 'center',
-                                    backgroundRepeat: 'no-repeat',
-                                    backgroundSize: '75px',
-                                  }}
-                                ></SitterImage>
-                                <SitterInfo>
-                                  <p className='sitterName'>{v.sitterName}</p>
-                                  <p className='sitterAddress'>
-                                    <i className='ic-location' />
-                                    {v.address}
-                                  </p>
-                                  <p className='sitterPhone'>
-                                    <i className='ic-phone' />
-                                    {v.phoneNumber}
-                                  </p>
-                                </SitterInfo>
-                              </div>
-                              <div
-                                className='buttons'
-                                style={{ position: 'relative', zIndex: 2 }}
-                              >
-                                <StyledButton
-                                  _margin='0'
-                                  _padding='6px 0px'
-                                  _title='일지 보기'
-                                  _onClick={() => {
-                                    reservationIdForDiary.current =
-                                      v.reservationId;
-                                    loadDiaryData();
-                                  }}
-                                />
-                                {!v.isPending && (
-                                  <StyledButton
-                                    _bgColor='#ffffff'
-                                    color='#fc9215'
-                                    _margin='0'
-                                    _padding='7px 0px'
-                                    _title='문의하기'
-                                    _border='1px solid #FC9215'
-                                    _onClick={()=>{
-                                      chatInfo.current = {...chatInfo.current, sitterId: v.sitterId}
-                                      openChatRoom();
-                                    }}
-                                  />
-                                )}
-                                {v.isPending && (
-                                  <StyledButton
-                                    _margin='0'
-                                    _title='리뷰 작성하기'
-                                    _onClick={() => {
-                                      setModalType(modalContent.review);
-                                      setReviewPageMode('write');
-                                      setModalDisplay(true);
-                                      dataToSend.current.data.sitterId =
-                                        v.sitterId;
-                                      dataToSend.current.reservationId =
-                                        v.reservationId;
-                                    }}
-                                  />
-                                )}
-                              </div>
-                            </ReservationInfoContainer>
-                            {v.isPending && (
-                              <InformText>
-                                * 리뷰를 작성해야 서비스가 완료됩니다.
-                              </InformText>
-                            )}
-                          </ReservationItem>
-                        );
-                      })
-                    ) : (
-                      proceedings.map((v, i) => {
-                        return (
-                          <ReservationItem
-                            key={`reservation_${i}`}
-                            className='proceeding_reservations'
-                          >
-                            <Link
-                              to={`/reservation/detail/${selectedTab}/${v.reservationId}`}
-                              style={{
-                                position: 'absolute',
-                                left: 0,
-                                top: 0,
-                                right: 0,
-                                bottom: 0,
-                              }}
-                            ></Link>
-                            <ReservationTagContainer>
-                              <div>
-                                {v.category.map((category, index) => (
-                                  <Tag key={`category_${index}`}>
-                                    {category}
-                                  </Tag>
-                                ))}
-                              </div>
-                              <div>
-                                {v.reservationDate.map((date, index) => (
-                                  <ReserveDate key={`date_${index}`}>
-                                    {index > 0 ? ', ' + date : date}
-                                  </ReserveDate>
-                                ))}
-                              </div>
-                            </ReservationTagContainer>
-                            <ReservationInfoContainer style={{justifyContent: 'space-between'}}>
-                              <div className='sitterInfo'>
-                                <SitterInfo>
-                                  <p className='sitterName'>{v.userName}</p>
-                                  <p className='sitterPhone'>
-                                    <i className='ic-phone' />
-                                    {v.phoneNumber}
-                                  </p>
-                                </SitterInfo>
-                              </div>
-                              <div
-                                className='buttons sitter'
-                                style={{ position: 'relative', zIndex: 2 }}
-                              >
-                                <StyledButton
-                                  _margin='0'
-                                  _padding='6px 0px'
-                                  _title='일지 작성하기'
-                                  _onClick={() => {
-                                    reservationIdForDiary.current =
-                                      v.reservationId;
-                                    loadDiaryData();
-                                  }}
-                                />
-                              </div>
-                            </ReservationInfoContainer>
-                            {v.isPending && (
-                              <InformText>
-                                * 신청자가 리뷰를 작성해야 서비스가
-                                완료됩니다.
-                              </InformText>
-                            )}
-                          </ReservationItem>
-                        );
-                      })
-                    )
-                  ) : (
-                    <NoResult>진행중인 예약 내역이 없습니다.</NoResult>
-                  )}
-                </ul>
-              </section>
-              <section>
-                <h3>지난 예약</h3>
-                <ul>
-                  {pastReservation?.length > 0 ? (
-                    pastReservation.map((v, i) => {
-                      return (
-                        <ReservationItem
-                          key={`reservation_${i}`}
+          <section>
+            <h3>진행중인 예약</h3>
+            <ul>
+              {proceedings?.length > 0 ? (
+                selectedTab === 'user' ? (
+                  proceedings.map((v, i) => {
+                    return (
+                      <ReservationItem
+                        key={`reservation_${i}`}
+                        className='proceeding_reservations'
+                      >
+                        <Link
+                          to={`/reservation/detail/${selectedTab}/${v.reservationId}`}
+                          style={{
+                            position: 'absolute',
+                            left: 0,
+                            top: 0,
+                            right: 0,
+                            bottom: 0,
+                          }}
+                        ></Link>
+                        <ReservationTagContainer>
+                          <div>
+                            {v.category.map((category, index) => (
+                              <Tag key={`category_${index}`}>
+                                {category}
+                              </Tag>
+                            ))}
+                          </div>
+                          <div>
+                            {v.reservationDate.map((date, index) => (
+                              <ReserveDate key={`date_${index}`}>
+                                {index > 0 ? ', ' + date : date}
+                              </ReserveDate>
+                            ))}
+                          </div>
+                        </ReservationTagContainer>
+                        <ReservationInfoContainer
+                          style={{ justifyContent: 'space-between' }}
                         >
-                          <Link
-                            to={`/reservation/detail/${selectedTab}/${v.reservationId}`}
-                            style={{
-                              position: 'absolute',
-                              left: 0,
-                              top: 0,
-                              right: 0,
-                              bottom: 0,
-                            }}
-                          ></Link>
-                          <ReservationTagContainer>
-                            <div>
-                              {v.category.map((category, index) => (
-                                <Tag key={`category_${index}`}>{category}</Tag>
-                              ))}
-                              {v.reservationState === '취소완료' ? (
-                                <TagCancel>{v.reservationState}</TagCancel>
-                              ) : null}
-                            </div>
-                            <div>
-                              {v.reservationDate.map((date, index) => (
-                                <ReserveDate key={`date_${index}`}>
-                                  {index > 0 ? ', ' + date : date}
-                                </ReserveDate>
-                              ))}
-                            </div>
-                          </ReservationTagContainer>
-                          <ReservationInfoContainer>
-                            {selectedTab === 'user' ? (
-                              <SitterInfo className='sitterInfo user' style={{zIndex: 2}}>
-                                <p className='sitterName'>{v.sitterName}</p>
-                                <button
-                                  type='button'
-                                  onClick={() =>
-                                    navigate(`/detail/${v.sitterId}`)
-                                  }
-                                >
-                                  {v.sitterName}님 상세페이지
-                                </button>
-                              </SitterInfo>
-                            ) : (
-                              <UserInfo>
-                                <dl className='userName'>
-                                  <dt style={{color: '#676767'}}>신청자</dt>
-                                  <dd>{v.userName}</dd>
-                                </dl>
-                              </UserInfo>
+                          <div className='sitterInfo'>
+                            <SitterImage
+                              style={{
+                                backgroundImage: `url(${v.imageUrl})`,
+                                backgroundPosition: 'center',
+                                backgroundRepeat: 'no-repeat',
+                                backgroundSize: '75px',
+                              }}
+                            ></SitterImage>
+                            <SitterInfo>
+                              <p className='sitterName'>{v.sitterName}</p>
+                              <p className='sitterAddress'>
+                                <i className='ic-location' />
+                                {v.address}
+                              </p>
+                              <p className='sitterPhone'>
+                                <i className='ic-phone' />
+                                {v.phoneNumber}
+                              </p>
+                            </SitterInfo>
+                          </div>
+                          <div
+                            className='buttons'
+                            style={{ position: 'relative', zIndex: 2 }}
+                          >
+                            <StyledButton
+                              _margin='0'
+                              _padding='6px 0px'
+                              _title='일지 보기'
+                              _onClick={() => {
+                                reservationIdForDiary.current =
+                                  v.reservationId;
+                                loadDiaryData();
+                              }}
+                            />
+                            {!v.isPending && (
+                              <StyledButton
+                                _bgColor='#ffffff'
+                                color='#fc9215'
+                                _margin='0'
+                                _padding='7px 0px'
+                                _title='문의하기'
+                                _border='1px solid #FC9215'
+                                _onClick={()=>{
+                                  chatInfo.current = {...chatInfo.current, sitterId: v.sitterId}
+                                  openChatRoom();
+                                }}
+                              />
                             )}
-                            {v.reservationState !== '취소완료' && (
-                              <div
-                                className='buttons'
-                                style={{ position: 'relative', zIndex: 2 }}
-                              >
-                                <StyledButton
-                                  _margin='0'
-                                  _title='리뷰 보기'
-                                  color={'#fc9215'}
-                                  _bgColor={'#fff'}
-                                  _border={'1px solid #fc9215'}
-                                  _onClick={() => {
-                                    idForReview.current = v.reservationId;
-                                    loadReview();
-                                  }}
-                                />
-                                {v.isPending && (
-                                  <StyledButton
-                                    _margin='0'
-                                    _title='돌봄일지 보기'
-                                    color={'#fc9215'}
-                                    _bgColor={'#fff'}
-                                    _border={'1px solid #fc9215'}
-                                    _onClick={() => {
-                                      reservationIdForDiary.current =
-                                        v.reservationId;
-                                      loadDiaryData();
-                                    }}
-                                  />
-                                )}
-                              </div>
+                            {v.isPending && (
+                              <StyledButton
+                                _margin='0'
+                                _title='리뷰 작성하기'
+                                _onClick={() => {
+                                  setModalType(modalContent.review);
+                                  setReviewPageMode('write');
+                                  setModalDisplay(true);
+                                  dataToSend.current.data.sitterId =
+                                    v.sitterId;
+                                  dataToSend.current.reservationId =
+                                    v.reservationId;
+                                }}
+                              />
                             )}
-                          </ReservationInfoContainer>
-                          {v.isPending && (
-                            <InformText>
-                              * 리뷰를 작성해야 서비스가 완료됩니다.
-                            </InformText>
-                          )}
-                        </ReservationItem>
-                      );
-                    })
-                  ) : (
-                    <NoResult>지난 예약 내역이 없습니다.</NoResult>
-                  )}
-                </ul>
-                {!buttonHide && (
-                  <div style={{textAlign: 'center'}}>
-                    <LoadMoreButton type="button" onClick={() => morePastReviews()}>지난 예약 더보기</LoadMoreButton>
-                  </div>
-                )}
-              </section>
-            </>
-          )}
+                          </div>
+                        </ReservationInfoContainer>
+                        {v.isPending && (
+                          <InformText>
+                            * 리뷰를 작성해야 서비스가 완료됩니다.
+                          </InformText>
+                        )}
+                      </ReservationItem>
+                    );
+                  })
+                ) : (
+                  proceedings.map((v, i) => {
+                    return (
+                      <ReservationItem
+                        key={`reservation_${i}`}
+                        className='proceeding_reservations'
+                      >
+                        <Link
+                          to={`/reservation/detail/${selectedTab}/${v.reservationId}`}
+                          style={{
+                            position: 'absolute',
+                            left: 0,
+                            top: 0,
+                            right: 0,
+                            bottom: 0,
+                          }}
+                        ></Link>
+                        <ReservationTagContainer>
+                          <div>
+                            {v.category.map((category, index) => (
+                              <Tag key={`category_${index}`}>
+                                {category}
+                              </Tag>
+                            ))}
+                          </div>
+                          <div>
+                            {v.reservationDate.map((date, index) => (
+                              <ReserveDate key={`date_${index}`}>
+                                {index > 0 ? ', ' + date : date}
+                              </ReserveDate>
+                            ))}
+                          </div>
+                        </ReservationTagContainer>
+                        <ReservationInfoContainer style={{justifyContent: 'space-between'}}>
+                          <div className='sitterInfo'>
+                            <SitterInfo>
+                              <p className='sitterName'>{v.userName}</p>
+                              <p className='sitterPhone'>
+                                <i className='ic-phone' />
+                                {v.phoneNumber}
+                              </p>
+                            </SitterInfo>
+                          </div>
+                          <div
+                            className='buttons sitter'
+                            style={{ position: 'relative', zIndex: 2 }}
+                          >
+                            <StyledButton
+                              _margin='0'
+                              _padding='6px 0px'
+                              _title='일지 작성하기'
+                              _onClick={() => {
+                                reservationIdForDiary.current =
+                                  v.reservationId;
+                                loadDiaryData();
+                              }}
+                            />
+                          </div>
+                        </ReservationInfoContainer>
+                        {v.isPending && (
+                          <InformText>
+                            * 신청자가 리뷰를 작성해야 서비스가
+                            완료됩니다.
+                          </InformText>
+                        )}
+                      </ReservationItem>
+                    );
+                  })
+                )
+              ) : (
+                <>
+                  {
+                    reservationListData && <NoResult>진행중인 예약 내역이 없습니다.</NoResult>
+                  }
+                </>
+              )}
+            </ul>
+          </section>
+          <section>
+            <h3>지난 예약</h3>
+            <ul>
+              {pastReservation?.length > 0 ? (
+                pastReservation.map((v, i) => {
+                  return (
+                    <ReservationItem
+                      key={`reservation_${i}`}
+                    >
+                      <Link
+                        to={`/reservation/detail/${selectedTab}/${v.reservationId}`}
+                        style={{
+                          position: 'absolute',
+                          left: 0,
+                          top: 0,
+                          right: 0,
+                          bottom: 0,
+                        }}
+                      ></Link>
+                      <ReservationTagContainer>
+                        <div>
+                          {v.category.map((category, index) => (
+                            <Tag key={`category_${index}`}>{category}</Tag>
+                          ))}
+                          {v.reservationState === '취소완료' ? (
+                            <TagCancel>{v.reservationState}</TagCancel>
+                          ) : null}
+                        </div>
+                        <div>
+                          {v.reservationDate.map((date, index) => (
+                            <ReserveDate key={`date_${index}`}>
+                              {index > 0 ? ', ' + date : date}
+                            </ReserveDate>
+                          ))}
+                        </div>
+                      </ReservationTagContainer>
+                      <ReservationInfoContainer>
+                        {selectedTab === 'user' ? (
+                          <SitterInfo className='sitterInfo user' style={{zIndex: 2}}>
+                            <p className='sitterName'>{v.sitterName}</p>
+                            <button
+                              type='button'
+                              onClick={() =>
+                                navigate(`/detail/${v.sitterId}`)
+                              }
+                            >
+                              {v.sitterName}님 상세페이지
+                            </button>
+                          </SitterInfo>
+                        ) : (
+                          <UserInfo>
+                            <dl className='userName'>
+                              <dt style={{color: '#676767'}}>신청자</dt>
+                              <dd>{v.userName}</dd>
+                            </dl>
+                          </UserInfo>
+                        )}
+                        {v.reservationState !== '취소완료' && (
+                          <div
+                            className='buttons'
+                            style={{ position: 'relative', zIndex: 2 }}
+                          >
+                            <StyledButton
+                              _margin='0'
+                              _title='리뷰 보기'
+                              color={'#fc9215'}
+                              _bgColor={'#fff'}
+                              _border={'1px solid #fc9215'}
+                              _onClick={() => {
+                                idForReview.current = v.reservationId;
+                                loadReview();
+                              }}
+                            />
+                            {v.isPending && (
+                              <StyledButton
+                                _margin='0'
+                                _title='돌봄일지 보기'
+                                color={'#fc9215'}
+                                _bgColor={'#fff'}
+                                _border={'1px solid #fc9215'}
+                                _onClick={() => {
+                                  reservationIdForDiary.current =
+                                    v.reservationId;
+                                  loadDiaryData();
+                                }}
+                              />
+                            )}
+                          </div>
+                        )}
+                      </ReservationInfoContainer>
+                      {v.isPending && (
+                        <InformText>
+                          * 리뷰를 작성해야 서비스가 완료됩니다.
+                        </InformText>
+                      )}
+                    </ReservationItem>
+                  );
+                })
+              ) : (
+                <NoResult>지난 예약 내역이 없습니다.</NoResult>
+              )}
+            </ul>
+            {!buttonHide && (
+              <div style={{textAlign: 'center'}}>
+                <LoadMoreButton type="button" onClick={() => morePastReviews()}>지난 예약 더보기</LoadMoreButton>
+              </div>
+            )}
+          </section>
         </section>
       </ReservationListPage>
       {modalType && (
