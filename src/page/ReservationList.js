@@ -59,7 +59,7 @@ const ReservationList = ({socket, tab, setTab}) => {
     data: reservationListData,
 	} = useMutation(() => apis.reservationList(selectedTab), {
 		onSuccess: (data) => {
-      console.log('loaded', data)
+      // console.log('loaded', data)
 			setProceedings(data.data.proceedings);
 			setPastReservation(data.data.pasts);
       if(data.data.pasts.length < 3){
@@ -191,7 +191,7 @@ const ReservationList = ({socket, tab, setTab}) => {
   }
   const {mutate: loadDiaryData} = useMutation(()=>loadDiaryApi(reservationIdForDiary.current), {
     onSuccess: (data) => {
-      console.log(data, 'loaded')
+      // console.log(data, 'loaded')
       const _data = {
         checkList: data.data.checkList?.length ? data.data.checkList?.length : 0,
         inputValues: data.data.checkList ? data.data.checkList : [],
@@ -218,7 +218,6 @@ const ReservationList = ({socket, tab, setTab}) => {
           setModalType(modalContent.diaryView);
         }else{
           // 진행중인 예약일 경우 돌봄일지 작성 및 수정 가능
-          console.log('돌보미탭, 데이터있음, 진행중')
           setDiaryStatus('get');
           diaryPageMode.current = 'view';
           setModalType(modalContent.diary);
@@ -227,7 +226,6 @@ const ReservationList = ({socket, tab, setTab}) => {
       setModalDisplay(true);
     },
     onError: (data) => {
-      console.log(data, 'diary loading failed');
       if (selectedTab === 'user' && data.response.status === 400) {
         setModalType(modalContent.noDiary);
         setModalDisplay(true);
@@ -240,7 +238,6 @@ const ReservationList = ({socket, tab, setTab}) => {
         diaryPageMode.current = 'readonly';
         setModalType(modalContent.diaryView);
       }else{
-        console.log('돌보미탭, 데이터 없음, 진행 중')
         // 진행중인 예약일 경우 돌봄일지 작성 및 수정 가능
         // setDiaryStatus('clear');
         diaryPageMode.current = 'write';

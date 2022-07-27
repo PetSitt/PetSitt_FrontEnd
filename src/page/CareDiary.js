@@ -14,7 +14,6 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
   const [datas, setDatas] = useState({checkList, inputValues, checked, images, imageUrls, files, text});
   const [dataForModify, setDataForModify] = useState({addImage: [], deleteImage: []});
   useEffect(()=>{
-    console.log(1)
     setDatas(()=>{
       return {checkList, inputValues, checked, images, imageUrls, files, text};
     })
@@ -22,13 +21,11 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
 
 
   useEffect(()=>{
-    console.log(2)
     setDiaryData(datas);
   },[datas]); // state 하나 바뀔때마다 refresh 되니까 비효율적인 것 같은데...
 
   useEffect(()=>{
     if(diaryStatus === 'get') {
-      console.log(3)
       setCheckList(diaryData.checkList);
       setInputValues(diaryData.inputValues);
       setChecked(diaryData.checked);
@@ -41,7 +38,6 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
       }
     }
     if(diaryStatus === 'clear'){
-      console.log(4)
       setCheckList(0);
       setInputValues([]);
       setChecked([]);
@@ -50,17 +46,14 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
       setFiles([]);
       setText(null);
       if(mode.current === 'view'){ // 수정모드일 경우
-        console.log(5)
         setDataForModify({addImage: [], deleteImage: []});
       }
     }
     if(diaryStatus === 'save'){ // 수정모드일 때 데이터 저장
-      console.log(6)
       modifyData.current = dataForModify;
     }
   },[diaryStatus]);
 
-  console.log(mode.current, datas, dataForModify)
   return (
     <CareDiaryPage ref={diaryPageRef}>
       <section>
@@ -241,7 +234,7 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
                         <span style={{backgroundImage: `url(${imageUrls[i]&&imageUrls[i]})`}}>{imageUrls[i] && <button type="button" className="removeImageButton"
                           onClick={async(e)=>{
                             e.preventDefault();
-                            console.log('삭제 버튼 clicked', imageUrls[i].split(':')[0]);
+                            // console.log('삭제 버튼 clicked', imageUrls[i].split(':')[0]);
                             if(mode === 'write'){
                               // 작성 모드일 경우
                               // 미리보기 이미지 배열에서 해당 주소 삭제
@@ -261,14 +254,14 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
                                 return _new;
                               });
                               if(imageUrls[i].split(':')[0] === 'https'){
-                                console.log('기존에 등록된 이미지 삭제');
+                                // console.log('기존에 등록된 이미지 삭제');
                                 setDataForModify((prev)=>{
                                   const _new = {...prev};
                                   _new.deleteImage.push(imageUrls[i]);
                                   return _new;
                                 })
                               }else{
-                                console.log('새로 추가한 이미지 다시 삭제');
+                                // console.log('새로 추가한 이미지 다시 삭제');
                                 let index = 0;
                                 let addFileIndex = i;
                                 while(index < i){
