@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Route, Routes } from 'react-router-dom';
 // page
 import Home from './page/Home';
@@ -27,6 +27,7 @@ import ChatRoom from './page/ChatRoom';
 
  
 const Router = ({socket}) => {
+  const [tab, setTab] = useState('user');
   return (
     <Routes>
       <Route path='/' element={<Home />} exact />
@@ -63,11 +64,10 @@ const Router = ({socket}) => {
       <Route path='/login' element={<Login socket={socket}/>}></Route>
       <Route path='/search' element={<SearchAddress />}></Route>
       <Route path='/reservation' element={<Reservation />}></Route>
-      ReservationDetail
-      <Route path='/reservation/list' element={<ReservationList socket={socket}/>}></Route>
+      <Route path='/reservation/list' element={<ReservationList socket={socket} tab={tab} setTab={setTab}/>}></Route>
       <Route
         path='/reservation/detail/:type/:id'
-        element={<ReservationDetail />}
+        element={<ReservationDetail setTab={setTab}/>}
       ></Route>
       <Route path="/oauth/kakao/callback" element={<Auth />}></Route>
       <Route path="/chats" element={<ChatList />}></Route>

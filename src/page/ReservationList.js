@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import styled from 'styled-components';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
+import { useQuery, useMutation } from 'react-query';
 import { Link } from 'react-router-dom';
 import { apis } from '../store/api';
 import { chatApis } from "../store/chatApi";
@@ -13,13 +13,13 @@ import Review from './Review';
 import CareDiary from './CareDiary';
 import Modal from '../elements/Modal';
 import ChatList from "./ChatList";
+import Alert from '../elements/Alert';
 
-const ReservationList = ({socket}) => {
-  const queryClient = useQueryClient();
+const ReservationList = ({socket, tab, setTab}) => {
   const navigate = useNavigate();
   const [pastReservation, setPastReservation] = useState();
   const [proceedings, setProceedings] = useState();
-  const [selectedTab, setSelectedTab] = useState('user');
+  const [selectedTab, setSelectedTab] = useState(tab);
   const [modalDisplay, setModalDisplay] = useState(false);
   const [modalType, setModalType] = useState(null);
   const reviewTextRef = useRef();
@@ -68,20 +68,19 @@ const ReservationList = ({socket}) => {
       }
 		},
 		onError: (data) => {
-      console.log(data, selectedTab)
       if(selectedTab === 'sitter' && data.response.status === 402){
         setModalType(modalContent.noSitterInfo);
         setModalDisplay(true);
       }
 		},
     onSettled: (data) => {
-      console.log('settled', data)
+      // console.log('settled', data)
     },
 		staleTime: Infinity,
 	});
  
   const registerReviewApi = (reservationId, data) => {
-    console.log(reservationId, data);
+    // console.log(reservationId, data);
     return apis.registerReview(reservationId, data);
   };
   const { mutate: saveReview } = useMutation(
@@ -92,7 +91,7 @@ const ReservationList = ({socket}) => {
       ),
     {
       onSuccess: (data) => {
-        console.log(data, 'review registered');
+        // console.log(data, 'review registered');
         setModalDisplay(false);
         setModalType(null);
         setReviewText(null);
@@ -120,7 +119,7 @@ const ReservationList = ({socket}) => {
       ),
     {
       onSuccess: (data) => {
-        console.log(data, 'loaded more reviews');
+        // console.log(data, 'loaded more reviews');
         if (data.data.reservations.length < 3) {
           setButtonHide(true);
           return;
@@ -130,10 +129,10 @@ const ReservationList = ({socket}) => {
         });
       },
       onError: (data) => {
-        console.log(data, 'loading more reviews failed');
+        // console.log(data, 'loading more reviews failed');
         if (data.response.status === 401) {
-          // 모달띄우기
           setButtonHide(true);
+          // alert
         }
       },
     }
@@ -142,7 +141,7 @@ const ReservationList = ({socket}) => {
     () => apis.loadReview(idForReview.current),
     {
       onSuccess: (data) => {
-        console.log(data, 'review loaded');
+        // console.log(data, 'review loaded');
         setModalType(modalContent.reviewView);
         setReviewPageMode('clear');
         setModalDisplay(true);
@@ -171,7 +170,7 @@ const ReservationList = ({socket}) => {
   };
   const saveDiary = useQuery(['saveDiaryQuery', diaryData], ()=>registerDiaryApi(diaryData), {
     onSuccess: (data) => {
-      console.log(data, 'diary saving success');
+      // console.log(data, 'diary saving success');
       setDiarySave(false);
       setModalDisplay(false);
       setModalType(null);
@@ -228,7 +227,6 @@ const ReservationList = ({socket}) => {
       }
       const reservationId = reservationIdForDiary.current;
       const status = pastReservation.filter((v)=>v.reservationId === reservationId);
-      console.log(status, '?????')
       if(status.length){
         // 지난 예약일 경우 읽기만 가능
         diaryPageMode.current = 'readonly';
@@ -309,7 +307,6 @@ const ReservationList = ({socket}) => {
     setModalType(modalContent.diaryCancel);
   };
   const confirmWritingDiary = () => {
-    console.log(diaryPageMode.current);
     if (diaryPageMode.current === 'write') {
       // 최초 등록일 경우
       setDiaryStatus('save');
@@ -325,10 +322,8 @@ const ReservationList = ({socket}) => {
     reservationIdForDiary.current = null;
     if (diaryPageMode.current === 'write') {
       setDiaryStatus('clear');
-      console.log('write close');
     } else {
       setDiaryStatus(null);
-      console.log('view close');
     }
   };
   const modalContent = {
@@ -417,6 +412,7 @@ const ReservationList = ({socket}) => {
     reservatioinList();
     setProceedings([]);
     setPastReservation([]);
+    setTab(selectedTab);
   }, [selectedTab]);
 
 	useEffect(() => {
@@ -439,8 +435,6 @@ const ReservationList = ({socket}) => {
     }
   },[])
 
-
-  console.log(reservationListData)
   return (
     <>
       <ReservationListPage style={{ paddingBottom: '100px' }}>
@@ -449,6 +443,7 @@ const ReservationList = ({socket}) => {
           <Tabs
             _tab={['사용자', '돌보미']}
             _value={['user', 'sitter']}
+            _checked={selectedTab}
             setSelectedTab={setSelectedTab}
           />
         </section>
@@ -485,7 +480,7 @@ const ReservationList = ({socket}) => {
                           <div>
                             {v.reservationDate.map((date, index) => (
                               <ReserveDate key={`date_${index}`}>
-                                {index > 0 ? ', ' + date : date}
+                                {date}
                               </ReserveDate>
                             ))}
                           </div>
@@ -595,7 +590,7 @@ const ReservationList = ({socket}) => {
                           <div>
                             {v.reservationDate.map((date, index) => (
                               <ReserveDate key={`date_${index}`}>
-                                {index > 0 ? ', ' + date : date}
+                                {date}
                               </ReserveDate>
                             ))}
                           </div>
@@ -676,7 +671,7 @@ const ReservationList = ({socket}) => {
                         <div>
                           {v.reservationDate.map((date, index) => (
                             <ReserveDate key={`date_${index}`}>
-                              {index > 0 ? ', ' + date : date}
+                              {date}
                             </ReserveDate>
                           ))}
                         </div>
@@ -820,6 +815,7 @@ const ReservationList = ({socket}) => {
       {
         chatInfo.current?.chatRoomId && popup.popup && <ChatList socket={socket} room={chatInfo.current.chatRoomId} detailOnly={true} popup={popup.popup} setPopup={setPopup}/>
       }
+      {(pastReservation?.length > 0 && buttonHide) && <Alert _text={'추가로 불러올 지난 예약 리스트가 없습니다.'}/>}
     </>
   );
 };
@@ -837,7 +833,7 @@ const ReservationItem = styled.li`
   padding: 16px;
   border-radius: 10px;
   border: 1px solid #ddd;
-  margin-bottom: 36px;
+  margin-bottom: 16px;
   &.proceeding_reservations{
     .sitterInfo{
       p{
@@ -896,7 +892,7 @@ const ReservationItem = styled.li`
 const ReservationTagContainer = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   margin-bottom: 10px;
 `;
