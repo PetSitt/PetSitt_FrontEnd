@@ -11,7 +11,7 @@ import Modal from '../elements/Modal';
 const Reservation = () => {
   const useClient = useQueryClient();
   const navigate = useNavigate();
-  const infoData = localStorage.getItem('reservationInfo');
+  const infoData = sessionStorage.getItem('reservationInfo');
   const [info, setInfo] = useState(infoData && JSON.parse(infoData));
   const weekdays = ['일', '월', '화', '수', '목', '금', '토', '일'];
   const [petsData, setPetsData] = useState();
@@ -23,20 +23,14 @@ const Reservation = () => {
   const [page, setPage] = useState('reservation');
 
   const sendRequestApi = (data, sitterId) => {
-    return apis.makeReservation(dataForRequest, info.sitterId)
+    return apis.makeReservation(data, sitterId)
   }
-  console.log(info)
-  const sendRequest = useQuery(['requestStatus', dataForRequest, info.sitterId], ()=>sendRequestApi(dataForRequest, info.sitterId), {
+  const sendRequest = useQuery(['requestStatus',dataForRequest, info.sitterId], ()=>sendRequestApi(dataForRequest, info.sitterId), {
     onSuccess: (data) => {
-      if(data.data.msg === '예약 완료'){
-        setRequestStatus(false);
-        localStorage.removeItem('reservationInfo');
-        setPage('done');
-      }
-      console.log('예약 완료')
+      setPage('done');
+      setRequestStatus(false);
     },
     onError: (data) => {
-      console.log(data, 'request error');
       // 403예약 불가능 날짜
     },
     enabled: !!requestStatus,
@@ -56,23 +50,38 @@ const Reservation = () => {
   const modalContent = {
     notSelected: {alert: true, title: '반려견 선택', text: '반려견을 선택해주세요.', confirmFn: ()=>setModalDisplay(false)},
     confirm: {alert: false, title: '예약 확정', text: '예약을 확정하시겠습니까?', _confirm: '예약하기', _cancel: '취소', confirmFn: confirmReservation, cancelFn: ()=>setModalDisplay(false)},
+    error: {alert: true, text: '잘못된 접근입니다. 다시 시도해주세요.', _confirm: '확인', confirmFn: ()=>navigate(-1)},
   };
   const {data: petsQuery} = useQuery('petsData', apis.reservation, {
     onSuccess: (data) => {
-      console.log(data, 'success');
       if(data.data.pets.length){
         setPetsData(data.data.pets);
       }
     },
-    onError: (data) => {
-      console.log(data, 'error');
-    },
+    
     refetchOnMount: 'always',
     staleTime: Infinity,
   })
 
+  
+
+  console.log(requestStatus)
+  if(!infoData) return (
+    <>
+    {
+      !infoData && (
+        <Modal _alert={true} _display={true} confirmOnClick={()=>navigate(-1)} _confirm={'확인'}>
+          <div className="text_area">
+            <p>잘못된 접근입니다.</p>
+          </div>
+        </Modal>
+      )
+    }
+    </>
+  )
   if(page !== 'reservation') return <Navigate to="/reservation/list"/>
-  if(petsQuery.isLoading) return '예약페이지 로딩중';
+  if(petsQuery.isLoading || !info || !petsData) return null;
+
   return (
     <>
       <ReservationPage>
@@ -116,7 +125,7 @@ const Reservation = () => {
             <h3>맡기는 반려동물</h3>
             <ul>
               {
-                petsData?.length ? (
+                petsData.length ? (
                   petsData.map((v,i)=>{
                     return (
                       <PetItem key={`pet_${i}`}>
@@ -124,12 +133,12 @@ const Reservation = () => {
                           <input type="checkbox" onChange={(e)=>{
                             if(e.target.checked){
                               setPetsForService((prev)=>{
-                                const _data = prev ? [...prev, v._id] : [];
+                                const _data = prev ? [...prev, v.petId] : [];
                                 return _data;
                               })
                             }else{
                               setPetsForService((prev)=>{
-                                const _data = [...prev].filter(item=>item !== v._id);
+                                const _data = [...prev].filter(item=>item !== v.petId);
                                 return _data;
                               })
                             }
