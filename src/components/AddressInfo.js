@@ -13,11 +13,13 @@ const AddressInfo = ({
   return (
     <ContensInner className={'contents'}>
       <div className='postNumber box'>
+        {console.log(_zonecode)}
         <Input
           _type='text'
           _placeholder={'우편번호'}
-          value={_zonecode}
+          defaultValue={_zonecode}
           onChange={onChange}
+          disabled
         />
         <div className='postLink' onClick={handlePost}>
           우편번호
