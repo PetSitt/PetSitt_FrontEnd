@@ -6,6 +6,7 @@ import Modal from "../elements/Modal";
 import NavBox from "../elements/NavBox";
 import StyledContainer from "../elements/StyledContainer";
 import { apis } from "../store/api";
+import pet_noimg from '../assets/img/img_pet_default.png';
 
 const Petprofile = () => {
   const id = useRef();
@@ -53,7 +54,7 @@ const Petprofile = () => {
                 <PetInfo>
                   <div
                     className="bgImg"
-                    style={{ backgroundImage: `url(${petImage ? petImage : "/images/placeholder_150.png"})` }}
+                    style={{ backgroundImage: `url(${petImage ? petImage : pet_noimg})` }}
                   ></div>
                   <div>
                     <p className="petName">{petName}</p>
