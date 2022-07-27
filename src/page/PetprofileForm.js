@@ -8,6 +8,7 @@ import StyledContainer from "../elements/StyledContainer";
 import NavBox from "../elements/NavBox";
 import InputBox from "../elements/InputBox";
 import StyledButton from "../elements/StyledButton";
+import pet_noimg from '../assets/img/img_pet_default.png';
 
 const INITIAL_VALUES = {
   petName: "",
@@ -83,6 +84,27 @@ const PetprofileForm = () => {
     },
   });
 
+
+  const [errorMessages, setErrorMessage] = useState({
+    petName: false,
+    petAge: false,
+    petType: false,
+  })
+
+  const toggleErrorMessage = (target, status) => {
+    setErrorMessage((prev)=>{
+      const newData = {...prev};
+      newData[target] = status;
+      return newData;
+    })
+  }
+
+
+  const doValidation = () => {
+    
+  }
+  console.log(errorMessages)
+
   // 등록 및 수정하는 함수
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -94,12 +116,23 @@ const PetprofileForm = () => {
     formData.append("petSpay", values.petSpay);
     formData.append("petIntro", values.petIntro);
     formData.append("petImage", values.petImage);
-
-    const fields = {
-      id: values.petId,
-      data: formData,
-    };
-    data ? update(fields) : create(formData);
+    
+    let emptyLength = 0;
+    for(let i=0; i<Object.keys(errorMessages).length; i++){
+      if(!values[Object.keys(errorMessages)[i]] || values[Object.keys(errorMessages)[i]] === ''){
+        toggleErrorMessage(Object.keys(errorMessages)[i], true);
+        emptyLength++;
+      }else{
+        toggleErrorMessage(Object.keys(errorMessages)[i], false);
+      }
+    }
+    if(emptyLength === 0){
+      const fields = {
+        id: values.petId,
+        data: formData,
+      };
+      data ? update(fields) : create(formData);
+    }
   };
 
   return (
@@ -107,7 +140,7 @@ const PetprofileForm = () => {
       <NavBox _title="반려동물 프로필" />
       {!isSuccess ? (
         <Form onSubmit={handleSubmit}>
-          <ImageBox onClick={handleClickUpload}>
+          <ImageBox onClick={handleClickUpload} style={{position: 'relative', width: '90px', margin: '0 auto'}}>
             <PreviewImage
               style={{
                 backgroundImage: `url(${
@@ -115,7 +148,7 @@ const PetprofileForm = () => {
                     ? imageSrc
                     : values.petImage?.length > 0
                     ? values?.petImage
-                    : "/images/placeholder_150.png"
+                    : pet_noimg
                 })`,
               }}
               alt="petPhoto"
@@ -137,24 +170,36 @@ const PetprofileForm = () => {
             </IBox>
           </ImageBox>
           <InputBox>
-            <label className="tit">반려동물 이름</label>
+            <label className="tit">반려견 이름 *</label>
             <input
               type="text"
               name="petName"
               placeholder="이름을 적어주세요."
-              onChange={handleInputChange}
+              onChange={(e)=>{
+                handleInputChange(e);
+                if(e.target.value.trim().length > 0) toggleErrorMessage('petName', false);
+              }}
               defaultValue={data && values.petName}
             />
+            {
+              errorMessages.petName && <Message>반려견 이름을 입력해주세요.</Message>
+            }
           </InputBox>
           <InputBox>
-            <label className="tit">나이</label>
+            <label className="tit">나이 *</label>
             <input
-              type="text"
+              type="number"
               name="petAge"
               placeholder="나이를 적어주세요."
-              onChange={handleInputChange}
               defaultValue={data && values.petAge}
+              onChange={(e)=>{
+                handleInputChange(e);
+                if(e.target.value.trim().length > 0) toggleErrorMessage('petAge', false);
+              }}
             />
+            {
+              errorMessages.petAge && <Message>반려견 나이를 입력해주세요.</Message>
+            }
           </InputBox>
           <InputBox outlined>
             <label className="tit">몸무게</label>
@@ -167,7 +212,7 @@ const PetprofileForm = () => {
             />
           </InputBox>
           <RadioBox>
-            <label className="tit">중성화</label>
+            <label className="tit">중성화 *</label>
             <RadioGroup>
               <label htmlFor="1">
                 <input
@@ -199,16 +244,22 @@ const PetprofileForm = () => {
           </RadioBox>
           <InputBox>
             <label htmlFor="kind" className="tit">
-              품종
+              품종 *
             </label>
             <input
               type="text"
               id="kind"
               name="petType"
               placeholder="품종을 적어주세요."
-              onChange={handleInputChange}
               defaultValue={data && values.petType}
+              onChange={(e)=>{
+                handleInputChange(e);
+                if(e.target.value.trim().length > 0) toggleErrorMessage('petType', false);
+              }}
             />
+            {
+              errorMessages.petType && <Message>반려견 품종을 입력해주세요.</Message>
+            }
           </InputBox>
           <InputBox>
             <label htmlFor="intro" className="tit">
@@ -242,8 +293,16 @@ const PetprofileForm = () => {
   );
 };
 
+
+const Message = styled.p`
+  font-size: 13px;
+  align-self: flex-start;
+  padding: 5px 0;
+  color: #F01D1D;
+`;
 const Form = styled.form`
-  input[type="text"] {
+  input[type="text"],
+  input[type="number"] {
     width: 100%;
     min-height: 48px;
     background: #ffffff;
@@ -280,11 +339,14 @@ const PreviewImage = styled.div`
   border-radius: 50%;
   background-repeat: no-repeat;
   background-position: center;
-  background-size: 135px;
+  background-size: contain;
   cursor: pointer;
 `;
 
 const IBox = styled.div`
+  position: absolute;
+  right: -6px;
+  bottom: 0;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
