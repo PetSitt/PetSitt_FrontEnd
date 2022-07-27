@@ -182,7 +182,7 @@ function Home() {
         }
       );
     } else {
-			setModalDisplay(true);
+			setSearchingStatus('blocked');
     }
   };
 
