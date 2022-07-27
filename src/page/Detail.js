@@ -179,7 +179,7 @@ const Detail = ({socket}) => {
     // 날짜/서비스 선택하기 모달 활성화됐을 때 모달 외 배경 클릭하면 꺼지도록 이벤트 추가 
 		window.addEventListener("click", checkSelectArea);
     // 로그인한 상태일 경우 등록된 반려견 정보 있는지 확인
-    if(localStorage.getItem('accessToken') && localStorage.getItem('userName')){
+    if(localStorage.getItem('accessToken')){
       petInfoRefetch();
     };
 		return()=>{
