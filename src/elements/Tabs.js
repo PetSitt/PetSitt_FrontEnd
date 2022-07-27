@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import styled from 'styled-components';
 
-const Tabs = ({_tab, _value, _checked, setSelectedTab}) => {
+const Tabs = ({_tab, _value, _checked, setSelectedTab, _style}) => {
   const [item, setItem] = useState(_tab);
   return (
-    <TabGroup>
+    <TabGroup style={{..._style}}>
       {
         item.map((v,i)=>{
           return (

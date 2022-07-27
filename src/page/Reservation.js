@@ -4,8 +4,10 @@ import {useQuery, useQueryClient} from 'react-query';
 import { useNavigate, Navigate } from 'react-router-dom';
 import {apis} from '../store/api';
 
+import { comma } from '../shared/common';
 import StyledButton from '../elements/StyledButton';
 import Modal from '../elements/Modal';
+import NavBox from '../elements/NavBox';
 
 
 const Reservation = () => {
@@ -65,7 +67,7 @@ const Reservation = () => {
 
   
 
-  console.log(requestStatus)
+  console.log(petsData)
   if(!infoData) return (
     <>
     {
@@ -85,46 +87,45 @@ const Reservation = () => {
   return (
     <>
       <ReservationPage>
+      <NavBox
+        _title={'예약하기'}
+      />
         <section className="page_top">
           <h2>예약하기</h2>
         </section>
         <section className="page_body">
           <section>
-            <dl>
-              <div>
-                <dt>서비스 : </dt>
-                <dd>
-                  <ul>
-                    {
-                      info.service.map((v,i)=>{
-                        return (
-                          <li key={`service_${i}`}>{i > 0 && ','} {v}</li>
-                        )
-                      })
-                    }
-                  </ul>
-                </dd>
+            <ReservInfoBox>
+              <p className='reservTitle'>신청하는 서비스</p>
+              <div className='reservDescBox'>
+                {
+                  info.service.map((v,i)=>{
+                    return (
+                      <p className='reservDesc' key={`service_${i}`}>{i > 0 && ','} {v}</p>
+                    )
+                  })
+                }
               </div>
-              <div>
-                <dt>날짜 : </dt>
-                <dd>
-                  <ul>
-                    {
-                      info.date.map((v,i)=>{
-                        return (
-                          <li key={`date_${i}`}>{i > 0 && ','} {v}</li>
-                        )
-                      })
-                    }
-                  </ul>
-                </dd>
+            </ReservInfoBox>
+            <ReservInfoBox>
+              <p className='reservTitle'>예약 일자</p>
+              <div className='reservDescBox'>
+                {
+                  info.date.map((v,i)=>{
+                    return (
+                      <p className='reservDesc' key={`date_${i}`}>{i > 0 && ','} {v}</p>
+                    )
+                  })
+                }
               </div>
-            </dl>
+            </ReservInfoBox>
           </section>
           <section>
-            <h3>맡기는 반려동물</h3>
-            <ul>
-              {
+            <ReservInfoBox className="pets">
+              <p className='reservTitle'>맡기는 반려동물</p>
+              <div className='reservDescBox'>
+                <ul style={{paddingTop: '24px'}}>
+                {
                 petsData.length ? (
                   petsData.map((v,i)=>{
                     return (
@@ -145,7 +146,8 @@ const Reservation = () => {
                           }}/>
                           <div>
                             <span style={{backgroundImage: `url(${v.petImage})`}}></span>
-                            <p>{v.petName} {`(${v.petType})`}</p>
+                            <p>{v.petName}</p>
+                            <p>{`${v.petAge}살 ${v.petType}`}</p>
                           </div>
                         </label>
                       </PetItem>
@@ -155,17 +157,27 @@ const Reservation = () => {
                   <p>등록된 펫 정보가 없습니다.</p>
                 )
               }
-            </ul>
+                </ul>
+              </div>
+            </ReservInfoBox>
           </section>
           <section>
-            <div className="info_box">
-              {info.sitterName} 님이 제공하는 서비스의
-              일당 금액은 {info.price}원 입니다.
-              <ol style={{fontSize: '14px', color: '#797979', padding: '10px', backgroundColor: '#eee', margin: '10px 0'}}>
-                <li>* 위 금액은 확정된 금액이 아닌 돌보미가 제공하는 평균적인 금액입니다.</li>
-                <li>* 예약 완료 전 해당 서비스에 대한 확정 금액을 협의하시길 권고드립니다.</li>
-              </ol>
-            </div>
+            <ReservPriceBox>
+              <p className='reservTitle'>서비스 금액</p>
+              <p className='reservDesc price'>{comma(info.price)}원</p>
+            </ReservPriceBox>
+            <ReservNoticeBox>
+              <ul>
+                <li>
+                  위 금액은 확정된 금액이 아닌 {info.sitterName} 돌보미가 제공하는 평균적인
+                  금액입니다.
+                </li>
+                <li>
+                  예약 완료 전 해당 서비스에 대한 확정 금액을 협의하시길
+                  권고드립니다.
+                </li>
+              </ul>
+            </ReservNoticeBox>
             <div>
               <StyledButton
                 _onClick={()=>{
@@ -225,17 +237,21 @@ dl > div{
 }
 & > section{
   &.page_body{
-    section{
-      padding: 30px 0;
-      border-top: 1px solid #ddd;
+    & > section{
+      border-bottom: 1px solid #C9C9C9;
+      &:last-child{
+        border: none;
+      }
     }
   }
 }
 
 `
 const PetItem = styled.li`
+  display: inline-block;
+  vertical-align: top;
   & + li{
-    margin-top: 15px;
+    margin-left: 24px;
   }
   label{
     position: relative;
@@ -246,25 +262,99 @@ const PetItem = styled.li`
       width: 0;
       height: 0;
       & + div{
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 15px;
-        border: 2px solid rgba(120, 120, 120, 0.2);
-        border-radius: 6px;
+        text-align: center;
         span{
+          display: inline-block;
           width: 60px;
           height: 60px;
           border-radius: 50%;
           background-size: cover;
           background-position: center;
           background-repeat: no-repeat;
+          border: 2px solid #E4E4E4;
+          box-sizing: border-box;
+        }
+        p{
+          margin-top: 6px;
+          line-height: 1;
+          & + p{
+            color: #676767;
+            margin-top: 5px;
+          }
         }
       }
       &:checked + div{
-        border-color: #FC9215;
+        span{
+          border-color: #FC9215;
+        }
+        p{
+          color: #FC9215;
+        }
       }
     }
   }
 `
+const ReservInfoBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: top;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  .reservTitle {
+    color: #676767;
+  }
+  .reservDesc {
+    text-align: right;
+    &+.reservDesc{
+      margin-top: 10px;
+    }
+  }
+  &.pets{
+    padding: 24px 0;
+    flex-direction: column;
+  }
+`;
+const ReservPriceBox = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: top;
+  justify-content: space-between;
+  padding: 16px 0;
+  border-bottom: 1px solid #C9C9C9;
+  .reservTitle {
+    color: #676767;
+  }
+  .reservDesc {
+    text-align: right;
+  }
+  .price {
+    font-weight: 700;
+    font-size: 21px;
+    line-height: 25px;
+    color: #fc9215;
+  }
+`;
+
+const ReservNoticeBox = styled.section`
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 17px;
+  color: #676767;
+  padding: 24px 0;
+  ul li {
+    position: relative;
+    padding-left: 20px;
+    padding-bottom: 10px;
+    &:before{
+      position: absolute;
+      left: 7px;
+      top: 5px;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background-color: #676767;
+      content: '';
+    }
+  }
+`;
 export default Reservation;
