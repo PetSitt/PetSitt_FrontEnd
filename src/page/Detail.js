@@ -10,7 +10,7 @@ import { chatApis } from "../store/chatApi";
 import Modal from '../elements/Modal';
 import StyledButton from '../elements/StyledButton';
 import Reviews from './Reviews';
-import ChatRoom from "./ChatRoom";
+import ChatList from "./ChatList";
 
 const Detail = ({socket}) => {
 	const queryClient = useQueryClient();
@@ -577,7 +577,7 @@ const Detail = ({socket}) => {
         </ReservationFunctions>
       </SitterDetailPage>
       {
-        roomId && value && <ChatRoom socket={socket} room={roomId}/>
+        roomId && value && <ChatList socket={socket} room={roomId} detailOnly={true}/>
       }
       {
         (modalDisplay && errorMessage === errorMessages.notLogin) && (
