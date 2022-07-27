@@ -184,9 +184,13 @@ const ReservationList = ({socket, tab, setTab}) => {
     },
     enabled: !!diarySave,
   });
-  const {mutate: loadDiaryData} = useMutation(()=>apis.loadDiaryData(reservationIdForDiary.current), {
+  const loadDiaryApi = (reservationIdForDiary) => {
+    console.log(reservationIdForDiary, 'reservationIdForDiary');
+    return apis.loadDiaryData(reservationIdForDiary);
+  }
+  const {mutate: loadDiaryData} = useMutation(()=>loadDiaryApi(reservationIdForDiary.current), {
     onSuccess: (data) => {
-      // console.log(data.data, 'diary data loaded');
+      console.log(data, 'loaded')
       const _data = {
         checkList: data.data.checkList.length,
         inputValues: data.data.checkList,
@@ -204,6 +208,7 @@ const ReservationList = ({socket, tab, setTab}) => {
         setModalType(modalContent.diaryView);
       }else{
         // 돌보미 탭일 경우 
+        console.log('돌보미탭')
         const reservationId = reservationIdForDiary.current;
         const status = pastReservation.filter((v)=>v.reservationId === reservationId);
         if(status.length){
@@ -212,6 +217,8 @@ const ReservationList = ({socket, tab, setTab}) => {
           setModalType(modalContent.diaryView);
         }else{
           // 진행중인 예약일 경우 돌봄일지 작성 및 수정 가능
+          console.log('돌보미탭, 데이터있음, 진행중')
+          setDiaryStatus('get');
           diaryPageMode.current = 'view';
           setModalType(modalContent.diary);
         }
@@ -232,9 +239,10 @@ const ReservationList = ({socket, tab, setTab}) => {
         diaryPageMode.current = 'readonly';
         setModalType(modalContent.diaryView);
       }else{
+        console.log('돌보미탭, 데이터 없음, 진행 중')
         // 진행중인 예약일 경우 돌봄일지 작성 및 수정 가능
-        setDiaryStatus('clear');
-        diaryPageMode.current = 'view';
+        // setDiaryStatus('clear');
+        diaryPageMode.current = 'write';
         setModalType(modalContent.diary);
       }
       setModalDisplay(true);
@@ -306,6 +314,7 @@ const ReservationList = ({socket, tab, setTab}) => {
     await setDiaryStatus('save');
     setModalType(modalContent.diaryCancel);
   };
+
   const confirmWritingDiary = () => {
     if (diaryPageMode.current === 'write') {
       // 최초 등록일 경우
@@ -445,6 +454,7 @@ const ReservationList = ({socket, tab, setTab}) => {
             _value={['user', 'sitter']}
             _checked={selectedTab}
             setSelectedTab={setSelectedTab}
+            _style={{margin: '0 -20px 42px'}}
           />
         </section>
         <section className='page_body'>
@@ -1042,6 +1052,7 @@ const Loading = styled.p`
 `;
 const InformText = styled.p`
   font-size: 13px;
-  color: red;
+  color: #F01D1D;
+  margin-top: 10px;
 `;
 export default ReservationList;

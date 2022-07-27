@@ -236,6 +236,7 @@ function Home() {
 			})
 		}
 	},[sitters, sittersIsRefetching])
+	console.log(addressInfo)
 
 	return (
 		<>
@@ -246,7 +247,7 @@ function Home() {
 					<div className="searchWrap" style={{position: 'relative'}}>
 						<div style={{position: 'relative'}}>
 							<div className="inputBox">
-								<input type="text" placeholder="구, 동을 검색해주세요. (예: 강남구 논현동)" value={addressInfo?.address_name && addressInfo?.address_name} onClick={()=>{setIframeDisplay(true); setDatepickerDisplay(false)}} readOnly/>
+								<input type="text" placeholder="주소를 검색해주세요." value={addressInfo?.address_name && addressInfo?.address_name} onClick={()=>{setIframeDisplay(true); setDatepickerDisplay(false)}} readOnly/>
 								<i className="ic-search"></i>
 							</div>
 							{
