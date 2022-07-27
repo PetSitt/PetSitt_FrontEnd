@@ -77,7 +77,7 @@ const AppWrapper = styled.div`
     & > section:first-of-type {
       padding: 20px;
       box-sizing: border-box;
-      padding-bottom: 74px;
+      padding-bottom: 70px;
     }
     & > .home:first-of-type {
       padding-bottom: 134px;

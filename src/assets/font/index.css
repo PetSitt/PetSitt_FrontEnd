@@ -92,12 +92,14 @@ i {
 }
 .ic-canceled:before {
   content: "\e915";
+  color: #217AFF;
 }
 .ic-home:before {
   content: "\e916";
 }
 .ic-upcoming:before {
   content: "\e917";
+  color: #FC9215;
 }
 .ic-pickup:before {
   content: "\e918";

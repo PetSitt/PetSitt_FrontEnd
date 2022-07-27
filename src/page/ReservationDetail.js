@@ -69,11 +69,13 @@ const ReservationDetail = () => {
                   <i className='ic-upcoming' />
                 </div>
               )}
-              {data.reservationState === '진행중' && (
+              {data.reservationState === '취소완료' ? (
+                <h4>취소된 예약입니다.</h4>
+              ) : (
                 <h4>{data.sitterName} 돌보미 방문 예정</h4>
               )}
               <StyledButton
-                _onClick={`/detail/${data.sitterId}`}
+                _onClick={()=>navigate(`/detail/${data.sitterId}`)}
                 _title='돌보미  프로필 보기'
                 color='#FC9215'
                 _bgColor='#ffffff'
@@ -83,7 +85,7 @@ const ReservationDetail = () => {
             <hr />
             <ReservBoby>
               <ReservInfoBox>
-                <p className='reservTitle'>예약 시간</p>
+                <p className='reservTitle'>예약 날짜</p>
                 <div className='reservDescBox'>
                   {data.reservationDate.map((date, index) => (
                     <p className='reservDesc' key={`date_${index}`}>
@@ -155,7 +157,7 @@ const ReservationDetail = () => {
         <Modal
           _alert={false}
           _display={modalDisplay}
-          _confirm='삭제'
+          _confirm='예약 취소'
           _cancel='닫기'
           confirmOnClick={cancelReservation}
           cancelOnclick={() => setModalDisplay(false)}
@@ -194,28 +196,23 @@ const ReservationDetail = () => {
                   <i className='ic-upcoming' />
                 </div>
               )}
-              {data.detailData.reservationState === '진행중' && (
+              {data.reservationState === '취소완료' ? (
                 <h4>
                   {data.pets.map((v, i) => (
                     <span key={`pet_${i}`}>
-                      {i > 0 ? ', ' + v.petName : v.petName}
+                      {i > 0 ? ', ' + v.petName + ' ' : v.petName + ' '}
                     </span>
                   ))}
                   만날 준비 되셨나요?
                 </h4>
+              ) : (
+                <h4>취소된 예약입니다.</h4>
               )}
-              <StyledButton
-                _onClick={`/detail/${data.detailData.sitterId}`}
-                _title='돌보미 프로필 보기'
-                color='#FC9215'
-                _bgColor='#ffffff'
-                _border='1px solid #FC9215'
-              />
             </ReservTop>
             <hr />
             <ReservBoby>
               <ReservInfoBox>
-                <p className='reservTitle'>의뢰한 시간</p>
+                <p className='reservTitle'>의뢰한 날짜</p>
                 <div className='reservDescBox'>
                   {data.detailData.reservationDate.map((date, index) => (
                     <p className='reservDesc' key={`date_${index}`}>
@@ -227,7 +224,8 @@ const ReservationDetail = () => {
               <ReservInfoBox>
                 <p className='reservTitle'>신청자 정보</p>
                 <div className='reservDescBox'>
-                  <p className='reservDesc'>{data.detailData.phoneNumber}</p>
+                <p className='reservDesc'>{data.detailData.userName}</p>
+                <p className='reservDesc'>{data.detailData.phoneNumber}</p>
                 </div>
               </ReservInfoBox>
               <ReservInfoBox>
