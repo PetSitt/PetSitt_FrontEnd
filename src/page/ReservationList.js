@@ -521,7 +521,7 @@ const ReservationList = ({socket}) => {
                                     color='#fc9215'
                                     _margin='0'
                                     _padding='7px 0px'
-                                    _title='문의s하기'
+                                    _title='문의하기'
                                     _border='1px solid #FC9215'
                                     _onClick={()=>{
                                       setValues(true)
@@ -632,6 +632,11 @@ const ReservationList = ({socket}) => {
                                     _padding='7px 0px'
                                     _title='문의하기'
                                     _border='1px solid #FC9215'
+                                    _onClick={()=>{
+                                      setValues(true)
+                                      chatInfo.current = {...chatInfo.current, sitterId: v.sitterId}
+                                      openChatRoom();
+                                    }}
                                   />
                                 )}
                                 {v.isPending && (
