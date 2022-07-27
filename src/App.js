@@ -6,6 +6,7 @@ import Router from './Router';
 import "./assets/font/index.css"
 import Menu from './components/Menu';
 import ChatList from './page/ChatList';
+import MarketingArea from './components/MarketingArea'
 
 const INITIAL_VALUES = {
   popup: false,
@@ -55,6 +56,7 @@ function App() {
           </Suspense>
         )}
       </div>
+      <MarketingArea></MarketingArea>
     </AppWrapper>
   );
 }
