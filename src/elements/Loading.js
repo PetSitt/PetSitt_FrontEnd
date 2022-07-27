@@ -2,13 +2,9 @@ import React from 'react';
 import styled, {keyframes} from 'styled-components';
 import icon_loading from '../assets/img/icon_loading.png';
 
-const Loading = ({_text, _position, _margin}) => {
-  const style = {
-    _position,
-    _margin,
-  };
+const Loading = ({_text}) => {
   return (
-    <LoadingBox {...style}>
+    <LoadingBox>
       <i style={{backgroundImage: `url(${icon_loading})`}}></i>
       {
         _text && <p>{_text}</p>
@@ -17,10 +13,6 @@ const Loading = ({_text, _position, _margin}) => {
   )
 }
 
-Loading.defaultProps = {
-  _position: 'fixed',
-  _margin: '40px 0',
-};
 
 const loadingSpin = keyframes`
   0% {
@@ -32,24 +24,10 @@ const loadingSpin = keyframes`
 
 `
 const LoadingBox = styled.div`
-  position: ${(props) => props._position};
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  left: 0;
-  right: 0;
-  top: 0;
-  bottom: 0;
   width: 100%;
-  z-index: 100;
   text-align: center;
-  margin: ${(props) => props._margin};
-  @media (min-width: 768px){
-		max-width: 412px;
-		right: ${(props) => props._position === 'relative' ? 0 : '10%'};
-		left: ${(props) => props._position === 'relative' ? 0 : 'auto'};
-	}
   i{
+    display: inline-block;
     width: 40px;
     height: 40px;
     background-size: 40px 40px;
