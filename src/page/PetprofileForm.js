@@ -24,6 +24,7 @@ const PetprofileForm = () => {
   const data = location.state;
   const [values, setValues] = useState(data ? data.data : INITIAL_VALUES);
   const [imageSrc, setImageSrc] = useState("");
+  const [imageMessage, setimageMessage] = useState("");
   const navigate = useNavigate();
   const photoInput = useRef();
 
@@ -114,8 +115,8 @@ const PetprofileForm = () => {
                 backgroundImage: `url(${
                   imageSrc
                     ? imageSrc
-                    : values.petImage.length > 0
-                    ? values.petImage
+                    : values.petImage?.length > 0
+                    ? values?.petImage
                     : "/images/placeholder_150.png"
                 })`,
               }}
@@ -131,6 +132,7 @@ const PetprofileForm = () => {
               onChange={(e) => {
                 encodeFileToBase64(e.target.files[0]);
               }}
+
             />
             <IBox>
               <i className="ic-camera"></i>

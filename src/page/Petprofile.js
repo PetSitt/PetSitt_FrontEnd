@@ -48,16 +48,15 @@ const Petprofile = () => {
         {values.length > 0 ? (
           values.map((el, idx) => {
             const { petId, petName, petType, petImage } = el;
-            console.log(petId, petName, idx)
             return (
               <PetList key={petId}>
                 <PetInfo>
                   <div
                     className="bgImg"
-                    style={{ backgroundImage: `url(${petImage})` }}
+                    style={{ backgroundImage: `url(${petImage ? petImage : "/images/placeholder_150.png"})` }}
                   ></div>
                   <div>
-                    <p className="petName">{petName} {petId}</p>
+                    <p className="petName">{petName}</p>
                     <p className="petType">{petType}</p>
                   </div>
                 </PetInfo>
