@@ -4,7 +4,6 @@ import styled from 'styled-components';
 import { useQueryClient, useQuery } from "react-query";
 import jwt_decode from "jwt-decode"
 import { chatApis } from "../store/chatApi";
-import ChatHeader from "../components/ChatHeader";
 
 function formatDate(value) {
   const date = new Date(value);
@@ -12,7 +11,7 @@ function formatDate(value) {
   return `${hour} ${minute}:${second}`;
 };
 
-function ChatRoom({ socket, room, idRoom, popup, showChatRoom, setPopup }) {
+function ChatRoom({ socket, room, idRoom, popup, showChatRoom }) {
   const param = useParams();
   const queryClient = useQueryClient();
   const [currentMessage, setCurrentMessage] = useState("");
