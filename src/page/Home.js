@@ -44,7 +44,7 @@ function Home() {
 	const datesTransformed= useRef(null);
 	const [sitterCardShow, setSitterCardShow] = useState({display: false, index: null});
 	const categoryClicked = useRef(false);
-	const showTooltip = useRef(0);
+	const showTooltip = useRef(true);
 	const dataToSend = useRef({
 		userEmail: null,
 		userName: null,
@@ -92,7 +92,7 @@ function Home() {
 		if(dates.length && addressInfo){
 			setQueriesData({searchDate: dates, region_2depth_name: addressInfo.region_2depth_name, x: addressInfo.x, y: addressInfo.y})
 		}
-		showTooltip.current++;
+
 	}, [dates, addressInfo])
 
 	// 로그인 여부 확인하는 api
@@ -182,9 +182,12 @@ function Home() {
         }
       );
     } else {
-			setModalDisplay(true);
+			setSearchingStatus('blocked');
     }
   };
+
+
+	
 
 	useEffect(()=>{
 		if(localStorage.getItem('kakaoToken')){
@@ -194,7 +197,12 @@ function Home() {
 		const fullHeight = window.innerHeight;
 		const filterHeight = filterAreaRef.current.clientHeight;
 		setContentHeight(fullHeight - filterHeight - 74);
-		showTooltip.current++;
+		const tooltipTimeout = setTimeout(()=>{
+			showTooltip.current = false;
+		},5000)
+		return()=>{
+			clearTimeout(tooltipTimeout);
+		}
 	},[])
 
 	useEffect(()=>{
@@ -215,7 +223,7 @@ function Home() {
 			setQueriesData({searchDate: dates, region_2depth_name: addressInfo.region_2depth_name, x: addressInfo.x, y: addressInfo.y, category});
 			setSearched(true);
 		}
-		showTooltip.current++;
+
 	}, [dates, addressInfo])
 
 	useEffect(()=>{
@@ -236,7 +244,6 @@ function Home() {
 			})
 		}
 	},[sitters, sittersIsRefetching])
-	console.log(addressInfo)
 
 	return (
 		<>
@@ -282,7 +289,9 @@ function Home() {
 								<StyledButton _title="날짜 적용" _margin="0" _onClick={()=>{setDatepickerDisplay(false); setDatesFormat()}}/>
 							</DatepickerWrap>
 						</div>
-						{/* <Tooltip className={showTooltip.current === 0 ? 'aniClass' : ''}>장소와 날짜 모두 선택해주세요.</Tooltip> */}
+						{
+							showTooltip.current && <Tooltip className={showTooltip.current ? 'aniClass' : ''}>장소와 날짜 모두 선택해주세요.</Tooltip>
+						}
 					</div>
 					<Categories>
 						<ul>
@@ -291,7 +300,6 @@ function Home() {
 								<li key={i}>
 									<label>
 										<input type="checkbox" onChange={(e) => {
-											showTooltip.current = 1;
 											categoryClicked.current = true;
 											if(categoryClicked.current){
 												if(e.target.checked){ 
@@ -321,7 +329,9 @@ function Home() {
 				<SittersListArea style={{position: 'relative'}}>
 					{
 						searchingStatus === 'searching' ? (
-							<Loading _text={'주변의 돌보미 리스트를 검색중입니다.'} _position={'relative'} _margin={'10vh 0'}/>
+							<LoadingWrap>
+								<Loading _text={'주변의 돌보미 리스트를 검색중입니다.'} _position={'relative'} _margin={'10vh 0'}/>
+							</LoadingWrap>
 						) : searchingStatus === 'blocked' ? (
 							<ExceptionArea _title={'GPS를 허용해주세요.'} _text={'GPS를 허용하지 않을 경우, 장소 및 날짜 검색을 통해 돌보미 리스트를 검색해주세요.'}/>
 						) : (
@@ -431,6 +441,23 @@ function Home() {
 	);
 }
 
+const LoadingWrap = styled.div`
+	position: fixed;
+	width: 100%;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 100;
+	@media (min-width: 768px){
+		max-width: 412px;
+		right: 10%;
+		left: auto;
+	}
+`
 const IndexPage = styled.div`
 .rmdp-container{
 	max-width: 100%;
@@ -808,6 +835,7 @@ const Tooltip = styled.p`
 	font-size: 14px;
 	color: #fff;
 	animation: ${tooltipAnimation} 5s forwards;
+	pointer-events: none;
 	&:before{
 		position: absolute;
 		left: 50%;
