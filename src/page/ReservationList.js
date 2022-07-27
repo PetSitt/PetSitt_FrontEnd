@@ -59,6 +59,7 @@ const ReservationList = ({socket, tab, setTab}) => {
     data: reservationListData,
 	} = useMutation(() => apis.reservationList(selectedTab), {
 		onSuccess: (data) => {
+      console.log('loaded', data)
 			setProceedings(data.data.proceedings);
 			setPastReservation(data.data.pasts);
       if(data.data.pasts.length < 3){
@@ -185,16 +186,16 @@ const ReservationList = ({socket, tab, setTab}) => {
     enabled: !!diarySave,
   });
   const loadDiaryApi = (reservationIdForDiary) => {
-    console.log(reservationIdForDiary, 'reservationIdForDiary');
+    // console.log(reservationIdForDiary, 'reservationIdForDiary');
     return apis.loadDiaryData(reservationIdForDiary);
   }
   const {mutate: loadDiaryData} = useMutation(()=>loadDiaryApi(reservationIdForDiary.current), {
     onSuccess: (data) => {
       console.log(data, 'loaded')
       const _data = {
-        checkList: data.data.checkList.length,
-        inputValues: data.data.checkList,
-        checked: data.data.checkStatus,
+        checkList: data.data.checkList?.length ? data.data.checkList?.length : 0,
+        inputValues: data.data.checkList ? data.data.checkList : [],
+        checked: data.data.checkStatus ? data.data.checkStatus : [],
         images: data.data.diaryImage.length,
         imageUrls: data.data.diaryImage,
         files: [],
@@ -222,11 +223,11 @@ const ReservationList = ({socket, tab, setTab}) => {
           diaryPageMode.current = 'view';
           setModalType(modalContent.diary);
         }
-        setModalDisplay(true);
       } 
+      setModalDisplay(true);
     },
     onError: (data) => {
-      // console.log(data, 'diary loading failed');
+      console.log(data, 'diary loading failed');
       if (selectedTab === 'user' && data.response.status === 400) {
         setModalType(modalContent.noDiary);
         setModalDisplay(true);
@@ -376,8 +377,8 @@ const ReservationList = ({socket, tab, setTab}) => {
     diary: {
       type: 'diary',
       _alert: false,
-      _confirm: '일지 등록',
-      _cancel: '등록 취소',
+      _confirm: '등록',
+      _cancel: '취소',
       confirmFn: confirmWritingDiary,
       cancelFn: cancelWritingDiary,
     },
@@ -525,8 +526,7 @@ const ReservationList = ({socket, tab, setTab}) => {
                           >
                             <StyledButton
                               _margin='0'
-                              _padding='6px 0px'
-                              _title='일지 보기'
+                              _title='돌봄일지 보기'
                               _onClick={() => {
                                 reservationIdForDiary.current =
                                   v.reservationId;
@@ -619,16 +619,34 @@ const ReservationList = ({socket, tab, setTab}) => {
                             className='buttons sitter'
                             style={{ position: 'relative', zIndex: 2 }}
                           >
-                            <StyledButton
-                              _margin='0'
-                              _padding='6px 0px'
-                              _title='일지 작성하기'
-                              _onClick={() => {
-                                reservationIdForDiary.current =
-                                  v.reservationId;
-                                loadDiaryData();
-                              }}
-                            />
+                            {
+                              v.diaryExist ? (
+                                <StyledButton
+                                  _margin='0'
+                                  _padding='6px 0px'
+                                  _title='일지 수정하기'
+                                  _onClick={() => {
+                                    reservationIdForDiary.current =
+                                      v.reservationId;
+                                    loadDiaryData();
+                                  }}
+                                />
+                              ):(
+                                <StyledButton
+                                  _margin='0'
+                                  _padding='6px 0px'
+                                  _title='일지 작성하기'
+                                  _onClick={() => {
+                                    reservationIdForDiary.current =
+                                      v.reservationId;
+                                    diaryPageMode.current = 'write'
+                                    setModalType(modalContent.diary);
+                                    setModalDisplay(true);
+                                    
+                                  }}
+                                />
+                              )
+                            }
                           </div>
                         </ReservationInfoContainer>
                         {v.isPending && (
@@ -886,9 +904,12 @@ const ReservationItem = styled.li`
     }
   }
   .buttons {
-    width: 80px;
+    flex-shrink: 0;
+    width: 100px;
     button{
       font-size: 14px;
+      height: 31px;
+      padding: 6px 0;
     }
     button + button {
       margin: 6px 0 0;
