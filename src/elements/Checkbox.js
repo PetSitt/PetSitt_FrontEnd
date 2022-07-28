@@ -20,7 +20,7 @@ const CheckBox = ({
   const styles = { _size, _border, _bgColor };
   // console.log(checked.includes(_text));
   let _checkBox = false;
-  console.log("checked:",checked)
+
   switch (_text) {
     case '소형견':
       _checkBox = checked[0] === true ? true : false;
@@ -57,8 +57,6 @@ const CheckBox = ({
   }
   return (
     <StLabel htmlFor={_id} className='radio'>
-      {console.log("_id:", _id)}
-      {console.log("checked:", checked)}
       <StInput
         {...styles}
         type='checkbox'

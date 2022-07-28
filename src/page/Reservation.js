@@ -81,7 +81,7 @@ const Reservation = () => {
     }
     </>
   )
-  if(page !== 'reservation') return <Navigate to="/reservation/list"/>
+  if(page !== 'reservation') return <Navigate to="/reservation/list" state={'reserved'}/>
   if(petsQuery.isLoading || !info || !petsData) return null;
 
   return (

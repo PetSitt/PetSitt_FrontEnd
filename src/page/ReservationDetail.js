@@ -21,11 +21,11 @@ const ReservationDetail = ({setTab}) => {
     () => apis.reservationDetail(reservationId, type),
     {
       onSuccess: (data) => {
-        console.log(data, 'success');
+        // console.log(data, 'success');
         setData(data.data);
       },
       onError: (data) => {
-        console.log(data, 'error');
+        // console.log(data, 'error');
       },
       refetchOnMount: 'always',
       staleTime: Infinity,
@@ -37,10 +37,10 @@ const ReservationDetail = ({setTab}) => {
       onSuccess: (data) => {
         setModalDisplay(false);
         navigate('/reservation/list');
-        console.log(data, 'success');
+        // console.log(data, 'success');
       },
       onError: (data) => {
-        console.log(data, 'error');
+        // console.log(data, 'error');
       },
     }
   );
@@ -102,7 +102,7 @@ const ReservationDetail = ({setTab}) => {
                 <p className='reservTitle'>돌보미 정보</p>
                 <div className='reservDescBox'>
                   <p className='reservDesc'>{data.sitterName}</p>
-                  <p className='reservDesc'>{data.phoneNumber}</p>
+                  <p className='reservDesc'>{data.phoneNumber ? data.phoneNumber : ''}</p>
                 </div>
               </ReservInfoBox>
               <ReservInfoBox>
@@ -229,7 +229,7 @@ const ReservationDetail = ({setTab}) => {
                 <p className='reservTitle'>신청자 정보</p>
                 <div className='reservDescBox'>
                 <p className='reservDesc'>{data.detailData.userName}</p>
-                <p className='reservDesc'>{data.detailData.phoneNumber}</p>
+                <p className='reservDesc'>{data.detailData.phoneNumber ? data.detailData.phoneNumber : ''}</p>
                 </div>
               </ReservInfoBox>
               <ReservInfoBox>

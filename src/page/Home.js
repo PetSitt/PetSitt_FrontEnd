@@ -14,6 +14,8 @@ import StyledButton from "../elements/StyledButton";
 import ExceptionArea from '../components/ExceptionArea';
 import Loading from '../elements/Loading';
 import MarketingArea from "../components/MarketingArea";
+import sitterBgDefault from '../assets/img/img_sitter_bg_default.png';
+import sitterDefault from '../assets/img/img_sitter_default.png'
 
 function Home() {
 	const datepickerRef = useRef();
@@ -62,13 +64,13 @@ function Home() {
 		() => getSittersList(queriesData, category),
 		{
 			onSuccess: (data) => {
-				console.log(data)
+				// console.log(data)
 				setSearched(false);
 				setSitters(data.data.sitters);
 				setSearchingStatus('done');
 			},
 			onError: (data) => {
-				console.error(data);
+				// console.error(data);
 				setSearched(false);
 			},
 			enabled: !!searched,
@@ -120,14 +122,14 @@ function Home() {
 		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
 		{
 			onSuccess: (data) => {
-				console.log(data, 'success')
+				// console.log(data, 'success')
 				queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(false);
 				setSitters(data.data.sitter);
 				setSearchingStatus('done');
 			},
 			onError: (data) => {
-				console.error(data);
+				// console.error(data);
 				setDefaultSearch(false);
 			},
 			enabled: !!defaultSearch,
@@ -142,7 +144,7 @@ function Home() {
 			localStorage.setItem('userEmail', dataToSend.current.userEmail);
     },
     onError: (data) => {
-      console.log(data, 'kakao login failed');
+      // console.log(data, 'kakao login failed');
     },
   })
   const getKakaoProfile = async () => {
@@ -161,7 +163,7 @@ function Home() {
         userName: data.properties.nickname,
       });
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     }
   };
 	const getLocation = () => {
@@ -175,7 +177,7 @@ function Home() {
         },
         (err) => {
 					setSearchingStatus('blocked');
-					console.log(err)
+					// console.log(err)
         },
         {
           enableHighAccuracy: false,
@@ -351,8 +353,8 @@ function Home() {
 												return (
 													<SitterCard key={`sitter_${i}`}>
 														<Link to={`/detail/${v.sitterId}`}>
-														<div className="image_area" style={{backgroundImage: `url(${v.mainImageUrl})`}}>
-															<span className="sitter_image" style={{backgroundImage: `url(${v.imageUrl})`}}></span>
+														<div className="image_area" style={{backgroundImage: `url(${v.mainImageUrl ? v.mainImageUrl : sitterBgDefault})`}}>
+															<span className="sitter_image" style={{backgroundImage: `url(${v.imageUrl ? v.imageUrl : sitterDefault})`}}></span>
 														</div>
 														<div className="info_area">
 															<p className="sitter">

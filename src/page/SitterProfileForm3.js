@@ -205,17 +205,17 @@ function SitterProfileForm3() {
               checked={values.plusService}
             />
             <Checkbox
-              _id={"퍼피 케어(1살미만)"}
+              _id={"퍼피 케어(1살 미만)"}
               _key={"plusService"}
-              _text={"퍼피 케어(1살미만)"}
+              _text={"퍼피 케어(1살 미만)"}
               _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.plusService}
             />
             <Checkbox
-              _id={"노견 케어(8살이상)"}
+              _id={"노견 케어(8살 이상)"}
               _key={"plusService"}
-              _text={"노견 케어(8살이상)"}
+              _text={"노견 케어(8살 이상)"}
               _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.plusService}

@@ -37,7 +37,7 @@ const Myprofile = () => {
     }
   });
 
-  const isLogin = cookies.get('refreshToken');
+  const isLogin = localStorage.getItem('accessToken');
   const handleUpdate = (e) => {
     inputEl1.current.disabled = false;
     inputEl2.current.disabled = false;
