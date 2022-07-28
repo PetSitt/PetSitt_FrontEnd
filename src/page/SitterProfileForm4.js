@@ -39,9 +39,6 @@ function SitterProfileForm4() {
       queryClient.invalidateQueries("sitterprofile");
       navigate("/mypage/sitterprofile");
     },
-    onError: (data) => {
-      console.log("onError:",data);
-    },
   });
 
   const handleSubmit = (e) => {
@@ -68,7 +65,6 @@ function SitterProfileForm4() {
 
     update ? sitterUpdate(formData) : create(formData)
   }
-  console.log(newDates, dates)
   useEffect(()=>{
     if(dates && typeof dates[0] === 'object'){
       setNewDates(()=>{

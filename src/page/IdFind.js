@@ -31,7 +31,6 @@ const [userEmail, setUserEmail] = useState("example@petsitt.com")
   } = useMutation(() => apis.idFind({ phoneNumber: numberState }),
     {
       onSuccess: (data) => {
-        // console.log("success", data);
       },
       onError: (err) => {
         if(err.response.status === 406){

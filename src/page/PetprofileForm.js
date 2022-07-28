@@ -68,7 +68,6 @@ const PetprofileForm = () => {
       navigate("/mypage/petprofile");
     },
     onError: (data) => {
-      console.log(data);
     },
   });
 
@@ -80,7 +79,6 @@ const PetprofileForm = () => {
       navigate("/mypage/petprofile");
     },
     onError: (data) => {
-      console.log("onError:",data);
     },
   });
 
@@ -98,12 +96,6 @@ const PetprofileForm = () => {
       return newData;
     })
   }
-
-
-  const doValidation = () => {
-    
-  }
-  console.log(errorMessages)
 
   // 등록 및 수정하는 함수
   const handleSubmit = (e) => {

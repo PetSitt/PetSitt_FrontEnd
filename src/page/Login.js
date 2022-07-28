@@ -41,7 +41,6 @@ const Login = ({socket}) => {
         socket.emit('join_my_room', messageData)
       }
       cookies.set('refreshToken', data.data.refreshToken);
-      // console.log(data, localStorage.getItem('accessToken'));
       navigate('/');      
     },
     onError: (data) => {

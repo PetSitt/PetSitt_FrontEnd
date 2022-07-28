@@ -81,7 +81,6 @@ const SitterProfileForm2 = () => {
         </InputBox>
         <InputBox>
           <label className='tit'>대표 활동 사진*</label>
-          {console.log("mainImageUrl:", values.mainImageUrl)}
           <ImageRegist
             name={'mainImageUrl'}
             value={data && values.mainImageUrl}

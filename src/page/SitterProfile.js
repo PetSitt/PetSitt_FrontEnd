@@ -29,7 +29,6 @@ const SitterProfile = () => {
         queryClient.invalidateQueries("sitterprofile");
       },
       onError: (data) => {
-        console.log("onError",data);
       },
     }
   );
@@ -121,7 +120,6 @@ const SitterProfile = () => {
             </CheckWrap>
             <div className="inner">
               <h3 className="tit">서비스 불가능한 날짜</h3>
-              {console.log(values.noDate)}
               <Calendar
                 value={values.noDate}
                 readOnly={true}

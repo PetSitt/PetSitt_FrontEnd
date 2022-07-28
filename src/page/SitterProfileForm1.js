@@ -34,7 +34,6 @@ const SitterProfileForm1 = () => {
 
   //주소 입력 우편번호 함수
   const handlePostcode = (data) => {
-    console.log('postcode')
     const { zonecode, sido, sigungu, query } = data;
     let fullAddress = data.address;
     let extraAddress = '';

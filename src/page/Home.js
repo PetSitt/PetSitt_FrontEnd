@@ -64,13 +64,11 @@ function Home() {
 		() => getSittersList(queriesData, category),
 		{
 			onSuccess: (data) => {
-				// console.log(data)
 				setSearched(false);
 				setSitters(data.data.sitters);
 				setSearchingStatus('done');
 			},
 			onError: (data) => {
-				// console.error(data);
 				setSearched(false);
 			},
 			enabled: !!searched,
@@ -81,7 +79,6 @@ function Home() {
 		if (date.length > 0) {
 			datesTransformed.current = null;
 			const getDates = date.map((v,i) => {
-				// console.log(v)
 				return v.format(v._format);
 			});
 			setDates(getDates);
@@ -102,12 +99,10 @@ function Home() {
 	// 로그인 여부 확인하는 api
 	const { mutate: checkUser } = useMutation(()=>apis.checkUser(), { 
 		onSuccess: (data) => {
-			// console.log(data, 'auth api 성공');
 			localStorage.setItem('userName', data.data.user.userName);
 			localStorage.setItem('userEmail', data.data.user.userEmail);
 		},
 		onError: (data) => {
-			// console.log(data, 'auth api 실패');
 			localStorage.removeItem('accessToken');
 			localStorage.removeItem('userName');
 			localStorage.removeItem('userEmail');
@@ -122,14 +117,12 @@ function Home() {
 		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
 		{
 			onSuccess: (data) => {
-				// console.log(data, 'success')
 				queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(false);
 				setSitters(data.data.sitter);
 				setSearchingStatus('done');
 			},
 			onError: (data) => {
-				// console.error(data);
 				setDefaultSearch(false);
 			},
 			enabled: !!defaultSearch,
@@ -138,13 +131,11 @@ function Home() {
 	);
   const {mutate: kakaoLoginQuery} = useMutation((data)=>apis.kakaoLogin(data), {
     onSuccess: (data) => {
-			// console.log('kakao success', data)
       localStorage.setItem('accessToken', data.data.token);
 			localStorage.setItem('userName', dataToSend.current.userName);
 			localStorage.setItem('userEmail', dataToSend.current.userEmail);
     },
     onError: (data) => {
-      // console.log(data, 'kakao login failed');
     },
   })
   const getKakaoProfile = async () => {
@@ -163,7 +154,6 @@ function Home() {
         userName: data.properties.nickname,
       });
     } catch (err) {
-      // console.log(err);
     }
   };
 	const getLocation = () => {
@@ -177,7 +167,6 @@ function Home() {
         },
         (err) => {
 					setSearchingStatus('blocked');
-					// console.log(err)
         },
         {
           enableHighAccuracy: false,
@@ -217,10 +206,8 @@ function Home() {
 	useEffect(()=>{
 		if(categoryClicked.current){
 			if(addressInfo &&  dates?.length > 0){
-				// console.log('검색 후 categorizing');
 				refetchSittersAfter();
 			}else{
-				// console.log('검색 전 categorizing');
 				refetchSitters();
 			} 
 		}

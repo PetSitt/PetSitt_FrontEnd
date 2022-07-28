@@ -44,7 +44,6 @@ const ReservationList = ({socket, tab, setTab}) => {
       reviewInfo: null,
     },
   });
-  console.log(location)
   const [diarySave, setDiarySave] = useState(false);
   const chatInfo = useRef({
     sitterId: null,
@@ -61,7 +60,6 @@ const ReservationList = ({socket, tab, setTab}) => {
     data: reservationListData,
 	} = useMutation(() => apis.reservationList(selectedTab), {
 		onSuccess: (data) => {
-      // console.log('loaded', data)
 			setProceedings(data.data.proceedings);
 			setPastReservation(data.data.pasts);
       if(data.data.pasts.length < 3){
@@ -77,13 +75,11 @@ const ReservationList = ({socket, tab, setTab}) => {
       }
 		},
     onSettled: (data) => {
-      // console.log('settled', data)
     },
 		staleTime: Infinity,
 	});
  
   const registerReviewApi = (reservationId, data) => {
-    // console.log(reservationId, data);
     return apis.registerReview(reservationId, data);
   };
   const { mutate: saveReview } = useMutation(
@@ -94,7 +90,6 @@ const ReservationList = ({socket, tab, setTab}) => {
       ),
     {
       onSuccess: (data) => {
-        // console.log(data, 'review registered');
         setModalDisplay(false);
         setModalType(null);
         setReviewText(null);
@@ -110,7 +105,6 @@ const ReservationList = ({socket, tab, setTab}) => {
         reservatioinList();
       },
       onError: (data) => {
-        console.log(data, 'review registration failed');
       },
     }
   );
@@ -122,7 +116,6 @@ const ReservationList = ({socket, tab, setTab}) => {
       ),
     {
       onSuccess: (data) => {
-        // console.log(data, 'loaded more reviews');
         if (data.data.reservations.length < 3) {
           setButtonHide(true);
           return;
@@ -132,10 +125,8 @@ const ReservationList = ({socket, tab, setTab}) => {
         });
       },
       onError: (data) => {
-        // console.log(data, 'loading more reviews failed');
         if (data.response.status === 401) {
           setButtonHide(true);
-          // alert
         }
       },
     }
@@ -144,13 +135,11 @@ const ReservationList = ({socket, tab, setTab}) => {
     () => apis.loadReview(idForReview.current),
     {
       onSuccess: (data) => {
-        // console.log(data, 'review loaded');
         setModalType(modalContent.reviewView);
         setReviewPageMode('clear');
         setModalDisplay(true);
       },
       onError: (data) => {
-        // console.log(data, 'loading review failed');
       },
     }
   );
@@ -173,7 +162,6 @@ const ReservationList = ({socket, tab, setTab}) => {
   };
   const saveDiary = useQuery(['saveDiaryQuery', diaryData], ()=>registerDiaryApi(diaryData), {
     onSuccess: (data) => {
-      // console.log(data, 'diary saving success');
       setDiarySave(false);
       setModalDisplay(false);
       setModalType(null);
@@ -183,17 +171,14 @@ const ReservationList = ({socket, tab, setTab}) => {
       reservatioinList();
     },
     onError: (data) => {
-      // console.log(data, 'diary saving failed');
     },
     enabled: !!diarySave,
   });
   const loadDiaryApi = (reservationIdForDiary) => {
-    // console.log(reservationIdForDiary, 'reservationIdForDiary');
     return apis.loadDiaryData(reservationIdForDiary);
   }
   const {mutate: loadDiaryData} = useMutation(()=>loadDiaryApi(reservationIdForDiary.current), {
     onSuccess: (data) => {
-      // console.log(data, 'loaded')
       const _data = {
         checkList: data.data.checkList?.length ? data.data.checkList?.length : 0,
         inputValues: data.data.checkList ? data.data.checkList : [],
@@ -264,14 +249,12 @@ const ReservationList = ({socket, tab, setTab}) => {
   };
   const { mutate: diaryModify } = useMutation(() => modifyDiaryApi(), {
     onSuccess: (data) => {
-      // console.log(data, 'diary modify success');
       setReviewPageMode('clear');
       modifyData.current = { addImage: [], deleteImage: [] };
       setModalDisplay(false);
       setModalType(null);
     },
     onError: (data) => {
-      // console.log(data, 'diary modify failed');
     },
   });
   const {mutate: openChatRoom} = useMutation(() => chatApis.chatRoomPost(chatInfo.current.sitterId), {
@@ -283,9 +266,6 @@ const ReservationList = ({socket, tab, setTab}) => {
           popup:!popup.popup
         }
       })
-    },
-    onError: (data) => {
-      console.log(data);
     }
   });
 

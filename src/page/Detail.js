@@ -100,10 +100,8 @@ const Detail = ({socket}) => {
 		data: detailData,
 	} = useQuery("detail_data", () => apis.getUserDetail(sitterId), {
 		onSuccess: (data) => {
-			// console.log(data.data, "data loaded");
     },
 		onError: (data) => {
-			// console.error(data);
 		},
 		staleTime: 180000,
     cacheTime: 0,
@@ -131,7 +129,6 @@ const Detail = ({socket}) => {
       })
     },
     onError: (data) => {
-      // console.log(data);
     }
   });
 

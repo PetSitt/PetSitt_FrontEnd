@@ -25,7 +25,6 @@ function SitterProfileForm3() {
   const [values, setValues] = useState(
     update ? data : { ...data, ...INITIAL_VALUES }
   );
-  console.log(values)
 
   /** 채크박스에 항목 id의 값을 배열로 만들어서 values에 저장 */
   const availableHandler = (checked, key, id) => {
@@ -49,11 +48,6 @@ function SitterProfileForm3() {
     handleChange(name, uncomma(value), setValues);
     return setNum(comma(uncomma(value)));
   };
-  
-
-  useEffect(() => {
-    console.log(values);
-  }, []);
 
   const [errorMessages, setErrorMessage] = useState({
     category: false,

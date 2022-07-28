@@ -65,9 +65,6 @@ const Reservation = () => {
     staleTime: Infinity,
   })
 
-  
-
-  console.log(petsData)
   if(!infoData) return (
     <>
     {

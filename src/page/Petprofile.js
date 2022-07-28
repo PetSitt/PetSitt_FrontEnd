@@ -29,11 +29,9 @@ const Petprofile = () => {
     isSuccess: petSuccessDelete,
   } = useMutation((petId) => apis.petprofileDelete(petId), {
     onSuccess: (data) => {
-      console.log("onSuccess:",data)
       queryClient.invalidateQueries("petprofile");
     },
     onError: (data) => {
-      console.log("onError:",data)
     }
   });
 

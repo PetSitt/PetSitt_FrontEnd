@@ -33,7 +33,6 @@ const MapContainer = ({ centerElement, showOnly, items, _height, setSitterCardSh
       display: true,
       index: sitterIndex
     });
-    console.log(items[markerIndex])
     const newCenter = {x: items[markerIndex].x, y: items[markerIndex].y + .0004}
     setCenterElem(newCenter);
     setLevel(3);
