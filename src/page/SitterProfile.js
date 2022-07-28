@@ -77,21 +77,20 @@ const SitterProfile = () => {
             <CheckWrap>
               <label className="tit">케어 가능 범위</label>
               <CheckGroup>
-                <Checkbox
-                  _text={"소형견"}
-                  _size={"1.2rem"}
-                  _border={"1px solid rgba(120, 120, 120, 0.7)"}
-                  onChange={(e) => {
-                    setValues((prevValues) => {
-                      const careSize = [...prevValues.careSize];
-                      careSize[0] = e.target.checked;
-                      return { ...prevValues, careSize };
-                    });
-                  }}
-                  checked={values.careSize}
-                  disabled
-                />
-                <Checkbox
+                {values.careSize.map((el, idx) => {
+                  return(
+                  <Checkbox
+                    _text={idx === 0 ? "소형견" : idx === 1 ? "중형견" : "대형견"}
+                    _size={"1.2rem"}
+                    _border={"1px solid rgba(120, 120, 120, 0.7)"}
+                    _id={idx === 0 ? "소형견" : idx === 1 ? "중형견" : "대형견"}
+                    checked={idx === 0 && el ? "소형견" : idx === 1 && el ? "중형견" : idx === 2 && el ? "대형견" : ""}
+                    disabled
+                  />
+                  )
+                })}
+                
+                {/* <Checkbox
                   _text={"중형견"}
                   _size={"1.2rem"}
                   onChange={(e) => {
@@ -116,7 +115,7 @@ const SitterProfile = () => {
                   }}
                   checked={values.careSize}
                   disabled
-                />
+                /> */}
               </CheckGroup>
             </CheckWrap>
             <div className="inner">
