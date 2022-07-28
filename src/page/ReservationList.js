@@ -35,6 +35,7 @@ const ReservationList = ({socket, tab, setTab}) => {
   const [diaryData, setDiaryData] = useState(null);
   const [diaryStatus, setDiaryStatus] = useState(null);
   const reservationIdForDiary = useRef();
+  const noMorePastReservations = useRef(false);
   const modifyData = useRef({ addImage: [], deleteImage: [] });
   const dataToSend = useRef({
     reservationId: null,
@@ -60,6 +61,7 @@ const ReservationList = ({socket, tab, setTab}) => {
     data: reservationListData,
 	} = useMutation(() => apis.reservationList(selectedTab), {
 		onSuccess: (data) => {
+      // console.log(data)
 			setProceedings(data.data.proceedings);
 			setPastReservation(data.data.pasts);
       if(data.data.pasts.length < 3){
@@ -127,6 +129,11 @@ const ReservationList = ({socket, tab, setTab}) => {
       onError: (data) => {
         if (data.response.status === 401) {
           setButtonHide(true);
+          noMorePastReservations.current = true;
+          const alertTimeout = setTimeout(()=>{
+            noMorePastReservations.current = false;
+          },3000);
+          
         }
       },
     }
@@ -594,7 +601,9 @@ const ReservationList = ({socket, tab, setTab}) => {
                               <p className='sitterName'>{v.userName}</p>
                               <p className='sitterPhone'>
                                 <i className='ic-phone' />
-                                {v.phoneNumber}
+                                  {
+                                    v.phoneNumber ? v.phoneNumber : '문의하기 기능을 이용해주세요.'
+                                  }
                               </p>
                             </SitterInfo>
                           </div>
@@ -688,9 +697,9 @@ const ReservationList = ({socket, tab, setTab}) => {
                           ))}
                         </div>
                       </ReservationTagContainer>
-                      <ReservationInfoContainer>
+                      <ReservationInfoContainer style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                         {selectedTab === 'user' ? (
-                          <SitterInfo className='sitterInfo user' style={{zIndex: 2}}>
+                          <SitterInfo className='sitterInfo user' style={{zIndex: 2, alignItems: 'center'}}>
                             <p className='sitterName'>{v.sitterName}</p>
                             <button
                               type='button'
@@ -756,7 +765,9 @@ const ReservationList = ({socket, tab, setTab}) => {
             </ul>
             {!buttonHide && (
               <div style={{textAlign: 'center'}}>
-                <LoadMoreButton type="button" onClick={() => morePastReviews()}>지난 예약 더보기</LoadMoreButton>
+                <LoadMoreButton type="button" onClick={() => {
+                  morePastReviews();
+                }}>지난 예약 더보기</LoadMoreButton>
               </div>
             )}
           </section>
@@ -827,7 +838,7 @@ const ReservationList = ({socket, tab, setTab}) => {
       {
         chatInfo.current?.chatRoomId && popup.popup && <ChatList socket={socket} room={chatInfo.current.chatRoomId} detailOnly={true} popup={popup.popup} setPopup={setPopup}/>
       }
-      {(pastReservation?.length > 0 && buttonHide) && <Alert _text={'추가로 불러올 지난 예약 리스트가 없습니다.'}/>}
+      {(noMorePastReservations.current) && <Alert _text={'추가로 불러올 지난 예약 리스트가 없습니다.'}/>}
     </>
   );
 };
@@ -956,7 +967,6 @@ const ReservationInfoContainer = styled.div`
     button {
       border-bottom: 1px solid #000;
       margin-left: 10px;
-      margin-top: 1px;
       padding: 4px 0;
       &:after {
         content: '';
