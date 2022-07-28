@@ -58,11 +58,14 @@ const ModalContainer = styled.div`
     max-width: 90%;
     width: 100%;
     padding: 24px 24px 16px;
-    margin: 299px auto;
+    margin: 0 auto;
     background-color: #fff;
     text-align: center;
     line-height: 1.4;
     border-radius: 6px;
+    max-height: 80%;
+    overflow: hidden;
+    overflow-y: auto;
     h3 {
       font-weight: 700;
       font-size: 18px;
