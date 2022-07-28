@@ -6,7 +6,8 @@ import Router from './Router';
 import "./assets/font/index.css"
 import Menu from './components/Menu';
 import ChatList from './page/ChatList';
-import MarketingArea from './components/MarketingArea'
+import MarketingArea from './components/MarketingArea';
+import LoadingBox from './elements/Loading';
 
 const INITIAL_VALUES = {
   popup: false,
@@ -46,7 +47,7 @@ function App() {
   return (
     <AppWrapper className="App">
       <div className={`AppInner ${detailPageClass}`}>
-        <Suspense fallback={<div>로딩중!!</div>}>
+        <Suspense fallback={<div className='loading'><LoadingBox /></div>}>
           <Router socket={value.socket} />
         </Suspense>
         <Menu popup={value.popup} socket={value.socket} setPopup={setValues} />
@@ -64,7 +65,12 @@ function App() {
 const AppWrapper = styled.div`
   height: 100vh;
   background: rgb(217, 227, 238);
-
+  .loading {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
   .AppInner::-webkit-scrollbar {
     display: none; /* Chrome, Safari, Opera scrollbar 숨기기*/
   }
