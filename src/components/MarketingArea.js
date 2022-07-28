@@ -6,9 +6,10 @@ import prize_1 from '../assets/img/img_prize_1.png';
 import prize_2 from '../assets/img/img_prize_2.png';
 import prize_3 from '../assets/img/img_prize_3.png';
 
-const MarketingArea = () => {
+const MarketingArea = ({page, setMarketing}) => {
+  console.log(page)
   return (
-    <MarketingPage>
+    <MarketingPage className={page === 'main' ? 'main' : ''}>
       <div className='marketing_head'>
         {/* <img src={logo_en} alt="petsitt" /> */}
         <div className='titleArea'>
@@ -17,6 +18,10 @@ const MarketingArea = () => {
             {/* <img src={logo_ko} alt="펫싯" style={{width: '100px'}}/> */}
             <h2>Petsitt 체험하고 상품받자!</h2>
             <p>반려견 케어 서비스가 필요할 때, <br/>우리 동네 돌보미들을 찾아 문의해보세요!</p>
+            <Button type="button" className='white' onClick={()=>{
+              setMarketing(false);
+              sessionStorage.setItem('marketingOnMobile', false);
+            }}>Petsitt 체험 시작하기<i className='ic-arw-right'></i></Button>
           </div>
         </div>
         <div className='contentArea'>
@@ -70,6 +75,12 @@ const MarketingArea = () => {
               </ul>
             </dd>
           </dl>
+          <div>
+            <Button type="button" onClick={()=>{
+              setMarketing(false);
+              sessionStorage.removeItem('marketingOnMobile', false);
+            }}>Petsitt 체험 시작하기<i className='ic-arw-right'></i></Button>
+          </div>
           </div>
         </div>
       </div>
@@ -78,12 +89,99 @@ const MarketingArea = () => {
 }
 
 
+const Button = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  text-align: center;
+  line-height: 40px;
+  font-size: 16px;
+  background-color: #FC9215;
+  color: #fff;
+  font-weight: 700;
+  border-radius: 6px;
+  margin-top: 20px;
+  i{
+    font-size: 20px;
+    margin-top: 1px;
+    margin-left: 5px;
+  }
+  &.white{
+    width: auto;
+    padding: 0 14px;
+    background-color: #fff;
+    color: #FC9215;
+    line-height: 30px;
+    font-size: 14px;
+    margin: 20px auto 0;
+    i{
+      font-size: 16px;
+      margin-top: -1px;
+      margin-left: 2px;
+    }
+  }
+`
 const MarketingPage = styled.div`
   height: 100vh;
   padding: 0;
   background-color: #F5F5F5;
   overflow: hidden;
   overflow-y: auto;
+  &.main{
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 400;
+    text-align: center;
+    .inner{
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+    .titleArea{
+      padding: 30px 0;
+      span{
+        font-size: 14px;
+        line-height: 22px;
+        padding: 0 6px;
+      }
+      h2{
+        font-size: 24px;
+        margin-top: 14px;
+      }
+      p{
+        font-size: 16px;
+        line-height: 1.4;
+        margin-top: 10px;
+      }
+    }
+    .contentArea{
+      padding: 40px 0;
+      dl{
+        dt{
+          font-size: 16px;
+        }
+        dd{
+          font-size: 14px;
+          p{
+            font-size: 12px;
+          }
+          span{
+            font-size: 12px;
+            margin-bottom: 10px;
+          }
+          a{
+            font-size: 12px;
+          }
+          .prize{
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
   .inner{
     padding-left: 15%;
     padding-right: 60px;
@@ -114,7 +212,7 @@ const MarketingPage = styled.div`
       line-height: 1.2;
       vertical-align: middle;
       margin-left: 8px;
-      color: #FFF4E8;
+      color: #fff;
       @media (max-width:1280px) {
         display: block;
         margin-left: 0;
@@ -227,9 +325,6 @@ const MarketingPage = styled.div`
       padding-left: 10vw;
       
     }
-  }
-  @media (max-width:768px) {
-    display: none;
   }
 `
 export default MarketingArea;
