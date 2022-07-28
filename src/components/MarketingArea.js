@@ -6,9 +6,10 @@ import prize_1 from '../assets/img/img_prize_1.png';
 import prize_2 from '../assets/img/img_prize_2.png';
 import prize_3 from '../assets/img/img_prize_3.png';
 
-const MarketingArea = ({page, setMarketing}) => {
+const MarketingArea = ({page, _display, setMarketing, storage}) => {
+  console.log(_display,'?')
   return (
-    <MarketingPage className={page === 'main' ? 'main' : ''}>
+    <MarketingPage className={page === 'main' ? 'main marketingPage' : 'marketingPage'} style={{display: _display ? 'block' : 'none'}}>
       <div className='marketing_head'>
         {/* <img src={logo_en} alt="petsitt" /> */}
         <div className='titleArea'>
@@ -77,7 +78,7 @@ const MarketingArea = ({page, setMarketing}) => {
           <div>
             <Button type="button" onClick={()=>{
               setMarketing(false);
-              sessionStorage.removeItem('marketingOnMobile', false);
+              sessionStorage.setItem('marketingOnMobile', false);
             }}>Petsitt 체험 시작하기<i className='ic-arw-right'></i></Button>
           </div>
           </div>
@@ -127,6 +128,7 @@ const MarketingPage = styled.div`
   background-color: #F5F5F5;
   overflow: hidden;
   overflow-y: auto;
+  z-index: -100;
   &.main{
     position: fixed;
     left: 0;

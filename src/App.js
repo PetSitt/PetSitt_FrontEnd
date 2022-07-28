@@ -56,7 +56,7 @@ function App() {
           </Suspense>
         )}
       </div>
-      <MarketingArea></MarketingArea>
+      <MarketingArea _display={true}></MarketingArea>
     </AppWrapper>
   );
 }
@@ -97,6 +97,12 @@ const AppWrapper = styled.div`
     }
     &.isDetailPage{
       overflow: hidden;
+    }
+    & + .marketingPage{
+      @media (max-width:768px) {
+        display: none!important;
+      }
+      
     }
   }
 `
