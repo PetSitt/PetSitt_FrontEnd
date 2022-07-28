@@ -39,6 +39,7 @@ const Input = ({
         values={_value}
         ref={_ref}
         defaultValue={defaultValue}
+        value={defaultValue}
         required={required}
         disabled={disabled}
         onChange={onChange}

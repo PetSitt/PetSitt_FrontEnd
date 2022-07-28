@@ -244,7 +244,7 @@ function SitterProfileForm3() {
             type="text"
             name="servicePrice"
             placeholder="일당 서비스 금액을 입력해주세요."
-            defaultValue={num ? num : comma(values.servicePrice)}
+            value={num ? num : comma(values.servicePrice)}
             onChange={handleInput}
           />
           {
