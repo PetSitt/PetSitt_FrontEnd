@@ -40,6 +40,7 @@ const AlertPage = styled.div`
   animation: ${alertAnimation} ease-in-out 3s;
   animation-fill-mode: forwards;
   z-index: 100;
+  pointer-events: none;
   @media (min-width: 768px){
 		max-width: 412px;
     width: 100%;
