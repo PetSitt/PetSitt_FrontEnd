@@ -9,7 +9,6 @@ const AddressInfo = ({
   handlePost,
   onChange,
 }) => {
-  console.log(_address,_zonecode,detailAddress)
   return (
     <ContensInner className={'contents'}>
       <div className='postNumber box'>

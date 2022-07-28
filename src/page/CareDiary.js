@@ -234,7 +234,6 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
                         <span style={{backgroundImage: `url(${imageUrls[i]&&imageUrls[i]})`}}>{imageUrls[i] && <button type="button" className="removeImageButton"
                           onClick={async(e)=>{
                             e.preventDefault();
-                            // console.log('삭제 버튼 clicked', imageUrls[i].split(':')[0]);
                             if(mode === 'write'){
                               // 작성 모드일 경우
                               // 미리보기 이미지 배열에서 해당 주소 삭제
@@ -254,14 +253,12 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
                                 return _new;
                               });
                               if(imageUrls[i].split(':')[0] === 'https'){
-                                // console.log('기존에 등록된 이미지 삭제');
                                 setDataForModify((prev)=>{
                                   const _new = {...prev};
                                   _new.deleteImage.push(imageUrls[i]);
                                   return _new;
                                 })
                               }else{
-                                // console.log('새로 추가한 이미지 다시 삭제');
                                 let index = 0;
                                 let addFileIndex = i;
                                 while(index < i){

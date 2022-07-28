@@ -21,11 +21,9 @@ const ReservationDetail = ({setTab}) => {
     () => apis.reservationDetail(reservationId, type),
     {
       onSuccess: (data) => {
-        // console.log(data, 'success');
         setData(data.data);
       },
       onError: (data) => {
-        // console.log(data, 'error');
       },
       refetchOnMount: 'always',
       staleTime: Infinity,
@@ -37,10 +35,8 @@ const ReservationDetail = ({setTab}) => {
       onSuccess: (data) => {
         setModalDisplay(false);
         navigate('/reservation/list');
-        // console.log(data, 'success');
       },
       onError: (data) => {
-        // console.log(data, 'error');
       },
     }
   );

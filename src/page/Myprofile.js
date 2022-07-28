@@ -23,7 +23,6 @@ const Myprofile = () => {
 
   const { mutate } = useMutation(apis.myprofilePatch, {
     onSuccess: ({ data }) => {
-      console.log("onSuccess",data);
       if (data.myprofile) {
         alert('프로필 정보를 수정했습니다.');
         window.location.reload();
@@ -31,7 +30,6 @@ const Myprofile = () => {
       queryClient.invalidateQueries('user')
     },
     onError: (data) => {
-      console.log("onError",data);
       alert(data.response.data.errorMessage);
       navigate('/login');
     }

@@ -99,10 +99,7 @@ const Signup = () => {
   const { mutate, error, isSuccess } = useMutation(apis.signupAdd, {
     onSuccess: ({ data }) => {
       navigate("/login", {state: {signup: true}});
-    },
-    onError: (data) => {
-      console.log(data);
-    },
+    }
   });
 
   // 등록하는 함수

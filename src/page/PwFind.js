@@ -62,14 +62,12 @@ const PwFind = () => {
       }
     },
     onError: (data) => {
-      console.log(data);
     },
   });
 
   // 등록하는 함수
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(values);
     mutate(values);
   };
 

@@ -8,12 +8,10 @@ const Reviews = ({reviewCount, sitterId}) => {
   const reviewIdValue = useRef(0);
 
   const getReviewApi = (sitterId, reviewId) => {
-    console.log(sitterId, reviewId)
     return apis.getReviews(sitterId, reviewId);
   }
   const {data: reviewsData, refetch: refetchReviews} = useQuery(['reviewsData', sitterId, reviewIdValue.current], ()=>getReviewApi(sitterId, {reviewId: reviewIdValue.current}), {
     onSuccess: (data) => {
-      console.log(data,'review loading success')
     },
     onError: (data) => {
       //console.error(data);
@@ -21,7 +19,6 @@ const Reviews = ({reviewCount, sitterId}) => {
     staleTime: Infinity,
   })
   const lastReviewRef = useRef(0);
-  console.log(reviews)
 
   useEffect(()=>{
     if(reviewsData?.data.reviews.length > 0){

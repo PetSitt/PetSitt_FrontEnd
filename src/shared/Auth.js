@@ -31,7 +31,7 @@ const Auth = () => {
       localStorage.setItem('kakaoToken', res.data.access_token);
       navigate('/');
     } catch (err) {
-      console.log(err);
+
     }
   };
   useEffect(() => {
