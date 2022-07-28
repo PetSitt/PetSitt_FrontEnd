@@ -13,7 +13,6 @@ const AddressInfo = ({
   return (
     <ContensInner className={'contents'}>
       <div className='postNumber box'>
-        {console.log(_zonecode)}
         <Input
           _type='text'
           _placeholder={'우편번호'}
