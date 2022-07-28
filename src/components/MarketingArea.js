@@ -7,7 +7,6 @@ import prize_2 from '../assets/img/img_prize_2.png';
 import prize_3 from '../assets/img/img_prize_3.png';
 
 const MarketingArea = ({page, setMarketing}) => {
-  console.log(page)
   return (
     <MarketingPage className={page === 'main' ? 'main' : ''}>
       <div className='marketing_head'>
