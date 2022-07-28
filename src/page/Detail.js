@@ -265,7 +265,7 @@ const Detail = ({socket}) => {
     }
   }
 
-  if (!detail) return <p>로딩중입니다</p>;
+  if (!detail) return null;
 	return (
 		<>
       <SitterDetailPage className="detailPageWrap" style={{paddingTop: 0}} onScroll={(e)=>{
@@ -553,7 +553,7 @@ const Detail = ({socket}) => {
                 </strong>
               </li>
               <li className="price">
-                <span>결제예정금액</span>
+                <span>서비스 예상 금액</span>
                 <strong><em>{detail.sitter.servicePrice}</em>원/일</strong>
               </li>
             </ul>

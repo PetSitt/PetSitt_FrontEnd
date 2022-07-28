@@ -17,10 +17,14 @@ const MarketingArea = ({page, _display, setMarketing, storage}) => {
             {/* <img src={logo_ko} alt="펫싯" style={{width: '100px'}}/> */}
             <h2>Petsitt 체험하고 상품받자!</h2>
             <p>반려견 케어 서비스가 필요할 때, <br/>우리 동네 돌보미들을 찾아 문의해보세요!</p>
-            <Button type="button" className='white' onClick={()=>{
-              setMarketing(false);
-              sessionStorage.setItem('marketingOnMobile', false);
-            }}>Petsitt 체험 시작하기<i className='ic-arw-right'></i></Button>
+            {
+              page === 'main' && (
+                <Button type="button" className='white' onClick={()=>{
+                  setMarketing(false);
+                  sessionStorage.setItem('marketingOnMobile', false);
+                }}>Petsitt 체험 시작하기<i className='ic-arw-right'></i></Button>
+              )
+            }
           </div>
         </div>
         <div className='contentArea'>
@@ -75,10 +79,14 @@ const MarketingArea = ({page, _display, setMarketing, storage}) => {
             </dd>
           </dl>
           <div>
-            <Button type="button" onClick={()=>{
-              setMarketing(false);
-              sessionStorage.setItem('marketingOnMobile', false);
-            }}>Petsitt 체험 시작하기<i className='ic-arw-right'></i></Button>
+            {
+              page === 'main' && (
+                <Button type="button" onClick={()=>{
+                  setMarketing(false);
+                  sessionStorage.setItem('marketingOnMobile', false);
+                }}>Petsitt 체험 시작하기<i className='ic-arw-right'></i></Button>
+              )
+            }
           </div>
           </div>
         </div>
