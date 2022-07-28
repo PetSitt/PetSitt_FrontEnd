@@ -99,7 +99,8 @@ const Signup = () => {
   const { mutate, error, isSuccess } = useMutation(apis.signupAdd, {
     onSuccess: ({ data }) => {
       // console.log(data);
-      navigate("/login", {state: {signup: true}});
+      sessionStorage.setItem('signup', true);
+      navigate("/login");
     },
     onError: (data) => {
       // console.log(data);
