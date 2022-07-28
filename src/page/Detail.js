@@ -69,7 +69,9 @@ const Detail = ({socket}) => {
     '응급 처치': 'ic-first-aid',
     '장기 예약 가능 - 14일 이상 돌봄가능': 'ic-longterm',
     '퍼피 케어(1살 미만)': 'ic-puppy',
+    '퍼피 케어(1살미만)': 'ic-puppy',
     '노견 케어(8살 이상)': 'ic-puppy',
+    '노견 케어(8살이상)': 'ic-puppy',
     '실내놀이': 'ic-activity',
     '마당있음': 'ic-yard',
   };
@@ -98,12 +100,13 @@ const Detail = ({socket}) => {
 		data: detailData,
 	} = useQuery("detail_data", () => apis.getUserDetail(sitterId), {
 		onSuccess: (data) => {
-			console.log(data.data, "data loaded");
+			// console.log(data.data, "data loaded");
     },
 		onError: (data) => {
-			console.error(data);
+			// console.error(data);
 		},
-		staleTime: Infinity,
+		staleTime: 180000,
+    cacheTime: 0,
 	});
 
   const {data: checkRegisteredPet, refetch: petInfoRefetch} = useQuery('getPetInfoQuery', () => apis.getPetInfo(), {
@@ -128,7 +131,7 @@ const Detail = ({socket}) => {
       })
     },
     onError: (data) => {
-      console.log(data);
+      // console.log(data);
     }
   });
 
@@ -190,6 +193,8 @@ const Detail = ({socket}) => {
   },[detail, month, selectBoxToggle]);
 
 	useEffect(() => {
+    queryClient.invalidateQueries('detail_data');
+    setDetail(null);
     // 날짜/서비스 선택하기 모달 활성화됐을 때 모달 외 배경 클릭하면 꺼지도록 이벤트 추가 
 		window.addEventListener("click", checkSelectArea);
     // 로그인한 상태일 경우 등록된 반려견 정보 있는지 확인

@@ -64,13 +64,13 @@ function Home() {
 		() => getSittersList(queriesData, category),
 		{
 			onSuccess: (data) => {
-				console.log(data)
+				// console.log(data)
 				setSearched(false);
 				setSitters(data.data.sitters);
 				setSearchingStatus('done');
 			},
 			onError: (data) => {
-				console.error(data);
+				// console.error(data);
 				setSearched(false);
 			},
 			enabled: !!searched,
@@ -122,14 +122,14 @@ function Home() {
 		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
 		{
 			onSuccess: (data) => {
-				console.log(data, 'success')
+				// console.log(data, 'success')
 				queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(false);
 				setSitters(data.data.sitter);
 				setSearchingStatus('done');
 			},
 			onError: (data) => {
-				console.error(data);
+				// console.error(data);
 				setDefaultSearch(false);
 			},
 			enabled: !!defaultSearch,
@@ -144,7 +144,7 @@ function Home() {
 			localStorage.setItem('userEmail', dataToSend.current.userEmail);
     },
     onError: (data) => {
-      console.log(data, 'kakao login failed');
+      // console.log(data, 'kakao login failed');
     },
   })
   const getKakaoProfile = async () => {
@@ -163,7 +163,7 @@ function Home() {
         userName: data.properties.nickname,
       });
     } catch (err) {
-      console.log(err);
+      // console.log(err);
     }
   };
 	const getLocation = () => {
@@ -177,7 +177,7 @@ function Home() {
         },
         (err) => {
 					setSearchingStatus('blocked');
-					console.log(err)
+					// console.log(err)
         },
         {
           enableHighAccuracy: false,

@@ -40,9 +40,13 @@ const Mypage = (props) => {
             </div>
           </div>
           <div className='profileInner'>
-            <div className='item'>
-              <Link to={{ pathname: `/pwchange` }}>비밀번호 변경</Link>
-            </div>
+            {
+               !localStorage.getItem('kakaoToken') && (
+                  <div className='item'>
+                    <Link to={{ pathname: `/pwchange` }}>비밀번호 변경</Link>
+                  </div>
+               )
+            }
             <div className='item'>
               <a href="https://forms.gle/8P1mzCKyuY9Aj7HGA" target="_blank" rel="noreferrer">고객센터</a>
             </div>

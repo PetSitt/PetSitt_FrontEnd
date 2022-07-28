@@ -7,7 +7,7 @@ import { chatApis } from "../store/chatApi";
 import moment from 'moment';
 
 import Tabs from '../elements/Tabs';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate,useLocation } from 'react-router-dom';
 import StyledButton from '../elements/StyledButton';
 import Review from './Review';
 import CareDiary from './CareDiary';
@@ -17,6 +17,7 @@ import Alert from '../elements/Alert';
 
 const ReservationList = ({socket, tab, setTab}) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [pastReservation, setPastReservation] = useState();
   const [proceedings, setProceedings] = useState();
   const [selectedTab, setSelectedTab] = useState(tab);
@@ -43,6 +44,7 @@ const ReservationList = ({socket, tab, setTab}) => {
       reviewInfo: null,
     },
   });
+  console.log(location)
   const [diarySave, setDiarySave] = useState(false);
   const chatInfo = useRef({
     sitterId: null,
@@ -148,7 +150,7 @@ const ReservationList = ({socket, tab, setTab}) => {
         setModalDisplay(true);
       },
       onError: (data) => {
-        console.log(data, 'loading review failed');
+        // console.log(data, 'loading review failed');
       },
     }
   );
@@ -181,7 +183,7 @@ const ReservationList = ({socket, tab, setTab}) => {
       reservatioinList();
     },
     onError: (data) => {
-      console.log(data, 'diary saving failed');
+      // console.log(data, 'diary saving failed');
     },
     enabled: !!diarySave,
   });
@@ -209,7 +211,6 @@ const ReservationList = ({socket, tab, setTab}) => {
         setModalType(modalContent.diaryView);
       }else{
         // 돌보미 탭일 경우 
-        console.log('돌보미탭')
         const reservationId = reservationIdForDiary.current;
         const status = pastReservation.filter((v)=>v.reservationId === reservationId);
         if(status.length){
@@ -438,7 +439,7 @@ const ReservationList = ({socket, tab, setTab}) => {
 
   useEffect(()=>{
     if(sessionStorage.getItem('reservationInfo')){
-      sessionStorage.removeItem('reservationInfo')
+      sessionStorage.removeItem('reservationInfo');
     }
   },[])
 
@@ -513,8 +514,11 @@ const ReservationList = ({socket, tab, setTab}) => {
                               </p>
                               <p className='sitterPhone'>
                                 <i className='ic-phone' />
-                                {v.phoneNumber}
+                                {
+                                  v.phoneNumber ? v.phoneNumber : '문의하기 기능을 이용해주세요.'
+                                }
                               </p>
+                              
                             </SitterInfo>
                           </div>
                           <div
@@ -648,7 +652,7 @@ const ReservationList = ({socket, tab, setTab}) => {
                         </ReservationInfoContainer>
                         {v.isPending && (
                           <InformText>
-                            * 신청자가 리뷰를 작성해야 서비스가
+                            신청자가 리뷰를 작성해야 서비스가
                             완료됩니다.
                           </InformText>
                         )}
@@ -757,7 +761,7 @@ const ReservationList = ({socket, tab, setTab}) => {
                       </ReservationInfoContainer>
                       {v.isPending && (
                         <InformText>
-                          * 리뷰를 작성해야 서비스가 완료됩니다.
+                          리뷰를 작성해야 서비스가 완료됩니다.
                         </InformText>
                       )}
                     </ReservationItem>
@@ -902,9 +906,9 @@ const ReservationItem = styled.li`
   }
   .buttons {
     flex-shrink: 0;
-    width: 100px;
+    width: 85px;
     button{
-      font-size: 14px;
+      font-size: 13px;
       height: 31px;
       padding: 6px 0;
     }
@@ -964,7 +968,7 @@ const ReservationInfoContainer = styled.div`
   .sitterInfo {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-evenly;
     button {
       border-bottom: 1px solid #000;
@@ -994,11 +998,16 @@ const SitterInfo = styled.div`
   }
   .sitterAddress,
   .sitterPhone {
+    position: relative;
+    padding-left: 15px;
     font-weight: 400;
     font-size: 14px;
     line-height: 17px;
     color: #676767;
     i {
+      position: absolute;
+      left: 0;
+      top: 0;
       margin-right: 2px;
       vertical-align: bottom;
     }
@@ -1036,10 +1045,17 @@ const UserInfo = styled.div`
   }
 `
 const SitterImage = styled.div`
+  flex-shrink: 0;
   width: 72px;
   height: 72px;
   border-radius: 10px;
+  margin-top: 8px;
   margin-right: 11px;
+  border: 1px solid #e9e9e9;
+  @media (min-width: 375px){
+    width: 50px;
+    height: 50px;
+  }
 `;
 
 const ReservationListPage = styled.div`
@@ -1058,6 +1074,7 @@ const ReservationListPage = styled.div`
   }
 `;
 const NoResult = styled.p`
+  font-size: 15px;
   padding: 20px 15px;
   border-radius: 6px;
   background-color: rgba(120, 120, 120, 0.1);
@@ -1069,8 +1086,10 @@ const Loading = styled.p`
   background-color: rgba(120, 120, 120, 0.1);
 `;
 const InformText = styled.p`
-  font-size: 13px;
+  font-size: 12px;
   color: #F01D1D;
   margin-top: 10px;
+  border-top: 1px solid #e9e9e9;
+  padding-top: 10px;
 `;
 export default ReservationList;
