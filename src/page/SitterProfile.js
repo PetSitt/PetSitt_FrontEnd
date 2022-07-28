@@ -8,6 +8,7 @@ import { comma } from "../shared/common";
 import Input from "../elements/Input";
 import NavBox from "../elements/NavBox";
 import Checkbox from "../elements/Checkbox";
+import sitterDefault from '../assets/img/img_sitter_default.png'
 
 const SitterProfile = () => {
   const navigate = useNavigate();
@@ -45,7 +46,7 @@ const SitterProfile = () => {
           <div className="profileinner">
             <div>
               <div className="profileMainImg inner">
-                <img src={values.mainImageUrl ? values.mainImageUrl : "/images/placeholder_150.png"} alt="돌보미" />
+                <span style={{backgroundImage: `url(${values.imageUrl ? values.imageUrl : sitterDefault})`}}></span>
               </div>
             </div>
             <label className="inner required">
@@ -177,10 +178,17 @@ const SitterProfileInner = styled.div`
 
   .profileMainImg {
     text-align: center;
-    img {
+    span {
+      display: block;
       width: 90px;
       height: 90px;
       border-radius: 50%;
+      margin: 0 auto;
+      border: 1px solid #e9e9e9;
+      box-sizing: border-box;
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
     }
   }
 `;
