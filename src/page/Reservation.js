@@ -98,7 +98,7 @@ const Reservation = () => {
                 {
                   info.service.map((v,i)=>{
                     return (
-                      <p className='reservDesc' key={`service_${i}`}>{i > 0 && ','} {v}</p>
+                      <p className='reservDesc' key={`service_${i}`}>{v}</p>
                     )
                   })
                 }
@@ -110,7 +110,7 @@ const Reservation = () => {
                 {
                   info.date.map((v,i)=>{
                     return (
-                      <p className='reservDesc' key={`date_${i}`}>{i > 0 && ','} {v}</p>
+                      <p className='reservDesc' key={`date_${i}`}>{v}</p>
                     )
                   })
                 }

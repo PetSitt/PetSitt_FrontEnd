@@ -65,6 +65,8 @@ i {
 }
 .ic-star:before {
   content: "\e90b";
+  color: #FFC700;
+
 }
 .ic-search:before {
   content: "\e90c";

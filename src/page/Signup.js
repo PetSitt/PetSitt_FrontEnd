@@ -98,11 +98,12 @@ const Signup = () => {
   // useMutation 세팅 함수
   const { mutate, error, isSuccess } = useMutation(apis.signupAdd, {
     onSuccess: ({ data }) => {
-      console.log(data);
-      // navigate("/login", {state: {signup: true}});
+      // console.log(data);
+      sessionStorage.setItem('signup', true);
+      navigate("/login");
     },
     onError: (data) => {
-      console.log(data);
+      // console.log(data);
       if(data.response.status === 400){
         if(data.response.data.errorMessage.indexOf('이메일'));
         setIdMessage('이미 가입된 이메일 주소 입니다.');
