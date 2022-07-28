@@ -12,6 +12,8 @@ import Modal from '../elements/Modal';
 import StyledButton from '../elements/StyledButton';
 import Reviews from './Reviews';
 import ChatList from "./ChatList";
+import sitterBgDefault from '../assets/img/img_sitter_bg_default.png';
+import sitterDefault from '../assets/img/img_sitter_default.png'
 
 const Detail = ({socket}) => {
 	const queryClient = useQueryClient();
@@ -278,11 +280,11 @@ const Detail = ({socket}) => {
       }}>
         <section className="page_top">
           <section>
-            <TopImage style={{backgroundImage: `url(${detail.sitter.mainImageUrl})`, margin: '0 -20px'}}></TopImage>
+            <TopImage style={{backgroundImage: `url(${detail.sitter.mainImageUrl ? detail.sitter.mainImageUrl : sitterBgDefault})`, margin: '0 -20px'}}></TopImage>
             <SitterProfile>
               <li className="profile">
                 <span
-                  style={{ backgroundImage: `url(${detail.sitter.imageUrl})` }}
+                  style={{ backgroundImage: `url(${detail.sitter.imageUrl ? detail.sitter.imageUrl : sitterDefault})` }}
                 ></span>
               </li>
               <li className="user">

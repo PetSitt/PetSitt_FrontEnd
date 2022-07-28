@@ -66,7 +66,6 @@ const SitterProfileForm2 = () => {
         <NavBox _title='상세 정보' _subTitle='2/4' sitterEditProfile />
         <InputBox>
           <label className='tit'>프로필 사진*</label>
-          {console.log("imageUrl:", values.imageUrl)}
           <ImageRegist
             name={'imageUrl'}
             value={data && values.imageUrl}
@@ -123,26 +122,18 @@ const SitterProfileForm2 = () => {
             }}
             defaultValue={data && values.myIntro}
             placeholder='자신을 소개해 주세요'
+            maxLength={1000}
           />
           {
             errorMessages.myIntro && <Message>자기 소개글을 입력해주세요.</Message>
           }
         </InputBox>
-        {update ? (
-          <StyledButton
-          _onClick={() => navigate('/mypage/SitterProfileForm3', {state: { data: values, update: true }})}
-          _title={'다음으로'}
-        />
-        ) : (
-          <StyledButton
+        <StyledButton
             _onClick={() =>
-              navigate("/mypage/SitterProfileForm3", {
-                state: { data: values, update: false },
-              })
+              doValidation()
             }
             _title={"다음으로"}
           />
-        )}
       </SitterProfileFormInner>
     </StyledContainer>
   );

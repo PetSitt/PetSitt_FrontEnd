@@ -14,7 +14,7 @@ function SitterProfileForm4() {
   const today = new DateObject();
   const {data, update} = useLocation().state;
   const [dates, setDates] = useState(data.noDate);
-  const [newDates, setNewDates] = useState(null);
+  const [newDates, setNewDates] = useState([]);
   const [dateMsg, setDateMsg] = useState('');
   const queryClient = useQueryClient();
   const navigate = useNavigate();
@@ -68,6 +68,7 @@ function SitterProfileForm4() {
 
     update ? sitterUpdate(formData) : create(formData)
   }
+  console.log(newDates, dates)
   useEffect(()=>{
     if(dates && typeof dates[0] === 'object'){
       setNewDates(()=>{

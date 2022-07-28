@@ -14,6 +14,8 @@ import StyledButton from "../elements/StyledButton";
 import ExceptionArea from '../components/ExceptionArea';
 import Loading from '../elements/Loading';
 import MarketingArea from "../components/MarketingArea";
+import sitterBgDefault from '../assets/img/img_sitter_bg_default.png';
+import sitterDefault from '../assets/img/img_sitter_default.png'
 
 function Home() {
 	const datepickerRef = useRef();
@@ -351,8 +353,8 @@ function Home() {
 												return (
 													<SitterCard key={`sitter_${i}`}>
 														<Link to={`/detail/${v.sitterId}`}>
-														<div className="image_area" style={{backgroundImage: `url(${v.mainImageUrl})`}}>
-															<span className="sitter_image" style={{backgroundImage: `url(${v.imageUrl})`}}></span>
+														<div className="image_area" style={{backgroundImage: `url(${v.mainImageUrl ? v.mainImageUrl : sitterBgDefault})`}}>
+															<span className="sitter_image" style={{backgroundImage: `url(${v.imageUrl ? v.imageUrl : sitterDefault})`}}></span>
 														</div>
 														<div className="info_area">
 															<p className="sitter">
