@@ -7,7 +7,6 @@ import prize_2 from '../assets/img/img_prize_2.png';
 import prize_3 from '../assets/img/img_prize_3.png';
 
 const MarketingArea = ({page, _display, setMarketing, storage}) => {
-  console.log(_display,'?')
   return (
     <MarketingPage className={page === 'main' ? 'main marketingPage' : 'marketingPage'} style={{display: _display ? 'block' : 'none'}}>
       <div className='marketing_head'>
