@@ -1,15 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const ChatHeader = ({socket, idRoom, popup, showChatRoom, setPopup}) => {
+const ChatHeader = ({socket, idRoom, popup, setPopup, showChatRoom, setShowChatRoom}) => {
 	return (
 			<ChatHeaderInner className="chats_header">
 				<h2 className="header">PetSitt</h2>
 				<div className="close" onClick={() => setPopup((prev) => {
 					socket.emit("leave_room", idRoom);
+					setShowChatRoom(!showChatRoom)
+					sessionStorage.setItem('showRoom', false);
 					return {
 						...prev,
-						popup:false
+						popup:!popup
 					}
 				})}><i className="ic-close"></i></div>
 			</ChatHeaderInner>

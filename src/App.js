@@ -11,7 +11,7 @@ import LoadingBox from './elements/Loading';
 
 const INITIAL_VALUES = {
   popup: false,
-  socket: null,
+  socket: {},
   id: null,
   username: null
 }
@@ -39,7 +39,7 @@ function App() {
       setValues((prev) => {
         return {
           ...prev,
-          socket: null
+          socket: {}
         }
       });
     }
@@ -51,11 +51,9 @@ function App() {
           <Router socket={value.socket} />
         </Suspense>
         <Menu popup={value.popup} socket={value.socket} setPopup={setValues} />
-        {value.popup && (
-          <Suspense>
-            <ChatList popup={value.popup} socket={value.socket} setPopup={setValues} />
-          </Suspense>
-        )}
+        <Suspense>
+          <ChatList popup={value.popup} socket={value.socket} setPopup={setValues} />
+        </Suspense>
       </div>
       <MarketingArea _display={true}></MarketingArea>
     </AppWrapper>
