@@ -22,6 +22,7 @@ const Login = ({socket}) => {
   const cookies = new Cookies();
   const email_ref = useRef();
   const pw_ref = useRef();
+  const [alert, setAlert] = useState();
 
   // 에러메세지 상태 저장
   const [errorMessage, setErrorMessage] = useState({
@@ -78,7 +79,11 @@ const Login = ({socket}) => {
       localStorage.removeItem('userName');
 			localStorage.removeItem('userEmail');
     }
-  }, [cookies]);
+    if(sessionStorage.getItem('signup')){
+      setAlert(true);
+      sessionStorage.removeItem('signup');
+    }
+  }, []);
 
   return (
     <StyledContainer>
@@ -196,7 +201,7 @@ const Login = ({socket}) => {
         />
       </RegisterBox>
       {
-        location.state?.signup && <Alert _text={'회원가입이 완료되었습니다.'}/>
+        alert && <Alert _text={'회원가입이 완료되었습니다.'}/>
       }
     </StyledContainer>
   );
