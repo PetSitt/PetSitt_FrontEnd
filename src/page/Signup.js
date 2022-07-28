@@ -98,7 +98,19 @@ const Signup = () => {
   // useMutation 세팅 함수
   const { mutate, error, isSuccess } = useMutation(apis.signupAdd, {
     onSuccess: ({ data }) => {
-      navigate("/login", {state: {signup: true}});
+      console.log(data);
+      // navigate("/login", {state: {signup: true}});
+    },
+    onError: (data) => {
+      console.log(data);
+      if(data.response.status === 400){
+        if(data.response.data.errorMessage.indexOf('이메일'));
+        setIdMessage('이미 가입된 이메일 주소 입니다.');
+        setIsId(false);
+        if(data.response.data.errorMessage.indexOf('핸드폰'));
+        setPhoneMessage('이미 가입된 핸드폰 번호입니다.');
+        setIsPhone(false);
+      }
     }
   });
 
