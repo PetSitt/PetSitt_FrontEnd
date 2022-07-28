@@ -1019,19 +1019,20 @@ const SitterProfile = styled.ul`
         font-weight: 500;
       }
       .score{
+        display: flex;
+        align-items: center;
         font-size: 14px;
         strong{
           font-weight: 500;
         }
         i{
-          display: inline-block;
           width: 18px;
           height: 18px;
           background-size: contain;
           background-repeat: no-repeat;
           background-position: center;
           vertical-align: middle;
-          margin: -4px 1px 0 8px;
+          margin: -1px 1px 0 8px;
         }
       }
     }
