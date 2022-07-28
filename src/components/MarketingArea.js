@@ -133,9 +133,10 @@ const MarketingPage = styled.div`
     left: 0;
     right: 0;
     top: 0;
-    bottom: 0;
+    height: 100vh;
     z-index: 400;
     text-align: center;
+    padding-bottom: 100px;
     .inner{
       padding-left: 20px;
       padding-right: 20px;
