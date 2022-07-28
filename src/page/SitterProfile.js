@@ -78,16 +78,18 @@ const SitterProfile = () => {
               <label className="tit">케어 가능 범위</label>
               <CheckGroup>
                 {values.careSize.map((el, idx) => {
-                  return(
-                  <Checkbox
-                    _text={idx === 0 ? "소형견" : idx === 1 ? "중형견" : "대형견"}
-                    _size={"1.2rem"}
-                    _border={"1px solid rgba(120, 120, 120, 0.7)"}
-                    _id={idx === 0 ? "소형견" : idx === 1 ? "중형견" : "대형견"}
-                    checked={idx === 0 && el ? "소형견" : idx === 1 && el ? "중형견" : idx === 2 && el ? "대형견" : ""}
-                    disabled
-                  />
-                  )
+                  if(el){
+                    return(
+                      <Checkbox
+                        key={idx}
+                        _text={idx === 0 ? "소형견" : idx === 1 ? "중형견" : "대형견"}
+                        _size={"1.2rem"}
+                        _id={idx === 0 ? "소형견" : idx === 1 ? "중형견" : "대형견"}
+                        checked={idx === 0 && el ? "소형견" : idx === 1 && el ? "중형견" : idx === 2 && el ? "대형견" : ""}
+                        disabled
+                      />
+                      )
+                  }
                 })}
                 
                 {/* <Checkbox

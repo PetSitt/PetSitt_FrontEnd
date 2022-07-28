@@ -41,13 +41,13 @@ const Detail = ({socket}) => {
     'noPets': '등록된 반려견 정보가 없습니다.',
   }
   const [errorMessage, setErrorMessage] = useState(null);
+  const detailPageRef = useRef();
   const reservationRef = useRef();
   const careSizeRef = useRef();
   const plusService = useRef();
   const reviewRef = useRef();
   const pageBodyRef = useRef();
   const floatingTabsRef = useRef();
-  const selectAreaRef = useRef();
   const [modalDisplay, setModalDisplay] = useState(false)
   const [scrollY, setScrollY] = useState();
   const [scrollDirection, setScrollDirection] = useState();
@@ -239,14 +239,14 @@ const Detail = ({socket}) => {
     }else{
       datesTransformed.current = [];
     }
-    selectAreaRef.current?.classList.add('isActive');
+    detailPageRef.current?.classList.add('menuIsActive');
   }, [date]);
   
   useEffect(()=>{
     if(scrollDirection === 'up'){
-      selectAreaRef.current?.classList.add('isActive');
+      detailPageRef.current?.classList.add('menuIsActive');
     }else{
-      selectAreaRef.current?.classList.remove('isActive');
+      detailPageRef.current?.classList.remove('menuIsActive');
     }
     setSelectBoxToggle({ type: "", status: false });
   },[scrollDirection])
@@ -272,7 +272,7 @@ const Detail = ({socket}) => {
   if (!detail) return null;
 	return (
 		<>
-      <SitterDetailPage className="detailPageWrap" style={{paddingTop: 0}} onScroll={(e)=>{
+      <SitterDetailPage ref={detailPageRef} className="detailPageWrap" style={{paddingTop: 0}} onScroll={(e)=>{
         scrollEvent(e);
         setScrollY((prev)=>{
           if (prev > e.target.scrollTop) setScrollDirection('up');
@@ -349,7 +349,7 @@ const Detail = ({socket}) => {
                             new_data[i] = e.target.checked;
                             return new_data;
                           });
-                          selectAreaRef.current.classList.add('isActive');
+                          detailPageRef.current.classList.add('menuIsActive');
                         }}/>
                         <span>
                           <i className={iconClasses[v]}></i>
@@ -444,7 +444,7 @@ const Detail = ({socket}) => {
               )
             }
           </section>
-          <section>
+          <section className="location_section">
             <h3>{detail.sitter.sitterName}님의 위치</h3>
             <MapWrapper>
               <MapContainer
@@ -457,7 +457,7 @@ const Detail = ({socket}) => {
           </section>
         </section>
         <ReservationFunctions>
-          <div className="select_area" ref={selectAreaRef}>
+          <div className="select_area">
             <div className={`select_detail service ${selectBoxToggle.status && selectBoxToggle.type === "service" ? 'isShow' : ''}`}>
                 <h3>서비스 선택 <button type="button" className="closeSelectWrap" onClick={()=>setSelectBoxToggle({status: false, type: null})}>닫기</button></h3>
                 <div>
@@ -615,7 +615,7 @@ const Detail = ({socket}) => {
           </Modal>
         )}
         {(modalDisplay && errorMessage !== errorMessages.notLogin && errorMessage !== errorMessages.noPets ) && (
-          <Modal _display={modalDisplay} _alert={true} confirmOnClick={()=>{setErrorMessage(null); setModalDisplay(false); selectAreaRef.current.classList.add('isActive');}}>
+          <Modal _display={modalDisplay} _alert={true} confirmOnClick={()=>{setErrorMessage(null); setModalDisplay(false); detailPageRef.current.classList.add('menuIsActive');}}>
             <div className="text_area">
               <p>{errorMessage}</p>
             </div>
@@ -764,11 +764,8 @@ const ReservationFunctions = styled.div`
     left: 0;
     right: 0;
     bottom: 100%;
-    transform: translateY(100%);
     transition: ease-out 240ms;
-    &.isActive{
-      transform: translateY(0);
-    }
+    transform: translateY(100%);
     & > ul {
       position: relative;
       z-index: 2;
@@ -832,6 +829,15 @@ const SitterDetailPage = styled.div`
   overflow: hidden;
   overflow-y: auto;
   line-height: 1.4;
+  //여기
+  &.menuIsActive{
+    .location_section{
+      margin-bottom: 200px;
+    }
+    .select_area{
+      transform: translateY(0);
+    }
+  }
   & > section {
     &.page_top{
       section{
