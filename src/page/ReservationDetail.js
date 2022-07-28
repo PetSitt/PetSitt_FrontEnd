@@ -117,7 +117,7 @@ const ReservationDetail = ({setTab}) => {
               </ReservInfoBox>
               <hr />
               <ReservPriceBox>
-                <p className='reservTitle'>결제 금액</p>
+                <p className='reservTitle'>서비스 예상 금액</p>
                 <p className='reservDesc price'>{comma(data.servicePrice)}원</p>
               </ReservPriceBox>
               <hr />
