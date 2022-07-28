@@ -1,6 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
 import { reset } from 'styled-reset';
-import 'https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css';
 const GlobalStyles = createGlobalStyle`
   ${reset};
 
