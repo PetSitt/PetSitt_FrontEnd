@@ -251,7 +251,7 @@ function Home() {
 	},[sitters, sittersIsRefetching])
 	return (
 		<>
-		<div className="home" style={{position: 'relative'}}>
+		<div className="home" style={{position: 'relative', backgroundColor: '#fff'}}>
 			<button type="button" onClick={getLocation} ref={getLocationButtonRef} style={{position: 'absolute', left: 0, top: 0, width: 0, height: 0}}></button>
 			<IndexPage>
 				<FilterArea ref={filterAreaRef}>
