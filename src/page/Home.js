@@ -52,6 +52,7 @@ function Home() {
 	})
 	const [searchingStatus, setSearchingStatus] = useState('searching');
 	const [marketing, setMarketing] = useState(false);
+
 	const getSittersList = (queriesData, category) => {
 		const _queriesData = {...queriesData, category: category.length ? category : []};
 		return apis.getSittersList(_queriesData);
@@ -435,9 +436,8 @@ function Home() {
 				</Buttons>
 			</IndexPage>
 		</div>
-		
 		{
-			marketing && <MarketingArea page='main' setMarketing={setMarketing} />
+			marketing && <MarketingArea _display={marketing} page='main' setMarketing={setMarketing}/>
 		}
 	</>
 	);
