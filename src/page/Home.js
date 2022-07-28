@@ -13,6 +13,7 @@ import icon_star from '../assets/img/icon_star.png';
 import StyledButton from "../elements/StyledButton";
 import ExceptionArea from '../components/ExceptionArea';
 import Loading from '../elements/Loading';
+import MarketingArea from "../components/MarketingArea";
 
 function Home() {
 	const datepickerRef = useRef();
@@ -39,7 +40,7 @@ function Home() {
 	const [contentHeight, setContentHeight] = useState();
 	const getLocationButtonRef = useRef();
 	const [datepickerDisplay, setDatepickerDisplay] = useState(false);
-	const [modalDisplay, setModalDisplay] = useState(false);
+	const [modalDisplay, setModalDisplay] = useState();
 	const showModal = useRef(false);
 	const datesTransformed= useRef(null);
 	const [sitterCardShow, setSitterCardShow] = useState({display: false, index: null});
@@ -50,7 +51,7 @@ function Home() {
 		userName: null,
 	})
 	const [searchingStatus, setSearchingStatus] = useState('searching');
-
+	const [marketing, setMarketing] = useState(false);
 	const getSittersList = (queriesData, category) => {
 		const _queriesData = {...queriesData, category: category.length ? category : []};
 		return apis.getSittersList(_queriesData);
@@ -200,6 +201,11 @@ function Home() {
 		const tooltipTimeout = setTimeout(()=>{
 			showTooltip.current = false;
 		},5000)
+		
+		if(window.innerWidth < 769 && !sessionStorage.getItem('marketingOnMobile')){
+			setMarketing(true);
+		}
+
 		return()=>{
 			clearTimeout(tooltipTimeout);
 		}
@@ -243,7 +249,6 @@ function Home() {
 			})
 		}
 	},[sitters, sittersIsRefetching])
-
 	return (
 		<>
 		<div className="home" style={{position: 'relative'}}>
@@ -430,13 +435,11 @@ function Home() {
 				</Buttons>
 			</IndexPage>
 		</div>
-		<Modal _alert={true} _display={modalDisplay} confirmOnClick={()=>setModalDisplay(false)}>
-			<div className="text_area">
-				<p>GPS를 허용해주세요.</p>
-				<p>GPS를 허용하지 않을 경우, 검색을 통해 돌보미 리스트를 확인해야합니다.</p>
-			</div>
-		</Modal>
-		</>
+		
+		{
+			marketing && <MarketingArea page='main' setMarketing={setMarketing} />
+		}
+	</>
 	);
 }
 
