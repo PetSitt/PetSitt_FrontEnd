@@ -62,7 +62,7 @@ const ReservationList = ({socket, tab, setTab}) => {
     data: reservationListData,
 	} = useMutation(() => apis.reservationList(selectedTab), {
 		onSuccess: (data) => {
-      console.log(data, 'list')
+      // console.log(data, 'list')
 			setProceedings(data.data.proceedings);
 			setPastReservation(data.data.pasts);
       if(data.data.pasts.length < 3){

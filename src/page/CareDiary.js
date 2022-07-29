@@ -190,9 +190,7 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
                           e.preventDefault();
                           const thisInput = e.target;
                           const thisFile = e.target.files[0];
-                          console.log('onchange',e.target.files[0])
                           if (e.target.files[0]) {
-                            console.log('업로드 성공',e.target.files[0])
                             if(mode.current === 'write'){
                               // 일지 처음 등록할 때
                               setFiles((prev)=>{
@@ -217,13 +215,10 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
                               thisInput.nextElementSibling.setAttribute("class", "hasImage");
                               setImageUrls((prev)=>{
                                 if(prev[i]){
-                                  console.log('있음', prev, i)
                                   const _prev = [...prev];
                                   _prev[i] = event.target.result;
                                   return _prev;
                                 }else{
-                                  console.log('없음', prev, i)
-
                                   return [...prev, event.target.result];
                                 }
                               })
