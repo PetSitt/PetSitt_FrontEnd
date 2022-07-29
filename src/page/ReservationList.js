@@ -35,7 +35,9 @@ const ReservationList = ({socket, tab, setTab}) => {
   const [diaryData, setDiaryData] = useState(null);
   const [diaryStatus, setDiaryStatus] = useState(null);
   const reservationIdForDiary = useRef();
-  const noMorePastReservations = useRef(false);
+  const timeoutRef = useRef();
+  const setAlert = useRef({status: false, text: null});
+  let alertTimeout; 
   const modifyData = useRef({ addImage: [], deleteImage: [] });
   const dataToSend = useRef({
     reservationId: null,
@@ -61,7 +63,7 @@ const ReservationList = ({socket, tab, setTab}) => {
     data: reservationListData,
 	} = useMutation(() => apis.reservationList(selectedTab), {
 		onSuccess: (data) => {
-      // console.log(data)
+      console.log(data, 'list')
 			setProceedings(data.data.proceedings);
 			setPastReservation(data.data.pasts);
       if(data.data.pasts.length < 3){
@@ -105,6 +107,11 @@ const ReservationList = ({socket, tab, setTab}) => {
           },
         };
         reservatioinList();
+        setAlert.current = {status: true, text: '리뷰를 등록했습니다.'};
+        const timeout = setTimeout(() => {
+          setAlert.current = {status: false, text: null};
+        }, 3000);
+        timeoutRef.current = timeout;
       },
       onError: (data) => {
       },
@@ -120,6 +127,11 @@ const ReservationList = ({socket, tab, setTab}) => {
       onSuccess: (data) => {
         if (data.data.reservations.length < 3) {
           setButtonHide(true);
+          setAlert.current = {status: true, text: '지난 예약 리스트를 모두 불러왔습니다.'};
+          const timeout = setTimeout(() => {
+            setAlert.current = {status: false, text: null};
+          }, 3000);
+          timeoutRef.current = timeout;
           return;
         }
         setPastReservation((prev) => {
@@ -129,11 +141,11 @@ const ReservationList = ({socket, tab, setTab}) => {
       onError: (data) => {
         if (data.response.status === 401) {
           setButtonHide(true);
-          noMorePastReservations.current = true;
-          const alertTimeout = setTimeout(()=>{
-            noMorePastReservations.current = false;
-          },3000);
-          
+          setAlert.current = {status: true, text: '추가로 불러올 지난 예약 리스트가 없습니다.'};
+          const timeout = setTimeout(() => {
+            setAlert.current = {status: false, text: null};
+          }, 3000);
+          timeoutRef.current = timeout;
         }
       },
     }
@@ -306,9 +318,19 @@ const ReservationList = ({socket, tab, setTab}) => {
       // 최초 등록일 경우
       setDiaryStatus('save');
       setDiarySave(true);
+      setAlert.current = {status: true, text: '일지 작성이 완료되었습니다.'};
+      const timeout = setTimeout(() => {
+        setAlert.current = {status: false, text: null};
+      }, 3000);
+      timeoutRef.current = timeout;
     } else {
       // 수정일 경우
       diaryModify();
+      setAlert.current = {status: true, text: '일지를 수정했습니다.'};
+      const timeout = setTimeout(() => {
+        setAlert.current = {status: false, text: null};
+      }, 3000);
+      timeoutRef.current = timeout;
     }
   };
   const closeDiaryPage = () => {
@@ -325,8 +347,8 @@ const ReservationList = ({socket, tab, setTab}) => {
     review: {
       type: 'review',
       _alert: false,
-      _confirm: '리뷰 등록',
-      _cancel: '등록 취소',
+      _confirm: '등록',
+      _cancel: '취소',
       confirmFn: confirmWritingReview,
       cancelFn: () => {
         setReviewText(reviewTextRef.current?.value);
@@ -345,7 +367,7 @@ const ReservationList = ({socket, tab, setTab}) => {
       type: 'reviewCancel',
       _alert: false,
       _confirm: '리뷰 작성 취소',
-      _cancel: '리뷰 작성',
+      _cancel: '이어서 작성',
       confirmFn: () => {
         setModalDisplay(false);
         setModalType(null);
@@ -381,7 +403,7 @@ const ReservationList = ({socket, tab, setTab}) => {
       type: 'diaryCancel',
       _alert: false,
       _confirm: '일지 작성 취소',
-      _cancel: '일지 작성',
+      _cancel: '이어서 작성',
       confirmFn: closeDiaryPage,
       cancelFn: () => {
         setDiaryStatus('get');
@@ -428,6 +450,10 @@ const ReservationList = ({socket, tab, setTab}) => {
     if(sessionStorage.getItem('reservationInfo')){
       sessionStorage.removeItem('reservationInfo');
     }
+    const timeoutId = timeoutRef.current;
+    return () => {
+      clearTimeout(timeoutId);
+    };
   },[])
 
   return (
@@ -687,7 +713,7 @@ const ReservationList = ({socket, tab, setTab}) => {
                           ))}
                           {v.reservationState === '취소완료' ? (
                             <TagCancel>{v.reservationState}</TagCancel>
-                          ) : null}
+                          ) : <TagCompleted>{v.reservationState}</TagCompleted>}
                         </div>
                         <div>
                           {v.reservationDate.map((date, index) => (
@@ -838,7 +864,7 @@ const ReservationList = ({socket, tab, setTab}) => {
       {
         chatInfo.current?.chatRoomId && popup.popup && <ChatList socket={socket} room={chatInfo.current.chatRoomId} detailOnly={true} popup={popup.popup} setPopup={setPopup}/>
       }
-      {(noMorePastReservations.current) && <Alert _text={'추가로 불러올 지난 예약 리스트가 없습니다.'}/>}
+      {setAlert.current.status && <Alert _text={setAlert.current.text}/>}
     </>
   );
 };
@@ -939,6 +965,17 @@ const TagCancel = styled.span`
   border-radius: 3px;
   padding: 3px 6px;
   color: #f01d1d;
+  margin-right: 4px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+`;
+
+const TagCompleted = styled.span`
+  background: rgba(113, 191, 10, 0.1);
+  border-radius: 3px;
+  padding: 3px 6px;
+  color: #71BF0A;
   margin-right: 4px;
   font-weight: 500;
   font-size: 14px;

@@ -18,8 +18,7 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
       return {checkList, inputValues, checked, images, imageUrls, files, text};
     })
   },[checkList, inputValues, checked, images, imageUrls, files, text, dataForModify]);
-
-
+  
   useEffect(()=>{
     setDiaryData(datas);
   },[datas]); // state 하나 바뀔때마다 refresh 되니까 비효율적인 것 같은데...
