@@ -11,8 +11,6 @@ import LoadingBox from './elements/Loading';
 
 const INITIAL_VALUES = {
   popup: false,
-  socketRes: true,
-  socket: io.connect(process.env.REACT_APP_SERVER, {transports: ['websocket'], upgrade: false}),
   id: null,
   username: null
 }
@@ -20,6 +18,7 @@ function App() {
   const location = useLocation();
   const [detailPageClass, sestDetailPageClass] = useState();
   const [value, setValues] = useState(INITIAL_VALUES);
+  let socket = io.connect(process.env.REACT_APP_SERVER, {transports: ['websocket'], upgrade: false})
   
  useEffect(()=>{
     // 디테일 페이지일 경우 Y축 scroll 대상 변경을 위한 클래스 세팅
@@ -27,35 +26,25 @@ function App() {
     else sestDetailPageClass('');
   }, [location.pathname]);
 
-  useEffect(() => {
-    setValues((prev) => {
-      return {
-        ...prev,
-        socket: value.socket
-      }
-    })
 
+  useEffect(() => {
     return () => {
-      value.socket.disconnect();
-      setValues((prev) => {
-        return {
-          ...prev,
-          socket: null
-        }
-      });
+      if (socket) {
+        socket.disconnect();
+        socket = null;
+      }
     }
   },[]);
   return (
     <AppWrapper className="App">
       <div className={`AppInner ${detailPageClass}`}>
         <Suspense fallback={<div className='loading'><LoadingBox /></div>}>
-          <Router socket={value.socket} />
+          <Router socket={socket} />
         </Suspense>
-        <Menu popup={value.popup} socket={value.socket} socketRes={value.socketRes} setValues={setValues} />
-          <Suspense>
-            <ChatList popup={value.popup} socket={value.socket} socketRes={value.socketRes} setValues={setValues} />
-          </Suspense>
-
+        <Menu popup={value.popup} socket={socket} setPopup={setValues} />
+        <Suspense>
+          <ChatList popup={value.popup} socket={socket} setPopup={setValues} />
+        </Suspense>
       </div>
       <MarketingArea _display={true}></MarketingArea>
     </AppWrapper>

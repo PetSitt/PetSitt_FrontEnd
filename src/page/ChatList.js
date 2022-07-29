@@ -10,7 +10,8 @@ function formatDate(value) {
   return `${date.getFullYear()}. ${date.getMonth() + 1}. ${date.getDate()}`;
 };
 
-function ChatList({popup, socket, socketRes, setValues, room, detailOnly}) {
+function ChatList({popup, socket, setPopup, room, detailOnly}) {
+  console.log(socket.id)
   const [showChatRoom, setShowChatRoom] = useState(false);
   const [idRoom, setIdRoom] = useState(detailOnly ? room : '');
   const [username, setUsername] = useState('');
@@ -26,15 +27,15 @@ function ChatList({popup, socket, socketRes, setValues, room, detailOnly}) {
   };
 
   useEffect(() => {
-    console.log(socketRes)
-    socketRes && refetch();
+    console.log(popup)
+    popup && refetch();
   },[refetch])
 
   if(popup){
-  return (
+    return (
       <ChatInner className={`chatsInner ${!showChatRoom ? "chatListInner": 'chatRoomInner'}`}>
           <div className="joinChatContainer">
-            <ChatHeader socket={socket} idRoom={detailOnly ? room : idRoom} socketRes={socketRes} popup={popup} setValues={setValues}/>
+            <ChatHeader socket={socket} idRoom={detailOnly ? room : idRoom} popup={popup} showChatRoom={showChatRoom} setPopup={setPopup}/>
             <ChatBody className={`${detailOnly ? 'detail_only' : ''} chats_body`}>
               {
                 !detailOnly ? (
