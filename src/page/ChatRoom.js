@@ -11,7 +11,7 @@ function formatDate(value) {
   return `${hour} ${minute}:${second}`;
 };
 
-function ChatRoom({ socket, room, popup, showChatRoom }) {
+function ChatRoom({ socket, room, idRoom, popup, showChatRoom }) {
   const param = useParams();
   const queryClient = useQueryClient();
   const [currentMessage, setCurrentMessage] = useState("");

@@ -11,7 +11,8 @@ import LoadingBox from './elements/Loading';
 
 const INITIAL_VALUES = {
   popup: false,
-  socket: null,
+  socketRes: true,
+  socket: io.connect(process.env.REACT_APP_SERVER, {transports: ['websocket'], upgrade: false}),
   id: null,
   username: null
 }
@@ -30,7 +31,7 @@ function App() {
     setValues((prev) => {
       return {
         ...prev,
-        socket: io.connect(process.env.REACT_APP_SERVER, {transports: ['websocket'], upgrade: false})
+        socket: value.socket
       }
     })
 
@@ -50,12 +51,11 @@ function App() {
         <Suspense fallback={<div className='loading'><LoadingBox /></div>}>
           <Router socket={value.socket} />
         </Suspense>
-        <Menu popup={value.popup} socket={value.socket} setPopup={setValues} />
-        {value.popup && (
+        <Menu popup={value.popup} socket={value.socket} socketRes={value.socketRes} setValues={setValues} />
           <Suspense>
-            <ChatList popup={value.popup} socket={value.socket} setPopup={setValues} />
+            <ChatList popup={value.popup} socket={value.socket} socketRes={value.socketRes} setValues={setValues} />
           </Suspense>
-        )}
+
       </div>
       <MarketingArea _display={true}></MarketingArea>
     </AppWrapper>
