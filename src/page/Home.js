@@ -214,7 +214,7 @@ function Home() {
 
 		if(isLocationInfo && isLocationInfo.expire > Date.now()){
 			setCurrentPosition({x:isLocationInfo.x, y:isLocationInfo.y});
-			setDefaultSearchCache(true);
+			refetchSitters();
 		}else{
 			localStorage.removeItem('locationInfo');
 			getLocationButtonRef.current.click();
