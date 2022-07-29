@@ -106,8 +106,10 @@ function Home() {
 		},
 		onError: (data) => {
 			localStorage.removeItem('accessToken');
+			localStorage.removeItem('kakaoToken');
 			localStorage.removeItem('userName');
 			localStorage.removeItem('userEmail');
+			cookies.remove('refreshToken');
 		},
 		staleTime: Infinity,
 	});
@@ -141,6 +143,11 @@ function Home() {
 			localStorage.setItem('userEmail', dataToSend.current.userEmail);
     },
     onError: (data) => {
+			localStorage.removeItem('accessToken');
+			localStorage.removeItem('kakaoToken');
+			localStorage.removeItem('userName');
+			localStorage.removeItem('userEmail');
+			cookies.remove('refreshToken');
     },
   })
   const getKakaoProfile = async () => {
@@ -201,6 +208,8 @@ function Home() {
 	useEffect(()=>{
 		if(localStorage.getItem('kakaoToken')){
 			getKakaoProfile();
+		}else if(localStorage.getItem('accessToken')){
+			checkUser();
 		}
 		const isLocationInfo = JSON.parse(localStorage.getItem('locationInfo'));
 

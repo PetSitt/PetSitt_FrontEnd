@@ -82,7 +82,7 @@ export const apis = {
 	checkUser: () => api.get('/api/auth'),
 
 	// mypage
-  passwordChange: (data) => api.put('/api/password_change', data),
+  passwordChange: (data) => api.put('/mypages/password_change', data),
 	myprofile: () => api.get('/mypages/myprofile'),
 	myprofileGet: () => api.get('/mypages/myprofile'),
 	myprofilePatch: (data) => api.patch('/mypages/myprofile', data),
