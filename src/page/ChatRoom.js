@@ -11,11 +11,11 @@ function formatDate(value) {
   return `${hour} ${minute}:${second}`;
 };
 
-function ChatRoom({ socket, room }) {
+function ChatRoom({ socket, room, popup, showChatRoom }) {
   const param = useParams();
   const queryClient = useQueryClient();
   const [currentMessage, setCurrentMessage] = useState("");
-  const { isLoading: dataLoading, data: chatsRoom} = useQuery(["chats", room, socket.id], () => chatApis.chatRoomGet(room, socket.id), {
+  const { isLoading: dataLoading, data: chatsRoom, refetch} = useQuery(["chats", room, socket.id], () => chatApis.chatRoomGet(room, socket.id), {
     staleTime: Infinity,
     enabled: true
   });
@@ -63,7 +63,8 @@ function ChatRoom({ socket, room }) {
 
   useEffect(() => {
     scrollToBottom();
-  },[])
+    refetch();
+  },[refetch])
   
   return (
     <ChatInner ref={scrollElement} className={`${sitterId ? 'chatRoomDetail' : 'chatRoom'}`} >

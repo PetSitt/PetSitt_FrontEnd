@@ -26,61 +26,56 @@ function ChatList({popup, socket, setPopup, room, detailOnly}) {
   };
 
   useEffect(() => {
-    popup && refetch();
-  },[popup, refetch])
+    refetch();
+  },[refetch])
 
   return (
-    <>
-      {popup && (
-        <ChatInner className={`chatsInner ${!showChatRoom ? "chatListInner": 'chatRoomInner'}`}>
-            <div className="joinChatContainer">
-              <ChatHeader socket={socket} idRoom={detailOnly ? room : idRoom} popup={popup} showChatRoom={showChatRoom} setShowChatRoom={setShowChatRoom} setPopup={setPopup}/>
-              <ChatBody className={`${detailOnly ? 'detail_only' : ''} chats_body`}>
-                {
-                  !detailOnly ? (
-                    <>
-                      { !showChatRoom ? (
-                      <>
-                        {chats.data?.rooms ? 
-                          (<div className="chatingList_inner">
-                          <p className="txt_chating">채팅목록</p>
-                          {chats.data?.rooms.map((el, idx) => {
-                            return (
-                              <div key={el.roomId} className="items">
-                                <button onClick={() => {joinRoom(el.userName, el.roomId)}}>
-                                  <div className="imgurl_inner">
-                                    <span className="bg_img" style={{backgroundImage: `url(${el.imageUrl})`}}></span>
-                                  </div>
-                                  <div>
-                                    <p>{el.userName}</p>
-                                    <p>{formatDate(el.lastChatAt)}</p>
-                                  </div>
-                                </button>
+    <ChatInner className={`chatsInner ${!showChatRoom ? "chatListInner": 'chatRoomInner'}`}>
+        <div className="joinChatContainer">
+          <ChatHeader socket={socket} idRoom={detailOnly ? room : idRoom} popup={popup} showChatRoom={showChatRoom} setPopup={setPopup}/>
+          <ChatBody className={`${detailOnly ? 'detail_only' : ''} chats_body`}>
+            {
+              !detailOnly ? (
+                <>
+                  { !showChatRoom ? (
+                  <>
+                    {chats.data?.rooms ? 
+                      (<div className="chatingList_inner">
+                      <p className="txt_chating">채팅목록</p>
+                      {chats.data?.rooms.map((el, idx) => {
+                        return (
+                          <div key={el.roomId} className="items">
+                            <button onClick={() => {joinRoom(el.userName, el.roomId)}}>
+                              <div className="imgurl_inner">
+                                <span className="bg_img" style={{backgroundImage: `url(${el.imageUrl})`}}></span>
                               </div>
-                            )
-                          })}
-                        </div>)
-                        :
-                        (<div className="chats_notice">
-                          <p>대화 했던 내역이 없습니다.</p>
-                          <p>원하는 돌보미를 찾아 문의 해보세요.</p>
-                        </div>)}
-                      </>
-                      ) : (
-                        <ChatRoom socket={socket} room={idRoom} popup={popup} showChatRoom={showChatRoom}/>
-                      )}
-                    </>
+                              <div>
+                                <p>{el.userName}</p>
+                                <p>{formatDate(el.lastChatAt)}</p>
+                              </div>
+                            </button>
+                          </div>
+                        )
+                      })}
+                    </div>)
+                    :
+                    (<div className="chats_notice">
+                      <p>대화 했던 내역이 없습니다.</p>
+                      <p>원하는 돌보미를 찾아 문의 해보세요.</p>
+                    </div>)}
+                  </>
                   ) : (
-                    <ChatRoom className={'detailOnly'} socket={socket} room={idRoom} popup={popup} showChatRoom={showChatRoom}/>
-                  )
-                }
-                
-              </ChatBody>
-            </div>
-        </ChatInner>
-        )
-      }
-    </>
+                    <ChatRoom socket={socket} room={idRoom} popup={popup} showChatRoom={showChatRoom}/>
+                  )}
+                </>
+              ) : (
+                <ChatRoom className={'detailOnly'} socket={socket} room={idRoom} popup={popup} showChatRoom={showChatRoom}/>
+              )
+            }
+            
+          </ChatBody>
+        </div>
+    </ChatInner>
   );
 };
 
