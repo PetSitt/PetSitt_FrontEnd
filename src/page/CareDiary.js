@@ -18,13 +18,6 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
       return {checkList, inputValues, checked, images, imageUrls, files, text};
     })
   },[checkList, inputValues, checked, images, imageUrls, files, text, dataForModify]);
-<<<<<<< HEAD
-  
-=======
-
-  console.log(imageUrls)
-
->>>>>>> parent of bba0bf2 (Revert "Merge pull request #403 from PetSitt/feature/reservation")
   useEffect(()=>{
     setDiaryData(datas);
   },[datas]); // state 하나 바뀔때마다 refresh 되니까 비효율적인 것 같은데...
