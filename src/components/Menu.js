@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Link, useLocation } from 'react-router-dom';
 
-const Menu = ({popup, setPopup, socket}) => {
+const Menu = ({popup, setPopup}) => {
   const location = useLocation();
   const [activeMenu, setActiveMenu] = useState();
  
