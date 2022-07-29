@@ -55,7 +55,6 @@ function Home() {
 	})
 	const [searchingStatus, setSearchingStatus] = useState('searching');
 	const [marketing, setMarketing] = useState(false);
-	const gpsMessage = useRef();
 	const timeoutRef = useRef();
 
 	const getSittersList = (queriesData, category) => {
@@ -120,8 +119,6 @@ function Home() {
 		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
 		{
 			onSuccess: (data) => {
-				console.log('default', data)
-
 				queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(false);
 				setSitters(data.data.sitter);
@@ -137,7 +134,9 @@ function Home() {
 	);
 	const sitter_default_cash = useQuery(['sitter_default', currentPosition, category], ()=>getListApi(currentPosition, category), {
 		onSuccess: (data) => {
-			console.log('cache', data)
+			setDefaultSearchCache(false);
+		},
+		onError: (data) => {
 			setDefaultSearchCache(false);
 		},
 		enabled: !!defaultSearchCache,
@@ -171,7 +170,6 @@ function Home() {
     }
   };
 	const getLocation = () => {
-		gpsMessage.current = '주변의 돌보미 리스트를 검색중입니다.';
     if (navigator.geolocation) {
 			const cancel = setTimeout(()=>{
 				setSearchingStatus('delayed');
@@ -192,6 +190,7 @@ function Home() {
 					localStorage.setItem('locationInfo', JSON.stringify(locationObj));
         },
         (err) => {
+					clearTimeout(cancel);
 					if(err.code === 3) setSearchingStatus('delayed');
 					if(err.code === 1) setSearchingStatus('blocked');
         },
@@ -207,13 +206,12 @@ function Home() {
   };
 
 
-	
-
 	useEffect(()=>{
 		if(localStorage.getItem('kakaoToken')){
 			getKakaoProfile();
 		}
 		const isLocationInfo = JSON.parse(localStorage.getItem('locationInfo'));
+
 		if(isLocationInfo && isLocationInfo.expire > Date.now()){
 			setCurrentPosition({x:isLocationInfo.x, y:isLocationInfo.y});
 			setDefaultSearchCache(true);
@@ -232,11 +230,12 @@ function Home() {
 			setMarketing(true);
 		}
 		const timeoutId = timeoutRef.current;
-
+		// console.log(window.history)
 		return()=>{
 			clearTimeout(tooltipTimeout);
 			clearTimeout(timeoutId);
 		}
+		
 	},[])
 
 	useEffect(()=>{
