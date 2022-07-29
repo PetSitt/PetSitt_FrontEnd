@@ -25,59 +25,60 @@ i {
   -moz-osx-font-smoothing: grayscale;
 }
 
-
-
-
-.ic-star-v2:before {
-  content: "\e900";
+.ic-camera:before {
+  content: "\e922";
+  color: #787878;
 }
 .ic-phone:before {
-  content: "\e901";
+  content: "\e900";
+  color: #787878;
 }
 .ic-book:before {
-  content: "\e902";
+  content: "\e901";
 }
 .ic-contact:before {
-  content: "\e903";
+  content: "\e902";
 }
 .ic-user:before {
-  content: "\e904";
+  content: "\e903";
 }
 .ic-map:before {
-  content: "\e905";
+  content: "\e904";
 }
 .ic-arw-right:before {
-  content: "\e906";
+  content: "\e905";
 }
 .ic-schedule:before {
-  content: "\e907";
+  content: "\e906";
 }
 .ic-arw-left:before {
-  content: "\e908";
+  content: "\e907";
 }
 .ic-boarding:before {
-  content: "\e909";
+  content: "\e908";
 }
 .ic-plus:before {
-  content: "\e90a";
+  content: "\e909";
 }
 .ic-close:before {
-  content: "\e90b";
+  content: "\e90a";
 }
 .ic-star:before {
-  content: "\e90c";
+  content: "\e90b";
+  color: #FFC700;
+
 }
 .ic-search:before {
-  content: "\e90d";
+  content: "\e90c";
 }
 .ic-calendar:before {
-  content: "\e90e";
+  content: "\e90d";
 }
 .ic-yard:before {
-  content: "\e90f";
+  content: "\e90e";
 }
 .ic-stroll:before {
-  content: "\e910";
+  content: "\e90f";
 }
 .ic-longterm:before {
   content: "\e911";
@@ -93,12 +94,14 @@ i {
 }
 .ic-canceled:before {
   content: "\e915";
+  color: #217AFF;
 }
 .ic-home:before {
   content: "\e916";
 }
 .ic-upcoming:before {
   content: "\e917";
+  color: #FC9215;
 }
 .ic-pickup:before {
   content: "\e918";
@@ -129,27 +132,4 @@ i {
 }
 .ic-Union:before {
   content: "\e921";
-}
-.ic-camera:before {
-  content: "\e922";
-}
-
-
-
-
-/* Color setting */
-.ic-camera:before {
-  color: #787878;
-}
-.ic-phone:before {
-  color: #787878;
-}
-.ic-canceled:before {
-  color: #217AFF;
-}
-.ic-upcoming:before {
-  color: #FC9215;
-}
-.ic-star:before {
-  color: #FFC700;
 }

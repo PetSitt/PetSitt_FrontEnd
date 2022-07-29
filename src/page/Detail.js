@@ -61,7 +61,6 @@ const Detail = ({socket}) => {
   ]) 
   const iconClasses = {
     '목욕 및 모발 관리' : 'ic-wash',
-    '목욕 및 모발관리' : 'ic-wash',
     '1박케어': 'ic-boarding',
     '데이케어': 'ic-daycare',
     '훈련': 'ic-prac',

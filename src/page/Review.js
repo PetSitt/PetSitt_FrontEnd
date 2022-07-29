@@ -9,9 +9,9 @@ const Review = ({mode, reviewTextRef, reviewText, starRef, errorMessage, reviewD
         <h3>{mode === 'write' ? '리뷰 작성' : '등록된 리뷰'}</h3>
         <div className="socreArea">
           { mode === 'write' ? (
-              Array.from({length: 5}, (v, i) => <Star key={`star_${i}`} type="button" onClick={()=>{setStarLength(i+1); starRef.current = i+1}} className={(i+1 <= starLength || (starRef.current && i+1 <= starRef.current))&& 'isActive'}><i className='ic-star-v2'></i>{i+1}</Star>)
+              Array.from({length: 5}, (v, i) => <Star key={`star_${i}`} type="button" onClick={()=>{setStarLength(i+1); starRef.current = i+1}} className={(i+1 <= starLength || (starRef.current && i+1 <= starRef.current))&& 'isActive'}>{i+1}</Star>)
             ) : (
-              Array.from({length: 5}, (v, i) => <Star key={`star_${i}`} type="button" className={(i+1 <= reviewData?.data?.star && 'isActive')}><i className='ic-star-v2'></i>{i+1}</Star>)
+              Array.from({length: 5}, (v, i) => <Star key={`star_${i}`} type="button" className={(i+1 <= reviewData?.data?.star && 'isActive')}>{i+1}</Star>)
             )
           }
         </div>
@@ -36,7 +36,7 @@ const ReviewPage = styled.div`
   h3{
     font-size: 18px;
     font-weight: bold;
-    margin-bottom: 12px;
+    margin-bottom: 15px;
     text-align: center;
   }
   .socreArea{
@@ -46,44 +46,32 @@ const ReviewPage = styled.div`
     justify-content: center;
   }
   .inputArea{
-    height: 140px;
+    height: 200px;
     border: 1px solid #ddd;
-    margin: 16px 0 0;
-    border-radius: 6px;
-    overflow: hidden;
+    margin: 20px 0;
     textarea{
       display: block;
       width: 100%;
       height: 100%;
-      padding: 12px 16px;
+      padding: 10px;
       resize: none;
-      font-size: 16px;
-      &::placeholder{
-        color:rgba(120,120,120,.7);
-      }
+
     }
   }
 `
 const Star = styled.button`
   width: 30px;
   height: 30px;
-  font-size: 0;
-  i{
-    font-size: 34px;
-    color: #FC9215;
-    opacity: .2;
-  }
+  border-radius: 50%;
+  border: 1px solid #fc9215;
   &.isActive{
-    i{
-      opacity: 1;
-    }
+    background-color: #fc9215;
   }
 `
 const ErrorMessage = styled.p`
-  font-size: 13px!important;
+  font-size: 13px;
   align-self: flex-start;
   padding: 5px 0;
   color: #F01D1D;
-  margin-top: 2px;
 `;
 export default Review;
