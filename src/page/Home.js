@@ -61,7 +61,7 @@ function Home() {
 		const _queriesData = {...queriesData, category: category.length ? category : []};
 		return apis.getSittersList(_queriesData);
 	};
-	const {data: sittersFilteredSearch, isLoading: sittersFilteredIsLoading, isFetched: sittersFilteredIsFetched, isRefetching: sittersAfterIsRefetching, refetch: refetchSittersAfter} = useQuery(
+	const {data: sittersFilteredSearch, refetch: refetchSittersAfter} = useQuery(
 		["sitter_list", queriesData, category],
 		() => getSittersList(queriesData, category),
 		{
@@ -115,6 +115,7 @@ function Home() {
 	const getListApi = (currentPosition, category) =>{
 		return apis.getSittersDefault({...currentPosition, category});
 	}
+	
 	const {data: sittersBeforeSearch, refetch: refetchSitters, isRefetching: sittersIsRefetching} = useQuery(
 		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
 		{
@@ -128,20 +129,11 @@ function Home() {
 				setDefaultSearch(false);
 			},
 			enabled: !!defaultSearch,
-			staleTime: Infinity,
-			cacheTime: 180000,
+			staleTime: 1000,
+			cacheTime: 0,
 		},
 	);
-	const sitter_default_cash = useQuery(['sitter_default', currentPosition, category], ()=>getListApi(currentPosition, category), {
-		onSuccess: (data) => {
-			setDefaultSearchCache(false);
-		},
-		onError: (data) => {
-			setDefaultSearchCache(false);
-		},
-		enabled: !!defaultSearchCache,
-		staleTime: Infinity, 
-	});
+
   const {mutate: kakaoLoginQuery} = useMutation((data)=>apis.kakaoLogin(data), {
     onSuccess: (data) => {
       localStorage.setItem('accessToken', data.data.token);
@@ -214,7 +206,7 @@ function Home() {
 
 		if(isLocationInfo && isLocationInfo.expire > Date.now()){
 			setCurrentPosition({x:isLocationInfo.x, y:isLocationInfo.y});
-			refetchSitters();
+			setDefaultSearch(true);
 		}else{
 			localStorage.removeItem('locationInfo');
 			getLocationButtonRef.current.click();
@@ -230,7 +222,6 @@ function Home() {
 			setMarketing(true);
 		}
 		const timeoutId = timeoutRef.current;
-		// console.log(window.history)
 		return()=>{
 			clearTimeout(tooltipTimeout);
 			clearTimeout(timeoutId);
