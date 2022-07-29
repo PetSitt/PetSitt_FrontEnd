@@ -12,6 +12,7 @@ import {
 
 import marker from '../assets/img/marker.png';
 import star from '../assets/img/icon_star.png';
+import { dblClick } from "@testing-library/user-event/dist/click";
 
 const MapContainer = ({ centerElement, showOnly, items, _height, setSitterCardShow }) => {
   const [level, setLevel] = useState(3);
@@ -60,6 +61,7 @@ const MapContainer = ({ centerElement, showOnly, items, _height, setSitterCardSh
           onZoomChanged={(map) => setLevel(map.getLevel())}
           draggable={showOnly ? false : true}
           level={level}
+          disableDoubleClickZoom={true}
         >
           {showOnly ? (
             <Circle
