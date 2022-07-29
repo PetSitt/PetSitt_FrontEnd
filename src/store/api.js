@@ -19,7 +19,7 @@ api.interceptors.request.use((config) => {
 	if(localStorage.getItem('accessToken')){
 		config.headers['Authorization'] = `Bearer ${localStorage.getItem('accessToken')}`;
 	}else{
-		window.location.href= "/login";
+		if(window.location.pathname !== '/login') window.location.href= "/login";
 	}
 	return config;
 }, (err) => {

@@ -3,12 +3,13 @@ import styled from 'styled-components';
 
 import exceptionImage from '../assets/img/no_result.png';
 
-const ExceptionArea = ({_title, _text}) => {
+const ExceptionArea = ({_title, _text, children}) => {
   return (
     <Exception>
       <img src={exceptionImage} alt="exception" />
       <h4>{_title}</h4>
       <p>{_text}</p>
+      {children}
     </Exception>
   )
 }
