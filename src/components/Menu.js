@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { Link, useLocation } from 'react-router-dom';
 
-const Menu = ({popup, socketRes, setValues}) => {
+const Menu = ({popup, setPopup, socket}) => {
   const location = useLocation();
   const [activeMenu, setActiveMenu] = useState();
  
@@ -26,11 +26,10 @@ const Menu = ({popup, socketRes, setValues}) => {
           <i className='ic-home' style={{fontSize: '25px', fontWeight: '500'}}></i>
         </Link>
       </div>
-      <div className='item' onClick={() => setValues((prev) => {
+      <div className='item' onClick={() => setPopup((prev) => {
         return {
           ...prev,
-          popup: !popup,
-          socketRes: !socketRes
+          popup: !popup
         }
       })}>
         <button className='nav-link' type="button">
