@@ -60,7 +60,7 @@ function SitterProfileForm4() {
     formData.append("careSize", JSON.stringify(data.careSize));
     formData.append("category", JSON.stringify(data.category));
     formData.append("plusService", JSON.stringify(data.plusService));
-    formData.append("noDate", JSON.stringify(newDates ? newDates : dates));
+    formData.append("noDate", JSON.stringify(dates));
     formData.append("servicePrice", data.servicePrice);
 
     update ? sitterUpdate(formData) : create(formData)
