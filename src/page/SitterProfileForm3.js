@@ -135,9 +135,9 @@ function SitterProfileForm3() {
               checked={values.category}
             />
             <Checkbox
-              _id={"목욕 및 모발관리"}
+              _id={"목욕 및 모발 관리"}
               _key={"category"}
-              _text={"목욕 및 모발관리"}
+              _text={"목욕 및 모발 관리"}
               _size={"1.2rem"}
               onChange={availableHandler}
               checked={values.category}

@@ -18,7 +18,7 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
       return {checkList, inputValues, checked, images, imageUrls, files, text};
     })
   },[checkList, inputValues, checked, images, imageUrls, files, text, dataForModify]);
-
+  
   useEffect(()=>{
     setDiaryData(datas);
   },[datas]); // state 하나 바뀔때마다 refresh 되니까 비효율적인 것 같은데...
@@ -77,7 +77,7 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
                     }}
                     disabled={mode.current === 'readonly'}
                     />
-                    <span><i className='ic-check'></i></span>
+                    <span></span>
                   </label>
                   {
                     mode.current === 'readonly' ? (
@@ -163,7 +163,7 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
             )
           }
         </div>
-        <div className="imageArea" style={{margin: '16px 0 24px'}}>
+        <div className="imageArea" style={{margin: '30px 0'}}>
           {
             mode.current === 'readonly' ? (
               <ul style={{display: 'flex', margin: '-3px'}}>
@@ -173,7 +173,7 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
                     <FileItem key={`image_${i}`}>
                       <label>
                         <input/>
-                        <span style={{backgroundImage: `url(${imageUrls[i]&&imageUrls[i]})`}}></span>
+                        <span style={{backgroundImage: `url(${imageUrls[i]&&imageUrls[i]})`}} className={imageUrls[i] && 'hasImage'}></span>
                       </label>
                     </FileItem>
                   )
@@ -230,24 +230,24 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
                             })
                           }
                         }} disabled={mode.current === 'readonly'}/>
-                      <span style={{backgroundImage: `url(${imageUrls[i]&&imageUrls[i]})`}}>{imageUrls[i] && <button type="button" className="removeImageButton"
-                          onClick={(e)=>{
+                        <span style={{backgroundImage: `url(${imageUrls[i]&&imageUrls[i]})`}}>{imageUrls[i] && <button type="button" className="removeImageButton"
+                          onClick={async(e)=>{
                             e.preventDefault();
                             if(mode === 'write'){
                               // 작성 모드일 경우
                               // 미리보기 이미지 배열에서 해당 주소 삭제
-                              setImageUrls((prev)=>{
+                              await setImageUrls((prev)=>{
                                 const _new = [...prev].filter((image,idx)=>i !== idx);
                                 return _new;
                               });
-                              setFiles((prev)=>{
+                              await setFiles((prev)=>{
                                 const _new = [...prev].filter((file,idx)=>i !== idx);
                                 return _new;
                               });
                             }else{
                               // 수정 모드일 경우
                               // 미리보기 이미지 배열에서 해당 주소 삭제
-                              setImageUrls((prev)=>{ 
+                              await setImageUrls((prev)=>{ 
                                 const _new = [...prev].filter((image,idx)=>i !== idx);
                                 return _new;
                               });
@@ -275,8 +275,6 @@ const CareDiary = ({mode, setDiaryData, diaryData, diaryStatus, modifyData}) => 
                                   return _new;
                                 });
                               }
-                              e.target.parentNode.previousElementSibling.value = null;
-                              e.target.parentNode.classList.remove('hasImage');
                             }
                             setImages((prev)=>prev-1);
                           }}
@@ -313,47 +311,26 @@ const CareDiaryPage = styled.div`
     justify-content: center;
   }
   .inputArea{
-    height: 140px;
+    height: 200px;
     border: 1px solid #ddd;
-    margin: 16px 0 0;
-    border-radius: 6px;
-    overflow: hidden;
+    margin: 20px 0;
     textarea{
       display: block;
       width: 100%;
       height: 100%;
-      padding: 12px 16px;
+      padding: 10px;
       resize: none;
-      font-size: 16px;
-      &::placeholder{
-        color:rgba(120,120,120,.7);
-      }
+
     }
   }
   .removeImageButton{
     position: absolute;
-    right: -5px;
-    top: -5px;
-    width: 18px;
-    height: 18px;
-    border-radius: 50%;
-    background-color: #000;
-    &::before,
-    &::after{
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 50%;
-      width: 10px;
-      height: 1px;
-      background-color: #fff;
-      content: '';
-      transform: rotate(-45deg);
-      margin: 0 auto;
-    }
-    &::after{
-      transform: rotate(45deg);
-    }
+    right: 0;
+    top: 0;
+    background: #fff;
+    padding: 0 3px;
+    line-height: 14px;
+    font-size: 11px;
   }
 `
 const FileItem = styled.li`
@@ -381,7 +358,6 @@ const FileItem = styled.li`
         background-repeat: no-repeat;
         background-color: #eee;
         background-position: center;
-        border-radius: 6px;
       }
     }
     & > span{
@@ -393,7 +369,6 @@ const FileItem = styled.li`
       background-repeat: no-repeat;
       background-color: #eee;
       background-position: center;
-      border: 1px solid #e9e9e9;
     }
   }
   &:last-of-type span::before,
@@ -435,34 +410,24 @@ const CheckList = styled.li`
       height: 0;
       & + span{
         display: block;
-        width: 20px;
-        height: 20px;
-        border: 1px solid rgba(120,120,120,.7);
-        border-radius: 3px;
-        i{
-          display: inline-block;
-          line-height: 19px;
-          color: rgba(120,120,120,.2);
-        }
+        width: 24px;
+        height: 24px;
+        border: 1px solid #ccc;
       }
       &:checked + span{
         border-color: #fc9215;
         background-color: #fc9215;
-        i{
-          color: #fff;
-        }
       }
     }
   }
   & > input{
     width: 100%;
-    font-size: 16px;
+    font-size: 14px;
     height: auto;
     padding: 0;
-    line-height: 1.3;
+    line-height: 24px;
   }
   & > p{
-    font-size: 16px!important;
     flex-basis: 100%;
     text-align: left;
     line-height: 1.3;
