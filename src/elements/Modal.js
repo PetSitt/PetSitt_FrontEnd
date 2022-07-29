@@ -57,7 +57,7 @@ const ModalContainer = styled.div`
   .modal {
     max-width: 90%;
     width: 100%;
-    padding: 24px 24px 16px;
+    padding: 24px 16px 24px;
     margin: 0 auto;
     background-color: #fff;
     text-align: center;
