@@ -7,7 +7,7 @@ import { chatApis } from "../store/chatApi";
 import moment from 'moment';
 
 import Tabs from '../elements/Tabs';
-import { useNavigate,useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import StyledButton from '../elements/StyledButton';
 import Review from './Review';
 import CareDiary from './CareDiary';
@@ -17,7 +17,6 @@ import Alert from '../elements/Alert';
 
 const ReservationList = ({socket, tab, setTab}) => {
   const navigate = useNavigate();
-  const location = useLocation();
   const [pastReservation, setPastReservation] = useState();
   const [proceedings, setProceedings] = useState();
   const [selectedTab, setSelectedTab] = useState(tab);
