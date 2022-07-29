@@ -37,6 +37,7 @@ function Home() {
 	const [sitters, setSitters] = useState(null);
 	const [currentPosition, setCurrentPosition] = useState();
 	const [defaultSearch, setDefaultSearch] = useState(false);
+	const [defaultSearchCache, setDefaultSearchCache] = useState(false);
 	const [viewType, setViewType] = useState('list');
 	const [locationItems, setLocationItems] = useState();
 	const [contentHeight, setContentHeight] = useState();
@@ -54,6 +55,8 @@ function Home() {
 	})
 	const [searchingStatus, setSearchingStatus] = useState('searching');
 	const [marketing, setMarketing] = useState(false);
+	const gpsMessage = useRef();
+	const timeoutRef = useRef();
 
 	const getSittersList = (queriesData, category) => {
 		const _queriesData = {...queriesData, category: category.length ? category : []};
@@ -113,10 +116,12 @@ function Home() {
 	const getListApi = (currentPosition, category) =>{
 		return apis.getSittersDefault({...currentPosition, category});
 	}
-	const {data: sittersBeforeSearch, isLoading: sittersIsLoading, isFetched: sittersIsFetched, refetch: refetchSitters, isRefetching: sittersIsRefetching} = useQuery(
+	const {data: sittersBeforeSearch, refetch: refetchSitters, isRefetching: sittersIsRefetching} = useQuery(
 		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
 		{
 			onSuccess: (data) => {
+				console.log('default', data)
+
 				queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(false);
 				setSitters(data.data.sitter);
@@ -127,8 +132,17 @@ function Home() {
 			},
 			enabled: !!defaultSearch,
 			staleTime: Infinity,
+			cacheTime: 180000,
 		},
 	);
+	const sitter_default_cash = useQuery(['sitter_default', currentPosition, category], ()=>getListApi(currentPosition, category), {
+		onSuccess: (data) => {
+			console.log('cache', data)
+			setDefaultSearchCache(false);
+		},
+		enabled: !!defaultSearchCache,
+		staleTime: Infinity, 
+	});
   const {mutate: kakaoLoginQuery} = useMutation((data)=>apis.kakaoLogin(data), {
     onSuccess: (data) => {
       localStorage.setItem('accessToken', data.data.token);
@@ -157,23 +171,36 @@ function Home() {
     }
   };
 	const getLocation = () => {
+		gpsMessage.current = '주변의 돌보미 리스트를 검색중입니다.';
     if (navigator.geolocation) {
+			const cancel = setTimeout(()=>{
+				setSearchingStatus('delayed');
+			}, 7000);
+			timeoutRef.current = cancel;
       navigator.geolocation.getCurrentPosition(
         (pos) => {
+					clearTimeout(cancel);
 					const latitude = pos.coords.latitude;
 					const longitude = pos.coords.longitude;
 					setCurrentPosition({x: longitude, y: latitude});
 					setDefaultSearch(true);
+					const locationObj = {
+						x: longitude,
+						y: latitude,
+						expire: Date.now() + 180000,
+					}
+					localStorage.setItem('locationInfo', JSON.stringify(locationObj));
         },
         (err) => {
-					setSearchingStatus('blocked');
+					if(err.code === 3) setSearchingStatus('delayed');
+					if(err.code === 1) setSearchingStatus('blocked');
         },
         {
           enableHighAccuracy: false,
-          maximumAge: 0,
-          timeout: Infinity,
+          maximumAge: 180000,
+          timeout: 8000,
         }
-      );
+      );			
     } else {
 			setSearchingStatus('blocked');
     }
@@ -186,7 +213,14 @@ function Home() {
 		if(localStorage.getItem('kakaoToken')){
 			getKakaoProfile();
 		}
-		getLocationButtonRef.current.click();
+		const isLocationInfo = JSON.parse(localStorage.getItem('locationInfo'));
+		if(isLocationInfo && isLocationInfo.expire > Date.now()){
+			setCurrentPosition({x:isLocationInfo.x, y:isLocationInfo.y});
+			setDefaultSearchCache(true);
+		}else{
+			localStorage.removeItem('locationInfo');
+			getLocationButtonRef.current.click();
+		}
 		const fullHeight = window.innerHeight;
 		const filterHeight = filterAreaRef.current.clientHeight;
 		setContentHeight(fullHeight - filterHeight - 74);
@@ -197,9 +231,11 @@ function Home() {
 		if(window.innerWidth < 769 && !sessionStorage.getItem('marketingOnMobile')){
 			setMarketing(true);
 		}
+		const timeoutId = timeoutRef.current;
 
 		return()=>{
 			clearTimeout(tooltipTimeout);
+			clearTimeout(timeoutId);
 		}
 	},[])
 
@@ -326,8 +362,10 @@ function Home() {
 							<LoadingWrap>
 								<Loading _text={'주변의 돌보미 리스트를 검색중입니다.'} _position={'relative'} _margin={'10vh 0'}/>
 							</LoadingWrap>
+						) : searchingStatus === 'delayed' ? (
+							<ExceptionArea _title={'GPS 확인이 지연되고있어요.'} _text={'장소 및 날짜 검색 기능을 통해 통해 돌보미 리스트를 검색해주세요.'}><TryAgainButton type="button" onClick={getLocation}>다시 시도하기</TryAgainButton></ExceptionArea>
 						) : searchingStatus === 'blocked' ? (
-							<ExceptionArea _title={'GPS를 허용해주세요.'} _text={'GPS를 허용하지 않을 경우, 장소 및 날짜 검색을 통해 돌보미 리스트를 검색해주세요.'}/>
+							<ExceptionArea _title={'GPS를 허용해주세요.'} _text={'GPS를 허용하지 않을 경우, 장소 및 날짜 검색 기능을 통해 돌보미 리스트를 검색해주세요.'}/>
 						) : (
 							sitters?.length > 0 ? (
 								<>
@@ -425,6 +463,13 @@ function Home() {
 				</Buttons>
 			</IndexPage>
 		</HomePage>
+		{
+			modalDisplay && (
+				<Modal>
+					{/* <div className='text_area'><p>실시간 위치 정보를 얻을 수 없어 </p></div> */}
+				</Modal>
+			)
+		}
 		{
 			marketing && <MarketingArea _display={marketing} page='main' setMarketing={setMarketing}/>
 		}
@@ -846,4 +891,15 @@ const Tooltip = styled.p`
 		content: '';
 	}
 `
+const TryAgainButton = styled.button`
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 19px;
+  padding: 12px 20px;
+  background: #ffffff;
+  border: 1px solid #fc9215;
+  border-radius: 54px;
+  color: #fc9215;
+	margin-top: 20px;
+`;
 export default Home;
