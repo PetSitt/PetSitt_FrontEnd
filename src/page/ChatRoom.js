@@ -191,7 +191,7 @@ const ChatInner = styled.div`
     position: fixed;
     width: 350px;
     max-width: calc(90% - 20px);
-    min-height: 45px;
+    min-height: 52px;
     right: 0;
     left: 0;
     margin: 0 auto;
@@ -213,8 +213,8 @@ const ChatInner = styled.div`
       line-height: 45px;
     }
     button {
-      width: 45px;
-      height: 30px;
+      width: 65px;
+      height: 40px;
       background-color: #fc9215;
       color: #fff;
       border-radius: 8px;

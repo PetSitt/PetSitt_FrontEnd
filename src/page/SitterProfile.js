@@ -227,6 +227,8 @@ const SitterBut = styled.div`
     padding: 2px;
     border-radius: 3px;
     color: #fff;
+    font-size: 16px;
+    font-weight: 700;
   }
 `
 const BoxInner = styled.div`
@@ -253,7 +255,6 @@ const CheckWrap = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  margin-top: 24px;
   & label {
     font-size: 16px;
     line-height: 19px;
