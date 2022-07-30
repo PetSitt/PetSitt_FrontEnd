@@ -140,7 +140,7 @@ const ChatInner = styled.div`
   }
   .joinChatContainer{
     position: relative;
-    padding-top: 60px;
+    padding-top: 80px;
     height: 100%;
     box-sizing: border-box;
   }
