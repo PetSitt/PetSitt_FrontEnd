@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import Modal from '../elements/Modal';
 import Alert from '../elements/Alert';
 
-const Mypage = (props) => {
+const Mypage = ({close}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const isLogin = localStorage.getItem('accessToken');
@@ -25,36 +25,36 @@ const Mypage = (props) => {
       {isLogin ? (
         <div className='inner'>
           <div className='profileInner'>
-            <div className='item'>
-              <Link to={{ pathname: `/mypage/myprofile` }}> 내 프로필 </Link>
-            </div>
-            <div className='item'>
+              <Link to={{ pathname: `/mypage/myprofile` }}> 
+                <div className='item'>내 프로필</div> 
+              </Link>
+            
               <Link to={{ pathname: `/mypage/petprofile` }}>
-                반려동물 프로필
+                <div className='item'> 반려동물 프로필</div>
               </Link>
-            </div>
-            <div className='item'>
+            
               <Link to={{ pathname: `/mypage/sitterprofile` }}>
-                돌보미 프로필
+                <div className='item'>
+                    돌보미 프로필
+                </div>
               </Link>
-            </div>
           </div>
           <div className='profileInner'>
             {
                !localStorage.getItem('kakaoToken') && (
-                  <div className='item'>
-                    <Link to={{ pathname: `/pwchange` }}>비밀번호 변경</Link>
-                  </div>
+                  <Link to={{ pathname: `/pwchange` }}>
+                    <div className='item'> 비밀번호 변경</div>
+                  </Link>
                )
             }
-            <div className='item'>
-              <a href="https://forms.gle/8P1mzCKyuY9Aj7HGA" target="_blank" rel="noreferrer">고객센터</a>
-            </div>
+            <a href="https://forms.gle/8P1mzCKyuY9Aj7HGA" target="_blank" rel="noreferrer">
+              <div className='item'> 고객센터 </div>
+            </a>
           </div>
           <div>
-            <div className='item'>
-              <button type="button" onClick={()=>setModalDisplay(true)}>로그아웃</button>
-            </div>
+            <button type="button" onClick={()=>setModalDisplay(true)}>
+              <div className='item'>로그아웃</div>
+            </button>
           </div>
         </div>
       ) : (
@@ -112,6 +112,7 @@ const MypageInner = styled.div`
       padding-bottom: 12px;
       margin-bottom: 12px;
     }
+    button {width:100%; display:block; text-align:left;}
   }
 `;
 
