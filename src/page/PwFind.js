@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
@@ -7,6 +7,7 @@ import Modal from "../elements/Modal";
 import NavBox from "../elements/NavBox";
 import StyledButton from "../elements/StyledButton";
 import StyledContainer from "../elements/StyledContainer";
+import { handleChange } from "../shared/common";
 import { apis } from "../store/api";
 
 const INITIAL_VALUES = {
@@ -15,40 +16,33 @@ const INITIAL_VALUES = {
 
 const PwFind = () => {
   const navigate = useNavigate();
+  const idRef = useRef();
   const [values, setValues] = useState(INITIAL_VALUES);
   const [idMessage, setIdMessage] = useState("");
+  const [isIdMessage, setIsIdMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
-
-  // 유효성 검사
   const [isId, setIsId] = useState(false);
-
-  const handleChange = (name, value) => {
-    setValues(function (prevValues) {
-      return {
-        ...prevValues,
-        [name]: value,
-      };
-    });
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    handleChange(name, value);
+    handleChange(name, value, setValues);
   };
 
-  // 회원가입 유효성 검사
+  // 유효성 검사
   const idCheck = (e) => {
-    handleInputChange(e);
-    const regId =
-      /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
     const idCurrent = e.target.value;
+    handleInputChange(e)
+    const regId = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
 
-    if (!regId.test(idCurrent)) {
+    if(!regId.test(idCurrent)){
       setIdMessage("이메일 형식에 맞게 입력해주세요");
-      setIsId(false);
+      setIsId(false)
     } else {
       setIdMessage("올바른 이메일 형식 입니다");
-      setIsId(true);
+      setIsId(true)
+    }
+    if(idRef.current.value){
+      setIsIdMessage("");
     }
   };
 
@@ -61,14 +55,22 @@ const PwFind = () => {
         window.location.replace("/home");
       }
     },
-    onError: (data) => {
+    onError: (err) => {
+      if(err.response.status === 406){
+        setIdMessage(err.response.data.errorMessage);
+        setIsId(false);
+      }
     },
   });
 
   // 등록하는 함수
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    mutate(values);
+  const handleSubmit = () => {
+    if(!idRef.current.value){
+      setIsIdMessage("이메일을 입력해주세요.");
+      setIsId(false);
+    } else {
+      mutate(values);
+    }
   };
 
   return (
@@ -82,13 +84,17 @@ const PwFind = () => {
         <label>이메일 주소</label>
         <input
           type="email"
-          name="useEmail"
+          name="userEmail"
           placeholder="example@petsitt.com"
+          ref={idRef}
           onChange={idCheck}
           required
         />
-        {values.userEmail && (
-          <Message className={`${isId ? "success" : "error"}`}>
+        { isIdMessage && (
+          <Message>{isIdMessage}</Message>
+        )}
+        { values.userEmail && (
+          <Message className={`${ isId ? "success" : "error"}`}>
             {idMessage}
           </Message>
         )}
