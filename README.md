@@ -16,3 +16,6 @@ UI/UX : 고가은
 ![](https://img.shields.io/badge/AXIOS-671ddf?style=for-the-badge&logo=AXIOS&logoColor=black)
 ![](https://img.shields.io/badge/reactquery-ff4154?style=for-the-badge&logo=reactquery&logoColor=black)
 ![](https://img.shields.io/badge/Socket.io-000000?style=for-the-badge&logo=Socket.io&logoColor=white)
+
+# 👉🏻바로 가기
+[자세한 내용은 wiki를 참고해주세요😃😃](https://github.com/PetSitt/petsitt_frontend/wiki)
