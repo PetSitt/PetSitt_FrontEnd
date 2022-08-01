@@ -54,13 +54,19 @@ const PwChange = () => {
       /^.*(?=.{4,10})(?=.*[a-zA-Z])(?=.*?[A-Z])(?=.*\d)(?=.+?[\W|_])[a-zA-Z0-9!@#$%^&*()-_+={}\|\\\/]+$/gim;
     const pwCurrent = e.target.value;
 
-    if (!regPw.test(pwCurrent)) {
-      setPwMessage("4~10자 이내 대/소문자,숫자,특수문자 조합으로 입력해주세요");
-      setIsPw(false);
-    } else {
-      setPwMessage("올바른 비밀번호 입니다");
-      setIsPw(true);
-    }
+      if (!regPw.test(pwCurrent)) {
+        setPwMessage("4~10자 이내 대/소문자,숫자,특수문자 조합으로 입력해주세요");
+        setIsPw(false);
+      } else {
+        if(pwOrdInput.current.value === e.target.value){
+          setPwMessage("기존 비밀번호와 같을순 없습니다.");
+          setIsPw(false);
+        } else {
+          setPwMessage("올바른 비밀번호 입니다");
+          setIsPw(true);
+        }
+      }
+    
   };
 
   //비밀번호 일치 체크 함수
@@ -82,7 +88,7 @@ const PwChange = () => {
       password: values.password,
       newPassword: values.newPassword,
     };
-    passwordChang(datas);
+    isPw && passwordChang(datas);
   };
 
   return (
