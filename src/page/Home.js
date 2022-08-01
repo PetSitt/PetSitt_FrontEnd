@@ -77,6 +77,7 @@ function Home() {
 			staleTime: Infinity,
 		},
 	);
+
 	const setDatesFormat = () => {
 		if (date.length > 0) {
 			datesTransformed.current = null;
@@ -114,10 +115,15 @@ function Home() {
 		staleTime: Infinity,
 	});
 	
+	const getMainApi = ({order = 'createdAt', offset = 0, limit = 6}) => {
+		const query = `order=${order}&offset=${offset}&limit=${limit}`
+		return apis.getMainDefault(query)
+	}
+
 	const getListApi = (currentPosition, category) =>{
 		return apis.getSittersDefault({...currentPosition, category});
 	}
-	
+
 	const {data: sittersBeforeSearch, refetch: refetchSitters, isRefetching: sittersIsRefetching} = useQuery(
 		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
 		{
