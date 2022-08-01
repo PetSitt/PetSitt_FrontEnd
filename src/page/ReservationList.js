@@ -35,7 +35,10 @@ const ReservationList = ({tab, setTab, setChatRoomOnly}) => {
   const reservationIdForDiary = useRef();
   const timeoutRef = useRef();
   const setAlert = useRef({status: false, text: null});
-  const sitterId = useRef();
+  const sitterInfo = useRef({
+    sitterId: null,
+    sitterName: null,
+  });
   const modifyData = useRef({ addImage: [], deleteImage: [] });
   const dataToSend = useRef({
     reservationId: null,
@@ -264,7 +267,7 @@ const ReservationList = ({tab, setTab, setChatRoomOnly}) => {
     onError: (data) => {
     },
   });
-  const {mutate: openChatRoom} = useMutation(() => chatApis.chatRoomPost(sitterId.current), {
+  const {mutate: openChatRoom} = useMutation(() => chatApis.chatRoomPost(sitterInfo.sitterId.current), {
     onSuccess: (data) => {
       setChatRoomOnly({status: true, roomId: data.data.roomId});
     },
@@ -541,7 +544,8 @@ const ReservationList = ({tab, setTab, setChatRoomOnly}) => {
                                 _title='문의하기'
                                 _border='1px solid #FC9215'
                                 _onClick={()=>{
-                                  sitterId.current = v.sitterId;
+                                  sitterInfo.sitterId.current = v.sitterId;
+                                  sitterInfo.sitterName.current = v.sitterName;
                                   openChatRoom();
                                 }}
                               />

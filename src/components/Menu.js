@@ -20,6 +20,12 @@ const Menu = ({chatDisplay, setChatDisplay, newMessage}) => {
   useEffect(()=>{
     activateMenu();
   },[location.pathname]);
+  const [modalActive, setModalActive] = useState(false);
+  useEffect(()=>{
+    if(modalDisplay){
+      setModalActive(true);
+    }
+  },[modalDisplay])
   
   return (
     <>
@@ -33,7 +39,6 @@ const Menu = ({chatDisplay, setChatDisplay, newMessage}) => {
           if(localStorage.getItem('accessToken')){
             setChatDisplay(true);
           }else{
-            console.log('!!')
             setModalDisplay(true);
           }
         }}>
@@ -52,15 +57,22 @@ const Menu = ({chatDisplay, setChatDisplay, newMessage}) => {
           </Link>
         </div>
       </MenuInner>
-      {
-        modalDisplay && (
-          <Modal _display={modalDisplay} _confirm={'로그인 하기'} _cancel={'취소'} confirmOnClick={()=>window.location.href='/login'} cancelOnClick={setModalDisplay(false)}>
-            <div className='text_area'>
-              <p>실시간 채팅 기능은 로그인 후 이용 가능합니다.</p>
-            </div>
-          </Modal>
-        )
-      } 
+      <Modal _alert={false} _display={modalDisplay} _confirm='로그인 하기' _cancel='취소'
+      confirmOnClick={() => {
+        if(window.location.pathname === '/login'){
+          setModalDisplay(false);
+        }else{
+          window.location.href = '/login';
+        }
+      }}
+      cancelOnclick={() => {
+        setModalDisplay(false);
+      }}>
+        <div className='text_area'>
+          <p>실시간 채팅 기능은</p>
+          <p>로그인 후 이용 가능합니다.</p>
+        </div>
+      </Modal>
     </>
   );
 };
