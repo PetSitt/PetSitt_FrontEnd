@@ -12,10 +12,9 @@ import StyledButton from '../elements/StyledButton';
 import Review from './Review';
 import CareDiary from './CareDiary';
 import Modal from '../elements/Modal';
-import ChatList from "./ChatList";
 import Alert from '../elements/Alert';
 
-const ReservationList = ({socket, tab, setTab}) => {
+const ReservationList = ({tab, setTab, setChatRoomOnly}) => {
   const navigate = useNavigate();
   const [pastReservation, setPastReservation] = useState();
   const [proceedings, setProceedings] = useState();
@@ -36,7 +35,7 @@ const ReservationList = ({socket, tab, setTab}) => {
   const reservationIdForDiary = useRef();
   const timeoutRef = useRef();
   const setAlert = useRef({status: false, text: null});
-  let alertTimeout; 
+  const sitterId = useRef();
   const modifyData = useRef({ addImage: [], deleteImage: [] });
   const dataToSend = useRef({
     reservationId: null,
@@ -47,16 +46,6 @@ const ReservationList = ({socket, tab, setTab}) => {
     },
   });
   const [diarySave, setDiarySave] = useState(false);
-  const chatInfo = useRef({
-    sitterId: null,
-    chatRoomId: null,
-  });
-  const [popup, setPopup] = useState({
-    popup: false,
-    socket: socket,
-    id: null,
-    username: null
-  });
   const {
 		mutate: reservatioinList,
     data: reservationListData,
@@ -275,16 +264,12 @@ const ReservationList = ({socket, tab, setTab}) => {
     onError: (data) => {
     },
   });
-  const {mutate: openChatRoom} = useMutation(() => chatApis.chatRoomPost(chatInfo.current.sitterId), {
+  const {mutate: openChatRoom} = useMutation(() => chatApis.chatRoomPost(sitterId.current), {
     onSuccess: (data) => {
-      chatInfo.current = {...chatInfo.current, chatRoomId: data.data.roomId}
-      setPopup((prev) => {
-        return {
-          ...prev,
-          popup:!popup.popup
-        }
-      })
-    }
+      setChatRoomOnly({status: true, roomId: data.data.roomId});
+    },
+    onError: (data) => {
+    },
   });
 
   const confirmWritingReview = () => {
@@ -556,7 +541,7 @@ const ReservationList = ({socket, tab, setTab}) => {
                                 _title='문의하기'
                                 _border='1px solid #FC9215'
                                 _onClick={()=>{
-                                  chatInfo.current = {...chatInfo.current, sitterId: v.sitterId}
+                                  sitterId.current = v.sitterId;
                                   openChatRoom();
                                 }}
                               />
@@ -860,9 +845,6 @@ const ReservationList = ({socket, tab, setTab}) => {
           )}
         </Modal>
       )}
-      {
-        chatInfo.current?.chatRoomId && popup.popup && <ChatList socket={socket} room={chatInfo.current.chatRoomId} detailOnly={true} popup={popup.popup} setPopup={setPopup}/>
-      }
       {setAlert.current.status && <Alert _text={setAlert.current.text}/>}
     </>
   );
