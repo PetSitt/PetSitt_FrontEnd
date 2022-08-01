@@ -267,9 +267,10 @@ const ReservationList = ({tab, setTab, setChatRoomOnly}) => {
     onError: (data) => {
     },
   });
-  const {mutate: openChatRoom} = useMutation(() => chatApis.chatRoomPost(sitterInfo.sitterId.current), {
+  const {mutate: openChatRoom} = useMutation(() => chatApis.chatRoomPost(sitterInfo.current.sitterId), {
     onSuccess: (data) => {
-      setChatRoomOnly({status: true, roomId: data.data.roomId});
+      // console.log(data)
+      setChatRoomOnly({status: true, roomId: data.data.roomId, sender: sitterInfo.current.sitterName});
     },
     onError: (data) => {
     },
@@ -544,8 +545,8 @@ const ReservationList = ({tab, setTab, setChatRoomOnly}) => {
                                 _title='문의하기'
                                 _border='1px solid #FC9215'
                                 _onClick={()=>{
-                                  sitterInfo.sitterId.current = v.sitterId;
-                                  sitterInfo.sitterName.current = v.sitterName;
+                                  sitterInfo.current.sitterId = v.sitterId;
+                                  sitterInfo.current.sitterName = v.sitterName;
                                   openChatRoom();
                                 }}
                               />
