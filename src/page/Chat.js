@@ -44,7 +44,7 @@ const Chat = ({setChatDisplay, newMessage, setNewMessage, chatRoomOnly}) => {
     chatBodyHeight.current = window.innerHeight;
     return()=>{
       queryClient.invalidateQueries('chatList');
-      setRoomEnter(false);
+      setRoomEnter(false);    
     }
   },[]);
   useEffect(()=>{

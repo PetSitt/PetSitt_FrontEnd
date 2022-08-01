@@ -35,7 +35,7 @@ function ChatList({listData, setRoomEnter, setChatDisplay, setRoomInfo}) {
     return()=>{
       ChatItems.current = null;
     }
-  },[])
+  },[]);
   
   if(!listData) return (
     <>
