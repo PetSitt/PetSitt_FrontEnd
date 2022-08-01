@@ -1,190 +1,226 @@
-import { useEffect, useState } from "react";
-import { useQuery } from "react-query";
+import { useEffect, useRef } from "react";
 import styled from "styled-components";
-import { chatApis } from "../store/chatApi";
-import ChatRoom from './ChatRoom';
-import ChatHeader from "../components/ChatHeader";
+import LoadingBox from '../elements/Loading';
 
-function formatDate(value) {
-  const date = new Date(value);
-  return `${date.getFullYear()}. ${date.getMonth() + 1}. ${date.getDate()}`;
-};
+function ChatList({listData, setRoomEnter, roomId, setChatDisplay}) {
+  const ChatItems = useRef();
+  const newDates = useRef();
+  const sortData = () => {
+    listData.sort(function compare(a, b) {
+      if(a.lastChatAt > b.lastChatAt) return -1;
+      if(a.lastChatAt < b.lastChatAt) return 1;
+      return 0;
+    })
+    return listData;
+  }
+  const convertDate = () => {
+    const today = new Date(Date.now());
+    const date = listData.map(v=>{
+      const chatDate = new Date(v.lastChatAt);
+      if(chatDate.toDateString() === today.toDateString()){
+        const [hour, minute, second] = chatDate.toLocaleTimeString("ko-KR").split(/:| /);
+        return `${hour} ${minute}:${second}`;
+      }else{
+        return chatDate.toLocaleDateString("ko-KR");
+      }
+    })
+    return date;
+  }
+  useEffect(()=>{
+    ChatItems.current = sortData();
+    newDates.current = convertDate();
+  },[listData])
 
-function ChatList({popup, socket, setPopup, room, detailOnly}) {
-  const [showChatRoom, setShowChatRoom] = useState(false);
-  const [idRoom, setIdRoom] = useState(detailOnly ? room : '');
-  const [username, setUsername] = useState('');
-  const { isLoading: dataLoading, data: chats, refetch } = useQuery("chatsList", () => chatApis.chatListGet(socket.id), {
-    staleTime: Infinity,
-    enabled: true
-  });
-  const joinRoom = (userName, room) => {
-    socket.emit("join_room", room);
-    setUsername(userName);
-    setIdRoom(room);
-    setShowChatRoom(true);
-  };
-
-  useEffect(() => {
-    refetch();
-  },[refetch])
-
-  return (
-    <ChatInner className={`chatsInner ${!showChatRoom ? "chatListInner": 'chatRoomInner'}`}>
-        <div className="joinChatContainer">
-          <ChatHeader socket={socket} idRoom={detailOnly ? room : idRoom} popup={popup} showChatRoom={showChatRoom} setPopup={setPopup}/>
-          <ChatBody className={`${detailOnly ? 'detail_only' : ''} chats_body`}>
-            {
-              !detailOnly ? (
-                <>
-                  { !showChatRoom ? (
-                  <>
-                    {chats.data?.rooms ? 
-                      (<div className="chatingList_inner">
-                      <p className="txt_chating">채팅목록</p>
-                      {chats.data?.rooms.map((el, idx) => {
-                        return (
-                          <div key={el.roomId} className="items">
-                            <button onClick={() => {joinRoom(el.userName, el.roomId)}}>
-                              <div className="imgurl_inner">
-                                <span className="bg_img" style={{backgroundImage: `url(${el.imageUrl})`}}></span>
-                              </div>
-                              <div>
-                                <p>{el.userName}</p>
-                                <p>{formatDate(el.lastChatAt)}</p>
-                              </div>
-                            </button>
-                          </div>
-                        )
-                      })}
-                    </div>)
-                    :
-                    (<div className="chats_notice">
-                      <p>대화 했던 내역이 없습니다.</p>
-                      <p>원하는 돌보미를 찾아 문의 해보세요.</p>
-                    </div>)}
-                  </>
-                  ) : (
-                    <ChatRoom socket={socket} room={idRoom} popup={popup} showChatRoom={showChatRoom}/>
-                  )}
-                </>
-              ) : (
-                <ChatRoom className={'detailOnly'} socket={socket} room={idRoom} popup={popup} showChatRoom={showChatRoom}/>
-              )
-            }
-            
-          </ChatBody>
+  useEffect(()=>{
+    return()=>{
+      ChatItems.current = null;
+    }
+  },[])
+  
+  if(!listData) return (
+    <>
+      <ChatHeaderWrap>
+        <p>채팅</p>
+        <button type='button' onClick={()=>{
+          setChatDisplay(false);
+        }}>닫기</button>
+      </ChatHeaderWrap>
+      <ChatBodyWrap>
+        <div className='loadingWrap'>
+          <LoadingBox />
         </div>
-    </ChatInner>
+      </ChatBodyWrap>
+    </>
+  )
+  return (
+    <>
+      <ChatHeaderWrap>
+        <p>채팅</p>
+        <button type='button' onClick={()=>{
+          setChatDisplay(false);
+        }}>닫기</button>
+      </ChatHeaderWrap>
+      <ChatBodyWrap>
+      {(ChatItems.current && newDates.current) ? (
+        <ul>
+          {
+            ChatItems.current.map((list,idx)=>{
+              return (
+                <ChatListItem key={idx} onClick={()=>{setRoomEnter(true); roomId.current = list.roomId}}>
+                  <UserImage style={{backgroundImage: `url(${list.imageUrl})`}}></UserImage>
+                  <ChatListInfo>
+                    <p className='info'>
+                      <span className='userName'>{list.userName}</span>
+                      <span className='date'>{newDates.current[idx]}</span>
+                    </p>
+                    <p className='message'>{list.lastChat}</p>
+                  </ChatListInfo>
+                  {
+                    list.newMessage && <i className='ic-new'>NEW</i>
+                  }
+                </ChatListItem>
+              )
+            })
+          }
+        </ul>
+      ) : (
+        <div className='loadingWrap'>
+          <LoadingBox />
+        </div>
+      )}
+      </ChatBodyWrap>
+    </>
   );
 };
 
-const ChatBody = styled.div`
+const ChatBodyWrap = styled.div`
   height: 100%;
-	-ms-overflow-style: none; /* IE and Edge - scrollbar 숨기기*/
-	scrollbar-width: none; /* Firefox scrollbar 숨기기*/	
-	overflow-Y: auto;
-  -ms-overflow-style: none; /* IE and Edge - scrollbar 숨기기*/
-  scrollbar-width: none; /* Firefox scrollbar 숨기기*/	
-  padding: 0 14px;
-`
-const ChatInner = styled.div`
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 25px;
-	width: 370px;
-	max-width: 90%;
-	height: 90%;
-	max-height: 680px;
-	border-radius: 30px;
-	background-color: #eeeeee;
-	margin: 0 auto;
-	box-shadow: rgb(0 0 0 / 30%) 0px 12px 60px 5px;
-	animation: boxFade 0.20s ease-out 0s 1 normal none running;
+  padding: 24px 20px;
   overflow: hidden;
-  z-index: 200;
-  @media (min-width: 768px){
-    right: calc(10% + 21px);
-    left: auto;
+  overflow-y: auto;
+  box-sizing: border-box;
+  @media(min-width: 768px){
+    -ms-overflow-style: none; /* IE and Edge scrollbar 숨기기*/
+    scrollbar-width: none; /* Firefox scrollbar 숨기기*/
   }
-  &.chatRoomInner{
-    padding-bottom: 56px;
-    .chats_body{
-      padding: 0;
-      overflow-y: hidden;
-      .chat-body{
-        padding-bottom: 20px;
-      }
-    }
-    .chatRoom{
-      padding: 0 14px;
-      height: 100%;
-      overflow: hidden;
-      overflow-y: auto;
-      -ms-overflow-style: none; /* IE and Edge - scrollbar 숨기기*/
-      scrollbar-width: none; /* Firefox scrollbar 숨기기*/	
-    }
-  }
-  .chats_body.detail_only{
-    padding: 0 0 56px;
-    overflow-y: hidden;
-    & > div{
-      padding: 0 14px 20px;
-      height: 100%;
-      overflow: hidden;
-      overflow-y: auto;
-      -ms-overflow-style: none; /* IE and Edge - scrollbar 숨기기*/
-      scrollbar-width: none; /* Firefox scrollbar 숨기기*/	
-    }
-  }
-  .joinChatContainer{
-    position: relative;
-    padding-top: 80px;
-    height: 100%;
-    box-sizing: border-box;
-  }
-  .chatingList_inner {
-    margin: 10px 0;
-    padding: 12px 10px 6px 10px;
-    background-color: rgb(255, 255, 255);
-    border-radius: 18px;
-    box-shadow: rgb(0 0 0 / 10%) 0px 2px 16px 1px;
-    .txt_chating {
-      font-size: 14px;
-    }
-  }
-  .chats_notice {
-    width: 100%;
+  .loadingWrap{
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    p {
-      font-size: 14px;
-      margin-bottom: 6px;
-    }
-  }
-  .items {
-    margin-top: 14px;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
     display: flex;
     align-items: center;
-  }
-  .items .imgurl_inner{
-    width: 50px;
-    height: 50px;
-    border-radius: 10px;
-    margin-right: 10px;
-    overflow: hidden;
-  }
-  .items .imgurl_inner .bg_img{
-    display: block;
-    width: 100%;
-    height: 100%;
-    background-position: center;
-    background-size: cover;
+    justify-content: center;
   }
 `
+const UserImage = styled.div`
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  flex-shrink: 0;
+  border: 1px solid #e9e9e9;
+`
+const ChatListItem = styled.li`
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  .ic-new{
+    position: absolute;
+    right: 0;
+    top: 50%;
+    height: 20px;
+    line-height: 18px;
+    border-radius: 10px;
+    padding: 0 5px;
+    color: #fff;
+    background-color: #fc9215;
+    font-weight: 700;
+    font-size: 12px;
+    margin-top: -10px;
+  }
+  & + li{
+    margin-top: 16px;
+  }
+`
+const ChatListInfo = styled.div`
+  display: flex;
+  width: 100%;
+  max-width: calc(100% - 56px);
+  flex-direction: column;
+  cursor: pointer;
+  font-size: 14px;
+  gap: 5px;
+  padding-right: 50px;
+  .info{
+    display: flex;
+    gap: 10px;
+    .date{
+      color: #676767;
+    }
+  }
+  .message{
+    line-height: 1.4;
+    min-height: 1.4em;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
+`
+const ChatHeaderWrap = styled.div`
+position: fixed;
+left: 0;
+right: 0;
+top: 0;
+width: 100%;
+padding: 20px;
+background-color: #fff;
+border-bottom: 1px solid #fff;
+box-sizing: border-box;
+height: 70px;
+@media (min-width: 768px){
+	max-width: 412px;
+	right: 10%;
+	left: auto;
+}
+	p{
+		font-weight: 700;
+    font-size: 24px;
+    line-height: 29px;
+	}
+	button{
+		position: absolute;
+		right: 20px;
+		top: 22px;
+		width: 24px;
+		height: 24px;
+		font-size: 0;
+		&::before,
+		&::after{
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 50%;
+			width: 24px;
+			height: 2px;
+			background-color: #000;
+			margin: -1px auto 0;
+			content: '';
+			transform: rotate(-45deg);
+		}
+		&::after{
+			transform: rotate(45deg);
+		}
+	}
+`
+const Message = styled.p`
+  font-size: 16px;
+  line-height: 1.4;
+`
 export default ChatList;

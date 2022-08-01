@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import Modal from '../elements/Modal';
 
-const Menu = ({popup, setPopup}) => {
+const Menu = ({chatDisplay, setChatDisplay, newMessage}) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [activeMenu, setActiveMenu] = useState();
- 
+  const [modalDisplay, setModalDisplay] = useState(false);
   const activateMenu = () => {
     if(location.pathname === '/'){
       setActiveMenu('home')
@@ -17,36 +19,49 @@ const Menu = ({popup, setPopup}) => {
   }
   useEffect(()=>{
     activateMenu();
-  },[location.pathname])
+  },[location.pathname]);
   
   return (
-    <MenuInner>
-      <div className='item'>
-        <Link className={`nav-link ${activeMenu === 'home' ? 'isActive' : ''}`} to='/'>
-          <i className='ic-home' style={{fontSize: '25px', fontWeight: '500'}}></i>
-        </Link>
-      </div>
-      <div className='item' onClick={() => setPopup((prev) => {
-        return {
-          ...prev,
-          popup: !popup
-        }
-      })}>
-        <button className='nav-link' type="button">
-          <i className='ic-chat' style={{fontSize: '21px'}}></i>
-        </button>
-      </div>
-      <div className='item'>
-        <Link className={`nav-link ${activeMenu === 'reservation' ? 'isActive' : ''}`} to='/reservation/list'>
-          <i className='ic-schedule'></i>
-        </Link>
-      </div>
-      <div className='item'>
-        <Link className={`nav-link ${activeMenu === 'mypage' ? 'isActive' : ''}`} to='/mypage'>
-          <i className='ic-profile' style={{fontSize: '24px', fontWeight: '500'}}></i>
-        </Link>
-      </div>
-    </MenuInner>
+    <>
+      <MenuInner>
+        <div className='item'>
+          <Link className={`nav-link ${activeMenu === 'home' ? 'isActive' : ''}`} to='/'>
+            <i className='ic-home' style={{fontSize: '25px', fontWeight: '500'}}></i>
+          </Link>
+        </div>
+        <div className='item' onClick={() => {
+          if(localStorage.getItem('accessToken')){
+            setChatDisplay(true);
+          }else{
+            console.log('!!')
+            setModalDisplay(true);
+          }
+        }}>
+          <button className={`nav-link ${newMessage?.status ? 'hasNew' : ''}`} type="button">
+            <i className='ic-chat' style={{fontSize: '21px'}}></i>
+          </button>
+        </div>
+        <div className='item'>
+              <Link className={`nav-link ${activeMenu === 'reservation' ? 'isActive' : ''}`} to='/reservation/list'>
+            <i className='ic-schedule'></i>
+          </Link>
+        </div>
+        <div className='item'>
+          <Link className={`nav-link ${activeMenu === 'mypage' ? 'isActive' : ''}`} to='/mypage'>
+            <i className='ic-profile' style={{fontSize: '24px', fontWeight: '500'}}></i>
+          </Link>
+        </div>
+      </MenuInner>
+      {
+        modalDisplay && (
+          <Modal _display={modalDisplay} _confirm={'로그인 하기'} _cancel={'취소'} confirmOnClick={()=>window.location.href='/login'} cancelOnClick={setModalDisplay(false)}>
+            <div className='text_area'>
+              <p>실시간 채팅 기능은 로그인 후 이용 가능합니다.</p>
+            </div>
+          </Modal>
+        )
+      } 
+    </>
   );
 };
 
@@ -74,6 +89,7 @@ const MenuInner = styled.nav`
     color: #787878;
     cursor: pointer;
     .nav-link{
+      position: relative;
       display: block;
       font-size: 22px;
       padding: 0 15px;
@@ -84,6 +100,24 @@ const MenuInner = styled.nav`
       &.isActive{
         i{
           color: #fc9215;
+        }
+      }
+      &.hasNew{
+        position: relative;
+        &::before{
+          position: absolute;
+          right: 6px;
+          top: -4px;
+          width: 16px;
+          height: 16px;
+          font-size: 8px;
+          color: #fff;
+          font-weight: 700;
+          line-height: 16px;
+          border-radius: 50%;
+          background-color: #fc9215;
+          content: 'N';
+          text-align: center;
         }
       }
     }

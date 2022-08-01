@@ -23,12 +23,12 @@ import SitterProfileForm3 from './page/SitterProfileForm3';
 import SitterProfileForm4 from './page/SitterProfileForm4';
 import Auth from './shared/Auth';
  
-const Router = ({socket}) => {
+const Router = ({setChatRoomOnly}) => {
   const [tab, setTab] = useState('user');
   return (
     <Routes>
       <Route path='/' element={<Home />} exact />
-      <Route path='/detail/:id' element={<Detail socket={socket}/>} exact />
+      <Route path='/detail/:id' element={<Detail setChatRoomOnly={setChatRoomOnly}/>}/>
       <Route path='/signup' element={<Signup />} />
       <Route path='/pwfind' element={<PwFind />} />
       <Route path='/idfind' element={<IdFind />} />
@@ -58,10 +58,10 @@ const Router = ({socket}) => {
         element={<SitterProfileForm4 />}
       />
       <Route path='/pwchange' element={<PwChange />} />
-      <Route path='/login' element={<Login socket={socket}/>}></Route>
+      <Route path='/login' element={<Login/>}></Route>
       <Route path='/search' element={<SearchAddress />}></Route>
       <Route path='/reservation' element={<Reservation />}></Route>
-      <Route path='/reservation/list' element={<ReservationList socket={socket} tab={tab} setTab={setTab}/>}></Route>
+      <Route path='/reservation/list' element={<ReservationList tab={tab} setTab={setTab} setChatRoomOnly={setChatRoomOnly}/>}></Route>
       <Route
         path='/reservation/detail/:type/:id'
         element={<ReservationDetail setTab={setTab}/>}

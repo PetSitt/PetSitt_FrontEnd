@@ -35,12 +35,6 @@ const Login = ({socket}) => {
   const { mutate: loginQuery } = useMutation(apis.login, {
     onSuccess: (data) => {
       localStorage.setItem('accessToken', data.data.accessToken);
-      const messageData = { //서버가 필요한 데이터 형식
-        userEmail: jwt_decode(localStorage.getItem('accessToken')).userEmail
-      };
-      if(data.data.accessToken){
-        socket.emit('join_my_room', messageData)
-      }
       cookies.set('refreshToken', data.data.refreshToken);
       navigate('/');      
     },
