@@ -164,8 +164,8 @@ function ChatRoom({setSocketStored, setNewMessage, setChatDisplay, setRoomEnter,
               {
                 messages.map((msg, idx)=>{
                   return(
-                   <>
-                     <ChatMessage key={idx} className={msg.me ? 'receiver' : 'sender'}>
+                   <React.Fragment key={idx}>
+                     <ChatMessage className={msg.me ? 'receiver' : 'sender'}>
                       <p>{msg.chatText}</p>
                       <span>{msg.time}</span>
                     </ChatMessage>
@@ -180,7 +180,7 @@ function ChatRoom({setSocketStored, setNewMessage, setChatDisplay, setRoomEnter,
                         }
                       })
                     }
-                   </>
+                   </React.Fragment>
                   )
                 })
               }
