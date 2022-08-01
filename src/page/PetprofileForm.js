@@ -196,7 +196,7 @@ const PetprofileForm = () => {
           <InputBox outlined>
             <label className="tit">몸무게</label>
             <input
-              type="text"
+              type="number"
               name="petWeight"
               placeholder="몸무게를 적어주세요."
               onChange={handleInputChange}

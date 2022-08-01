@@ -1,9 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { useMutation, useQuery } from "react-query";
+import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import Button from "../elements/Button";
-import Input from "../elements/Input";
 import InputBox from "../elements/InputBox";
 import Modal from "../elements/Modal";
 import NavBox from "../elements/NavBox";
@@ -14,14 +12,15 @@ import { apis } from "../store/api";
 const IdFind = () => {
   const mobileRef = useRef();
   const navigate = useNavigate();
-  const [findId, setFindId] = useState(false);
   const [numberState, setNumberState] = useState();
   const [foundId, setFoundId] = useState();
   const [showModal, setShowModal] = useState(false);
   const [error, setError] = useState(false);
+  // 에러메세지 상태 저장
+  const [numberMessage, setNumberMessage] = useState("");
 
-// 아이디 찾기 후 아이디 저장
-const [userEmail, setUserEmail] = useState("example@petsitt.com")
+  // 아이디 찾기 후 아이디 저장
+  const [userEmail, setUserEmail] = useState("example@petsitt.com")
 
   const {
     mutate: find_id_query,
@@ -42,6 +41,15 @@ const [userEmail, setUserEmail] = useState("example@petsitt.com")
       retry: 0,
     }
   );
+
+  const idFind = () => {
+    if(!numberState){
+      setNumberMessage("핸드폰 번호를 입력 해주세요.")
+    } else {
+      find_id_query();
+    }
+  };
+
   useEffect(() => {
     if (!foundId && idFoundSucceess) {
       setUserEmail(emailInfoData.data.userEmail);
@@ -53,7 +61,7 @@ const [userEmail, setUserEmail] = useState("example@petsitt.com")
 
   return (
     <StyledContainer>
-      <NavBox _title={"아이디(이메일) 찾기"} />
+       <NavBox _title={"아이디(이메일) 찾기"} />
       <InfoBox>
         회원가입 시 등록한
         <br />
@@ -75,8 +83,9 @@ const [userEmail, setUserEmail] = useState("example@petsitt.com")
           defaultValue={error ? numberState : ''}
           required
         />
+        { !numberState && <div style={{color:'red'}}>{numberMessage}</div>}
         {
-          error && <Message>{numberState} 번호로 등록된 이메일이 없습니다.</Message>
+          error && <Message>{numberState} 번호로 등록된 이메일이 없습니다. </Message>
         }
       </InputBox>
       <StyledButton
@@ -85,7 +94,7 @@ const [userEmail, setUserEmail] = useState("example@petsitt.com")
         _bgColor={"#ffffff"}
         color={"#fc9215"}
         _margin={"36px 0px"}
-        _onClick={find_id_query}
+        _onClick={idFind}
       />
       <Modal
         _display={showModal}

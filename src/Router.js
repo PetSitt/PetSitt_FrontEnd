@@ -22,9 +22,6 @@ import SitterProfileForm2 from './page/SitterProfileForm2';
 import SitterProfileForm3 from './page/SitterProfileForm3';
 import SitterProfileForm4 from './page/SitterProfileForm4';
 import Auth from './shared/Auth';
-import ChatList from './page/ChatList';
-import ChatRoom from './page/ChatRoom';
-
  
 const Router = ({setChatRoomOnly}) => {
   const [tab, setTab] = useState('user');
@@ -70,8 +67,6 @@ const Router = ({setChatRoomOnly}) => {
         element={<ReservationDetail setTab={setTab}/>}
       ></Route>
       <Route path="/oauth/kakao/callback" element={<Auth />}></Route>
-      <Route path="/chats" element={<ChatList />}></Route>
-      <Route path="/chats/:id" element={<ChatRoom />}></Route>
       <Route path='*' element={<Home replace to='/' />} />
     </Routes>
   );
