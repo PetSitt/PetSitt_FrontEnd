@@ -12,7 +12,7 @@ const convertDate = (time) => {
   const [hour, minute, second] = newTime.toLocaleTimeString("ko-KR").split(/:| /);
   return `${hour} ${minute}:${second}`;
 }
-function ChatRoom({roomId, setSocketStored, setNewMessage, setChatDisplay, setRoomEnter}) {
+function ChatRoom({setSocketStored, setNewMessage, setChatDisplay, setRoomEnter, roomId, senderName}) {
   const queryClient = useQueryClient();
   const [historyGet, setHistoryGet] = useState();
   const [socket, setSocket] = useState();
@@ -47,24 +47,14 @@ function ChatRoom({roomId, setSocketStored, setNewMessage, setChatDisplay, setRo
   })
   const {data: chatHistory, isFetched} = useQuery(['chatHistory', roomId, socket?.id], ()=>chatRoomGetApi(roomId, socket?.id), {
     onSuccess: (data) => {
-      console.log(data)
-      for(let i = 0; i<data.data.chats.length; i++){
-        if(data.data.myName !== data.data.chats[i].userName) {
-          sender.current = data.data.chats[i].userName;
-          break;
-        }
-        if(i+1 === data.data.chats.length) sender.current = data.data.myName;
-      }
       let i = 0;
       data.data.chats.reduce((acc,cur,idx)=>{
         acc = cur; 
         const next = data.data.chats[idx+1] ? data.data.chats[idx+1]['createdAt'] : null;
         const thisDate = new Date(acc?.createdAt).toLocaleDateString("ko-KR");
         const nextDate = new Date(next).toLocaleDateString("ko-KR");
-        console.log()
         const [yaer, month, date] = nextDate.split('. ');
         if(thisDate < nextDate && next && acc){
-          console.log(date, nextDate)
           dateDividers.current['index'][i] = idx;
           dateDividers.current['dates'][i] = `${yaer}년 ${month}월 ${date.split('.')[0]}일`
           i++;
@@ -159,11 +149,10 @@ function ChatRoom({roomId, setSocketStored, setNewMessage, setChatDisplay, setRo
       <ChatHeaderWrap>
         <button type='button' className='back' onClick={()=>{
           setRoomEnter(false);
-          
         }}>
           <i className='ic-arw-left'></i>
         </button>
-        <p>{sender.current}</p>
+        <p>{senderName}</p>
         <button type='button' className='close' onClick={()=>{
           setChatDisplay(false);
         }}>닫기</button>

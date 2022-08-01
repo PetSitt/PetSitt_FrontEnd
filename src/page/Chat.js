@@ -10,10 +10,10 @@ const Chat = ({setChatDisplay, newMessage, setNewMessage, chatRoomOnly}) => {
   const queryClient = useQueryClient();
   const [dataLoad, setDataLoad] = useState(false);
   const [roomEnter, setRoomEnter] = useState(false);
-  const roomId = useRef();
   const [socketStore, setSocketStored] = useState();
   const newCheck = useRef(false);
   const chatBodyHeight = useRef();
+  const [roomInfo, setRoomInfo] = useState({roomId: null, senderName: null,});
   const {data: getChatList} = useQuery("chatList", () => chatApis.chatListGet(), {
     onSuccess: (data)=>{
       setDataLoad(false);
@@ -44,7 +44,7 @@ const Chat = ({setChatDisplay, newMessage, setNewMessage, chatRoomOnly}) => {
     chatBodyHeight.current = window.innerHeight;
     return()=>{
       queryClient.invalidateQueries('chatList');
-      // setNewMessage({lastText: false, status: false});
+      setRoomEnter(false);
     }
   },[]);
   useEffect(()=>{
@@ -60,16 +60,15 @@ const Chat = ({setChatDisplay, newMessage, setNewMessage, chatRoomOnly}) => {
     if(chatRoomOnly.status) setRoomEnter(true);
   },[chatRoomOnly]);
 
-
   if(!getChatList) return null;
   return (
     <ChatWrap style={{height: chatBodyHeight.current + 'px'}}>
       <ChatBody>
         {
           !roomEnter ? (
-            <ChatList listData={getChatList.data.rooms} setRoomEnter={setRoomEnter} roomId={roomId} setChatDisplay={setChatDisplay}/>
+            <ChatList listData={getChatList.data.rooms} setRoomEnter={setRoomEnter} setChatDisplay={setChatDisplay} setRoomInfo={setRoomInfo}/>
           ) : (
-            <ChatRoom roomId={chatRoomOnly?.status ? chatRoomOnly?.roomId : roomId.current} setSocketStored={setSocketStored} setNewMessage={setNewMessage} setChatDisplay={setChatDisplay} setRoomEnter={setRoomEnter}/>
+            <ChatRoom roomId={chatRoomOnly?.status ? chatRoomOnly?.roomId : roomInfo.roomId} setSocketStored={setSocketStored} setNewMessage={setNewMessage} setChatDisplay={setChatDisplay} setRoomEnter={setRoomEnter} senderName={chatRoomOnly?.status ? chatRoomOnly?.sender : roomInfo.senderName}/>
           )
         }
       </ChatBody>

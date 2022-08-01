@@ -112,7 +112,7 @@ const Detail = ({setChatRoomOnly}) => {
 
   const {mutate: openChatRoom} = useMutation(() => chatApis.chatRoomPost(sitterId), {
     onSuccess: (data) => {
-      setChatRoomOnly({status: true, roomId: data.data.roomId});
+      setChatRoomOnly({status: true, roomId: data.data.roomId, sender: detail.sitter.sitterName});
     },
     onError: (data) => {
     },
