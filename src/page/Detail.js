@@ -15,7 +15,7 @@ import ChatList from "./ChatList";
 import sitterBgDefault from '../assets/img/img_sitter_bg_default.png';
 import sitterDefault from '../assets/img/img_sitter_default.png'
 
-const Detail = ({socket}) => {
+const Detail = ({setChatRoomOnly}) => {
 	const queryClient = useQueryClient();
 	const param = useParams();
   const navigate = useNavigate();
@@ -76,17 +76,7 @@ const Detail = ({socket}) => {
     '실내놀이': 'ic-activity',
     '마당있음': 'ic-yard',
   };
-  
-  const chatInfo = useRef({
-    sitterId: null,
-    chatRoomId: null,
-  });
-  const [popup, setPopup] = useState({
-    popup: false,
-    socket: socket,
-    id: null,
-    username: null
-  });
+
   const disableDate = () => {
     const datesArray = [];
     detail.sitter.noDate.map(v=>{
@@ -122,16 +112,10 @@ const Detail = ({socket}) => {
 
   const {mutate: openChatRoom} = useMutation(() => chatApis.chatRoomPost(sitterId), {
     onSuccess: (data) => {
-      chatInfo.current = {...chatInfo.current, chatRoomId: data.data.roomId}
-      setPopup((prev) => {
-        return {
-          ...prev,
-          popup:!popup.popup
-        }
-      })
+      setChatRoomOnly({status: true, roomId: data.data.roomId});
     },
     onError: (data) => {
-    }
+    },
   });
 
 	const checkSelectArea = (e) => {
@@ -567,7 +551,6 @@ const Detail = ({socket}) => {
           <div className="buttons">
             <StyledButton
               _onClick={() => {
-                chatInfo.current = {...chatInfo.current, sitterId}
                 openChatRoom();
               }}
               _bgColor={'rgba(252, 146, 21, 0.1)'}
@@ -597,9 +580,6 @@ const Detail = ({socket}) => {
           </div>
         </ReservationFunctions>
       </SitterDetailPage>
-      {
-        chatInfo.current?.chatRoomId && popup.popup && <ChatList socket={socket} room={chatInfo.current.chatRoomId} detailOnly={true} popup={popup.popup} setPopup={setPopup}/>
-      }
       {
         (modalDisplay && errorMessage === errorMessages.notLogin) && (
           <Modal _display={modalDisplay} _alert={false} _confirm={'로그인하기'} _cancel={'취소'} cancelOnclick={()=>{setErrorMessage(null); setModalDisplay(false)}} confirmOnClick={()=>{navigate('/login')}}>
