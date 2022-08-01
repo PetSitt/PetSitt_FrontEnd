@@ -44,10 +44,10 @@ function App() {
       // eventSource 연결되었을 경우 && 한 번만 요청되도록 sseConnected Boolean값 확인
       sseConnected.current =  true;
       eventSourceRef.current.addEventListener('open', function(e) {
-        console.log("접속이 되었습니다!!!!!");
+        // console.log("접속이 되었습니다!!!!!");
       });
       eventSourceRef.current.addEventListener('message', function(e) {
-        console.log("메세지가 도착했습니다!!!", JSON.parse(e.data));
+        // console.log("메세지가 도착했습니다!!!", JSON.parse(e.data));
         if(JSON.parse(e.data).newMessage){
           setNewMessage({status: true, lastText: e.data.lastChat});
         }
@@ -63,6 +63,12 @@ function App() {
       setChatDisplay(true);
     }
   },[chatRoomOnly]);
+
+  useEffect(()=>{
+    if(!chatDisplay){
+      setChatRoomOnly({status: false, roomId: null, sender: null});
+    }
+  },[chatDisplay])
 
   return (
     <AppWrapper className="App">

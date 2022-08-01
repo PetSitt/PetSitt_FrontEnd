@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import styled from "styled-components";
 import LoadingBox from '../elements/Loading';
 
-function ChatList({listData, setRoomEnter, roomId, setChatDisplay}) {
+function ChatList({listData, setRoomEnter, setChatDisplay, setRoomInfo}) {
   const ChatItems = useRef();
   const newDates = useRef();
   const sortData = () => {
@@ -66,7 +66,7 @@ function ChatList({listData, setRoomEnter, roomId, setChatDisplay}) {
           {
             ChatItems.current.map((list,idx)=>{
               return (
-                <ChatListItem key={idx} onClick={()=>{setRoomEnter(true); roomId.current = list.roomId}}>
+                <ChatListItem key={idx} onClick={()=>{setRoomEnter(true); setRoomInfo({roomId: list.roomId, senderName: list.userName})}}>
                   <UserImage style={{backgroundImage: `url(${list.imageUrl})`}}></UserImage>
                   <ChatListInfo>
                     <p className='info'>
@@ -95,7 +95,7 @@ function ChatList({listData, setRoomEnter, roomId, setChatDisplay}) {
 
 const ChatBodyWrap = styled.div`
   height: 100%;
-  padding: 24px 20px;
+  padding: 6px 20px 24px;
   overflow: hidden;
   overflow-y: auto;
   box-sizing: border-box;
