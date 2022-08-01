@@ -79,6 +79,7 @@ const PetprofileForm = () => {
       navigate("/mypage/petprofile");
     },
     onError: (data) => {
+      console.log(data)
     },
   });
 

@@ -97,6 +97,7 @@ export const apis = {
 	// main
 	getSittersList: (queriesData) => publicApi.post('/mains/search', queriesData),
   getSittersDefault: (data) => publicApi.post('/mains', data),
+	getMainDefault: (query) => api.get(`/mains/${query}`),
 
 	// detail
 	getUserDetail: (sitterId) => publicApi.get(`/details/${sitterId}`),

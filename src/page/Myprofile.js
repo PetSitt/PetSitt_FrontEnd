@@ -1,6 +1,5 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Cookies } from 'react-cookie';
 import styled from 'styled-components';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import Button from '../elements/Button';
@@ -8,6 +7,7 @@ import Input from '../elements/Input';
 import { apis } from '../store/api';
 import NavBox from '../elements/NavBox';
 import StyledContainer from '../elements/StyledContainer';
+import Modal from '../elements/Modal';
 
 const Myprofile = () => {
   const queryClient = useQueryClient();
@@ -16,16 +16,14 @@ const Myprofile = () => {
   });
   const inputEl1 = useRef();
   const inputEl2 = useRef();
-  const inputEl3 = useRef();
   const [text, setText] = useState('수정');
-  const cookies = new Cookies();
+  const [showModal, setShowModal] = useState(false);
   const navigate = useNavigate();
 
   const { mutate } = useMutation(apis.myprofilePatch, {
     onSuccess: ({ data }) => {
       if (data.myprofile) {
-        alert('프로필 정보를 수정했습니다.');
-        window.location.reload();
+        setShowModal(true)
       }
       queryClient.invalidateQueries('user')
     },
@@ -89,13 +87,12 @@ const Myprofile = () => {
             <label className='inner required'>
               <p className='tit'>이메일</p>
               <Input
-                _width='100%'
-                _height='44px'
-                _type='text'
-                _ref={inputEl3}
-                defaultValue={userData.data.myprofile.userEmail}
-                disabled
-              />
+                 _width='100%'
+                 _height='44px'
+                 _type='text'
+                 defaultValue={userData.data.myprofile.userEmail}
+                 disabled
+               />
             </label>
           </>
         ) : (
@@ -106,6 +103,19 @@ const Myprofile = () => {
           </Link>
         )}
       </MyprofileInner>
+
+      <Modal
+        _display={showModal}
+        _confirm="저장하기"
+        _alert={true}
+        confirmOnClick={async () => {
+          navigate("/mypage");
+        }}
+      >
+		    <div className="text_area">
+          <h3>프로필 정보를 수정했습니다.</h3>
+        </div>
+	    </Modal>
     </StyledContainer>
   );
 };
