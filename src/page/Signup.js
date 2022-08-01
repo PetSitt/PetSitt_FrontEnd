@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { useMutation } from "react-query";
 import { apis } from "../store/api";
@@ -8,6 +8,7 @@ import NavBox from "../elements/NavBox";
 import InputBox from "../elements/InputBox";
 import StyledButton from "../elements/StyledButton";
 import { handleChange } from "../shared/common";
+import { Cookies } from 'react-cookie';
 
 const INITIAL_VALUES = {
   userEmail: "",
@@ -17,6 +18,7 @@ const INITIAL_VALUES = {
 };
 
 const Signup = () => {
+  const cookies = new Cookies();
   const [values, setValues] = useState(INITIAL_VALUES);
   // 에러메세지 상태 저장
   const [idMessage, setIdMessage] = useState("");
@@ -122,6 +124,14 @@ const Signup = () => {
       mutate(values);
     }
   };
+
+  useEffect(()=>{
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('kakaoToken');
+    cookies.remove('refreshToken');
+    localStorage.removeItem('userName');
+    localStorage.removeItem('userEmail');
+  },[]);
 
   return (
     <StyledContainer>

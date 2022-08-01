@@ -33,7 +33,7 @@ function App() {
     // accessToken 없고 로그인 페지 아닐 경우에만 EventSource 요청
     if(accessToken && location.pathname !== '/login'){
       const userEmail = jwt_decode(localStorage.getItem('accessToken')).userEmail;
-      const eventSource = new EventSource(`http://3.39.230.232/chats/sse/${userEmail}`);
+      const eventSource = new EventSource(`https://kimguen.com/chats/sse/${userEmail}`);
       eventSourceRef.current = eventSource;
     }
   },[]);
