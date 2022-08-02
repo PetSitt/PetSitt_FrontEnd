@@ -55,6 +55,7 @@ function Home({prevIsDetail}) {
 
 	const getSittersList = (queriesData, category) => {
 		const _queriesData = {...queriesData, category: category.length ? category : []};
+		console.log(_queriesData)
 		return apis.getSittersList(_queriesData);
 	};
 	const {data: sittersFilteredSearch} = useQuery(
@@ -62,6 +63,7 @@ function Home({prevIsDetail}) {
 		() => getSittersList(queriesData, category),
 		{
 			onSuccess: (data) => {
+				console.log(data)
 				setSearched(false);
 				setSitters(data.data.sitters);
 				setSearchingStatus('done');
@@ -138,7 +140,7 @@ function Home({prevIsDetail}) {
 		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
 		{
 			onSuccess: (data) => {
-				queryClient.invalidateQueries('sitter_default');
+				// queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(false);
 				setSitters(data.data.sitter);
 				setSearchingStatus('done');
@@ -282,8 +284,12 @@ function Home({prevIsDetail}) {
 		// 카테고리 버튼 클릭했을 경우
 		if(categoryClicked.current){
 			if(addressInfo &&  dates?.length > 0){
+				console.log('searched')
+				queryClient.invalidateQueries('sitter_list');
 				setSearched(true);
 			}else{
+				console.log('default')
+				queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(true);
 			} 
 		};
