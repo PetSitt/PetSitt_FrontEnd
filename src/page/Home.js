@@ -282,17 +282,15 @@ function Home({prevIsDetail}) {
 		// 카테고리 버튼 클릭했을 경우
 		if(categoryClicked.current){
 			if(addressInfo &&  dates?.length > 0){
-				console.log('searched')
 				queryClient.invalidateQueries('sitter_list');
 				setSearched(true);
 			}else{
-				console.log('default')
 				queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(true);
-			} 
+			}
 		};
 		categoryClicked.current = false;
-	},[category])
+	},[category]);
 	
 	useEffect(()=>{
 		// 주소, 날짜 모두 선택했을 경우 검색 실행
@@ -302,7 +300,7 @@ function Home({prevIsDetail}) {
 			setSearched(true);
 		}
 		// 선택한 주소, 날짜 둘다 없을 경우 위치기반으로 돌보미 리스트 검색(검색 후 주소, 날짜 다시 삭제했을 경우를 위해 추가)
-		if(!dates.length && !addressInfo && (!prevIsDetail && !sessionStorage.getItem('searchedData'))){
+		if(!dates.length && !addressInfo && !sessionStorage.getItem('searchedData')){
 			showTooltip.current = true;
 			const tooltipTimeout = setTimeout(()=>{
 				showTooltip.current = false;
