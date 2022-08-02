@@ -1,5 +1,5 @@
-import React, {useState} from 'react';
-import { Route, Routes } from 'react-router-dom';
+import React, {useState, useRef, useEffect} from 'react';
+import { Route, Routes, useLocation } from 'react-router-dom';
 // page
 import Home from './page/Home';
 import Detail from './page/Detail';
@@ -24,11 +24,19 @@ import SitterProfileForm4 from './page/SitterProfileForm4';
 import Auth from './shared/Auth';
  
 const Router = ({setChatRoomOnly}) => {
+  const location = useLocation();
+  const prevIsDetail = useRef(false);
   const [tab, setTab] = useState('user');
+  useEffect(()=>{
+    if(location.pathname !== '/' && location.pathname.split('/')[1] !== 'detail'){
+      prevIsDetail.current = false;
+    }
+  },[location.pathname])
+  
   return (
     <Routes>
-      <Route path='/' element={<Home />} exact />
-      <Route path='/detail/:id' element={<Detail setChatRoomOnly={setChatRoomOnly}/>}/>
+      <Route path='/' element={<Home prevIsDetail={prevIsDetail}/>} exact />
+      <Route path='/detail/:id' element={<Detail setChatRoomOnly={setChatRoomOnly} prevIsDetail={prevIsDetail}/>}/>
       <Route path='/signup' element={<Signup />} />
       <Route path='/pwfind' element={<PwFind />} />
       <Route path='/idfind' element={<IdFind />} />
