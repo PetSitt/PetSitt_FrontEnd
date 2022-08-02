@@ -13,7 +13,7 @@ import icon_star from '../assets/img/icon_star.png';
 import StyledButton from "../elements/StyledButton";
 import ExceptionArea from '../components/ExceptionArea';
 import Loading from '../elements/Loading';
-import MarketingArea from "../components/MarketingArea";
+// import MarketingArea from "../components/MarketingArea"; 마케팅 종료로 해당 코드 주석처리
 import sitterBgDefault from '../assets/img/img_sitter_bg_default.png';
 import sitterDefault from '../assets/img/img_sitter_default.png'
 
@@ -54,7 +54,7 @@ function Home() {
 		userName: null,
 	})
 	const [searchingStatus, setSearchingStatus] = useState('searching');
-	const [marketing, setMarketing] = useState(false);
+	// const [marketing, setMarketing] = useState(false); 마케팅 종료로 해당 코드 주석처리
 	const timeoutRef = useRef();
 
 	const getSittersList = (queriesData, category) => {
@@ -233,9 +233,10 @@ function Home() {
 			showTooltip.current = false;
 		},5000)
 		
-		if(window.innerWidth < 769 && !sessionStorage.getItem('marketingOnMobile')){
-			setMarketing(true);
-		}
+		// 마케팅 종료로 해당 코드 주석처리
+		// if(window.innerWidth < 769 && !sessionStorage.getItem('marketingOnMobile')){
+		// 	setMarketing(true);
+		// }
 		const timeoutId = timeoutRef.current;
 		return()=>{
 			clearTimeout(tooltipTimeout);
@@ -282,7 +283,9 @@ function Home() {
 	},[sitters, sittersIsRefetching])
 	return (
 		<>
-		<HomePage className={marketing ? 'home marketingOn' : 'home'} style={{position: 'relative', backgroundColor: '#fff'}}>
+		{/* 마케팅 종료로 해당 코드 주석처리 */}
+		{/* <HomePage className={marketing ? 'home marketingOn' : 'home'} style={{position: 'relative', backgroundColor: '#fff'}}> */}
+		<HomePage className={'home'} style={{position: 'relative', backgroundColor: '#fff'}}>
 			<button type="button" onClick={getLocation} ref={getLocationButtonRef} style={{position: 'absolute', left: 0, top: 0, width: 0, height: 0}}></button>
 			<IndexPage>
 				<FilterArea ref={filterAreaRef}>
@@ -461,32 +464,26 @@ function Home() {
 							viewType === 'list' ? (
 								<button type="button" className="showMapView" onClick={()=>setViewType('map')}><i className="ic-map"></i>지도</button>
 							) : (
-								<button type="button" className="showListView" onClick={()=>setViewType('list')}><i className="ic-list"></i>리스트</button>
+								<button type="button" className="showListView" onClick={()=>setViewType('list')}><i className="ic-Union"></i>리스트</button>
 							)
 						)
 					}
 				</Buttons>
 			</IndexPage>
 		</HomePage>
-		{
-			modalDisplay && (
-				<Modal>
-					{/* <div className='text_area'><p>실시간 위치 정보를 얻을 수 없어 </p></div> */}
-				</Modal>
-			)
-		}
-		{
+		{/* 마케팅 종료로 해당 코드 주석처리 */}
+		{/* {
 			marketing && <MarketingArea _display={marketing} page='main' setMarketing={setMarketing}/>
-		}
+		} */}
 	</>
 	);
 }
 
 const HomePage = styled.div`
-	&.marketingOn{
+	/* &.marketingOn{
 		height: 100%;
 		overflow: hidden;
-	}
+	} */
 `
 const LoadingWrap = styled.div`
 	position: fixed;

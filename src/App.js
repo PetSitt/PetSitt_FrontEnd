@@ -6,7 +6,7 @@ import Router from './Router';
 import "./assets/font/index.css"
 import Menu from './components/Menu';
 import Chat from './page/Chat';
-import MarketingArea from './components/MarketingArea';
+// import MarketingArea from './components/MarketingArea'; 마케팅 종료로 해당 코드 주석처리
 import LoadingBox from './elements/Loading';
 
 
@@ -85,14 +85,15 @@ function App() {
           )
         }
       </div>
-      <MarketingArea _display={true}></MarketingArea>
+      {/* 마케팅 종료로 해당 코드 주석처리 */}
+      {/* <MarketingArea _display={true}></MarketingArea> */}
     </AppWrapper>
   );
 }
 
 const AppWrapper = styled.div`
   height: 100vh;
-  background: rgb(217, 227, 238);
+  background: #FFF4E8;
   .loading {
     position: absolute;
     top: 50%;
