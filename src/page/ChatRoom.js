@@ -174,7 +174,6 @@ function ChatRoom({setSocketStored, setNewMessage, setChatDisplay, setRoomEnter,
       chatRoomRef.current.scrollTop = chatRoomRef.current.scrollHeight;
     }
   },[messages])
-  
   return (
     <>
       <ChatHeaderWrap>
@@ -370,7 +369,7 @@ const ChatHeaderWrap = styled.div`
 display: flex;
 align-items: center;
 justify-content: space-between;
-position: fixed;
+position: absolute;
 left: 0;
 right: 0;
 top: 0;
@@ -380,11 +379,6 @@ background-color: #fff;
 border-bottom: 1px solid #E4E4E4;
 box-sizing: border-box;
 height: 70px;
-@media (min-width: 768px){
-	max-width: 412px;
-	right: 10%;
-	left: auto;
-}
 	p{
 		font-weight: 500;
     font-size: 21px;
