@@ -15,7 +15,7 @@ import ChatList from "./ChatList";
 import sitterBgDefault from '../assets/img/img_sitter_bg_default.png';
 import sitterDefault from '../assets/img/img_sitter_default.png'
 
-const Detail = ({setChatRoomOnly}) => {
+const Detail = ({setChatRoomOnly, prevIsDetail}) => {
 	const queryClient = useQueryClient();
 	const param = useParams();
   const navigate = useNavigate();
@@ -188,6 +188,7 @@ const Detail = ({setChatRoomOnly}) => {
       window.removeEventListener("click", checkSelectArea);
       queryClient.invalidateQueries('detail_data');
 			setDetail(null);
+      prevIsDetail.current = true;
 		}
 	}, []);
 
