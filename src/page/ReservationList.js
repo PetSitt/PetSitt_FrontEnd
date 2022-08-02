@@ -867,7 +867,7 @@ const ReservationItem = styled.li`
   position: relative;
   padding: 16px;
   border-radius: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid #E4E4E4;
   margin-bottom: 16px;
   &.proceeding_reservations{
     .sitterInfo{

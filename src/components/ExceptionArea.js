@@ -25,9 +25,17 @@ const Exception = styled.div`
     margin-top: 18px;
   }
   p{
-      color: #676767;
-      font-size: 16px;
-      margin-top: 8px;
+    color: #676767;
+    font-size: 16px;
+    margin-top: 8px;
+  }
+  @media(max-width: 768px){
+    h4{
+      font-size: 20px;
     }
+    p{
+      font-size: 14px;
+    }
+  }
 `
 export default ExceptionArea;
