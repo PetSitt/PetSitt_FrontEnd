@@ -50,7 +50,6 @@ function ChatList({listData, setRoomEnter, setChatDisplay, setRoomInfo, isFetchi
       ChatItems.current = null;
     }
   },[]);
-  console.log(listData, isFetching, isSuccess)
   
   if(isFetching) return (
     <>
@@ -204,7 +203,7 @@ const ChatListInfo = styled.div`
 
 `
 const ChatHeaderWrap = styled.div`
-position: fixed;
+position: absolute;
 left: 0;
 right: 0;
 top: 0;
@@ -214,11 +213,6 @@ background-color: #fff;
 border-bottom: 1px solid #fff;
 box-sizing: border-box;
 height: 70px;
-@media (min-width: 768px){
-	max-width: 412px;
-	right: 10%;
-	left: auto;
-}
 	p{
 		font-weight: 700;
     font-size: 24px;

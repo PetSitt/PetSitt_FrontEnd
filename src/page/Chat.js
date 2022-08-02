@@ -62,7 +62,7 @@ const Chat = ({setChatDisplay, newMessage, setNewMessage, chatRoomOnly}) => {
 
   if(!getChatList) return null;
   return (
-    <ChatWrap style={{height: chatBodyHeight.current + 'px'}}>
+    <ChatWrap>
       <ChatBody>
         {
           !roomEnter ? (
@@ -81,9 +81,11 @@ const ChatWrap = styled.div`
   left: 0;
   right: 0;
   top: 0;
+  bottom: 0;
   width: 100%;
   background-color: #fff;
   z-index: 300;
+  max-height: 100%;
   &::before{
     position: fixed;
     left: 0;
