@@ -313,7 +313,7 @@ const CareDiaryPage = styled.div`
   }
   .inputArea{
     height: 140px;
-    border: 1px solid #ddd;
+    border: 1px solid #C9C9C9;
     margin: 16px 0 0;
     border-radius: 6px;
     overflow: hidden;
