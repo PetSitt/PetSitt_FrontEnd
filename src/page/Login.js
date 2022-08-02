@@ -185,7 +185,7 @@ const Login = ({socket}) => {
           _bgColor={'#ffffff'}
           color={'#fc9215'}
           _margin={'0 0 10px 0'}
-          _title={'이메일로 시작하기'}
+          _title={'이메일로 회원가입'}
         />
         <StyledButton
           _onClick={() => window.location.href = `${KAKAO_AUTH_URL}`}
