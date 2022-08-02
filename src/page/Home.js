@@ -55,7 +55,6 @@ function Home({prevIsDetail}) {
 
 	const getSittersList = (queriesData, category) => {
 		const _queriesData = {...queriesData, category: category.length ? category : []};
-		console.log(_queriesData)
 		return apis.getSittersList(_queriesData);
 	};
 	const {data: sittersFilteredSearch} = useQuery(
@@ -63,7 +62,6 @@ function Home({prevIsDetail}) {
 		() => getSittersList(queriesData, category),
 		{
 			onSuccess: (data) => {
-				console.log(data)
 				setSearched(false);
 				setSitters(data.data.sitters);
 				setSearchingStatus('done');
