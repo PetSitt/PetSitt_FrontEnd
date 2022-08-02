@@ -17,6 +17,8 @@ import MarketingArea from "../components/MarketingArea";
 import sitterBgDefault from '../assets/img/img_sitter_bg_default.png';
 import sitterDefault from '../assets/img/img_sitter_default.png'
 
+const limit = 6;
+
 function Home() {
 	const datepickerRef = useRef();
 	const today = new DateObject();
@@ -34,7 +36,7 @@ function Home() {
   const [queriesData, setQueriesData] = useState({});
 	const [category, setCategory] = useState([]);
 	const [searched, setSearched] = useState(false);
-	const [sitters, setSitters] = useState(null);
+	const [sitters, setSitters] = useState([]);
 	const [currentPosition, setCurrentPosition] = useState();
 	const [defaultSearch, setDefaultSearch] = useState(false);
 	const [defaultSearchCache, setDefaultSearchCache] = useState(false);
@@ -44,6 +46,9 @@ function Home() {
 	const getLocationButtonRef = useRef();
 	const [datepickerDisplay, setDatepickerDisplay] = useState(false);
 	const [modalDisplay, setModalDisplay] = useState();
+	const [offset, setOffset] = useState(0);
+	const [target, setTarget] = useState(null);
+	const [hasNext, setHasNext] = useState(true);
 	const showModal = useRef(false);
 	const datesTransformed= useRef(null);
 	const [sitterCardShow, setSitterCardShow] = useState({display: false, index: null});
@@ -114,24 +119,26 @@ function Home() {
 		},
 		staleTime: Infinity,
 	});
-	
-	const getMainApi = ({order = 'createdAt', offset = 0, limit = 6}) => {
-		const query = `order=${order}&offset=${offset}&limit=${limit}`
-		return apis.getMainDefault(query)
-	}
 
-	const getListApi = (currentPosition, category) =>{
-		return apis.getSittersDefault({...currentPosition, category});
+	const getListApi = (currentPosition, category, offset, limit) =>{
+		return apis.getSittersDefault({...currentPosition, category, offset, limit});
 	}
 
 	const {data: sittersBeforeSearch, refetch: refetchSitters, isRefetching: sittersIsRefetching} = useQuery(
-		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
+		["sitter_default", currentPosition, category, offset, limit], () => getListApi(currentPosition, category, offset, limit),
 		{
 			onSuccess: (data) => {
 				queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(false);
-				setSitters(data.data.sitter);
 				setSearchingStatus('done');
+
+				if(offset === 0){
+					setSitters(data.data.sitter);
+				} else {
+					setSitters([...sitters, ...data.data.sitter]);
+				}
+				setOffset(offset + limit);
+				// setHasNext(hasNext);
 			},
 			onError: (data) => {
 				setDefaultSearch(false);
@@ -280,6 +287,28 @@ function Home() {
 			})
 		}
 	},[sitters, sittersIsRefetching])
+
+	useEffect(() => {
+		let options = {
+      threshold: "1",
+    };
+
+    let handleIntersection = ([entries], observer) => {
+			if (entries.isIntersecting) {
+				refetchSitters();
+				window.localStorage.setItem('scrollY', window.scrollY);
+        observer.unobserve(entries.target);
+      }
+    };
+		
+		const io = new IntersectionObserver(handleIntersection, options);
+		if (target) io.observe(target);
+
+		return () => {
+			io && io.disconnect();
+		}
+	},[target, offset])
+
 	return (
 		<>
 		<HomePage className={marketing ? 'home marketingOn' : 'home'} style={{position: 'relative', backgroundColor: '#fff'}}>
@@ -377,36 +406,39 @@ function Home() {
 								{
 									(viewType === 'list')
 									? (
-									<ul>
-										{
-											sitters?.map((v,i)=>{
-												return (
-													<SitterCard key={`sitter_${i}`}>
-														<Link to={`/detail/${v.sitterId}`}>
-														<div className="image_area" style={{backgroundImage: `url(${v.mainImageUrl ? v.mainImageUrl : sitterBgDefault})`}}>
-															<span className="sitter_image" style={{backgroundImage: `url(${v.imageUrl ? v.imageUrl : sitterDefault})`}}></span>
-														</div>
-														<div className="info_area">
-															<p className="sitter">
-																<em>{v.sitterName}</em>
-																<span>재고용률 {v.rehireRate}%</span>
-															</p>
-															<p className="address">{v.address}</p>
-															<div className="bottom_info">
-																<div className="star">
-																	<img src={icon_star} alt="star"/>
-																	<span>{v.averageStar} </span>
-																	<span>{`(${v.reviewCount})`}</span>
-																</div>
-																<p className="price"><strong>{v.servicePrice}</strong><span>원~</span></p>
+									<>
+										<ul>
+											{
+												sitters?.map((v,i)=>{
+													const lastItem = i === sitters.length - 1;
+													return (
+														<SitterCard key={`sitter_${i}`} ref={lastItem ? setTarget : null}>
+															<Link to={`/detail/${v.sitterId}`}>
+															<div className="image_area" style={{backgroundImage: `url(${v.mainImageUrl ? v.mainImageUrl : sitterBgDefault})`}}>
+																<span className="sitter_image" style={{backgroundImage: `url(${v.imageUrl ? v.imageUrl : sitterDefault})`}}></span>
 															</div>
-														</div>
-														</Link>
-													</SitterCard>
-												)
-											})
-										}
-									</ul>
+															<div className="info_area">
+																<p className="sitter">
+																	<em>{v.sitterName}</em>
+																	<span>재고용률 {v.rehireRate}%</span>
+																</p>
+																<p className="address">{v.address}</p>
+																<div className="bottom_info">
+																	<div className="star">
+																		<img src={icon_star} alt="star"/>
+																		<span>{v.averageStar} </span>
+																		<span>{`(${v.reviewCount})`}</span>
+																	</div>
+																	<p className="price"><strong>{v.servicePrice}</strong><span>원~</span></p>
+																</div>
+															</div>
+															</Link>
+														</SitterCard>
+													)
+												})
+											}
+										</ul>
+									</>
 									) : (
 										<MapArea>
 											<MapContainer items={locationItems} _height={contentHeight} setSitterCardShow={setSitterCardShow}/>
