@@ -489,8 +489,9 @@ function Home({prevIsDetail}) {
 									<ul>
 										{
 											sitters?.map((v,i)=>{
+												const lastItem = i === sitters.length - 1;
 												return (
-													<SitterCard key={`sitter_${i}`}>
+													<SitterCard key={`sitter_${i}`} ref={lastItem ? setTarget : null}>
 														<LinkButton type="button" onClick={(e)=>{
 															e.preventDefault();
 															if(dates.length && addressInfo){
