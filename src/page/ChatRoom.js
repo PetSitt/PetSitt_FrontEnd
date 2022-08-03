@@ -227,7 +227,7 @@ function ChatRoom({setSocketStored, setNewMessage, setChatDisplay, setRoomEnter,
         }
         
         <InputArea>
-          <input type="text" ref={textRef} value={messageToSend} placeholder={'메시지를 입력하세요.'} onKeyPress={(e)=>{
+          <input type="text" ref={textRef} value={messageToSend ? messageToSend : ''} placeholder={'메시지를 입력하세요.'} onKeyPress={(e)=>{
             setMessageToSend(e.target.value)
             if(e.key === 'Enter'){
               sendMessage();

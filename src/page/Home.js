@@ -356,6 +356,7 @@ function Home({prevIsDetail}) {
 				hasNext && refetchSitters();
 				// window.localStorage.setItem('scrollY', window.scrollY);
         observer.unobserve(entries.target);
+				console.log(window.scrollY)
       }
     };
 		
