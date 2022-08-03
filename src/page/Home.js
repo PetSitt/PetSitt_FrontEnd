@@ -1,19 +1,18 @@
 import { useEffect, useState, useRef } from "react";
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Cookies } from "react-cookie";
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import { DateObject,Calendar } from "react-multi-date-picker";
 import styled, {keyframes} from 'styled-components';
 import { apis } from "../store/api";
 
-import Modal from "../elements/Modal";
 import MapContainer from "./MapContainer";
 import SearchAddress from "./SearchAddress";
 import icon_star from '../assets/img/icon_star.png';
 import StyledButton from "../elements/StyledButton";
 import ExceptionArea from '../components/ExceptionArea';
 import Loading from '../elements/Loading';
-import MarketingArea from "../components/MarketingArea";
+// import MarketingArea from "../components/MarketingArea"; 마케팅 종료로 해당 코드 주석처리
 import sitterBgDefault from '../assets/img/img_sitter_bg_default.png';
 import sitterDefault from '../assets/img/img_sitter_default.png'
 
@@ -25,12 +24,11 @@ function Home() {
 	const cookies = new Cookies();
 	const queryClient = useQueryClient();
 	const filterAreaRef = useRef();
-	const [date, setDate] = useState(new Date());
+	const [date, setDate] = useState([]);
 	const [dates, setDates] = useState([]);
 	const weekDays = ["일", "월", "화", "수", "목", "금", "토"];
   const months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"];
 	const [addressInfo, setAddressInfo] = useState();
-	const [address, setAddress] = useState();
 	const [iframeDisplay, setIframeDisplay] = useState(false);
 	const categories = ['산책', '훈련', '데이케어', '1박케어', '목욕 및 모발관리'];
   const [queriesData, setQueriesData] = useState({});
@@ -39,7 +37,6 @@ function Home() {
 	const [sitters, setSitters] = useState([]);
 	const [currentPosition, setCurrentPosition] = useState();
 	const [defaultSearch, setDefaultSearch] = useState(false);
-	const [defaultSearchCache, setDefaultSearchCache] = useState(false);
 	const [viewType, setViewType] = useState('list');
 	const [locationItems, setLocationItems] = useState();
 	const [contentHeight, setContentHeight] = useState();
@@ -59,14 +56,14 @@ function Home() {
 		userName: null,
 	})
 	const [searchingStatus, setSearchingStatus] = useState('searching');
-	const [marketing, setMarketing] = useState(false);
+	// const [marketing, setMarketing] = useState(false); 마케팅 종료로 해당 코드 주석처리
 	const timeoutRef = useRef();
 
 	const getSittersList = (queriesData, category) => {
 		const _queriesData = {...queriesData, category: category.length ? category : []};
 		return apis.getSittersList(_queriesData);
 	};
-	const {data: sittersFilteredSearch, refetch: refetchSittersAfter} = useQuery(
+	const {data: sittersFilteredSearch} = useQuery(
 		["sitter_list", queriesData, category],
 		() => getSittersList(queriesData, category),
 		{
@@ -74,9 +71,11 @@ function Home() {
 				setSearched(false);
 				setSitters(data.data.sitters);
 				setSearchingStatus('done');
+				sessionStorage.removeItem('searchedData');
 			},
 			onError: (data) => {
 				setSearched(false);
+				sessionStorage.removeItem('searchedData');
 			},
 			enabled: !!searched,
 			staleTime: Infinity,
@@ -95,14 +94,26 @@ function Home() {
 			if(date.length > 1){
 				datesTransformed.current = `${dateItem} 외 ${date.length-1}일`
 			}
+		}else{
+			datesTransformed.current = [];
 		}
 	}
 	useEffect(()=>{
+		// 날짜, 장소 모두 검색했을 경우
 		if(dates.length && addressInfo){
-			setQueriesData({searchDate: dates, region_2depth_name: addressInfo.region_2depth_name, x: addressInfo.x, y: addressInfo.y})
+			setQueriesData({searchDate: dates, region_2depth_name: addressInfo.region_2depth_name, x: addressInfo.x, y: addressInfo.y});
 		}
-
-	}, [dates, addressInfo])
+		// 날짜, 장소 모두 설정하지 않았을 경우
+		if(!dates.length && !addressInfo){
+			// 날짜, 장소 모두 검색하라는 tooltip 노출
+			showTooltip.current = true;
+			const tooltipTimeout = setTimeout(()=>{
+				showTooltip.current = false;
+				clearTimeout(tooltipTimeout);
+			},5000);
+			// setDefaultSearch(true);
+		}
+	}, [dates, addressInfo]);
 
 	// 로그인 여부 확인하는 api
 	const { mutate: checkUser } = useMutation(()=>apis.checkUser(), { 
@@ -123,12 +134,11 @@ function Home() {
 	const getListApi = (currentPosition, category, offset, limit) =>{
 		return apis.getSittersDefault({...currentPosition, category, offset, limit});
 	}
-
 	const {data: sittersBeforeSearch, refetch: refetchSitters, isRefetching: sittersIsRefetching} = useQuery(
 		["sitter_default", currentPosition, category, offset, limit], () => getListApi(currentPosition, category, offset, limit),
 		{
 			onSuccess: (data) => {
-				queryClient.invalidateQueries('sitter_default');
+				// queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(false);
 				setSearchingStatus('done');
 
@@ -185,6 +195,7 @@ function Home() {
     if (navigator.geolocation) {
 			const cancel = setTimeout(()=>{
 				setSearchingStatus('delayed');
+				clearTimeout(cancel);
 			}, 7000);
 			timeoutRef.current = cancel;
       navigator.geolocation.getCurrentPosition(
@@ -217,6 +228,12 @@ function Home() {
     }
   };
 
+	const setStoredData = (data) => {
+		setDates(data.dates);
+		setAddressInfo(data.address);
+		setCategory(data.category);
+		datesTransformed.current = data.datesText;
+	}
 
 	useEffect(()=>{
 		if(localStorage.getItem('kakaoToken')){
@@ -224,48 +241,88 @@ function Home() {
 		}else if(localStorage.getItem('accessToken')){
 			checkUser();
 		}
-		const isLocationInfo = JSON.parse(localStorage.getItem('locationInfo'));
-
-		if(isLocationInfo && isLocationInfo.expire > Date.now()){
-			setCurrentPosition({x:isLocationInfo.x, y:isLocationInfo.y});
-			setDefaultSearch(true);
+		const searchedData = JSON.parse(sessionStorage.getItem('searchedData'));
+		// 이전 페이지가 상세페이지였고 검색했던 데이터가 있을 경우
+		// 저장된 데이터로 state 저장
+		if(prevIsDetail && searchedData){
+			setStoredData(searchedData);
+			setDate(()=>{
+				return searchedData.dates.map(v=>{
+					return new Date(v);
+				})
+			});
 		}else{
-			localStorage.removeItem('locationInfo');
-			getLocationButtonRef.current.click();
+			// 이전에 저장된 실시간 위치 정보 저장되어있는지 확인
+			const isLocationInfo = JSON.parse(localStorage.getItem('locationInfo'));		
+			if(isLocationInfo && isLocationInfo.expire > Date.now()){
+				// location 정보 저장되어 있으면 저장된 정보로 돌보미 검색
+				setCurrentPosition({x:isLocationInfo.x, y:isLocationInfo.y});
+				setDefaultSearch(true);
+			}else{
+				// 없을경우 위치정보 재검색
+				localStorage.removeItem('locationInfo');
+				getLocationButtonRef.current.click();
+			}
 		}
-		const fullHeight = window.innerHeight;
-		const filterHeight = filterAreaRef.current.clientHeight;
+		
+		let fullHeight = window.innerHeight;
+		let filterHeight = filterAreaRef.current.clientHeight;
 		setContentHeight(fullHeight - filterHeight - 74);
+		
 		const tooltipTimeout = setTimeout(()=>{
 			showTooltip.current = false;
-		},5000)
-		
-		if(window.innerWidth < 769 && !sessionStorage.getItem('marketingOnMobile')){
-			setMarketing(true);
-		}
+			clearTimeout(tooltipTimeout);
+		},5000);
 		const timeoutId = timeoutRef.current;
+		// 마케팅 종료로 해당 코드 주석처리
+		// if(window.innerWidth < 769 && !sessionStorage.getItem('marketingOnMobile')){
+		// 	setMarketing(true);
+		// }
 		return()=>{
 			clearTimeout(tooltipTimeout);
 			clearTimeout(timeoutId);
-		}
-		
+			setSitters([]);
+		}		
 	},[])
 
 	useEffect(()=>{
+		// 카테고리 버튼 클릭했을 경우
 		if(categoryClicked.current){
 			if(addressInfo &&  dates?.length > 0){
-				refetchSittersAfter();
+				queryClient.invalidateQueries('sitter_list');
+				setSearched(true);
 			}else{
-				refetchSitters();
-			} 
-		}
+				queryClient.invalidateQueries('sitter_default');
+				setDefaultSearch(true);
+			}
+		};
 		categoryClicked.current = false;
-	},[category])
+	},[category]);
 	
 	useEffect(()=>{
+		// 주소, 날짜 모두 선택했을 경우 검색 실행
 		if(dates.length && addressInfo){
+			queryClient.invalidateQueries('sitter_list');
 			setQueriesData({searchDate: dates, region_2depth_name: addressInfo.region_2depth_name, x: addressInfo.x, y: addressInfo.y, category});
 			setSearched(true);
+		}
+		// 선택한 주소, 날짜 둘다 없을 경우 위치기반으로 돌보미 리스트 검색(검색 후 주소, 날짜 다시 삭제했을 경우를 위해 추가)
+		if(!dates.length && !addressInfo && !sessionStorage.getItem('searchedData')){
+			showTooltip.current = true;
+			const tooltipTimeout = setTimeout(()=>{
+				showTooltip.current = false;
+				clearTimeout(tooltipTimeout);
+			},5000);
+			const isLocationInfo = JSON.parse(localStorage.getItem('locationInfo'));
+			if(isLocationInfo && isLocationInfo.expire > Date.now()){
+				// 저장된 위치정보 있고 3분 지나지 않았을 경우 그대로 가져오기
+				setCurrentPosition({x:isLocationInfo.x, y:isLocationInfo.y});
+				setDefaultSearch(true);
+			}else{
+				// 저장된 위치정보 없을 경우 실시간 위치 정보 다시 불러오기
+				localStorage.removeItem('locationInfo');
+				getLocationButtonRef.current.click();
+			}
 		}
 	}, [dates, addressInfo])
 
@@ -286,9 +343,10 @@ function Home() {
 				return positionItems;
 			})
 		}
-	},[sitters, sittersIsRefetching])
 
-	useEffect(() => {
+	},[sitters, sittersIsRefetching]);
+  
+  useEffect(() => {
 		let options = {
       threshold: "1",
     };
@@ -307,18 +365,23 @@ function Home() {
 		return () => {
 			io && io.disconnect();
 		}
-	},[target, offset])
-
+	},[target, offset]);
+  
 	return (
 		<>
-		<HomePage className={marketing ? 'home marketingOn' : 'home'} style={{position: 'relative', backgroundColor: '#fff'}}>
+		{/* 마케팅 종료로 해당 코드 주석처리 */}
+		{/* <HomePage className={marketing ? 'home marketingOn' : 'home'} style={{position: 'relative', backgroundColor: '#fff'}}> */}
+		<HomePage className={'home'} style={{position: 'relative', backgroundColor: '#fff'}}>
 			<button type="button" onClick={getLocation} ref={getLocationButtonRef} style={{position: 'absolute', left: 0, top: 0, width: 0, height: 0}}></button>
 			<IndexPage>
 				<FilterArea ref={filterAreaRef}>
 					<div className="searchWrap" style={{position: 'relative'}}>
 						<div style={{position: 'relative'}}>
 							<div className="inputBox">
-								<input type="text" placeholder="주소를 검색해주세요." value={addressInfo?.address_name && addressInfo?.address_name} onClick={()=>{setIframeDisplay(true); setDatepickerDisplay(false)}} readOnly/>
+								<input type="text" placeholder="주소를 검색해주세요." value={addressInfo ? addressInfo?.address_name : ''} onClick={()=>{setIframeDisplay(true); setDatepickerDisplay(false)}} readOnly/>
+								{
+									addressInfo && <ClearAddressButton type="button" onClick={()=>deleteAddressInfo()}><i className='ic-close'></i>주소 삭제</ClearAddressButton>
+								}
 								<i className="ic-search"></i>
 							</div>
 							{
@@ -333,11 +396,15 @@ function Home() {
 						<div style={{position: 'relative', zIndex: 2}}>
 							<div className="inputBox date">
 								<input type="text" placeholder="날짜를 선택해주세요." value={datesTransformed.current?.length > 0 ? datesTransformed.current : ''} onClick={()=>{setDatepickerDisplay(true); setIframeDisplay(false)}} readOnly/>
+								{
+									datesTransformed.current?.length > 0 && <ClearAddressButton type="button" onClick={()=>deleteDates()}><i className='ic-close'></i>날짜 삭제</ClearAddressButton>
+								}
 								<i className="ic-calendar"></i>
 							</div>
 							<DatepickerWrap style={{display: datepickerDisplay === true ? 'block' : 'none', position: 'absolute', left: '0', right: '0', top: '100%', marginTop: '-1px'}}>
 								<Calendar
 									ref={datepickerRef}
+									value={date}
 									onChange={setDate}
 									multiple={true}
 									format="YYYY/MM/DD"
@@ -350,11 +417,11 @@ function Home() {
 										borderRadius: 0,
 									}}
 								/>
-								<StyledButton _title="날짜 적용" _margin="0" _onClick={()=>{setDatepickerDisplay(false); setDatesFormat()}}/>
+								<StyledButton _title="닫기" _margin="0" _onClick={()=>{setDatepickerDisplay(false); setDatesFormat()}}/>
 							</DatepickerWrap>
 						</div>
 						{
-							showTooltip.current && <Tooltip className={showTooltip.current ? 'aniClass' : ''}>장소와 날짜 모두 선택해주세요.</Tooltip>
+							showTooltip.current && !prevIsDetail && !addressInfo && <Tooltip className={showTooltip.current ? 'aniClass' : ''}>장소와 날짜 모두 선택해주세요.</Tooltip>
 						}
 					</div>
 					<Categories>
@@ -381,7 +448,9 @@ function Home() {
 													})
 												}
 											}
-										}}/>
+										}}
+										checked={category && category.includes(v)}
+										/>
 										<span>{v}</span>
 									</label>
 								</li>
@@ -406,39 +475,47 @@ function Home() {
 								{
 									(viewType === 'list')
 									? (
-									<>
-										<ul>
-											{
-												sitters?.map((v,i)=>{
-													const lastItem = i === sitters.length - 1;
-													return (
-														<SitterCard key={`sitter_${i}`} ref={lastItem ? setTarget : null}>
-															<Link to={`/detail/${v.sitterId}`}>
-															<div className="image_area" style={{backgroundImage: `url(${v.mainImageUrl ? v.mainImageUrl : sitterBgDefault})`}}>
-																<span className="sitter_image" style={{backgroundImage: `url(${v.imageUrl ? v.imageUrl : sitterDefault})`}}></span>
-															</div>
-															<div className="info_area">
-																<p className="sitter">
-																	<em>{v.sitterName}</em>
-																	<span>재고용률 {v.rehireRate}%</span>
-																</p>
-																<p className="address">{v.address}</p>
-																<div className="bottom_info">
-																	<div className="star">
-																		<img src={icon_star} alt="star"/>
-																		<span>{v.averageStar} </span>
-																		<span>{`(${v.reviewCount})`}</span>
-																	</div>
-																	<p className="price"><strong>{v.servicePrice}</strong><span>원~</span></p>
+
+									<ul>
+										{
+											sitters?.map((v,i)=>{
+												return (
+													<SitterCard key={`sitter_${i}`}>
+														<LinkButton type="button" onClick={(e)=>{
+															e.preventDefault();
+															if(dates.length && addressInfo){
+																const data = {
+																	dates: dates,
+																	address: addressInfo,
+																	category: category,
+																	datesText: datesTransformed.current,
+																}
+																sessionStorage.setItem('searchedData', JSON.stringify(data));
+															}
+															navigate(`/detail/${v.sitterId}`);
+														}}></LinkButton>
+														<div className="image_area" style={{backgroundImage: `url(${v.mainImageUrl ? v.mainImageUrl : sitterBgDefault})`}}>
+															<span className="sitter_image" style={{backgroundImage: `url(${v.imageUrl ? v.imageUrl : sitterDefault})`}}></span>
+														</div>
+														<div className="info_area">
+															<p className="sitter">
+																<em>{v.sitterName}</em>
+																<span>재고용률 {v.rehireRate}%</span>
+															</p>
+															<p className="address">{v.address}</p>
+															<div className="bottom_info">
+																<div className="star">
+																	<img src={icon_star} alt="star"/>
+																	<span>{v.averageStar} </span>
+																	<span>{`(${v.reviewCount})`}</span>
 																</div>
 															</div>
-															</Link>
-														</SitterCard>
-													)
-												})
-											}
-										</ul>
-									</>
+	                          </div>
+													</SitterCard>
+												)
+											})
+										}
+									</ul>
 									) : (
 										<MapArea>
 											<MapContainer items={locationItems} _height={contentHeight} setSitterCardShow={setSitterCardShow}/>
@@ -447,7 +524,18 @@ function Home() {
 													{
 														sitterCardShow.display && (
 															<SitterCard style={{background: '#fff'}}>
-																<Link to={`/detail/${sitters[sitterCardShow.index].sitterId}`}>
+																<LinkButton type="button" onClick={(e)=>{
+																	e.preventDefault();
+																	if(dates.length && addressInfo){
+																		const data = {
+																			dates: dates,
+																			address: addressInfo,
+																			category: category,
+																		}
+																		sessionStorage.setItem('searchedData', JSON.stringify(data));
+																	}
+																	navigate(`/detail/${sitters[sitterCardShow.index].sitterId}`);
+																}}></LinkButton>
 																<div className="image_area" style={{backgroundImage: `url(${sitters[sitterCardShow.index].mainImageUrl})`}}>
 																	<span className="sitter_image" style={{backgroundImage: `url(${sitters[sitterCardShow.index].imageUrl})`}}></span>
 																</div>
@@ -466,7 +554,6 @@ function Home() {
 																		<p className="price"><strong>{sitters[sitterCardShow.index].servicePrice}</strong><span>원~</span></p>
 																	</div>
 																</div>
-																</Link>
 																<button type="button" className="closeSitterCard" onClick={()=>setSitterCardShow({display: false, index: null})}>닫기</button>
 															</SitterCard>
 														)
@@ -493,32 +580,26 @@ function Home() {
 							viewType === 'list' ? (
 								<button type="button" className="showMapView" onClick={()=>setViewType('map')}><i className="ic-map"></i>지도</button>
 							) : (
-								<button type="button" className="showListView" onClick={()=>setViewType('list')}><i className="ic-list"></i>리스트</button>
+								<button type="button" className="showListView" onClick={()=>setViewType('list')}><i className="ic-Union"></i>리스트</button>
 							)
 						)
 					}
 				</Buttons>
 			</IndexPage>
 		</HomePage>
-		{
-			modalDisplay && (
-				<Modal>
-					{/* <div className='text_area'><p>실시간 위치 정보를 얻을 수 없어 </p></div> */}
-				</Modal>
-			)
-		}
-		{
+		{/* 마케팅 종료로 해당 코드 주석처리 */}
+		{/* {
 			marketing && <MarketingArea _display={marketing} page='main' setMarketing={setMarketing}/>
-		}
+		} */}
 	</>
 	);
 }
 
 const HomePage = styled.div`
-	&.marketingOn{
+	/* &.marketingOn{
 		height: 100%;
 		overflow: hidden;
-	}
+	} */
 `
 const LoadingWrap = styled.div`
 	position: fixed;
@@ -608,6 +689,8 @@ const Buttons = styled.div`
 }
 `
 const FilterArea = styled.div`
+position: relative;
+z-index: 2;
 .searchWrap{
 	z-index: 2;
 }
@@ -636,7 +719,7 @@ const FilterArea = styled.div`
 			font-size: 20px;
 		}
 	}
-	i{
+	& > i{
 		position: absolute;
 		left: 0;
 		top: 0;
@@ -666,13 +749,19 @@ const FilterArea = styled.div`
 		}
 	}
 	&.date{
-		max-width: 51%;
+		max-width: 60%;
 		margin-top: 16px;
 		input{
 			padding-left: 34px;
 		}
 		i{
 			width: 36px;
+		}
+		@media screen and (max-width: 375px){
+			max-width: 65%;
+		}
+		@media screen and (max-width: 320px){
+			max-width: 100%;
 		}
 	}
 }
@@ -835,12 +924,19 @@ const SitterCard = styled.li`
 	}
 `
 const SittersListArea = styled.div`
+	position: relative;
+	z-index: 1;
 	&::before{
 		display: block;
 		height: 6px;
 		margin: 0 -20px 20px;
 		content: '';
 		background-color: #F5F5F5;
+	}
+	ul{
+		li{
+			position: relative;
+		}
 	}
 `
 const AddressWrap = styled.div`
@@ -939,4 +1035,30 @@ const TryAgainButton = styled.button`
   color: #fc9215;
 	margin-top: 20px;
 `;
+
+const ClearAddressButton = styled.button`
+	position: absolute;
+	right: 10px;
+	top: 50%;
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background-color: #e9e9e9;
+	margin-top: -12px;
+		font-size: 0;
+	i{
+		color: #1a1a1a;
+		&::before{
+			font-size: 12px;
+		}
+	}
+`
+const LinkButton = styled.button`
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index: 2;
+`
 export default Home;

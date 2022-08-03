@@ -14,7 +14,7 @@ const Chat = ({setChatDisplay, newMessage, setNewMessage, chatRoomOnly}) => {
   const newCheck = useRef(false);
   const chatBodyHeight = useRef();
   const [roomInfo, setRoomInfo] = useState({roomId: null, senderName: null,});
-  const {data: getChatList} = useQuery("chatList", () => chatApis.chatListGet(), {
+  const {data: getChatList, isFetching, isSuccess} = useQuery("chatList", () => chatApis.chatListGet(), {
     onSuccess: (data)=>{
       setDataLoad(false);
     },
@@ -62,11 +62,11 @@ const Chat = ({setChatDisplay, newMessage, setNewMessage, chatRoomOnly}) => {
 
   if(!getChatList) return null;
   return (
-    <ChatWrap style={{height: chatBodyHeight.current + 'px'}}>
+    <ChatWrap>
       <ChatBody>
         {
           !roomEnter ? (
-            <ChatList listData={getChatList.data.rooms} setRoomEnter={setRoomEnter} setChatDisplay={setChatDisplay} setRoomInfo={setRoomInfo}/>
+            <ChatList listData={getChatList.data.rooms} setRoomEnter={setRoomEnter} setChatDisplay={setChatDisplay} setRoomInfo={setRoomInfo} isFetching={isFetching} isSuccess={isSuccess}/>
           ) : (
             <ChatRoom roomId={chatRoomOnly?.status ? chatRoomOnly?.roomId : roomInfo.roomId} setSocketStored={setSocketStored} setNewMessage={setNewMessage} setChatDisplay={setChatDisplay} setRoomEnter={setRoomEnter} senderName={chatRoomOnly?.status ? chatRoomOnly?.sender : roomInfo.senderName}/>
           )
@@ -81,10 +81,11 @@ const ChatWrap = styled.div`
   left: 0;
   right: 0;
   top: 0;
+  bottom: 0;
   width: 100%;
-  border: 1px solid #ddd;
   background-color: #fff;
   z-index: 300;
+  max-height: 100%;
   &::before{
     position: fixed;
     left: 0;

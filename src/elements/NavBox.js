@@ -48,24 +48,6 @@ const NavBox = ({
       </NavWrap>
     );
   }
-
-  if (sitterEditProfile) {
-    return (
-      <NavWrap>
-        <TitleBox>
-          <h1>{_title}</h1>
-          <span>{_subTitle}</span>
-        </TitleBox>
-        <CancelButton
-          onClick={() => {
-            navigate("/mypage");
-          }}
-        >
-          취소
-        </CancelButton>
-      </NavWrap>
-    );
-  }
   return (
     <NavWrap>
       <button

@@ -1,8 +1,9 @@
 import { useEffect, useRef } from "react";
 import styled from "styled-components";
+import ExceptionArea from "../components/ExceptionArea";
 import LoadingBox from '../elements/Loading';
 
-function ChatList({listData, setRoomEnter, setChatDisplay, setRoomInfo}) {
+function ChatList({listData, setRoomEnter, setChatDisplay, setRoomInfo, isFetching, isSuccess}) {
   const ChatItems = useRef();
   const newDates = useRef();
   const sortData = () => {
@@ -15,29 +16,42 @@ function ChatList({listData, setRoomEnter, setChatDisplay, setRoomInfo}) {
   }
   const convertDate = () => {
     const today = new Date(Date.now());
+    const thisYear =  new Date(Date.now()).getFullYear();
     const date = listData.map(v=>{
       const chatDate = new Date(v.lastChatAt);
       if(chatDate.toDateString() === today.toDateString()){
+        // 오늘일 경우
         const [hour, minute, second] = chatDate.toLocaleTimeString("ko-KR").split(/:| /);
         return `${hour} ${minute}:${second}`;
       }else{
-        return chatDate.toLocaleDateString("ko-KR");
+        // 오늘 아닐 경우
+        const [year, month, date] = chatDate.toLocaleDateString("ko-KR").split('. ');
+        if(chatDate.getFullYear() === thisYear){
+          // 올해일 경우
+          return `${month}월 ${date.split('.')[0]}일`;
+        }else{
+          // 올해 아닐 경우 년도 표시
+          return `${year}년 ${month}월 ${date.split('.')[0]}일`;
+        }
       }
     })
     return date;
   }
   useEffect(()=>{
-    ChatItems.current = sortData();
-    newDates.current = convertDate();
+    if(listData){
+      // 채팅 리스트 최신 순서대로 정렬
+      ChatItems.current = sortData();
+      // 채팅 리스트 날짜 형식 변경
+      newDates.current = convertDate();
+    }
   },[listData])
-
   useEffect(()=>{
     return()=>{
       ChatItems.current = null;
     }
   },[]);
   
-  if(!listData) return (
+  if(isFetching) return (
     <>
       <ChatHeaderWrap>
         <p>채팅</p>
@@ -48,6 +62,21 @@ function ChatList({listData, setRoomEnter, setChatDisplay, setRoomInfo}) {
       <ChatBodyWrap>
         <div className='loadingWrap'>
           <LoadingBox />
+        </div>
+      </ChatBodyWrap>
+    </>
+  )
+  if(isSuccess && !listData) return (
+    <>
+      <ChatHeaderWrap>
+        <p>채팅</p>
+        <button type='button' onClick={()=>{
+          setChatDisplay(false);
+        }}>닫기</button>
+      </ChatHeaderWrap>
+      <ChatBodyWrap>
+        <div className='noChats'>
+          <ExceptionArea _title={'실시간 채팅 내역이 없습니다.'} _text={'문의사항이 있을 경우 돌보미와 채팅을 시작해보세요!'}></ExceptionArea>
         </div>
       </ChatBodyWrap>
     </>
@@ -174,7 +203,7 @@ const ChatListInfo = styled.div`
 
 `
 const ChatHeaderWrap = styled.div`
-position: fixed;
+position: absolute;
 left: 0;
 right: 0;
 top: 0;
@@ -184,11 +213,6 @@ background-color: #fff;
 border-bottom: 1px solid #fff;
 box-sizing: border-box;
 height: 70px;
-@media (min-width: 768px){
-	max-width: 412px;
-	right: 10%;
-	left: auto;
-}
 	p{
 		font-weight: 700;
     font-size: 24px;

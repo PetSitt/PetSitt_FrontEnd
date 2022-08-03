@@ -47,9 +47,6 @@ const Mypage = ({close}) => {
                   </Link>
                )
             }
-            <a href="https://forms.gle/8P1mzCKyuY9Aj7HGA" target="_blank" rel="noreferrer">
-              <div className='item'> 고객센터 </div>
-            </a>
           </div>
           <div>
             <button type="button" onClick={()=>setModalDisplay(true)}>
