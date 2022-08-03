@@ -284,6 +284,7 @@ function Home({prevIsDetail}) {
 			setSitters([]);
 		}		
 	},[])
+	console.log(showTooltip.current)
 
 	useEffect(()=>{
 		// 카테고리 버튼 클릭했을 경우
@@ -430,7 +431,7 @@ function Home({prevIsDetail}) {
 							</DatepickerWrap>
 						</div>
 						{
-							showTooltip.current && !prevIsDetail && !addressInfo && <Tooltip className={showTooltip.current ? 'aniClass' : ''}>장소와 날짜 모두 선택해주세요.</Tooltip>
+							(showTooltip.current && (!dates.length && !addressInfo)) && <Tooltip className={showTooltip.current ? 'aniClass' : ''}>장소와 날짜 모두 선택해주세요.</Tooltip>
 						}
 					</div>
 					<Categories>
@@ -488,9 +489,8 @@ function Home({prevIsDetail}) {
 									<ul>
 										{
 											sitters?.map((v,i)=>{
-												const lastItem = i === sitters.length - 1;
 												return (
-													<SitterCard key={`sitter_${i}`} ref={lastItem ? setTarget : null}>
+													<SitterCard key={`sitter_${i}`}>
 														<LinkButton type="button" onClick={(e)=>{
 															e.preventDefault();
 															if(dates.length && addressInfo){
