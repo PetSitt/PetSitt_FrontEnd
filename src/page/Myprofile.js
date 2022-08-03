@@ -8,12 +8,14 @@ import { apis } from '../store/api';
 import NavBox from '../elements/NavBox';
 import StyledContainer from '../elements/StyledContainer';
 import Modal from '../elements/Modal';
+import useInputs from "../hooks/useInputs";
 
 const Myprofile = () => {
   const queryClient = useQueryClient();
   const { isLoading, data: userData } = useQuery('user', apis.myprofileGet, {
     staleTime: Infinity,
   });
+  const [{phoneNumber, userEmail, userName}] = useInputs(userData.data.myprofile);
   const inputEl1 = useRef();
   const inputEl2 = useRef();
   const [text, setText] = useState('수정');
@@ -69,7 +71,7 @@ const Myprofile = () => {
                 _height='44px'
                 _type='text'
                 _ref={inputEl1}
-                defaultValue={userData.data.myprofile.userName}
+                defaultValue={userName}
                 disabled
               />
             </label>
@@ -80,7 +82,7 @@ const Myprofile = () => {
                 _height='44px'
                 _type='text'
                 _ref={inputEl2}
-                defaultValue={userData.data.myprofile.phoneNumber}
+                defaultValue={phoneNumber}
                 disabled
               />
             </label>
@@ -90,7 +92,7 @@ const Myprofile = () => {
                  _width='100%'
                  _height='44px'
                  _type='text'
-                 defaultValue={userData.data.myprofile.userEmail}
+                 defaultValue={userEmail}
                  disabled
                />
             </label>

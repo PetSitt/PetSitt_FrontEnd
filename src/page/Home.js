@@ -16,8 +16,9 @@ import Loading from '../elements/Loading';
 import sitterBgDefault from '../assets/img/img_sitter_bg_default.png';
 import sitterDefault from '../assets/img/img_sitter_default.png'
 
-function Home({prevIsDetail}) {
-	const navigate = useNavigate();
+const limit = 6;
+
+function Home() {
 	const datepickerRef = useRef();
 	const today = new DateObject();
 	const cookies = new Cookies();
@@ -33,7 +34,7 @@ function Home({prevIsDetail}) {
   const [queriesData, setQueriesData] = useState({});
 	const [category, setCategory] = useState([]);
 	const [searched, setSearched] = useState(false);
-	const [sitters, setSitters] = useState(null);
+	const [sitters, setSitters] = useState([]);
 	const [currentPosition, setCurrentPosition] = useState();
 	const [defaultSearch, setDefaultSearch] = useState(false);
 	const [viewType, setViewType] = useState('list');
@@ -41,6 +42,11 @@ function Home({prevIsDetail}) {
 	const [contentHeight, setContentHeight] = useState();
 	const getLocationButtonRef = useRef();
 	const [datepickerDisplay, setDatepickerDisplay] = useState(false);
+	const [modalDisplay, setModalDisplay] = useState();
+	const [offset, setOffset] = useState(0);
+	const [target, setTarget] = useState(null);
+	const [hasNext, setHasNext] = useState(true);
+	const showModal = useRef(false);
 	const datesTransformed= useRef(null);
 	const [sitterCardShow, setSitterCardShow] = useState({display: false, index: null});
 	const categoryClicked = useRef(false);
@@ -124,24 +130,25 @@ function Home({prevIsDetail}) {
 		},
 		staleTime: Infinity,
 	});
-	
-	const getMainApi = ({order = 'createdAt', offset = 0, limit = 6}) => {
-		const query = `order=${order}&offset=${offset}&limit=${limit}`
-		return apis.getMainDefault(query)
-	}
 
-	const getListApi = (currentPosition, category) =>{
-		return apis.getSittersDefault({...currentPosition, category});
+	const getListApi = (currentPosition, category, offset, limit) =>{
+		return apis.getSittersDefault({...currentPosition, category, offset, limit});
 	}
-	
-	const {data: sittersBeforeSearch, isRefetching: sittersIsRefetching} = useQuery(
-		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
+	const {data: sittersBeforeSearch, refetch: refetchSitters, isRefetching: sittersIsRefetching} = useQuery(
+		["sitter_default", currentPosition, category, offset, limit], () => getListApi(currentPosition, category, offset, limit),
 		{
 			onSuccess: (data) => {
 				// queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(false);
-				setSitters(data.data.sitter);
 				setSearchingStatus('done');
+
+				if(offset === 0){
+					setSitters(data.data.sitter);
+				} else {
+					setSitters([...sitters, ...data.data.sitter]);
+				}
+				setOffset(offset + limit);
+				// setHasNext(hasNext);
 			},
 			onError: (data) => {
 				setDefaultSearch(false);
@@ -336,18 +343,30 @@ function Home({prevIsDetail}) {
 				return positionItems;
 			})
 		}
-	},[sitters, sittersIsRefetching]);
 
-	const deleteAddressInfo = () => {
-		setAddressInfo(null);
-	};
-	const deleteDates = () => {
-		setDate([]);
-		setDates([]);
-		datesTransformed.current = [];
-	};
-	
-	
+	},[sitters, sittersIsRefetching]);
+  
+  useEffect(() => {
+		let options = {
+      threshold: "1",
+    };
+
+    let handleIntersection = ([entries], observer) => {
+			if (entries.isIntersecting) {
+				refetchSitters();
+				window.localStorage.setItem('scrollY', window.scrollY);
+        observer.unobserve(entries.target);
+      }
+    };
+		
+		const io = new IntersectionObserver(handleIntersection, options);
+		if (target) io.observe(target);
+
+		return () => {
+			io && io.disconnect();
+		}
+	},[target, offset]);
+  
 	return (
 		<>
 		{/* 마케팅 종료로 해당 코드 주석처리 */}
@@ -456,6 +475,7 @@ function Home({prevIsDetail}) {
 								{
 									(viewType === 'list')
 									? (
+
 									<ul>
 										{
 											sitters?.map((v,i)=>{
@@ -489,9 +509,8 @@ function Home({prevIsDetail}) {
 																	<span>{v.averageStar} </span>
 																	<span>{`(${v.reviewCount})`}</span>
 																</div>
-																<p className="price"><strong>{v.servicePrice}</strong><span>원~</span></p>
 															</div>
-														</div>
+	                          </div>
 													</SitterCard>
 												)
 											})
