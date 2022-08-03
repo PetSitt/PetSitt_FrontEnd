@@ -23,7 +23,7 @@ import SitterProfileForm3 from './page/SitterProfileForm3';
 import SitterProfileForm4 from './page/SitterProfileForm4';
 import Auth from './shared/Auth';
  
-const Router = ({setChatRoomOnly}) => {
+const Router = ({homeRef, setChatRoomOnly}) => {
   const location = useLocation();
   const prevIsDetail = useRef(false);
   const [tab, setTab] = useState('user');
@@ -35,7 +35,7 @@ const Router = ({setChatRoomOnly}) => {
   
   return (
     <Routes>
-      <Route path='/' element={<Home prevIsDetail={prevIsDetail}/>} exact />
+      <Route path='/' element={<Home homeRef={homeRef} prevIsDetail={prevIsDetail}/>} exact />
       <Route path='/detail/:id' element={<Detail setChatRoomOnly={setChatRoomOnly} prevIsDetail={prevIsDetail}/>}/>
       <Route path='/signup' element={<Signup />} />
       <Route path='/pwfind' element={<PwFind />} />

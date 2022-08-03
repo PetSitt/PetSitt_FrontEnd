@@ -18,7 +18,7 @@ import sitterDefault from '../assets/img/img_sitter_default.png'
 
 const limit = 6;
 
-function Home({prevIsDetail}) {
+function Home({homeRef, prevIsDetail}) {
 	const navigate = useNavigate();
 	const datepickerRef = useRef();
 	const today = new DateObject();
@@ -278,13 +278,15 @@ function Home({prevIsDetail}) {
 		// if(window.innerWidth < 769 && !sessionStorage.getItem('marketingOnMobile')){
 		// 	setMarketing(true);
 		// }
+
+		homeRef.current.scrollTop = parseInt(sessionStorage.getItem('scrollY')) 
+
 		return()=>{
 			clearTimeout(tooltipTimeout);
 			clearTimeout(timeoutId);
 			setSitters([]);
 		}		
 	},[])
-
 	useEffect(()=>{
 		// 카테고리 버튼 클릭했을 경우
 		if(categoryClicked.current){
@@ -355,7 +357,7 @@ function Home({prevIsDetail}) {
     let handleIntersection = ([entries], observer) => {
 			if (entries.isIntersecting) {
 				hasNext && refetchSitters();
-				// window.localStorage.setItem('scrollY', window.scrollY);
+				sessionStorage.setItem('scrollY', window.scrollY)
         observer.unobserve(entries.target);
       }
     };
@@ -430,7 +432,7 @@ function Home({prevIsDetail}) {
 							</DatepickerWrap>
 						</div>
 						{
-							showTooltip.current && !prevIsDetail && !addressInfo && <Tooltip className={showTooltip.current ? 'aniClass' : ''}>장소와 날짜 모두 선택해주세요.</Tooltip>
+							(showTooltip.current && (!dates.length && !addressInfo)) && <Tooltip className={showTooltip.current ? 'aniClass' : ''}>장소와 날짜 모두 선택해주세요.</Tooltip>
 						}
 					</div>
 					<Categories>
