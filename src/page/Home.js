@@ -284,8 +284,6 @@ function Home({prevIsDetail}) {
 			setSitters([]);
 		}		
 	},[])
-	console.log(showTooltip.current)
-
 	useEffect(()=>{
 		// 카테고리 버튼 클릭했을 경우
 		if(categoryClicked.current){
