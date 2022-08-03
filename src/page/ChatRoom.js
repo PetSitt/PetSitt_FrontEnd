@@ -17,13 +17,12 @@ function ChatRoom({setSocketStored, setNewMessage, setChatDisplay, setRoomEnter,
   const [historyGet, setHistoryGet] = useState();
   const [socket, setSocket] = useState();
   const newCheck = useRef(false);
-  const time = useRef([]);
   const isLoading = useRef(false);
   const textRef = useRef();
-  const sender = useRef();
   const chatRoomRef = useRef();
   const [messageToSend, setMessageToSend] = useState();
   const dateDividers = useRef({index: [], dates: []});
+  const isNewToday = useRef({status: false, lastIndex: null, date: null});
   const chatRoomGetApi = (roomId, socketId) => {
     return chatApis.chatRoomGet(roomId, socketId);
   }
@@ -47,21 +46,42 @@ function ChatRoom({setSocketStored, setNewMessage, setChatDisplay, setRoomEnter,
   })
   const {data: chatHistory, isFetched} = useQuery(['chatHistory', roomId, socket?.id], ()=>chatRoomGetApi(roomId, socket?.id), {
     onSuccess: (data) => {
-      let i = 0;
-      data.data.chats.reduce((acc,cur,idx)=>{
-        acc = cur; 
-        const next = data.data.chats[idx+1] ? data.data.chats[idx+1]['createdAt'] : null;
-        const thisDate = new Date(acc?.createdAt).toLocaleDateString("ko-KR");
-        const nextDate = new Date(next).toLocaleDateString("ko-KR");
-        const [yaer, month, date] = nextDate.split('. ');
-        if(thisDate < nextDate && next && acc){
-          dateDividers.current['index'][i] = idx;
-          dateDividers.current['dates'][i] = `${yaer}년 ${month}월 ${date.split('.')[0]}일`
-          i++;
-        }else{
-          return false;
+      const array = data.data.chats;
+      const today = new Date(Date.now()).toLocaleDateString("ko-KR");
+      const [todayYear, todayMonth, todayDate] = today.split('. ');
+      if(data.data.chats.length){
+        let i = 1;
+        // 채팅 날짜 구분을 추가하기 위한 코드
+        array.reduce((acc,cur,idx)=>{
+          acc = cur; 
+          // 날짜 형태 변경을 위한 코드
+          const next = array[idx+1] ? array[idx+1]['createdAt'] : null;
+          const thisDate = new Date(acc?.createdAt).toLocaleDateString("ko-KR");
+          const nextDate = new Date(next).toLocaleDateString("ko-KR");
+          const [year, month, date] = nextDate.split('. ');
+          const [firstYear, firstMonth, firstDate] = new Date(array[0]['createdAt']).toLocaleDateString("ko-KR").split('. ');
+          // 최초 메세지 인덱스와 날짜 저장
+          dateDividers.current['index'][0] = 0;
+          dateDividers.current['dates'][0] = `${firstYear}년 ${firstMonth}월 ${firstDate.split('.')[0]}일`;
+          // 최초 메세지 이후 날짜가 변경되는 시점 찾아서 저장
+          if(thisDate < nextDate && next && acc){ 
+            // 원본 데이터 배열에서 뽑아 쓸 수 있도록 날짜가 변경되는 메세지의 인덱스와 날짜 저장
+            dateDividers.current['index'][i] = idx+1;
+            dateDividers.current['dates'][i] = `${year}년 ${month}월 ${date.split('.')[0]}일`
+            i++;
+          }else{
+            return false;
+          }
+        },null);
+        // 마지막 메세지가 오늘보다 이전일 경우 sendMessage, receiveMessage 이벤트 발생할 때 오늘 날짜 추가하기 위해 isNewToday.current값 변경
+        const lastDate = new Date(array[array?.length-1]['createdAt']).toLocaleDateString("ko-KR");
+        if(lastDate < today) {
+          isNewToday.current = {status: true, lastIndex: array.length, date: `${todayYear}년 ${todayMonth}월 ${todayDate.split('.')[0]}일`};
         }
-      },null);
+      }else{
+        // 최초 메세지일 경우 sendMessage, receiveMessage 이벤트 발생할 때 오늘 날짜 추가
+        isNewToday.current = {status: true, lastIndex: 0, date: `${todayYear}년 ${todayMonth}월 ${todayDate.split('.')[0]}일`};
+      }
       setMessages(data.data.chats);
       setHistoryGet(false);
     },    
@@ -76,10 +96,11 @@ function ChatRoom({setSocketStored, setNewMessage, setChatDisplay, setRoomEnter,
         userEmail: jwt_decode(localStorage.getItem('accessToken')).userEmail
       };
       await socket.emit('send_message', messageData);
+      const today = Date.now();
       const newMessage = { //화면을 갱신하기위한 데이터 형식
         roomId: roomId,
         chatText: messageToSend,
-        createdAt: Date.now(),
+        createdAt: today,
         time: convertDate(Date.now()),
         me: true,
         newMessage: true,
@@ -89,6 +110,11 @@ function ChatRoom({setSocketStored, setNewMessage, setChatDisplay, setRoomEnter,
         const newData = [...prev, newMessage];
         return newData;
       })
+      if(isNewToday.current.status){
+        dateDividers.current['index'].push(isNewToday.current.lastIndex);
+        dateDividers.current['dates'].push(isNewToday.current.date);
+        isNewToday.current.status = {status: false, lastIndex: null, date: null};
+      }
     }
     setMessageToSend('');
     textRef.current.focus();
@@ -118,7 +144,12 @@ function ChatRoom({setSocketStored, setNewMessage, setChatDisplay, setRoomEnter,
         setMessages((prev)=>{
           const newData = [...prev, {...data, time: convertDate(data.createdAt)}];  
           return newData;
-        })
+        });
+        if(isNewToday.current.status){
+          dateDividers.current['index'].push(isNewToday.current.lastIndex);
+          dateDividers.current['dates'].push(isNewToday.current.date);
+          isNewToday.current.status = {status: false, lastIndex: null, date: null};
+        }
       });
       // 채팅방 들어온 후 메뉴바에 NEW 표시 여부를 체크하기 위해 api요청
       newCheck.current = true;
@@ -143,7 +174,6 @@ function ChatRoom({setSocketStored, setNewMessage, setChatDisplay, setRoomEnter,
       chatRoomRef.current.scrollTop = chatRoomRef.current.scrollHeight;
     }
   },[messages])
-  
   return (
     <>
       <ChatHeaderWrap>
@@ -159,32 +189,36 @@ function ChatRoom({setSocketStored, setNewMessage, setChatDisplay, setRoomEnter,
       </ChatHeaderWrap>
       <ChatRoomWrap ref={chatRoomRef}>
         {
-          messages ? (
+          checkNewMessage.isFetching && !checkNewMessage.isFetching ? (
+            <div className='loadingWrap'>
+              <LoadingBox />
+            </div>
+          ) : messages ? (
             <ul>
-              {
-                messages.map((msg, idx)=>{
-                  return(
-                   <React.Fragment key={idx}>
-                     <ChatMessage className={msg.me ? 'receiver' : 'sender'}>
-                      <p>{msg.chatText}</p>
-                      <span>{msg.time}</span>
-                    </ChatMessage>
-                    {
-                      dateDividers.current.index.map((v,i)=>{
-                        if(v === idx){
-                          return (
-                            <DateDivider key={`date${i}`} className='date'><p>{dateDividers.current.dates[i]}</p></DateDivider>
-                          )
-                        }else{
-                          return null;
-                        }
-                      })
-                    }
-                   </React.Fragment>
-                  )
-                })
-              }
-            </ul>
+                {
+                  messages.map((msg, idx)=>{
+                    return(
+                     <React.Fragment key={idx}>
+                      {
+                        dateDividers.current.index.map((v,i)=>{
+                          if(v === idx){
+                            return (
+                              <DateDivider key={`date${i}`} className='date'><p>{dateDividers.current.dates[i]}</p></DateDivider>
+                            )
+                          }else{
+                            return null;
+                          }
+                        })
+                      }
+                       <ChatMessage className={msg.me ? 'receiver' : 'sender'}>
+                        <p>{msg.chatText}</p>
+                        <span>{msg.time}</span>
+                      </ChatMessage>
+                     </React.Fragment>
+                    )
+                  })
+                }
+              </ul>
           ) : (
             <div className='loadingWrap'>
               <LoadingBox />
@@ -335,7 +369,7 @@ const ChatHeaderWrap = styled.div`
 display: flex;
 align-items: center;
 justify-content: space-between;
-position: fixed;
+position: absolute;
 left: 0;
 right: 0;
 top: 0;
@@ -345,11 +379,6 @@ background-color: #fff;
 border-bottom: 1px solid #E4E4E4;
 box-sizing: border-box;
 height: 70px;
-@media (min-width: 768px){
-	max-width: 412px;
-	right: 10%;
-	left: auto;
-}
 	p{
 		font-weight: 500;
     font-size: 21px;
