@@ -40,7 +40,7 @@ const SitterProfile = () => {
   return (
     <>
       <SitterProfileInner>
-        <NavBox _title="돌보미 프로필" sitterEditProfile/>
+        <NavBox _title="돌보미 프로필"/>
         {values ? (
           <div className="profileinner">
             <div>

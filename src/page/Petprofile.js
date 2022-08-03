@@ -43,7 +43,7 @@ const Petprofile = () => {
   return (
     <>
       <StyledContainer>
-        <NavBox _title="반려동물 프로필" sitterEditProfile/>
+        <NavBox _title='반려동물 프로필' />
         {values.length > 0 ? (
           values.map((el, idx) => {
             const { petId, petName, petType, petImage } = el;
