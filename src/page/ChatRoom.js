@@ -110,7 +110,7 @@ function ChatRoom({setSocketStored, setNewMessage, setChatDisplay, setRoomEnter,
         const newData = [...prev, newMessage];
         return newData;
       })
-      if(isNewToday.current.status){
+      if(isNewToday.current.status === true){
         dateDividers.current['index'].push(isNewToday.current.lastIndex);
         dateDividers.current['dates'].push(isNewToday.current.date);
         isNewToday.current.status = {status: false, lastIndex: null, date: null};
@@ -145,7 +145,7 @@ function ChatRoom({setSocketStored, setNewMessage, setChatDisplay, setRoomEnter,
           const newData = [...prev, {...data, time: convertDate(data.createdAt)}];  
           return newData;
         });
-        if(isNewToday.current.status){
+        if(isNewToday.current.status === true){
           dateDividers.current['index'].push(isNewToday.current.lastIndex);
           dateDividers.current['dates'].push(isNewToday.current.date);
           isNewToday.current.status = {status: false, lastIndex: null, date: null};
