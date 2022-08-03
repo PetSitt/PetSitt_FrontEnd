@@ -11,7 +11,6 @@ import pet_noimg from '../assets/img/img_pet_default.png';
 import Modal from '../elements/Modal';
 import StyledButton from '../elements/StyledButton';
 import Reviews from './Reviews';
-import ChatList from "./ChatList";
 import sitterBgDefault from '../assets/img/img_sitter_bg_default.png';
 import sitterDefault from '../assets/img/img_sitter_default.png'
 
@@ -254,7 +253,15 @@ const Detail = ({setChatRoomOnly, prevIsDetail}) => {
     }else{
       floatingTabsRef.current.classList.remove('isFixed');
     }
+    const innerWidth = window.innerWidth;
+    if(scrollY + window.innerHeight >= detailPageRef.current?.scrollHeight-(innerWidth*.2)){
+      detailPageRef.current.classList.add('menuIsActive');
+    }
+    if(reservationRef.current.getBoundingClientRect().top > 0){
+      detailPageRef.current.classList.remove('menuIsActive');
+    }
   }
+
 
   if (!detail) return null;
 	return (
@@ -807,16 +814,15 @@ const ReservationFunctions = styled.div`
   }
 `;
 const SitterDetailPage = styled.div`
+&.detailPageWrap{
   position: relative;
   height: 100%;
   overflow: hidden;
   overflow-y: auto;
   line-height: 1.4;
-  //여기
+  padding-bottom: 0!important;
+}
   &.menuIsActive{
-    .location_section{
-      margin-bottom: 200px;
-    }
     .select_area{
       transform: translateY(0);
     }
@@ -836,7 +842,7 @@ const SitterDetailPage = styled.div`
     }
     &.page_body{
       position: relative;
-      padding: 50px 0 70px;
+      padding: 50px 0 250px;
       .rmdp-border{
         margin-top: 46px;
       }

@@ -236,6 +236,8 @@ function Home({homeRef, prevIsDetail}) {
 		datesTransformed.current = data.datesText;
 	}
 	useEffect(()=>{
+		console.log("prevIsDetail :", window.localStorage.getItem('scrollY'))
+		// prevIsDetail && 
 		if(localStorage.getItem('kakaoToken')){
 			getKakaoProfile();
 		}else if(localStorage.getItem('accessToken')){
@@ -354,20 +356,20 @@ function Home({homeRef, prevIsDetail}) {
       threshold: "1",
     };
 
-    let handleIntersection = ([entries], observer) => {
+		let handleIntersection = ([entries], observer) => {
 			if (entries.isIntersecting) {
 				hasNext && refetchSitters();
 				sessionStorage.setItem('scrollY', window.scrollY)
-        observer.unobserve(entries.target);
-      }
-    };
+				observer.unobserve(entries.target);
+			}
+		};
 		
-		const io = new IntersectionObserver(handleIntersection, options);
-		if (target) io.observe(target);
+	const io = new IntersectionObserver(handleIntersection, options);
+	if (target) io.observe(target);
 
-		return () => {
-			io && io.disconnect();
-		}
+	return () => {
+		io && io.disconnect();
+	}
 	},[target, offset]);
   
 	const deleteAddressInfo = () => {
