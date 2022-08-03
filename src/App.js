@@ -9,7 +9,6 @@ import Chat from './page/Chat';
 // import MarketingArea from './components/MarketingArea'; 마케팅 종료로 해당 코드 주석처리
 import LoadingBox from './elements/Loading';
 
-
 function App() {
   const location = useLocation();
   const [detailPageClass, sestDetailPageClass] = useState();
@@ -17,6 +16,7 @@ function App() {
   const [newMessage, setNewMessage] = useState({status: false, lastText: null});
   const sseConnected = useRef(false);
   const [chatRoomOnly, setChatRoomOnly] = useState(false);
+  const appHeight = useRef();
   
   useEffect(()=>{
     // 디테일 페이지일 경우 Y축 scroll 대상 변경을 위한 클래스 세팅
@@ -36,6 +36,7 @@ function App() {
       const eventSource = new EventSource(`https://kimguen.com/chats/sse/${userEmail}`);
       eventSourceRef.current = eventSource;
     }
+    appHeight.current = window.innerHeight;
   },[]);
 
   const eventSourceRef = useRef();
@@ -71,7 +72,7 @@ function App() {
   },[chatDisplay])
 
   return (
-    <AppWrapper className="App">
+    <AppWrapper className="App" style={{height: `${appHeight.current}px`}}>
       <div className={`AppInner ${detailPageClass}`}>
         <Suspense fallback={<div className='loading'><LoadingBox /></div>}>
           <Router setChatRoomOnly={setChatRoomOnly}/>
@@ -92,8 +93,8 @@ function App() {
 }
 
 const AppWrapper = styled.div`
-  height: 100vh;
   background: #FFF4E8;
+  overflow: hidden;
   .loading {
     position: absolute;
     top: 50%;
@@ -110,6 +111,12 @@ const AppWrapper = styled.div`
     scrollbar-width: none; /* Firefox scrollbar 숨기기*/
     background-color: #fff;
     box-sizing: border-box;
+    overflow: hidden;
+    overflow-y: auto;
+    &.isDetailPage{
+      overflow-y: hidden;
+      max-height: 100%;
+    }
     & > div:first-of-type,
     & > section:first-of-type {
       min-height: 100%;
