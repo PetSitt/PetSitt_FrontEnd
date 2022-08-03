@@ -72,7 +72,7 @@ function App() {
   },[chatDisplay])
 
   return (
-    <AppWrapper className="App" style={{height: `${appHeight.current}px`}}>
+    <AppWrapper className="App" style={{height: location.pathname === '/' ? 'auto' : `${appHeight.current}px`}}>
       <div className={`AppInner ${detailPageClass}`}>
         <Suspense fallback={<div className='loading'><LoadingBox /></div>}>
           <Router setChatRoomOnly={setChatRoomOnly}/>
