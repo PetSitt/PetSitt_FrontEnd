@@ -16,6 +16,8 @@ import Loading from '../elements/Loading';
 import sitterBgDefault from '../assets/img/img_sitter_bg_default.png';
 import sitterDefault from '../assets/img/img_sitter_default.png'
 
+const limit = 6;
+
 function Home({prevIsDetail}) {
 	const navigate = useNavigate();
 	const datepickerRef = useRef();
@@ -33,7 +35,7 @@ function Home({prevIsDetail}) {
   const [queriesData, setQueriesData] = useState({});
 	const [category, setCategory] = useState([]);
 	const [searched, setSearched] = useState(false);
-	const [sitters, setSitters] = useState(null);
+	const [sitters, setSitters] = useState([]);
 	const [currentPosition, setCurrentPosition] = useState();
 	const [defaultSearch, setDefaultSearch] = useState(false);
 	const [viewType, setViewType] = useState('list');
@@ -41,6 +43,11 @@ function Home({prevIsDetail}) {
 	const [contentHeight, setContentHeight] = useState();
 	const getLocationButtonRef = useRef();
 	const [datepickerDisplay, setDatepickerDisplay] = useState(false);
+	const [modalDisplay, setModalDisplay] = useState();
+	const [offset, setOffset] = useState(0);
+	const [target, setTarget] = useState(null);
+	const [hasNext, setHasNext] = useState(true);
+	const showModal = useRef(false);
 	const datesTransformed= useRef(null);
 	const [sitterCardShow, setSitterCardShow] = useState({display: false, index: null});
 	const categoryClicked = useRef(false);
@@ -124,24 +131,25 @@ function Home({prevIsDetail}) {
 		},
 		staleTime: Infinity,
 	});
-	
-	const getMainApi = ({order = 'createdAt', offset = 0, limit = 6}) => {
-		const query = `order=${order}&offset=${offset}&limit=${limit}`
-		return apis.getMainDefault(query)
-	}
 
-	const getListApi = (currentPosition, category) =>{
-		return apis.getSittersDefault({...currentPosition, category});
+	const getListApi = (currentPosition, category, offset, limit) =>{
+		return apis.getSittersDefault({...currentPosition, category, offset, limit});
 	}
-	
-	const {data: sittersBeforeSearch, isRefetching: sittersIsRefetching} = useQuery(
-		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
+	const {data: sittersBeforeSearch, refetch: refetchSitters, isRefetching: sittersIsRefetching} = useQuery(
+		["sitter_default", currentPosition, category, offset, limit], () => getListApi(currentPosition, category, offset, limit),
 		{
 			onSuccess: (data) => {
 				// queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(false);
-				setSitters(data.data.sitter);
 				setSearchingStatus('done');
+
+				if(offset === 0){
+					setSitters(data.data.sitter);
+				} else {
+					setSitters([...sitters, ...data.data.sitter]);
+				}
+				setOffset(offset + limit);
+				setHasNext(data.data.next[0]);
 			},
 			onError: (data) => {
 				setDefaultSearch(false);
@@ -227,7 +235,6 @@ function Home({prevIsDetail}) {
 		setCategory(data.category);
 		datesTransformed.current = data.datesText;
 	}
-
 	useEffect(()=>{
 		if(localStorage.getItem('kakaoToken')){
 			getKakaoProfile();
@@ -299,6 +306,7 @@ function Home({prevIsDetail}) {
 			setQueriesData({searchDate: dates, region_2depth_name: addressInfo.region_2depth_name, x: addressInfo.x, y: addressInfo.y, category});
 			setSearched(true);
 		}
+
 		// 선택한 주소, 날짜 둘다 없을 경우 위치기반으로 돌보미 리스트 검색(검색 후 주소, 날짜 다시 삭제했을 경우를 위해 추가)
 		if(!dates.length && !addressInfo && !sessionStorage.getItem('searchedData')){
 			showTooltip.current = true;
@@ -336,8 +344,30 @@ function Home({prevIsDetail}) {
 				return positionItems;
 			})
 		}
-	},[sitters, sittersIsRefetching]);
 
+	},[sitters, sittersIsRefetching]);
+  
+  useEffect(() => {
+		let options = {
+      threshold: "1",
+    };
+
+    let handleIntersection = ([entries], observer) => {
+			if (entries.isIntersecting) {
+				hasNext && refetchSitters();
+				// window.localStorage.setItem('scrollY', window.scrollY);
+        observer.unobserve(entries.target);
+      }
+    };
+		
+		const io = new IntersectionObserver(handleIntersection, options);
+		if (target) io.observe(target);
+
+		return () => {
+			io && io.disconnect();
+		}
+	},[target, offset]);
+  
 	const deleteAddressInfo = () => {
 		setAddressInfo(null);
 	};
@@ -346,8 +376,6 @@ function Home({prevIsDetail}) {
 		setDates([]);
 		datesTransformed.current = [];
 	};
-	
-	
 	return (
 		<>
 		{/* 마케팅 종료로 해당 코드 주석처리 */}
@@ -456,6 +484,7 @@ function Home({prevIsDetail}) {
 								{
 									(viewType === 'list')
 									? (
+
 									<ul>
 										{
 											sitters?.map((v,i)=>{
@@ -489,9 +518,8 @@ function Home({prevIsDetail}) {
 																	<span>{v.averageStar} </span>
 																	<span>{`(${v.reviewCount})`}</span>
 																</div>
-																<p className="price"><strong>{v.servicePrice}</strong><span>원~</span></p>
 															</div>
-														</div>
+	                          </div>
 													</SitterCard>
 												)
 											})

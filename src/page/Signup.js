@@ -8,6 +8,7 @@ import NavBox from "../elements/NavBox";
 import InputBox from "../elements/InputBox";
 import StyledButton from "../elements/StyledButton";
 import { handleChange } from "../shared/common";
+import useInputs from "../hooks/useInputs";
 import { Cookies } from 'react-cookie';
 
 const INITIAL_VALUES = {
@@ -19,7 +20,7 @@ const INITIAL_VALUES = {
 
 const Signup = () => {
   const cookies = new Cookies();
-  const [values, setValues] = useState(INITIAL_VALUES);
+  const [{userEmail, userName, password, phoneNumber}, onChange, reset] = useInputs(INITIAL_VALUES);
   // 에러메세지 상태 저장
   const [idMessage, setIdMessage] = useState("");
   const [pwMessage, setPwMessage] = useState("");
@@ -36,14 +37,10 @@ const Signup = () => {
   const [isPhone, setIsPhone] = useState(false);
   const navigate = useNavigate();
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    handleChange(name, value, setValues);
-  };
 
   // 회원가입 유효성 검사
   const idCheck = (e) => {
-    handleInputChange(e);
+    onChange(e)
     const regId = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
     const idCurrent = e.target.value;
 
@@ -58,7 +55,7 @@ const Signup = () => {
 
   // 영문 숫자 포함해서 4~10 이내로
   const pwCheck = (e) => {
-    handleInputChange(e);
+    onChange(e)
     const regPw = /^.*(?=.{4,10})(?=.*[a-zA-Z])(?=.*?[A-Z])(?=.*\d)(?=.+?[\W|_])[a-zA-Z0-9!@#$%^&*()-_+={}\|\\\/]+$/gim;
     const pwCurrent = e.target.value;
 
@@ -73,7 +70,7 @@ const Signup = () => {
 
   //비밀번호 일치 체크 함수
   const isSamePw = (e) => {
-    if (values.password === e.target.value) {
+    if (password === e.target.value) {
       setPw2Message("비밀번호가 일치합니다");
       setIsPw2(true);
     } else {
@@ -84,7 +81,7 @@ const Signup = () => {
 
   /* 휴대폰번호 검증 */
   function phoneRegexr(e) {
-    handleInputChange(e);
+    onChange(e);
     const phoneVal = e.target.value;
     setPhoneCurrent(phoneVal.replace(/[^0-9]/gi, ""));
     const phoneReg = /^\d{3}\d{3,4}\d{4}$/gim;
@@ -100,8 +97,8 @@ const Signup = () => {
   // useMutation 세팅 함수
   const { mutate, error, isSuccess } = useMutation(apis.signupAdd, {
     onSuccess: ({ data }) => {
-      // console.log(data);
       sessionStorage.setItem('signup', true);
+      reset();
       navigate("/login");
     },
     onError: (data) => {
@@ -121,7 +118,7 @@ const Signup = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isId && isPw && isPhone) {
-      mutate(values);
+      mutate(userEmail, userName, password, phoneNumber);
     }
   };
 
@@ -146,7 +143,7 @@ const Signup = () => {
             onChange={idCheck}
             required
           />
-          {values.userEmail && (
+          {userEmail && (
             <Message className={`${isId ? "success" : "error"}`}>
               {idMessage}
             </Message>
@@ -162,7 +159,7 @@ const Signup = () => {
             onChange={pwCheck}
             required
           />
-          {values.password && (
+          {password && (
             <Message className={`${isPw ? "success" : "error"}`}>
               {pwMessage}
             </Message>
@@ -177,7 +174,7 @@ const Signup = () => {
             onChange={isSamePw}
             required
           />
-          {values.password && (
+          {password && (
             <Message className={`${isPw2 ? "success" : "error"}`}>
               {pw2Message}
             </Message>
@@ -193,7 +190,7 @@ const Signup = () => {
             onChange={phoneRegexr}
             required
           />
-          {values.phoneNumber && (
+          {phoneNumber && (
             <Message className={`${isPhone ? "success" : "error"}`}>
               {phoneMessage}
             </Message>
@@ -204,7 +201,7 @@ const Signup = () => {
           _type={"text"}
           _placeholder={"닉네임을 입력해주세요"}
           _name={"userName"}
-          _onChange={handleInputChange}
+          _onChange={onChange}
           _value={phoneCurrent}
           required
         >
@@ -213,7 +210,7 @@ const Signup = () => {
             type="text"
             name="userName"
             placeholder="닉네임을 입력해주세요"
-            onChange={handleInputChange}
+            onChange={onChange}
             required
           />
         </InputBox>

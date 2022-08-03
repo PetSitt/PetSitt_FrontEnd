@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useMutation, useQueryClient } from "react-query";
 import { useNavigate, useLocation } from "react-router-dom";
 import styled from "styled-components";
 import { apis } from "../store/api";
-import { handleChange } from "../shared/common";
 import StyledContainer from "../elements/StyledContainer";
 import NavBox from "../elements/NavBox";
 import InputBox from "../elements/InputBox";
 import StyledButton from "../elements/StyledButton";
 import pet_noimg from '../assets/img/img_pet_default.png';
+import useInputs from "../hooks/useInputs";
 
 const INITIAL_VALUES = {
   petName: "",
@@ -23,20 +23,19 @@ const INITIAL_VALUES = {
 const PetprofileForm = () => {
   const location = useLocation();
   const data = location.state;
-  const [values, setValues] = useState(data ? data.data : INITIAL_VALUES);
+  const [values, onChange] = useInputs(data ? data.data : INITIAL_VALUES);
   const [imageSrc, setImageSrc] = useState("");
-  const [imageMessage, setimageMessage] = useState("");
   const navigate = useNavigate();
   const photoInput = useRef();
 
   const handleClickRadioButton = (e) => {
     const { name } = e.target;
-    handleChange(name, Boolean(Number(e.target.id)), setValues);
+    onChange(name, Boolean(Number(e.target.id)))
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    handleChange(name, value, setValues);
+    onChange(name, value)
   };
 
   const handleClickUpload = () => {
@@ -48,7 +47,7 @@ const PetprofileForm = () => {
     const reader = new FileReader();
     reader.readAsDataURL(fileBlob);
 
-    handleChange("petImage", fileBlob, setValues);
+    onChange("petImage", fileBlob);
 
     return new Promise(async (resolve) => {
       reader.onload = () => {
@@ -82,7 +81,6 @@ const PetprofileForm = () => {
       console.log(data)
     },
   });
-
 
   const [errorMessages, setErrorMessage] = useState({
     petName: false,
@@ -124,6 +122,7 @@ const PetprofileForm = () => {
         id: values.petId,
         data: formData,
       };
+
       data ? update(fields) : create(formData);
     }
   };
