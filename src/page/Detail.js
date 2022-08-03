@@ -440,13 +440,13 @@ const Detail = ({setChatRoomOnly, prevIsDetail}) => {
           </section>
           <section className="location_section">
             <h3>{detail.sitter.sitterName}님의 위치</h3>
-            {/* <MapWrapper>
+            <MapWrapper>
               <MapContainer
                 centerElement={{x: detail.sitter.x, y: detail.sitter.y, sitterName: detail.sitter.sitterName, reviewStar: detail.sitter.averageStar}}
                 showOnly={true}
                 _height="100%"
               />
-            </MapWrapper> */}
+            </MapWrapper>
             <p>{detail.sitter.address}</p>
           </section>
         </section>
