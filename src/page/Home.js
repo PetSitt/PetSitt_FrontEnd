@@ -18,7 +18,8 @@ import sitterDefault from '../assets/img/img_sitter_default.png'
 
 const limit = 6;
 
-function Home() {
+function Home({prevIsDetail}) {
+	const navigate = useNavigate();
 	const datepickerRef = useRef();
 	const today = new DateObject();
 	const cookies = new Cookies();
@@ -148,7 +149,7 @@ function Home() {
 					setSitters([...sitters, ...data.data.sitter]);
 				}
 				setOffset(offset + limit);
-				// setHasNext(hasNext);
+				setHasNext(data.data.next[0]);
 			},
 			onError: (data) => {
 				setDefaultSearch(false);
@@ -234,7 +235,6 @@ function Home() {
 		setCategory(data.category);
 		datesTransformed.current = data.datesText;
 	}
-
 	useEffect(()=>{
 		if(localStorage.getItem('kakaoToken')){
 			getKakaoProfile();
@@ -306,6 +306,7 @@ function Home() {
 			setQueriesData({searchDate: dates, region_2depth_name: addressInfo.region_2depth_name, x: addressInfo.x, y: addressInfo.y, category});
 			setSearched(true);
 		}
+
 		// 선택한 주소, 날짜 둘다 없을 경우 위치기반으로 돌보미 리스트 검색(검색 후 주소, 날짜 다시 삭제했을 경우를 위해 추가)
 		if(!dates.length && !addressInfo && !sessionStorage.getItem('searchedData')){
 			showTooltip.current = true;
@@ -353,8 +354,8 @@ function Home() {
 
     let handleIntersection = ([entries], observer) => {
 			if (entries.isIntersecting) {
-				refetchSitters();
-				window.localStorage.setItem('scrollY', window.scrollY);
+				hasNext && refetchSitters();
+				// window.localStorage.setItem('scrollY', window.scrollY);
         observer.unobserve(entries.target);
       }
     };
@@ -367,6 +368,14 @@ function Home() {
 		}
 	},[target, offset]);
   
+	const deleteAddressInfo = () => {
+		setAddressInfo(null);
+	};
+	const deleteDates = () => {
+		setDate([]);
+		setDates([]);
+		datesTransformed.current = [];
+	};
 	return (
 		<>
 		{/* 마케팅 종료로 해당 코드 주석처리 */}
