@@ -359,10 +359,10 @@ function Home({homeRef, prevIsDetail}) {
 		let handleIntersection = ([entries], observer) => {
 			if (entries.isIntersecting) {
 				hasNext && refetchSitters();
-				sessionStorage.setItem('scrollY', window.scrollY)
+        sessionStorage.setItem('scrollY', window.scrollY)
 				observer.unobserve(entries.target);
-			}
-		};
+      }
+    };
 		
 	const io = new IntersectionObserver(handleIntersection, options);
 	if (target) io.observe(target);
