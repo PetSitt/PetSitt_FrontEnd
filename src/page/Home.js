@@ -138,7 +138,7 @@ function Home() {
 					setSitters([...sitters, ...data.data.sitter]);
 				}
 				setOffset(offset + limit);
-				// setHasNext(hasNext);
+				setHasNext(data.data.next[0]);
 			},
 			onError: (data) => {
 				setDefaultSearch(false);
@@ -217,7 +217,6 @@ function Home() {
     }
   };
 
-
 	useEffect(()=>{
 		if(localStorage.getItem('kakaoToken')){
 			getKakaoProfile();
@@ -244,6 +243,7 @@ function Home() {
 			setMarketing(true);
 		}
 		const timeoutId = timeoutRef.current;
+
 		return()=>{
 			clearTimeout(tooltipTimeout);
 			clearTimeout(timeoutId);
@@ -267,7 +267,7 @@ function Home() {
 			setQueriesData({searchDate: dates, region_2depth_name: addressInfo.region_2depth_name, x: addressInfo.x, y: addressInfo.y, category});
 			setSearched(true);
 		}
-	}, [dates, addressInfo])
+	},[dates, addressInfo])
 
 	useEffect(()=>{
 		if(sitters?.length > 0){
@@ -295,8 +295,8 @@ function Home() {
 
     let handleIntersection = ([entries], observer) => {
 			if (entries.isIntersecting) {
-				refetchSitters();
-				window.localStorage.setItem('scrollY', window.scrollY);
+				hasNext && refetchSitters();
+				// window.localStorage.setItem('scrollY', window.scrollY);
         observer.unobserve(entries.target);
       }
     };
