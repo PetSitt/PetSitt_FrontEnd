@@ -54,7 +54,6 @@ function Home({prevIsDetail}) {
 	const [searchingStatus, setSearchingStatus] = useState('searching');
 	// const [marketing, setMarketing] = useState(false); 마케팅 종료로 해당 코드 주석처리
 	const timeoutRef = useRef();
-	const homePageRef = useRef();
 
 	const getSittersList = (queriesData, category) => {
 		const _queriesData = {...queriesData, category: category.length ? category : []};
@@ -136,6 +135,7 @@ function Home({prevIsDetail}) {
 		{
 			onSuccess: (data) => {
 				// queryClient.invalidateQueries('sitter_default');
+				setSitters(data.data.sitter);
 				setDefaultSearch(false);
 				setSearchingStatus('done');
 			},
@@ -345,7 +345,7 @@ function Home({prevIsDetail}) {
 		<>
 		{/* 마케팅 종료로 해당 코드 주석처리 */}
 		{/* <HomePage className={marketing ? 'home marketingOn' : 'home'} style={{position: 'relative', backgroundColor: '#fff'}}> */}
-		<HomePage ref={homePageRef} className={'home'} style={{position: 'relative', backgroundColor: '#fff'}}>
+		<HomePage className={'home'} style={{position: 'relative', backgroundColor: '#fff'}}>
 			<button type="button" onClick={getLocation} ref={getLocationButtonRef} style={{position: 'absolute', left: 0, top: 0, width: 0, height: 0}}></button>
 			<IndexPage>
 				<FilterArea ref={filterAreaRef}>
