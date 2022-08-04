@@ -112,6 +112,7 @@ function App() {
 }
 
 const AppWrapper = styled.div`
+  position: relative;
   background: #fff;
   overflow: hidden;
   .loading {
@@ -128,6 +129,7 @@ const AppWrapper = styled.div`
     max-width: 412px;
     position: absolute;
     right: 10%;
+    left: auto;
     top: 0;
     width: 100%;
     height: 100%;
