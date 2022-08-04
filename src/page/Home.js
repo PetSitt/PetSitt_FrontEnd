@@ -16,8 +16,6 @@ import Loading from '../elements/Loading';
 import sitterBgDefault from '../assets/img/img_sitter_bg_default.png';
 import sitterDefault from '../assets/img/img_sitter_default.png'
 
-const limit = 6;
-
 function Home({prevIsDetail}) {
 	const navigate = useNavigate();
 	const datepickerRef = useRef();
@@ -44,9 +42,6 @@ function Home({prevIsDetail}) {
 	const getLocationButtonRef = useRef();
 	const [datepickerDisplay, setDatepickerDisplay] = useState(false);
 	const [modalDisplay, setModalDisplay] = useState();
-	const [offset, setOffset] = useState(0);
-	const [target, setTarget] = useState(null);
-	const [hasNext, setHasNext] = useState(true);
 	const showModal = useRef(false);
 	const datesTransformed= useRef(null);
 	const [sitterCardShow, setSitterCardShow] = useState({display: false, index: null});
@@ -143,14 +138,6 @@ function Home({prevIsDetail}) {
 				// queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(false);
 				setSearchingStatus('done');
-
-				if(offset === 0){
-					setSitters(data.data.sitter);
-				} else {
-					setSitters([...sitters, ...data.data.sitter]);
-				}
-				setOffset(offset + limit);
-				setHasNext(data.data.next[0]);
 			},
 			onError: (data) => {
 				setDefaultSearch(false);
@@ -466,9 +453,8 @@ function Home({prevIsDetail}) {
 									<ul>
 										{
 											sitters?.map((v,i)=>{
-												const lastItem = i === sitters.length - 1;
 												return (
-													<SitterCard key={`sitter_${i}`} ref={lastItem ? setTarget : null}>
+													<SitterCard key={`sitter_${i}`}>
 														<LinkButton type="button" onClick={(e)=>{
 															e.preventDefault();
 															if(dates.length && addressInfo){
@@ -634,17 +620,23 @@ const DatepickerWrap = styled.div`
 const Buttons = styled.div`
 	position: fixed;
 	width: 100%;
+	max-width: 412px;
+	right: 10%;
+	left: auto;
 	bottom: 44px;
 	text-align: center;
 	pointer-events: none;
-	left: 0;
-	right: 0;
 	z-index: 2;
 	@media (min-width: 768px){
-		max-width: 412px;
-		right: 10%;
-		left: auto;
+		
 	}
+	@media (max-width: 1024px){
+		right: 0;
+  }
+  @media (max-width: 768px){
+    left: 0;
+    max-width: 100%;
+  }
 	button{
 		position: absolute;
 		bottom: 30px;
