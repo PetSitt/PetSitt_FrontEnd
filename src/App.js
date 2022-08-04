@@ -22,6 +22,7 @@ function App() {
   useEffect(()=>{
     // 디테일 페이지일 경우 Y축 scroll 대상 변경을 위한 클래스 세팅
     if(location.pathname.split('/')[1] === 'detail') sestDetailPageClass('isDetailPage');
+    if(location.pathname === '/') sestDetailPageClass('isHomePage');
     else sestDetailPageClass('');
 
     if(!localStorage.getItem('accessToken')) {
@@ -73,7 +74,7 @@ function App() {
   },[chatDisplay])
 
   return (
-    <AppWrapper className="App">
+    <AppWrapper className="App" style={{height: `${appHeight.current}px`}}>
       <div className={`AppInner ${detailPageClass}`} ref={homeRef}>
 
         <Suspense fallback={<div className='loading'><LoadingBox /></div>}>
@@ -115,7 +116,8 @@ const AppWrapper = styled.div`
     box-sizing: border-box;
     overflow: hidden;
     overflow-y: auto;
-    &.isDetailPage{
+    &.isDetailPage,
+    &.isHomePage{
       overflow-y: hidden;
       max-height: 100%;
     }
