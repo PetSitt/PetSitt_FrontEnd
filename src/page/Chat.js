@@ -78,12 +78,11 @@ const Chat = ({setChatDisplay, newMessage, setNewMessage, chatRoomOnly}) => {
 
 const ChatWrap = styled.div`
   position: fixed;
-  left: auto;
-  right: 10%;
-  max-width: 412px;
-  width: 100%;
+  left: 0;
+  right: 0;
   top: 0;
   bottom: 0;
+  width: 100%;
   background-color: #fff;
   z-index: 300;
   max-height: 100%;
@@ -96,12 +95,10 @@ const ChatWrap = styled.div`
     content: '';
     z-index: -1;
   }
-  @media (max-width: 1024px){
-	right: 0;
-  }
-  @media (max-width: 768px){
-    left: 0;
-    max-width: 100%;
+  @media (min-width: 768px){
+    max-width: 412px;
+    right: 10%;
+    left: auto;
   }
 `
 const ChatBody = styled.div`

@@ -14,19 +14,16 @@ const ChatHeader = ({setChatDisplay}) => {
 
 const ChatHeaderWrap = styled.div`
 position: fixed;
-max-width: 412px;
-right: 10%;
-left: auto;
+left: 0;
+right: 0;
 top: 0;
 width: 100%;
 padding: 20px;
 background-color: #fff;
-@media (max-width: 1024px){
-	right: 0;
-}
-@media (max-width: 768px){
-	left: 0;
-	max-width: 100%;
+@media (min-width: 768px){
+	max-width: 412px;
+	right: 10%;
+	left: auto;
 }
 	p{
 		font-weight: 700;

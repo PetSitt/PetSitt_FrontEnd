@@ -635,16 +635,10 @@ const FloatingTabsSection = styled.section`
     position: fixed;
     padding: 16px 20px;
     margin: 0;
-    left: auto;
-    right: 10%;
-    max-width: 412px;
-    width: 100%;
-    @media (max-width: 1024px){
-    right: 0;
-    }
-    @media (max-width: 768px){
-      left: 0;
-      max-width: 100%;
+    @media (min-width: 768px){
+      left: auto;
+      right: 10%;
+      width: 412px;
     }
   }
 	ul{
@@ -674,19 +668,15 @@ const FloatingTabsSection = styled.section`
 `
 const ReservationFunctions = styled.div`
   position: fixed;
+  left: 0;
+  right: 0;
   bottom: 0;
-  left: auto;
-  right: 10%;
-  max-width: 412px;
-  width: 100%;
   z-index: 3;
   background-color: #fff;
-  @media (max-width: 1024px){
-	right: 0;
-  }
-  @media (max-width: 768px){
-    left: 0;
-    max-width: 100%;
+  @media (min-width: 768px){
+    left: auto;
+    right: 10%;
+    width: 412px;
   }
   .select_detail {
     position: absolute;
