@@ -62,6 +62,7 @@ function Home({homeRef, prevIsDetail}) {
 	const homePageRef = useRef();
 
 	const getSittersList = (queriesData, category) => {
+		console.log(offset, limit)
 		const _queriesData = {...queriesData, category: category.length ? category : []};
 		return apis.getSittersList(_queriesData);
 	};
@@ -70,10 +71,18 @@ function Home({homeRef, prevIsDetail}) {
 		() => getSittersList(queriesData, category),
 		{
 			onSuccess: (data) => {
+				console.log(data)
 				setSearched(false);
 				setSitters(data.data.sitters);
 				setSearchingStatus('done');
 				sessionStorage.removeItem('searchedData');
+				// if(offset === 0){
+				// 	setSitters(data.data.sitters);
+				// } else {
+				// 	setSitters([...sitters, ...data.data.sitters]);
+				// }
+				// setOffset(offset + limit);
+				// setHasNext(data.data.next[0]);
 			},
 			onError: (data) => {
 				setSearched(false);
@@ -360,26 +369,25 @@ function Home({homeRef, prevIsDetail}) {
 	},[homePageRef.current])
   
   useEffect(() => {
-		// 윤호님 이부분때문에 디테일 들어갔다가 뒤로오면 데이터 그대로 불러오는 기능이 오류나서
-		// 아래처럼 if문 추가했는데 문제되면 말씀해주세요
-		// 이전에 검색된 내역이 있으면서 디테일 페이지에서 돌아왔을 경우 제외하고 아래 코드 실행하도록 적용한 내용입니다!
-
-		let io = '';
-		if(!prevIsDetail && !sessionStorage.getItem('searchedData')){
-			let options = {
-				threshold: "1",
-			};
-			let handleIntersection = ([entries], observer) => {
-				if (entries.isIntersecting) {
-					hasNext && refetchSitters();
-					sessionStorage.setItem('scrollY', window.scrollY)
-					observer.unobserve(entries.target);
+		let options = {
+			threshold: "1",
+		};
+		let handleIntersection = ([entries], observer) => {
+			if (entries.isIntersecting) {
+				if(hasNext && dates.length && addressInfo){
+					setSearched(true);
+				};
+				if(hasNext && !dates.length && !addressInfo){
+					setDefaultSearch(true);
 				}
-			};
+				// hasNext && refetchSitters();
+				sessionStorage.setItem('scrollY', window.scrollY)
+				observer.unobserve(entries.target);
+			}
+		};
 
-			io = new IntersectionObserver(handleIntersection, options);
-			if (target) io.observe(target);
-		}
+		const io = new IntersectionObserver(handleIntersection, options);
+		if (target) io.observe(target);
 		return () => {
 			io && io.disconnect();
 		}
@@ -674,17 +682,23 @@ const DatepickerWrap = styled.div`
 const Buttons = styled.div`
 	position: fixed;
 	width: 100%;
+	max-width: 412px;
+	right: 10%;
+	left: auto;
 	bottom: 44px;
 	text-align: center;
 	pointer-events: none;
-	left: 0;
-	right: 0;
 	z-index: 2;
 	@media (min-width: 768px){
-		max-width: 412px;
-		right: 10%;
-		left: auto;
+		
 	}
+	@media (max-width: 1024px){
+		right: 0;
+  }
+  @media (max-width: 768px){
+    left: 0;
+    max-width: 100%;
+  }
 	button{
 		position: absolute;
 		bottom: 30px;
