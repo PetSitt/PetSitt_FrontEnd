@@ -8,6 +8,9 @@ import Menu from './components/Menu';
 import Chat from './page/Chat';
 // import MarketingArea from './components/MarketingArea'; 마케팅 종료로 해당 코드 주석처리
 import LoadingBox from './elements/Loading';
+import logo from './assets/img/logo_petsitt.png';
+import bg_1 from './assets/img/bg_1.png';
+import bg_2 from './assets/img/bg_2.png';
 
 function App() {
   const location = useLocation();
@@ -91,12 +94,25 @@ function App() {
       </div>
       {/* 마케팅 종료로 해당 코드 주석처리 */}
       {/* <MarketingArea _display={true}></MarketingArea> */}
+      <Background>
+        <div className='textArea'>
+          <h3><img src={logo} alt="petsitt" /></h3>
+          <h2>반려견 케어가 필요할 때, 펫싯!</h2>
+          <p>펫싯은 반려견을 특정 기간 동안 맡길 수 있는 돌보미와<br/>사용자를 연결해주는 중계 서비스입니다.</p>
+        </div>
+      <span className='element el_l'>
+        <img src={bg_1} alt="petsitt"/>
+      </span>
+      <span className='element el_r'>
+      <img src={bg_2} alt="petsitt"/>
+      </span>
+      </Background>
     </AppWrapper>
   );
 }
 
 const AppWrapper = styled.div`
-  background: #FFF4E8;
+  background: #fff;
   overflow: hidden;
   .loading {
     position: absolute;
@@ -108,6 +124,11 @@ const AppWrapper = styled.div`
     display: none; /* Chrome, Safari, Opera scrollbar 숨기기*/
   }
   .AppInner{
+    position: relative;
+    max-width: 412px;
+    position: absolute;
+    right: 10%;
+    top: 0;
     width: 100%;
     height: 100%;
     -ms-overflow-style: none; /* IE and Edge scrollbar 숨기기*/
@@ -116,6 +137,24 @@ const AppWrapper = styled.div`
     box-sizing: border-box;
     overflow: hidden;
     overflow-y: auto;
+    background-color: #fff;
+    z-index: 2;
+    &::before,
+    &::after{
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 1px;
+      background-color: #f5f5f5;
+      z-index: 4;
+      content: '';
+    }
+    &::before{
+      left: 0;
+    }
+    &::after{
+      right: 0;
+    }
     &.isDetailPage,
     &.isHomePage{
       overflow-y: hidden;
@@ -134,13 +173,19 @@ const AppWrapper = styled.div`
     & > .detail:first-of-type {
       padding: 0 20px 20px;
     }
-    @media (min-width:768px) {
-      max-width: 412px;
-      position: absolute;
-      right: 10%;
-      top: 0%;
-      overflow: hidden;
-      overflow-y: auto;
+    @media (max-width:1024px) {
+      right: 0;
+    }
+    @media (max-width:768px) {
+      position: relative;
+      max-width: 100%;
+      left: auto;
+      right: auto;
+      top: auto;
+      bottom: auto;
+      &::before{
+        display: none;
+      }
     }
     &.isDetailPage{
       overflow: hidden;
@@ -153,5 +198,64 @@ const AppWrapper = styled.div`
     }
   }
 `
+const Background = styled.div`
+  position: relative;
+  height: 100%;
+  padding: 8.85% 0 0 8.13%;
+  z-index: 1;
+  @media (max-width:1024px) {
+    padding-left: 5%;
+  }
+  .textArea{
+    color: #FF8B24;
+    h3{
+      max-width: 176px;
+      img{
+        display: block;
+        max-width: 100%;
+      }
+    }
+    h2{
+      font-size: 36px;
+      font-weight: 700;
+      margin: 24px 0 16px;
+    }
+    p{
+      font-size: 20px;
+      font-weight: 500;
+      opacity: .7;
+      line-height: 1.4;
+    }
+    @media (max-width:1280px) {
+      h2{
+        font-size: 28px;
+      }
+      p{
+        font-size: 16px;
+      }
+    }
+  }
+  .element{
+    display: block;
+    position: absolute;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    &.el_l{
+      left: 0;
+      bottom: 0;
+      width: 45.625%;
+    }
+    &.el_r{
+      right: 0;
+      top: 0;
+      width: 48.281%;
+      min-width: 700px;
+    }
+    img{
+      max-width: 100%;
+    }
+  }
+`;
 
 export default App;
