@@ -59,6 +59,7 @@ function Home({homeRef, prevIsDetail}) {
 	const [searchingStatus, setSearchingStatus] = useState('searching');
 	// const [marketing, setMarketing] = useState(false); 마케팅 종료로 해당 코드 주석처리
 	const timeoutRef = useRef();
+	const homePageRef = useRef();
 
 	const getSittersList = (queriesData, category) => {
 		const _queriesData = {...queriesData, category: category.length ? category : []};
@@ -265,7 +266,6 @@ function Home({homeRef, prevIsDetail}) {
 				getLocationButtonRef.current.click();
 			}
 		}
-		
 		let fullHeight = window.innerHeight;
 		let filterHeight = filterAreaRef.current.clientHeight;
 		setContentHeight(fullHeight - filterHeight - 74);
@@ -349,15 +349,26 @@ function Home({homeRef, prevIsDetail}) {
 		}
 
 	},[sitters, sittersIsRefetching]);
-  
 
+	useEffect(()=>{
+		if(prevIsDetail && sessionStorage.getItem('scrollY')){
+			const value = sessionStorage.getItem('scrollY')/1;
+			setTimeout(()=>{
+				homePageRef.current.scrollTo(0, value);
+			}, 100)
+		}
+	},[homePageRef.current])
+  
   useEffect(() => {
+		// 윤호님 이부분때문에 디테일 들어갔다가 뒤로오면 데이터 그대로 불러오는 기능이 오류나서
+		// 아래처럼 if문 추가했는데 문제되면 말씀해주세요
+		// 이전에 검색된 내역이 있으면서 디테일 페이지에서 돌아왔을 경우 제외하고 아래 코드 실행하도록 적용한 내용입니다!
+
 		let io = '';
 		if(!prevIsDetail && !sessionStorage.getItem('searchedData')){
 			let options = {
 				threshold: "1",
 			};
-
 			let handleIntersection = ([entries], observer) => {
 				if (entries.isIntersecting) {
 					hasNext && refetchSitters();
@@ -365,7 +376,7 @@ function Home({homeRef, prevIsDetail}) {
 					observer.unobserve(entries.target);
 				}
 			};
-			
+
 			io = new IntersectionObserver(handleIntersection, options);
 			if (target) io.observe(target);
 		}
@@ -386,7 +397,7 @@ function Home({homeRef, prevIsDetail}) {
 		<>
 		{/* 마케팅 종료로 해당 코드 주석처리 */}
 		{/* <HomePage className={marketing ? 'home marketingOn' : 'home'} style={{position: 'relative', backgroundColor: '#fff'}}> */}
-		<HomePage className={'home'} style={{position: 'relative', backgroundColor: '#fff'}}>
+		<HomePage ref={homePageRef} className={'home'} style={{position: 'relative', backgroundColor: '#fff'}}>
 			<button type="button" onClick={getLocation} ref={getLocationButtonRef} style={{position: 'absolute', left: 0, top: 0, width: 0, height: 0}}></button>
 			<IndexPage>
 				<FilterArea ref={filterAreaRef}>
@@ -508,6 +519,7 @@ function Home({homeRef, prevIsDetail}) {
 																}
 																sessionStorage.setItem('searchedData', JSON.stringify(data));
 															}
+															sessionStorage.setItem('scrollY', homePageRef.current.scrollTop);
 															navigate(`/detail/${v.sitterId}`);
 														}}></LinkButton>
 														<div className="image_area" style={{backgroundImage: `url(${v.mainImageUrl ? v.mainImageUrl : sitterBgDefault})`}}>
@@ -616,6 +628,9 @@ const HomePage = styled.div`
 		height: 100%;
 		overflow: hidden;
 	} */
+	height: 100%;
+	overflow: hidden;
+	overflow-y: auto;
 `
 const LoadingWrap = styled.div`
 	position: fixed;
