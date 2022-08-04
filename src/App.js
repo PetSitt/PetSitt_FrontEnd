@@ -14,7 +14,6 @@ import bg_2 from './assets/img/bg_2.png';
 
 function App() {
   const location = useLocation();
-  const homeRef = useRef();
   const [detailPageClass, sestDetailPageClass] = useState();
   const [chatDisplay, setChatDisplay] = useState(false);
   const [newMessage, setNewMessage] = useState({status: false, lastText: null});
@@ -78,10 +77,9 @@ function App() {
 
   return (
     <AppWrapper className="App" style={{height: `${appHeight.current}px`}}>
-      <div className={`AppInner ${detailPageClass}`} ref={homeRef}>
-
+      <div className={`AppInner ${detailPageClass}`}>
         <Suspense fallback={<div className='loading'><LoadingBox /></div>}>
-          <Router setChatRoomOnly={setChatRoomOnly} homeRef={homeRef}/>
+          <Router setChatRoomOnly={setChatRoomOnly}/>
         </Suspense>
         <Menu chatDisplay={chatDisplay} setChatDisplay={setChatDisplay} newMessage={newMessage}/>
         {

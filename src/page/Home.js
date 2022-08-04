@@ -18,7 +18,7 @@ import sitterDefault from '../assets/img/img_sitter_default.png'
 
 const limit = 6;
 
-function Home({homeRef, prevIsDetail}) {
+function Home({prevIsDetail}) {
 	const navigate = useNavigate();
 	const datepickerRef = useRef();
 	const today = new DateObject();
@@ -76,13 +76,6 @@ function Home({homeRef, prevIsDetail}) {
 				setSitters(data.data.sitters);
 				setSearchingStatus('done');
 				sessionStorage.removeItem('searchedData');
-				// if(offset === 0){
-				// 	setSitters(data.data.sitters);
-				// } else {
-				// 	setSitters([...sitters, ...data.data.sitters]);
-				// }
-				// setOffset(offset + limit);
-				// setHasNext(data.data.next[0]);
 			},
 			onError: (data) => {
 				setSearched(false);
@@ -142,11 +135,11 @@ function Home({homeRef, prevIsDetail}) {
 		staleTime: Infinity,
 	});
 
-	const getListApi = (currentPosition, category, offset, limit) =>{
-		return apis.getSittersDefault({...currentPosition, category, offset, limit});
+	const getListApi = (currentPosition, category) =>{
+		return apis.getSittersDefault({...currentPosition, category});
 	}
 	const {data: sittersBeforeSearch, refetch: refetchSitters, isRefetching: sittersIsRefetching} = useQuery(
-		["sitter_default", currentPosition, category, offset, limit], () => getListApi(currentPosition, category, offset, limit),
+		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
 		{
 			onSuccess: (data) => {
 				// queryClient.invalidateQueries('sitter_default');
@@ -288,9 +281,6 @@ function Home({homeRef, prevIsDetail}) {
 		// if(window.innerWidth < 769 && !sessionStorage.getItem('marketingOnMobile')){
 		// 	setMarketing(true);
 		// }
-
-		homeRef.current.scrollTop = parseInt(sessionStorage.getItem('scrollY')) 
-
 		return()=>{
 			clearTimeout(tooltipTimeout);
 			clearTimeout(timeoutId);
@@ -356,42 +346,7 @@ function Home({homeRef, prevIsDetail}) {
 				return positionItems;
 			})
 		}
-
 	},[sitters, sittersIsRefetching]);
-
-	useEffect(()=>{
-		if(prevIsDetail && sessionStorage.getItem('scrollY')){
-			const value = sessionStorage.getItem('scrollY')/1;
-			setTimeout(()=>{
-				homePageRef.current.scrollTo(0, value);
-			}, 100)
-		}
-	},[homePageRef.current])
-  
-  useEffect(() => {
-		let options = {
-			threshold: "1",
-		};
-		let handleIntersection = ([entries], observer) => {
-			if (entries.isIntersecting) {
-				if(hasNext && dates.length && addressInfo){
-					setSearched(true);
-				};
-				if(hasNext && !dates.length && !addressInfo){
-					setDefaultSearch(true);
-				}
-				// hasNext && refetchSitters();
-				sessionStorage.setItem('scrollY', window.scrollY)
-				observer.unobserve(entries.target);
-			}
-		};
-
-		const io = new IntersectionObserver(handleIntersection, options);
-		if (target) io.observe(target);
-		return () => {
-			io && io.disconnect();
-		}
-	},[target, offset]);
   
 	const deleteAddressInfo = () => {
 		setAddressInfo(null);
@@ -527,7 +482,6 @@ function Home({homeRef, prevIsDetail}) {
 																}
 																sessionStorage.setItem('searchedData', JSON.stringify(data));
 															}
-															sessionStorage.setItem('scrollY', homePageRef.current.scrollTop);
 															navigate(`/detail/${v.sitterId}`);
 														}}></LinkButton>
 														<div className="image_area" style={{backgroundImage: `url(${v.mainImageUrl ? v.mainImageUrl : sitterBgDefault})`}}>
