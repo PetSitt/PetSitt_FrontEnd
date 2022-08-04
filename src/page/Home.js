@@ -236,7 +236,6 @@ function Home({homeRef, prevIsDetail}) {
 		datesTransformed.current = data.datesText;
 	}
 	useEffect(()=>{
-		console.log("prevIsDetail :", window.localStorage.getItem('scrollY'))
 		// prevIsDetail && 
 		if(localStorage.getItem('kakaoToken')){
 			getKakaoProfile();
@@ -351,25 +350,28 @@ function Home({homeRef, prevIsDetail}) {
 
 	},[sitters, sittersIsRefetching]);
   
+
   useEffect(() => {
-		let options = {
-      threshold: "1",
-    };
+		let io = '';
+		if(!prevIsDetail && !sessionStorage.getItem('searchedData')){
+			let options = {
+				threshold: "1",
+			};
 
-		let handleIntersection = ([entries], observer) => {
-			if (entries.isIntersecting) {
-				hasNext && refetchSitters();
-        sessionStorage.setItem('scrollY', window.scrollY)
-				observer.unobserve(entries.target);
-      }
-    };
-		
-	const io = new IntersectionObserver(handleIntersection, options);
-	if (target) io.observe(target);
-
-	return () => {
-		io && io.disconnect();
-	}
+			let handleIntersection = ([entries], observer) => {
+				if (entries.isIntersecting) {
+					hasNext && refetchSitters();
+					sessionStorage.setItem('scrollY', window.scrollY)
+					observer.unobserve(entries.target);
+				}
+			};
+			
+			io = new IntersectionObserver(handleIntersection, options);
+			if (target) io.observe(target);
+		}
+		return () => {
+			io && io.disconnect();
+		}
 	},[target, offset]);
   
 	const deleteAddressInfo = () => {
