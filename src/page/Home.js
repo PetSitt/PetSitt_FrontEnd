@@ -363,11 +363,12 @@ function Home({homeRef, prevIsDetail}) {
 		// 윤호님 이부분때문에 디테일 들어갔다가 뒤로오면 데이터 그대로 불러오는 기능이 오류나서
 		// 아래처럼 if문 추가했는데 문제되면 말씀해주세요
 		// 이전에 검색된 내역이 있으면서 디테일 페이지에서 돌아왔을 경우 제외하고 아래 코드 실행하도록 적용한 내용입니다!
+
+		let io = '';
 		if(!prevIsDetail && !sessionStorage.getItem('searchedData')){
 			let options = {
 				threshold: "1",
 			};
-	
 			let handleIntersection = ([entries], observer) => {
 				if (entries.isIntersecting) {
 					hasNext && refetchSitters();
@@ -375,14 +376,13 @@ function Home({homeRef, prevIsDetail}) {
 					observer.unobserve(entries.target);
 				}
 			};
-			
-		const io = new IntersectionObserver(handleIntersection, options);
-		if (target) io.observe(target);
-	
+
+			io = new IntersectionObserver(handleIntersection, options);
+			if (target) io.observe(target);
+		}
 		return () => {
 			io && io.disconnect();
 		}
-	}
 	},[target, offset]);
   
 	const deleteAddressInfo = () => {
