@@ -635,19 +635,22 @@ const HomePage = styled.div`
 const LoadingWrap = styled.div`
 	position: fixed;
 	width: 100%;
-	left: 0;
-	right: 0;
+	max-width: 412px;
+	left: auto;
+	right: 10%;
 	top: 0;
 	bottom: 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	z-index: 100;
-	@media (min-width: 768px){
-		max-width: 412px;
-		right: 10%;
-		left: auto;
-	}
+	@media (max-width: 1024px){
+		right: 0;
+  }
+  @media (max-width: 768px){
+    left: 0;
+    max-width: 100%;
+  }
 `
 const IndexPage = styled.div`
 .rmdp-container{
