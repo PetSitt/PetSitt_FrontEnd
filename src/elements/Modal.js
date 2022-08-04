@@ -48,8 +48,9 @@ const ModalContainer = styled.div`
   width: 100%;
   align-items: center;
   justify-content: center;
-  left: 0;
-  right: 0;
+  left: auto;
+  right: 10%;
+  max-width: 412px;
   top: 0;
   bottom: 0;
   background: rgba(0, 0, 0, 0.4);
@@ -84,10 +85,12 @@ const ModalContainer = styled.div`
       padding: 20px 0 0;
     }
   }
-  @media (min-width: 768px) {
-    left: auto;
-    right: 10%;
-    max-width: 412px;
+  @media (max-width: 1024px){
+	right: 0;
+  }
+  @media (max-width: 768px){
+    left: 0;
+    max-width: 100%;
   }
 `;
 export default Modal;
