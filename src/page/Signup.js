@@ -40,11 +40,11 @@ const Signup = () => {
 
   // 회원가입 유효성 검사
   const idCheck = (e) => {
-    onChange(e)
+    const { name, value } = e.target;
+    onChange(name, value)
     const regId = /^[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_\.]?[0-9a-zA-Z])*\.[a-zA-Z]{2,3}$/i;
-    const idCurrent = e.target.value;
 
-    if (!regId.test(idCurrent)) {
+    if (!regId.test(value)) {
       setIdMessage("이메일 형식에 맞게 입력해주세요");
       setIsId(false);
     } else {
@@ -55,11 +55,11 @@ const Signup = () => {
 
   // 영문 숫자 포함해서 4~10 이내로
   const pwCheck = (e) => {
-    onChange(e)
+    const { name, value } = e.target;
+    onChange(name, value)
     const regPw = /^.*(?=.{4,10})(?=.*[a-zA-Z])(?=.*?[A-Z])(?=.*\d)(?=.+?[\W|_])[a-zA-Z0-9!@#$%^&*()-_+={}\|\\\/]+$/gim;
-    const pwCurrent = e.target.value;
 
-    if (!regPw.test(pwCurrent)) {
+    if (!regPw.test(value)) {
       setPwMessage("4~10자 이내 대/소문자,숫자,특수문자 조합으로 입력해주세요");
       setIsPw(false);
     } else {
@@ -81,11 +81,11 @@ const Signup = () => {
 
   /* 휴대폰번호 검증 */
   function phoneRegexr(e) {
-    onChange(e);
-    const phoneVal = e.target.value;
-    setPhoneCurrent(phoneVal.replace(/[^0-9]/gi, ""));
+    const { name, value } = e.target;
+    onChange(name, value);
+    setPhoneCurrent(value.replace(/[^0-9]/gi, ""));
     const phoneReg = /^\d{3}\d{3,4}\d{4}$/gim;
-    if (!phoneReg.test(phoneVal)) {
+    if (!phoneReg.test(value)) {
       setPhoneMessage("정상적인 번호가 아닙니다.");
       setIsPhone(false);
     } else {

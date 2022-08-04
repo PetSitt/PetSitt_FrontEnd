@@ -18,7 +18,7 @@ import sitterDefault from '../assets/img/img_sitter_default.png'
 
 const limit = 6;
 
-function Home({prevIsDetail}) {
+function Home({homeRef, prevIsDetail}) {
 	const navigate = useNavigate();
 	const datepickerRef = useRef();
 	const today = new DateObject();
@@ -236,6 +236,7 @@ function Home({prevIsDetail}) {
 		datesTransformed.current = data.datesText;
 	}
 	useEffect(()=>{
+		// prevIsDetail && 
 		if(localStorage.getItem('kakaoToken')){
 			getKakaoProfile();
 		}else if(localStorage.getItem('accessToken')){
@@ -278,6 +279,9 @@ function Home({prevIsDetail}) {
 		// if(window.innerWidth < 769 && !sessionStorage.getItem('marketingOnMobile')){
 		// 	setMarketing(true);
 		// }
+
+		homeRef.current.scrollTop = parseInt(sessionStorage.getItem('scrollY')) 
+
 		return()=>{
 			clearTimeout(tooltipTimeout);
 			clearTimeout(timeoutId);
@@ -346,23 +350,25 @@ function Home({prevIsDetail}) {
 
 	},[sitters, sittersIsRefetching]);
   
+
   useEffect(() => {
-		let options = {
-      threshold: "1",
-    };
+		let io = '';
+		if(!prevIsDetail && !sessionStorage.getItem('searchedData')){
+			let options = {
+				threshold: "1",
+			};
 
-    let handleIntersection = ([entries], observer) => {
-			if (entries.isIntersecting) {
-				hasNext && refetchSitters();
-				// window.localStorage.setItem('scrollY', window.scrollY);
-        observer.unobserve(entries.target);
-				console.log(window.scrollY)
-      }
-    };
-		
-		const io = new IntersectionObserver(handleIntersection, options);
-		if (target) io.observe(target);
-
+			let handleIntersection = ([entries], observer) => {
+				if (entries.isIntersecting) {
+					hasNext && refetchSitters();
+					sessionStorage.setItem('scrollY', window.scrollY)
+					observer.unobserve(entries.target);
+				}
+			};
+			
+			io = new IntersectionObserver(handleIntersection, options);
+			if (target) io.observe(target);
+		}
 		return () => {
 			io && io.disconnect();
 		}

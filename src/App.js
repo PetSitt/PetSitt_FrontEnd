@@ -11,6 +11,7 @@ import LoadingBox from './elements/Loading';
 
 function App() {
   const location = useLocation();
+  const homeRef = useRef();
   const [detailPageClass, sestDetailPageClass] = useState();
   const [chatDisplay, setChatDisplay] = useState(false);
   const [newMessage, setNewMessage] = useState({status: false, lastText: null});
@@ -72,10 +73,11 @@ function App() {
   },[chatDisplay])
 
   return (
-    <AppWrapper className="App" style={{height: location.pathname === '/' ? 'auto' : `${appHeight.current}px`}}>
-      <div className={`AppInner ${detailPageClass}`}>
+    <AppWrapper className="App">
+      <div className={`AppInner ${detailPageClass}`} ref={homeRef}>
+
         <Suspense fallback={<div className='loading'><LoadingBox /></div>}>
-          <Router setChatRoomOnly={setChatRoomOnly}/>
+          <Router setChatRoomOnly={setChatRoomOnly} homeRef={homeRef}/>
         </Suspense>
         <Menu chatDisplay={chatDisplay} setChatDisplay={setChatDisplay} newMessage={newMessage}/>
         {
