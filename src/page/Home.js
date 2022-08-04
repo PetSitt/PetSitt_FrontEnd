@@ -62,6 +62,7 @@ function Home({prevIsDetail}) {
 	const homePageRef = useRef();
 
 	const getSittersList = (queriesData, category) => {
+		console.log(offset, limit)
 		const _queriesData = {...queriesData, category: category.length ? category : []};
 		return apis.getSittersList(_queriesData);
 	};
@@ -70,6 +71,7 @@ function Home({prevIsDetail}) {
 		() => getSittersList(queriesData, category),
 		{
 			onSuccess: (data) => {
+				console.log(data)
 				setSearched(false);
 				setSitters(data.data.sitters);
 				setSearchingStatus('done');
@@ -634,17 +636,23 @@ const DatepickerWrap = styled.div`
 const Buttons = styled.div`
 	position: fixed;
 	width: 100%;
+	max-width: 412px;
+	right: 10%;
+	left: auto;
 	bottom: 44px;
 	text-align: center;
 	pointer-events: none;
-	left: 0;
-	right: 0;
 	z-index: 2;
 	@media (min-width: 768px){
-		max-width: 412px;
-		right: 10%;
-		left: auto;
+		
 	}
+	@media (max-width: 1024px){
+		right: 0;
+  }
+  @media (max-width: 768px){
+    left: 0;
+    max-width: 100%;
+  }
 	button{
 		position: absolute;
 		bottom: 30px;
