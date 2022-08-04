@@ -80,8 +80,9 @@ const Menu = ({chatDisplay, setChatDisplay, newMessage}) => {
 const MenuInner = styled.nav`
   position: fixed;
   bottom: 0;
-  left: 0;
-  right: 0;
+  left: auto;
+  right: 10%;
+  max-width: 412px;
   width: 100%;
   height: 54px;
   line-height: 54px;
@@ -92,10 +93,12 @@ const MenuInner = styled.nav`
   margin-top: 100px;
   background-color: #fff;
   z-index: 2;
-  @media (min-width: 768px) {
-    max-width: 412px;
-    right: 10%;
-    left: auto;
+  @media (max-width: 1024px){
+	right: 0;
+  }
+  @media (max-width: 768px){
+    left: 0;
+    max-width: 100%;
   }
   .item {
     color: #787878;
