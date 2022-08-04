@@ -236,7 +236,6 @@ function Home({homeRef, prevIsDetail}) {
 		datesTransformed.current = data.datesText;
 	}
 	useEffect(()=>{
-		console.log("prevIsDetail :", window.localStorage.getItem('scrollY'))
 		// prevIsDetail && 
 		if(localStorage.getItem('kakaoToken')){
 			getKakaoProfile();
