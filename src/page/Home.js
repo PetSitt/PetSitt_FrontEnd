@@ -16,8 +16,6 @@ import Loading from '../elements/Loading';
 import sitterBgDefault from '../assets/img/img_sitter_bg_default.png';
 import sitterDefault from '../assets/img/img_sitter_default.png'
 
-const limit = 6;
-
 function Home({prevIsDetail}) {
 	const navigate = useNavigate();
 	const datepickerRef = useRef();
@@ -44,9 +42,6 @@ function Home({prevIsDetail}) {
 	const getLocationButtonRef = useRef();
 	const [datepickerDisplay, setDatepickerDisplay] = useState(false);
 	const [modalDisplay, setModalDisplay] = useState();
-	const [offset, setOffset] = useState(0);
-	const [target, setTarget] = useState(null);
-	const [hasNext, setHasNext] = useState(true);
 	const showModal = useRef(false);
 	const datesTransformed= useRef(null);
 	const [sitterCardShow, setSitterCardShow] = useState({display: false, index: null});
@@ -62,7 +57,6 @@ function Home({prevIsDetail}) {
 	const homePageRef = useRef();
 
 	const getSittersList = (queriesData, category) => {
-		console.log(offset, limit)
 		const _queriesData = {...queriesData, category: category.length ? category : []};
 		return apis.getSittersList(_queriesData);
 	};
@@ -71,7 +65,6 @@ function Home({prevIsDetail}) {
 		() => getSittersList(queriesData, category),
 		{
 			onSuccess: (data) => {
-				console.log(data)
 				setSearched(false);
 				setSitters(data.data.sitters);
 				setSearchingStatus('done');
@@ -145,14 +138,6 @@ function Home({prevIsDetail}) {
 				// queryClient.invalidateQueries('sitter_default');
 				setDefaultSearch(false);
 				setSearchingStatus('done');
-
-				if(offset === 0){
-					setSitters(data.data.sitter);
-				} else {
-					setSitters([...sitters, ...data.data.sitter]);
-				}
-				setOffset(offset + limit);
-				setHasNext(data.data.next[0]);
 			},
 			onError: (data) => {
 				setDefaultSearch(false);
@@ -468,9 +453,8 @@ function Home({prevIsDetail}) {
 									<ul>
 										{
 											sitters?.map((v,i)=>{
-												const lastItem = i === sitters.length - 1;
 												return (
-													<SitterCard key={`sitter_${i}`} ref={lastItem ? setTarget : null}>
+													<SitterCard key={`sitter_${i}`}>
 														<LinkButton type="button" onClick={(e)=>{
 															e.preventDefault();
 															if(dates.length && addressInfo){
