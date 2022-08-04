@@ -18,7 +18,7 @@ import sitterDefault from '../assets/img/img_sitter_default.png'
 
 const limit = 6;
 
-function Home({homeRef, prevIsDetail}) {
+function Home({prevIsDetail}) {
 	const navigate = useNavigate();
 	const datepickerRef = useRef();
 	const today = new DateObject();
@@ -133,11 +133,11 @@ function Home({homeRef, prevIsDetail}) {
 		staleTime: Infinity,
 	});
 
-	const getListApi = (currentPosition, category, offset, limit) =>{
-		return apis.getSittersDefault({...currentPosition, category, offset, limit});
+	const getListApi = (currentPosition, category) =>{
+		return apis.getSittersDefault({...currentPosition, category});
 	}
 	const {data: sittersBeforeSearch, refetch: refetchSitters, isRefetching: sittersIsRefetching} = useQuery(
-		["sitter_default", currentPosition, category, offset, limit], () => getListApi(currentPosition, category, offset, limit),
+		["sitter_default", currentPosition, category], () => getListApi(currentPosition, category),
 		{
 			onSuccess: (data) => {
 				// queryClient.invalidateQueries('sitter_default');
@@ -279,9 +279,6 @@ function Home({homeRef, prevIsDetail}) {
 		// if(window.innerWidth < 769 && !sessionStorage.getItem('marketingOnMobile')){
 		// 	setMarketing(true);
 		// }
-
-		homeRef.current.scrollTop = parseInt(sessionStorage.getItem('scrollY')) 
-
 		return()=>{
 			clearTimeout(tooltipTimeout);
 			clearTimeout(timeoutId);
@@ -347,43 +344,7 @@ function Home({homeRef, prevIsDetail}) {
 				return positionItems;
 			})
 		}
-
 	},[sitters, sittersIsRefetching]);
-
-	useEffect(()=>{
-		if(prevIsDetail && sessionStorage.getItem('scrollY')){
-			const value = sessionStorage.getItem('scrollY')/1;
-			setTimeout(()=>{
-				homePageRef.current.scrollTo(0, value);
-			}, 100)
-		}
-	},[homePageRef.current])
-  
-  useEffect(() => {
-		// 윤호님 이부분때문에 디테일 들어갔다가 뒤로오면 데이터 그대로 불러오는 기능이 오류나서
-		// 아래처럼 if문 추가했는데 문제되면 말씀해주세요
-		// 이전에 검색된 내역이 있으면서 디테일 페이지에서 돌아왔을 경우 제외하고 아래 코드 실행하도록 적용한 내용입니다!
-
-		let io = '';
-		if(!prevIsDetail && !sessionStorage.getItem('searchedData')){
-			let options = {
-				threshold: "1",
-			};
-			let handleIntersection = ([entries], observer) => {
-				if (entries.isIntersecting) {
-					hasNext && refetchSitters();
-					sessionStorage.setItem('scrollY', window.scrollY)
-					observer.unobserve(entries.target);
-				}
-			};
-
-			io = new IntersectionObserver(handleIntersection, options);
-			if (target) io.observe(target);
-		}
-		return () => {
-			io && io.disconnect();
-		}
-	},[target, offset]);
   
 	const deleteAddressInfo = () => {
 		setAddressInfo(null);
@@ -519,7 +480,6 @@ function Home({homeRef, prevIsDetail}) {
 																}
 																sessionStorage.setItem('searchedData', JSON.stringify(data));
 															}
-															sessionStorage.setItem('scrollY', homePageRef.current.scrollTop);
 															navigate(`/detail/${v.sitterId}`);
 														}}></LinkButton>
 														<div className="image_area" style={{backgroundImage: `url(${v.mainImageUrl ? v.mainImageUrl : sitterBgDefault})`}}>
