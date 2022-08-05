@@ -224,7 +224,6 @@ function Home({prevIsDetail}) {
 		datesTransformed.current = data.datesText;
 	}
 	useEffect(()=>{
-		// prevIsDetail && 
 		if(localStorage.getItem('kakaoToken')){
 			getKakaoProfile();
 		}else if(localStorage.getItem('accessToken')){

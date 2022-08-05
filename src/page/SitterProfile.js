@@ -5,7 +5,6 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { apis } from "../store/api";
 import { comma } from "../shared/common";
-import Input from "../elements/Input";
 import NavBox from "../elements/NavBox";
 import Checkbox from "../elements/Checkbox";
 import sitterDefault from '../assets/img/img_sitter_default.png'
