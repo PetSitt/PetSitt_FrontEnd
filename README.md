@@ -51,8 +51,10 @@ polling방식, long-polling 방식과 큰 차이가 없지만, 지속적인 연�
 <details>
 <summary>채팅 (Socket.io)</summary>
 <div markdown="1">
-- 각 시터에 해당된 채팅방 생성\
-- 채팅창 상단에 위치 시, 새로운 채팅메세지를 스크롤다운 없이 확인가능\
+<ul>
+  <li>각 시터에 해당된 채팅방 생성</li>
+  <li>채팅창 상단에 위치 시, 새로운 채팅메세지를 스크롤다운 없이 확인가능</li>
+</ul>
 <img width="700" src="https://user-images.githubusercontent.com/47635373/182986632-01005204-13c9-4d08-9a47-c5fb893bd445.png"/>
 </div>
 </details>
