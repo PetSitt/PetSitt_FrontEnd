@@ -41,31 +41,35 @@ polling방식, long-polling 방식과 큰 차이가 없지만, 지속적인 연�
 <details>
 <summary>실시간 위치 정보 및 지도 (kakao Map API)를 활용한 돌보미 리스트 표기</summary>
 <div markdown="1">
-- 펫싯에 접속한 사용자의 실시간 위치 정보를 얻어와 근처의 돌보미 리스트를 보여줌\
-- 혹은 사용자가 검색한 주소 기준으로 가까운 곳에 위치한 돌보미 리스트 확인 가능\
-- 카카오 맵에서 돌보미 마커 선택 시, 해당 돌보미의 이름과 평점을 간단히 보여주고 돌보미 정보 카드를 클릭할 경우 해당 돌보미의 상세 페이지로 이동
-<img width="700" src="https://user-images.githubusercontent.com/30254570/182987583-cf548b46-01ee-4c6f-bb39-6b42afb10a17.png"/>
+  <ul>
+    <li>펫싯에 접속한 사용자의 실시간 위치 정보를 얻어와 근처의 돌보미 리스트를 보여줌</li>
+    <li>혹은 사용자가 검색한 주소 기준으로 가까운 곳에 위치한 돌보미 리스트 확인 가능</li>
+    <li>카카오 맵에서 돌보미 마커 선택 시, 해당 돌보미의 이름과 평점을 간단히 보여주고 돌보미 정보 카드를 클릭할 경우 해당 돌보미의 상세 페이지로 이동</li>
+  <ul>
+  <img width="700" src="https://user-images.githubusercontent.com/30254570/182987583-cf548b46-01ee-4c6f-bb39-6b42afb10a17.png"/>
 </div>
 </details>
 
 <details>
 <summary>채팅 (Socket.io)</summary>
 <div markdown="1">
-<ul>
-  <li>각 시터에 해당된 채팅방 생성</li>
-  <li>채팅창 상단에 위치 시, 새로운 채팅메세지를 스크롤다운 없이 확인가능</li>
-</ul>
-<img width="700" src="https://user-images.githubusercontent.com/47635373/182986632-01005204-13c9-4d08-9a47-c5fb893bd445.png"/>
+  <ul>
+    <li>각 시터에 해당된 채팅방 생성</li>
+    <li>채팅창 상단에 위치 시, 새로운 채팅메세지를 스크롤다운 없이 확인가능</li>
+  </ul>
+  <img width="700" src="https://user-images.githubusercontent.com/47635373/182986632-01005204-13c9-4d08-9a47-c5fb893bd445.png"/>
 </div>
 </details>
 
 <details>
 <summary>알림 (SSE)</summary>
 <div markdown="1">
-- 채팅방에 접속해있지 않거나, 새로 사이트에 로그인 했을 경우 새로운 알림 아이콘 표시\
-- 로그인 중 새로운 메시지를 전송받았을 경우\
-- 펫싯 사이트에 접속해있지 않다가 다시 로그인 했을 때 새로운 메세지가 있는 경우\
-<img width="700" src="https://user-images.githubusercontent.com/47635373/182986635-7805791f-c59b-4eb8-8a84-b6790fee59da.png"/>
+  <ul>
+    <li>채팅방에 접속해있지 않거나, 새로 사이트에 로그인 했을 경우 새로운 알림 아이콘 표시</li>
+    <li>로그인 중 새로운 메시지를 전송받았을 경우</li>
+    <li>펫싯 사이트에 접속해있지 않다가 다시 로그인 했을 때 새로운 메세지가 있는 경우</li>
+  </ul>
+  <img width="700" src="https://user-images.githubusercontent.com/47635373/182986635-7805791f-c59b-4eb8-8a84-b6790fee59da.png"/>
 </div>
 </details>
 
