@@ -44,7 +44,7 @@ polling방식, long-polling 방식과 큰 차이가 없지만, 지속적인 연�
 - 펫싯에 접속한 사용자의 실시간 위치 정보를 얻어와 근처의 돌보미 리스트를 보여줌
 - 혹은 사용자가 검색한 주소 기준으로 가까운 곳에 위치한 돌보미 리스트 확인 가능
 - 카카오 맵에서 돌보미 마커 선택 시, 해당 돌보미의 이름과 평점을 간단히 보여주고 돌보미 정보 카드를 클릭할 경우 해당 돌보미의 상세 페이지로 이동\
-![182986616-5343e2c3-651e-48f2-b400-c689321b34ce](https://user-images.githubusercontent.com/30254570/182987583-cf548b46-01ee-4c6f-bb39-6b42afb10a17.png)
+<img width="700" src="https://user-images.githubusercontent.com/30254570/182987583-cf548b46-01ee-4c6f-bb39-6b42afb10a17.png"/>
 </div>
 </details>
 
