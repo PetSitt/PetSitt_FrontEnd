@@ -22,7 +22,7 @@ function SitterProfileForm4() {
   // useMutation 생성하는 세팅 함수
   const { mutate: create } = useMutation(apis.sitterprofilePost, {
     onSuccess: () => {
-      //무효화 시킴
+      //초기화 시킴
       queryClient.invalidateQueries("sitterprofile");
       navigate("/mypage/sitterprofile");
     },
@@ -36,6 +36,7 @@ function SitterProfileForm4() {
   // useMutation 수정하는 세팅 함수
   const { mutate: sitterUpdate } = useMutation(apis.sitterprofilePatch, {
     onSuccess: () => {
+      //초기화 시킴
       queryClient.invalidateQueries("sitterprofile");
       navigate("/mypage/sitterprofile");
     },

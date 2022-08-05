@@ -11,11 +11,12 @@ const AddressInfo = ({
 }) => {
   return (
     <ContensInner className={'contents'}>
+      {console.log(_zonecode)}
       <div className='postNumber box'>
         <Input
           _type='text'
           _placeholder={'우편번호'}
-          defaultValue={_zonecode}
+          _value={_zonecode}
           onChange={onChange}
           disabled
         />
@@ -27,7 +28,7 @@ const AddressInfo = ({
         <Input
           _type='text'
           _placeholder={'주소'}
-          defaultValue={_address}
+          _value={_address}
           onChange={onChange}
         />
       </div>
