@@ -249,7 +249,8 @@ function Home({prevIsDetail}) {
 			}else{
 				// 없을경우 위치정보 재검색
 				localStorage.removeItem('locationInfo');
-				getLocationButtonRef.current.click();
+				// getLocationButtonRef.current.click();
+				getLocation();
 			}
 		}
 		let fullHeight = window.innerHeight;
@@ -308,7 +309,8 @@ function Home({prevIsDetail}) {
 			}else{
 				// 저장된 위치정보 없을 경우 실시간 위치 정보 다시 불러오기
 				localStorage.removeItem('locationInfo');
-				getLocationButtonRef.current.click();
+				// getLocationButtonRef.current.click();
+				getLocation();
 			}
 		}
 	}, [dates, addressInfo])
