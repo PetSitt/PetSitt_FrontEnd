@@ -8,6 +8,10 @@ ReactJS : 소윤호, 김하연, 이정민\
 Node.js : 김형근, 유승완, 서아름, 김정현\
 UI/UX : 고가은
 
+## 실행 방법
+```
+```
+
 ## ⚒️개발 스팩
 ![](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=HTML5&logoColor=white)
 ![](https://img.shields.io/badge/styledComponents-db7093?style=for-the-badge&logo=styled-components&logoColor=white)
@@ -58,6 +62,17 @@ polling방식, long-polling 방식과 큰 차이가 없지만, 지속적인 연�
     <li>채팅창 상단에 위치 시, 새로운 채팅메세지를 스크롤다운 없이 확인가능</li>
   </ul>
   <img width="700" src="https://user-images.githubusercontent.com/47635373/182986632-01005204-13c9-4d08-9a47-c5fb893bd445.png"/>
+</div>
+</details>
+<details>
+<summary>알림 (SSE)</summary>
+<div markdown="1">
+  <ul>
+    <li>채팅방에 접속해있지 않거나, 새로 사이트에 로그인 했을 경우 새로운 알림 아이콘 표시</li>
+    <li>로그인 중 새로운 메시지를 전송받았을 경우</li>
+    <li>펫싯 사이트에 접속해있지 않다가 다시 로그인 했을 때 새로운 메세지가 있는 경우</li>
+  </ul>
+  <img width="700" src="https://user-images.githubusercontent.com/30254570/183269953-0fbce393-5255-46a1-86e3-3591ca9fc38d.png"/>
 </div>
 </details>
 
