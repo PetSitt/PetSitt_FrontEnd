@@ -53,7 +53,6 @@ function Home({prevIsDetail}) {
 	})
 	const [searchingStatus, setSearchingStatus] = useState('searching');
 	// const [marketing, setMarketing] = useState(false); 마케팅 종료로 해당 코드 주석처리
-	const timeoutRef = useRef();
 
 	const getSittersList = (queriesData, category) => {
 		const _queriesData = {...queriesData, category: category.length ? category : []};
@@ -182,14 +181,8 @@ function Home({prevIsDetail}) {
   };
 	const getLocation = () => {
     if (navigator.geolocation) {
-			const cancel = setTimeout(()=>{
-				setSearchingStatus('delayed');
-				clearTimeout(cancel);
-			}, 7000);
-			timeoutRef.current = cancel;
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-					clearTimeout(cancel);
 					const latitude = pos.coords.latitude;
 					const longitude = pos.coords.longitude;
 					setCurrentPosition({x: longitude, y: latitude});
@@ -202,14 +195,13 @@ function Home({prevIsDetail}) {
 					localStorage.setItem('locationInfo', JSON.stringify(locationObj));
         },
         (err) => {
-					clearTimeout(cancel);
 					if(err.code === 3) setSearchingStatus('delayed');
 					if(err.code === 1) setSearchingStatus('blocked');
         },
         {
           enableHighAccuracy: false,
           maximumAge: 180000,
-          timeout: 8000,
+          timeout: 7000,
         }
       );			
     } else {
@@ -261,14 +253,12 @@ function Home({prevIsDetail}) {
 			showTooltip.current = false;
 			clearTimeout(tooltipTimeout);
 		},5000);
-		const timeoutId = timeoutRef.current;
 		// 마케팅 종료로 해당 코드 주석처리
 		// if(window.innerWidth < 769 && !sessionStorage.getItem('marketingOnMobile')){
 		// 	setMarketing(true);
 		// }
 		return()=>{
 			clearTimeout(tooltipTimeout);
-			clearTimeout(timeoutId);
 			setSitters([]);
 		}		
 	},[])
