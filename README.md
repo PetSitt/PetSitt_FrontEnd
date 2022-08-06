@@ -8,6 +8,10 @@ ReactJS : 소윤호, 김하연, 이정민\
 Node.js : 김형근, 유승완, 서아름, 김정현\
 UI/UX : 고가은
 
+## 실행 방법
+```
+```
+
 ## ⚒️개발 스팩
 ![](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=HTML5&logoColor=white)
 ![](https://img.shields.io/badge/styledComponents-db7093?style=for-the-badge&logo=styled-components&logoColor=white)
