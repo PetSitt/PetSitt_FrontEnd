@@ -61,18 +61,6 @@ polling방식, long-polling 방식과 큰 차이가 없지만, 지속적인 연�
 </div>
 </details>
 
-<details>
-<summary>알림 (SSE)</summary>
-<div markdown="1">
-  <ul>
-    <li>채팅방에 접속해있지 않거나, 새로 사이트에 로그인 했을 경우 새로운 알림 아이콘 표시</li>
-    <li>로그인 중 새로운 메시지를 전송받았을 경우</li>
-    <li>펫싯 사이트에 접속해있지 않다가 다시 로그인 했을 때 새로운 메세지가 있는 경우</li>
-  </ul>
-  <img width="700" src="https://user-images.githubusercontent.com/47635373/182986635-7805791f-c59b-4eb8-8a84-b6790fee59da.png"/>
-</div>
-</details>
-
 ## 🧑🏻‍💻역할 분담
 | Name | Blog | 분담 |
 |------------|------------|------------|
