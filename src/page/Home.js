@@ -213,7 +213,7 @@ function Home({prevIsDetail}) {
         }
       );			
     } else {
-			setSearchingStatus('blocked');
+			setSearchingStatus('notSupport');
     }
   };
 
@@ -444,6 +444,8 @@ function Home({prevIsDetail}) {
 							<ExceptionArea _title={'GPS 확인이 지연되고있어요.'} _text={'장소 및 날짜 검색 기능을 통해 통해 돌보미 리스트를 검색해주세요.'}><TryAgainButton type="button" onClick={getLocation}>다시 시도하기</TryAgainButton></ExceptionArea>
 						) : searchingStatus === 'blocked' ? (
 							<ExceptionArea _title={'GPS를 허용해주세요.'} _text={'GPS를 허용하지 않을 경우, 장소 및 날짜 검색 기능을 통해 돌보미 리스트를 검색해주세요.'}/>
+						) : searchingStatus === 'notSupport' ? (
+							<ExceptionArea _title={'위치정보 사용 불가'} _text={'브라우저가 위치 정보 기능을 지원하지 않습니다. 장소 및 날짜 검색 기능을 통해 돌보미 리스트를 검색해주세요.'}/>
 						) : (
 							sitters?.length > 0 ? (
 								<>
