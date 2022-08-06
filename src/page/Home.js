@@ -53,7 +53,6 @@ function Home({prevIsDetail}) {
 	})
 	const [searchingStatus, setSearchingStatus] = useState('searching');
 	// const [marketing, setMarketing] = useState(false); 마케팅 종료로 해당 코드 주석처리
-	const timeoutRef = useRef();
 
 	const getSittersList = (queriesData, category) => {
 		const _queriesData = {...queriesData, category: category.length ? category : []};
@@ -182,14 +181,8 @@ function Home({prevIsDetail}) {
   };
 	const getLocation = () => {
     if (navigator.geolocation) {
-			const cancel = setTimeout(()=>{
-				setSearchingStatus('delayed');
-				clearTimeout(cancel);
-			}, 7000);
-			timeoutRef.current = cancel;
       navigator.geolocation.getCurrentPosition(
         (pos) => {
-					clearTimeout(cancel);
 					const latitude = pos.coords.latitude;
 					const longitude = pos.coords.longitude;
 					setCurrentPosition({x: longitude, y: latitude});
@@ -202,18 +195,17 @@ function Home({prevIsDetail}) {
 					localStorage.setItem('locationInfo', JSON.stringify(locationObj));
         },
         (err) => {
-					clearTimeout(cancel);
 					if(err.code === 3) setSearchingStatus('delayed');
 					if(err.code === 1) setSearchingStatus('blocked');
         },
         {
           enableHighAccuracy: false,
           maximumAge: 180000,
-          timeout: 8000,
+          timeout: 7000,
         }
       );			
     } else {
-			setSearchingStatus('blocked');
+			setSearchingStatus('notSupport');
     }
   };
 
@@ -250,6 +242,7 @@ function Home({prevIsDetail}) {
 				// 없을경우 위치정보 재검색
 				localStorage.removeItem('locationInfo');
 				getLocationButtonRef.current.click();
+				getLocation();
 			}
 		}
 		let fullHeight = window.innerHeight;
@@ -260,14 +253,12 @@ function Home({prevIsDetail}) {
 			showTooltip.current = false;
 			clearTimeout(tooltipTimeout);
 		},5000);
-		const timeoutId = timeoutRef.current;
 		// 마케팅 종료로 해당 코드 주석처리
 		// if(window.innerWidth < 769 && !sessionStorage.getItem('marketingOnMobile')){
 		// 	setMarketing(true);
 		// }
 		return()=>{
 			clearTimeout(tooltipTimeout);
-			clearTimeout(timeoutId);
 			setSitters([]);
 		}		
 	},[])
@@ -309,6 +300,7 @@ function Home({prevIsDetail}) {
 				// 저장된 위치정보 없을 경우 실시간 위치 정보 다시 불러오기
 				localStorage.removeItem('locationInfo');
 				getLocationButtonRef.current.click();
+				getLocation();
 			}
 		}
 	}, [dates, addressInfo])
@@ -442,6 +434,8 @@ function Home({prevIsDetail}) {
 							<ExceptionArea _title={'GPS 확인이 지연되고있어요.'} _text={'장소 및 날짜 검색 기능을 통해 통해 돌보미 리스트를 검색해주세요.'}><TryAgainButton type="button" onClick={getLocation}>다시 시도하기</TryAgainButton></ExceptionArea>
 						) : searchingStatus === 'blocked' ? (
 							<ExceptionArea _title={'GPS를 허용해주세요.'} _text={'GPS를 허용하지 않을 경우, 장소 및 날짜 검색 기능을 통해 돌보미 리스트를 검색해주세요.'}/>
+						) : searchingStatus === 'notSupport' ? (
+							<ExceptionArea _title={'위치정보 사용 불가'} _text={'브라우저가 위치 정보 기능을 지원하지 않습니다. 장소 및 날짜 검색 기능을 통해 돌보미 리스트를 검색해주세요.'}/>
 						) : (
 							sitters?.length > 0 ? (
 								<>
