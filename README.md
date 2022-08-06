@@ -8,15 +8,6 @@ ReactJS : 소윤호, 김하연, 이정민\
 Node.js : 김형근, 유승완, 서아름, 김정현\
 UI/UX : 고가은
 
-## 👍실행 하는 방법
-```
-1. 패키지 설치
-yarn 혹은 npm install
-
-2. 패키지 설치
-ynarn start 혹은 npm start
-```
-
 ## ⚒️개발 스팩
 ![](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=HTML5&logoColor=white)
 ![](https://img.shields.io/badge/styledComponents-db7093?style=for-the-badge&logo=styled-components&logoColor=white)
@@ -81,6 +72,12 @@ polling방식, long-polling 방식과 큰 차이가 없지만, 지속적인 연�
   <img width="700" src="https://user-images.githubusercontent.com/47635373/182986635-7805791f-c59b-4eb8-8a84-b6790fee59da.png"/>
 </div>
 </details>
+
+## 🧑🏻‍💻역할 분담
+| Name | Blog | 분담 |
+|------------|------------|------------|
+|소윤호|[Tistory](https://triplexlab.tistory.com/)|HTTPS, 회원가입, 비밀번호찾기, CI/CD, Daum postcode API, 반응형, 유저 정보 페이지 조회 및 수정, 반려동물 프로필(CRUD), 돌보미 프로필(CRUD), Multi Datepicker, 실시간 채팅(Socket.io)|
+|김하연|[velog](https://velog.io/@hayeooooon/)|로그인, 아이디찾기, Daum postcode API + Kakao Map API 연동, 메인페이지 검색, 상세페이지, 예약페이지, 리뷰/돌봄일지, 실시간 채팅(SSE), 모달 및 얼럿 컴포넌트|
 
 ## 🧑🏻‍💻역할 분담
 | Name | Blog | 분담 |
