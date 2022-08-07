@@ -8,10 +8,6 @@ ReactJS : 소윤호, 김하연, 이정민\
 Node.js : 김형근, 유승완, 서아름, 김정현\
 UI/UX : 고가은
 
-## 실행 방법
-```
-```
-
 ## ⚒️개발 스팩
 ![](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=HTML5&logoColor=white)
 ![](https://img.shields.io/badge/styledComponents-db7093?style=for-the-badge&logo=styled-components&logoColor=white)
@@ -75,7 +71,6 @@ polling방식, long-polling 방식과 큰 차이가 없지만, 지속적인 연�
   <img width="700" src="https://user-images.githubusercontent.com/30254570/183269953-0fbce393-5255-46a1-86e3-3591ca9fc38d.png"/>
 </div>
 </details>
-<<<<<<< HEAD
 
 <details>
 <summary>알림 (SSE)</summary>
@@ -89,8 +84,6 @@ polling방식, long-polling 방식과 큰 차이가 없지만, 지속적인 연�
 </div>
 </details>
 
-=======
->>>>>>> 6e9f481 (test:reademe 수정 및 하나로 합침)
 ## 🧑🏻‍💻역할 분담
 | Name | Blog | 분담 |
 |------------|------------|------------|
