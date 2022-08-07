@@ -75,7 +75,6 @@ polling방식, long-polling 방식과 큰 차이가 없지만, 지속적인 연�
   <img width="700" src="https://user-images.githubusercontent.com/30254570/183269953-0fbce393-5255-46a1-86e3-3591ca9fc38d.png"/>
 </div>
 </details>
-
 ## 🧑🏻‍💻역할 분담
 | Name | Blog | 분담 |
 |------------|------------|------------|
