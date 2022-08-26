@@ -13,14 +13,14 @@ import { Cookies } from 'react-cookie';
 
 const INITIAL_VALUES = {
   userEmail: "",
-  userName: "",
   password: "",
   phoneNumber: "",
+  userName: "",
 };
 
 const Signup = () => {
   const cookies = new Cookies();
-  const [{userEmail, userName, password, phoneNumber}, onChange, reset] = useInputs(INITIAL_VALUES);
+  const [{userEmail, password, phoneNumber, userName}, onChange, reset] = useInputs(INITIAL_VALUES);
   // 에러메세지 상태 저장
   const [idMessage, setIdMessage] = useState("");
   const [pwMessage, setPwMessage] = useState("");
@@ -93,6 +93,12 @@ const Signup = () => {
       setIsPhone(true);
     }
   }
+
+  /* 닉네임 */
+  function nickName(e) {
+    const { name, value } = e.target;
+    onChange(name, value);
+  };
 
   // useMutation 세팅 함수
   const { mutate, error, isSuccess } = useMutation(apis.signupAdd, {
@@ -196,21 +202,13 @@ const Signup = () => {
             </Message>
           )}
         </InputBox>
-        <InputBox
-          _label={"닉네임"}
-          _type={"text"}
-          _placeholder={"닉네임을 입력해주세요"}
-          _name={"userName"}
-          _onChange={onChange}
-          _value={phoneCurrent}
-          required
-        >
+        <InputBox>
           <label>닉네임</label>
           <input
             type="text"
             name="userName"
             placeholder="닉네임을 입력해주세요"
-            onChange={onChange}
+            onChange={nickName}
             required
           />
         </InputBox>
