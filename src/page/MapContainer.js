@@ -42,12 +42,12 @@ const MapContainer = ({ centerElement, showOnly, items, _height, setSitterCardSh
   useEffect(()=>{
     items && setPositions(items);
   },[items])
+
   useEffect(() => {
     if (positions.length > 0) {
       setCenterElem(positions[0]);
     }
   }, [positions]);
-  const bounds = new kakao.maps.LatLngBounds();
 
 
   if (!centerElem) return <p>로딩중입니다</p>;

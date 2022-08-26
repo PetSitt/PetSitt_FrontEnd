@@ -32,7 +32,7 @@ const SearchAddress = ({ setAddressInfo, setIframeDisplay }) => {
 			onClose={handleClose}
 			style={{ width: "100%"}}
 			useBannerLink={false}
-			submitMode={false}
+			submitMode={true}
 			className='daum-postcode-wrap'
 		/>
 	);

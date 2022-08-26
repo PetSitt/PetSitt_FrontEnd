@@ -209,6 +209,7 @@ function Home({prevIsDetail}) {
     }
   };
 
+	console.log(iframeDisplay)
 	const setStoredData = (data) => {
 		setDates(data.dates);
 		setAddressInfo(data.address);
