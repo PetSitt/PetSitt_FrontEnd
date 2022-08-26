@@ -124,7 +124,6 @@ const Signup = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (isId && isPw && isPhone) {
-      console.log(userEmail, userName, password, phoneNumber)
       mutate({userEmail, userName, password, phoneNumber});
     }
   };
